@@ -40,21 +40,21 @@ const Navbar = () => {
       } border-b border-gray-200`}
     >
       <div
-        className={`container mx-auto flex items-center justify-between px-4 sm:px-6 transition-all duration-300 ${
-          scrolled ? "py-2.5 sm:py-3" : "py-3 sm:py-4"
+        className={`container mx-auto flex items-center justify-between px-3 sm:px-4 md:px-6 transition-all duration-300 ${
+          scrolled ? "py-2 sm:py-2.5 md:py-3" : "py-2.5 sm:py-3 md:py-4"
         }`}
       >
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2 group relative"
+          className="flex items-center group relative touch-manipulation"
           aria-label="Vayu Packaging Solutions Home"
         >
           <motion.img
             src={logo}
             alt="Vayu Packaging Solutions"
             className={`w-auto object-contain transition-all duration-300 ${
-              scrolled ? "h-10 sm:h-12" : "h-12 sm:h-14 md:h-16"
+              scrolled ? "h-9 sm:h-10 md:h-12" : "h-10 sm:h-12 md:h-14 lg:h-16"
             }`}
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
@@ -102,7 +102,7 @@ const Navbar = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden text-foreground p-2 hover:bg-muted rounded-lg transition-colors"
+          className="md:hidden text-foreground p-2.5 hover:bg-muted rounded-lg transition-colors touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
           aria-label="Toggle menu"
           aria-expanded={open}
         >

@@ -64,9 +64,9 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-          <p>© 2025 Vayu Packaging Solutions. All rights reserved.</p>
-          <p className="mt-2 md:mt-0">Delivering quality, one box at a time.</p>
+        <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4 text-sm text-muted-foreground text-center md:text-left">
+          <p className="leading-relaxed">© 2025 Vayu Packaging Solutions. All rights reserved.</p>
+          <p className="leading-relaxed">Delivering quality, one box at a time.</p>
         </div>
       </div>
     </footer>
