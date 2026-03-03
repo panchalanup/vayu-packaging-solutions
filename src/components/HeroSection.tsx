@@ -66,7 +66,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section id="home" className="relative h-screen flex items-center overflow-hidden">
+    <section id="home" className="relative min-h-[calc(100vh-4rem)] flex items-center overflow-hidden">
       {/* Background images with slide animation */}
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.img
