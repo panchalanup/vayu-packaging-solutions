@@ -16,6 +16,9 @@ import aboutPackaging from "@/assets/about-packaging.jpg";
 import servicesPackaging from "@/assets/services-packaging.jpg";
 import placeholderImage from "/placeholder.svg";
 
+// Import videos
+import factoryVideo from "@/assets/video/factory-top-view.mp4";
+
 // ============================================
 // LOGO IMAGES
 // ============================================
@@ -49,6 +52,13 @@ export const HERO_IMAGES = [
     alt: "Inside a modern warehouse with forklifts",
   },
 ] as const;
+
+// ============================================
+// VIDEO ASSETS
+// ============================================
+export const VIDEO_ASSETS = {
+  factoryTour: factoryVideo,
+} as const;
 
 // ============================================
 // ABOUT SECTION IMAGES
