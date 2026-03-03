@@ -11,14 +11,17 @@ const INTERVAL = 5000;
 const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? "100%" : "-100%",
+    y: direction > 0 ? -30 : 30,
     opacity: 0,
   }),
   center: {
     x: 0,
+    y: 0,
     opacity: 1,
   },
   exit: (direction: number) => ({
-    x: direction > 0 ? "-50%" : "50%",
+    x: direction > 0 ? "-100%" : "100%",
+    y: direction > 0 ? 30 : -30,
     opacity: 0,
   }),
 };
@@ -58,7 +61,7 @@ const HeroSection = () => {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden -mt-20">
-      {/* Background images with slide animation */}
+      {/* Background images with Parallax Slide effect */}
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.img
           key={current}
@@ -70,7 +73,10 @@ const HeroSection = () => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
+          transition={{
+            duration: 1,
+            ease: [0.43, 0.13, 0.23, 0.96], // Custom smooth easing
+          }}
           loading="eager"
           draggable={false}
         />
