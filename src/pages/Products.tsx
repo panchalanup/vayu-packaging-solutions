@@ -1,38 +1,50 @@
 import Layout from "@/components/Layout";
 import PageTransition from "@/components/PageTransition";
 import { motion } from "framer-motion";
-import { ArrowUpRight, CheckCircle } from "lucide-react";
+import { ArrowUpRight, CheckCircle, Image as ImageIcon } from "lucide-react";
 
 const products = [
   {
+    id: "PROD-1",
     title: "3-Ply Corrugated Boxes",
     desc: "Lightweight yet durable. Ideal for small and medium-weight products like apparel, accessories, and books.",
     features: ["Single wall construction", "Cost-effective", "Ideal for light goods"],
+    imageDesc: "Stack of 3-ply boxes, one open showing construction",
   },
   {
+    id: "PROD-2",
     title: "5-Ply Corrugated Boxes",
     desc: "Double wall strength for heavier products. Perfect for electronics, home appliances, and FMCG goods.",
     features: ["Double wall protection", "High stacking strength", "Industry standard"],
+    imageDesc: "5-ply boxes with electronics or appliances",
   },
   {
+    id: "PROD-3",
     title: "7-Ply Corrugated Boxes",
     desc: "Maximum protection for heavy-duty shipping. Used for industrial parts, machinery, and export packaging.",
     features: ["Triple wall construction", "Export-grade quality", "Maximum load capacity"],
+    imageDesc: "Heavy-duty 7-ply box with industrial product",
   },
   {
+    id: "PROD-4",
     title: "Die-Cut Boxes",
     desc: "Custom-shaped boxes designed to fit your product perfectly. Reduces material waste and enhances unboxing experience.",
     features: ["Custom shapes & sizes", "Brand-focused design", "Minimal material waste"],
+    imageDesc: "Unique shaped boxes, branded examples",
   },
   {
+    id: "PROD-5",
     title: "Printed Packaging",
     desc: "Full-color printed corrugated boxes that showcase your brand. Available in flexo and offset printing.",
     features: ["Flexo & offset printing", "CMYK full color", "Brand visibility"],
+    imageDesc: "Full-color printed boxes with vibrant branding",
   },
   {
+    id: "PROD-6",
     title: "Food-Grade Boxes",
     desc: "FSSAI compliant corrugated boxes for food and beverage packaging with food-safe coatings.",
     features: ["FSSAI compliant", "Food-safe coating", "Moisture resistant"],
+    imageDesc: "Food packaging with safety certifications",
   },
 ];
 
@@ -64,17 +76,35 @@ const Products = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="bg-card border border-border rounded-2xl p-8 hover:border-primary/40 transition-all"
+                  className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-xl transition-all group"
                 >
-                  <h3 className="font-heading text-xl font-semibold text-foreground mb-3">{product.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-6">{product.desc}</p>
-                  <div className="space-y-2">
-                    {product.features.map((f) => (
-                      <div key={f} className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-accent flex-shrink-0" />
-                        <span className="text-foreground text-sm">{f}</span>
+                  {/* Product Image Placeholder */}
+                  <div className="relative aspect-square bg-gradient-to-br from-blue-50 to-blue-100">
+                    <div className="absolute inset-0 flex items-center justify-center p-6">
+                      <div className="text-center">
+                        <ImageIcon className="w-16 h-16 mx-auto mb-3 text-primary/40 group-hover:scale-110 transition-transform" />
+                        <p className="text-xs font-mono text-primary/60 mb-2">{product.id}</p>
+                        <p className="text-xs text-muted-foreground">{product.imageDesc}</p>
                       </div>
-                    ))}
+                    </div>
+                    {/* Badge */}
+                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
+                      <p className="text-xs font-semibold text-primary">800x800px</p>
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6 sm:p-8">
+                    <h3 className="font-heading text-xl font-semibold text-foreground mb-3">{product.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-6">{product.desc}</p>
+                    <div className="space-y-2">
+                      {product.features.map((f) => (
+                        <div key={f} className="flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-accent flex-shrink-0" />
+                          <span className="text-foreground text-sm">{f}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               ))}

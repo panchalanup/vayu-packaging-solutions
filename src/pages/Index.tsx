@@ -1,8 +1,11 @@
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
+import VideoSection from "@/components/VideoSection";
+import ProcessTimeline from "@/components/ProcessTimeline";
+import FacilityGallery from "@/components/FacilityGallery";
 import PageTransition from "@/components/PageTransition";
 import { motion } from "framer-motion";
-import { ArrowUpRight, CheckCircle, Star, Quote } from "lucide-react";
+import { ArrowUpRight, Star, Quote } from "lucide-react";
 
 const stats = [
   { value: "12+", label: "Years of Experience" },
@@ -54,6 +57,15 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Video Section - NEW */}
+        <VideoSection />
+
+        {/* Process Timeline - NEW */}
+        <ProcessTimeline />
+
+        {/* Facility Gallery - NEW */}
+        <FacilityGallery />
 
         {/* Quick CTA */}
         <section className="py-24">
