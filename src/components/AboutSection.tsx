@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import aboutImage from "@/assets/about-packaging.jpg";
 import { ArrowUpRight, CheckCircle } from "lucide-react";
+import { ABOUT_CONTENT, KEY_FEATURES, STATS } from "@/constants";
+import { ABOUT_IMAGES } from "@/constants/images";
 
 const stats = [
-  { value: "12+", label: "Years of Experience" },
-  { value: "5000+", label: "Happy Clients" },
-  { value: "50M+", label: "Boxes Delivered" },
+  STATS.yearsExperience,
+  STATS.happyClients,
+  STATS.boxesDelivered,
 ];
 
 const AboutSection = () => {
@@ -21,14 +22,14 @@ const AboutSection = () => {
             className="relative"
           >
             <img
-              src={aboutImage}
-              alt="Quality corrugated boxes inspection"
+              src={ABOUT_IMAGES.main}
+              alt={ABOUT_IMAGES.alt}
               className="rounded-2xl w-full object-cover aspect-square glow-amber"
               loading="lazy"
             />
             <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground rounded-2xl p-6 shadow-2xl hidden md:block">
-              <p className="font-heading text-3xl font-bold">12+</p>
-              <p className="text-sm font-medium opacity-80">Years of Experience</p>
+              <p className="font-heading text-3xl font-bold">{STATS.yearsExperience.value}</p>
+              <p className="text-sm font-medium opacity-80">{STATS.yearsExperience.label}</p>
             </div>
           </motion.div>
 
@@ -42,16 +43,14 @@ const AboutSection = () => {
               About Us
             </p>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
-              Reliable corrugated box distribution built on trust &amp; quality
+              {ABOUT_CONTENT.heading}
             </h2>
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-              Vayu Packaging Solutions is a leading distributor of corrugated boxes across India. 
-              We source from certified manufacturers and deliver custom packaging solutions 
-              tailored to your business — from e-commerce to FMCG, electronics to food.
+              {ABOUT_CONTENT.description}
             </p>
 
             <div className="space-y-4 mb-10">
-              {["Custom box sizes for any industry", "Bulk supply with competitive pricing", "On-time delivery guarantee"].map((item) => (
+              {KEY_FEATURES.map((item) => (
                 <div key={item} className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
                   <span className="text-foreground">{item}</span>

@@ -1,62 +1,6 @@
 import { motion } from "framer-motion";
 import { Image as ImageIcon } from "lucide-react";
-
-const facilityImages = [
-  {
-    id: "WG-1",
-    title: "Warehouse Overview",
-    description: "Wide shot of main warehouse floor",
-    placeholder: "/placeholder.svg",
-  },
-  {
-    id: "WG-2",
-    title: "Storage Systems",
-    description: "Tall racking systems with organized inventory",
-    placeholder: "/placeholder.svg",
-  },
-  {
-    id: "WG-3",
-    title: "Modern Equipment",
-    description: "Forklifts and automated equipment",
-    placeholder: "/placeholder.svg",
-  },
-  {
-    id: "WG-4",
-    title: "Quality Lab",
-    description: "Testing area with compression tester",
-    placeholder: "/placeholder.svg",
-  },
-  {
-    id: "WG-5",
-    title: "Team at Work",
-    description: "Workers collaborating and organizing",
-    placeholder: "/placeholder.svg",
-  },
-  {
-    id: "WG-6",
-    title: "Loading Bay",
-    description: "Trucks at loading docks",
-    placeholder: "/placeholder.svg",
-  },
-  {
-    id: "WG-7",
-    title: "Raw Materials",
-    description: "Corrugated sheets and rolls",
-    placeholder: "/placeholder.svg",
-  },
-  {
-    id: "WG-8",
-    title: "Finished Products",
-    description: "Stacks of completed boxes",
-    placeholder: "/placeholder.svg",
-  },
-  {
-    id: "WG-9",
-    title: "Office Space",
-    description: "Professional order management area",
-    placeholder: "/placeholder.svg",
-  },
-];
+import { GALLERY_IMAGES } from "@/constants/images";
 
 const FacilityGallery = () => {
   return (
@@ -80,7 +24,7 @@ const FacilityGallery = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {facilityImages.map((image, index) => (
+          {GALLERY_IMAGES.map((image, index) => (
             <motion.div
               key={image.id}
               initial={{ opacity: 0, y: 30 }}
@@ -89,24 +33,25 @@ const FacilityGallery = () => {
               transition={{ delay: index * 0.05 }}
               className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 hover:shadow-xl transition-all duration-300"
             >
-              {/* Placeholder Image */}
-              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
-                <div className="text-center p-4">
-                  <ImageIcon className="w-12 h-12 mx-auto mb-2 text-primary/40" />
-                  <p className="text-xs font-mono text-primary/60">{image.id}</p>
-                  <p className="text-sm font-semibold text-foreground mt-2">{image.title}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{image.description}</p>
-                </div>
-              </div>
-
-              {/* Uncomment when you add actual images
+              {/* Gallery Image */}
               <img
-                src={image.placeholder}
-                alt={image.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                src={image.src}
+                alt={image.alt}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 loading="lazy"
               />
-              */}
+              
+              {/* Placeholder Overlay - Shows when using placeholder */}
+              {image.src.includes('placeholder') && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+                  <div className="text-center p-4">
+                    <ImageIcon className="w-12 h-12 mx-auto mb-2 text-primary/40" />
+                    <p className="text-xs font-mono text-primary/60">{image.id}</p>
+                    <p className="text-sm font-semibold text-foreground mt-2">{image.title}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{image.description}</p>
+                  </div>
+                </div>
+              )}
 
               {/* Overlay on Hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

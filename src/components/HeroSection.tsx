@@ -1,19 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
-import heroImage1 from "@/assets/hero-packaging.jpg";
-import heroImage2 from "@/assets/hero-packaging-2.jpg";
-import heroImage3 from "@/assets/hero-packaging-3.jpg";
-import heroImage4 from "@/assets/hero-packaging-4.jpg";
-import heroImage5 from "@/assets/hero-packaging-5.jpg";
+import { HERO_CONTENT } from "@/constants";
+import { HERO_IMAGES } from "@/constants/images";
 
-const slides = [
-  { src: heroImage1, alt: "Modern logistics warehouse with trucks loading boxes" },
-  { src: heroImage2, alt: "Cargo airplane loading shipments at sunset" },
-  { src: heroImage3, alt: "Container ship on the ocean" },
-  { src: heroImage4, alt: "Fleet of delivery trucks on highway" },
-  { src: heroImage5, alt: "Inside a modern warehouse with forklifts" },
-];
+const slides = HERO_IMAGES;
 
 const INTERVAL = 5000;
 
@@ -97,7 +88,7 @@ const HeroSection = () => {
             transition={{ delay: 0.2 }}
             className="text-blue-200 font-semibold text-xs sm:text-sm uppercase tracking-widest mb-4 sm:mb-6"
           >
-            Trusted Corrugated Box Distributor
+            {HERO_CONTENT.tagline}
           </motion.p>
 
           <motion.h1
@@ -106,8 +97,9 @@ const HeroSection = () => {
             transition={{ delay: 0.35 }}
             className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight mb-4 sm:mb-6"
           >
-            Packaging solutions that{" "}
-            <span className="text-gradient">protect</span> what matters most
+            {HERO_CONTENT.heading.split('protect')[0]}
+            <span className="text-gradient">protect</span>
+            {HERO_CONTENT.heading.split('protect')[1]}
           </motion.h1>
 
           <motion.p
@@ -116,7 +108,7 @@ const HeroSection = () => {
             transition={{ delay: 0.5 }}
             className="text-blue-100/80 text-base sm:text-lg md:text-xl max-w-lg mb-8 sm:mb-10 leading-relaxed"
           >
-            India's reliable partner for high-quality corrugated boxes — custom sizes, bulk supply, and on-time delivery for every industry.
+            {HERO_CONTENT.description}
           </motion.p>
 
           <motion.div
@@ -129,14 +121,14 @@ const HeroSection = () => {
               href="#contact"
               className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-sm sm:text-base font-semibold hover:brightness-110 transition-all touch-manipulation"
             >
-              Get a Quote
+              {HERO_CONTENT.primaryCTA}
               <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </a>
             <a
               href="#services"
               className="inline-flex items-center justify-center gap-2 border border-white/30 text-white px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-sm sm:text-base font-semibold hover:bg-white/10 transition-all touch-manipulation"
             >
-              Our Services
+              {HERO_CONTENT.secondaryCTA}
             </a>
           </motion.div>
         </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowUpRight, Phone } from "lucide-react";
-import logo from "@/assets/logo-horizontal.png";
+import { LOGO_IMAGES } from "@/constants/images";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -51,7 +51,7 @@ const Navbar = () => {
           aria-label="Vayu Packaging Solutions Home"
         >
           <motion.img
-            src={logo}
+            src={LOGO_IMAGES.horizontal}
             alt="Vayu Packaging Solutions"
             className={`w-auto object-contain transition-all duration-300 ${
               scrolled ? "h-9 sm:h-10 md:h-12" : "h-10 sm:h-12 md:h-14 lg:h-16"

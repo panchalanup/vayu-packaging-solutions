@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Package, Truck, Shield, Ruler, ArrowUpRight } from "lucide-react";
-import servicesImage from "@/assets/services-packaging.jpg";
+import { SERVICES_CONTENT, INDUSTRIES } from "@/constants";
+import { SERVICES_IMAGES } from "@/constants/images";
 
 const services = [
   {
@@ -33,12 +34,12 @@ const ServicesSection = () => {
           <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-4">
             Our Services
           </p>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
-            End-to-end corrugated packaging solutions
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            From sourcing raw materials to final delivery, we handle the complete packaging lifecycle.
-          </p>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
+              {SERVICES_CONTENT.heading}
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              {SERVICES_CONTENT.description}
+            </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -72,20 +73,20 @@ const ServicesSection = () => {
           className="mt-20 grid lg:grid-cols-2 gap-12 items-center"
         >
           <img
-            src={servicesImage}
-            alt="Corrugated boxes on conveyor belt"
+            src={SERVICES_IMAGES.main}
+            alt={SERVICES_IMAGES.alt}
             className="rounded-2xl w-full object-cover aspect-video"
             loading="lazy"
           />
           <div>
             <h3 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-6">
-              Serving industries that demand excellence
+              {SERVICES_CONTENT.industryHeading}
             </h3>
             <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-              Whether you're shipping electronics, food products, pharmaceuticals, or e-commerce goods — our corrugated solutions are engineered to protect and impress.
+              {SERVICES_CONTENT.industryDescription}
             </p>
             <div className="flex flex-wrap gap-3">
-              {["E-Commerce", "FMCG", "Electronics", "Food & Beverage", "Pharmaceuticals", "Automotive"].map((tag) => (
+              {INDUSTRIES.map((tag) => (
                 <span
                   key={tag}
                   className="bg-secondary text-secondary-foreground px-4 py-2 rounded-full text-sm font-medium"
