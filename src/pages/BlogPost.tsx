@@ -5,6 +5,8 @@ import PageTransition from "@/components/PageTransition";
 import ShareButtons from "@/components/ShareButtons";
 import BlogCard from "@/components/BlogCard";
 import ReadingProgress from "@/components/ReadingProgress";
+import TableOfContents from "@/components/TableOfContents";
+import ScrollToTop from "@/components/ScrollToTop";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock, Calendar, User } from "lucide-react";
 import { getBlogBySlug, getRelatedBlogs, BLOG_AUTHOR } from "@/constants/blogs";
@@ -61,10 +63,12 @@ const BlogPost = () => {
     <Layout>
       {/* Reading Progress Indicator */}
       <ReadingProgress />
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
       
       <PageTransition>
         {/* Breadcrumb & Back Button */}
-        <section className="pt-8 pb-6 border-b border-border">
+        <section className="pt-6 pb-4 border-b border-border">
           <div className="container mx-auto px-6 max-w-4xl">
             <Link 
               to="/blogs"
@@ -77,7 +81,7 @@ const BlogPost = () => {
         </section>
 
         {/* Blog Header */}
-        <section className="pt-12 pb-8">
+        <section className="pt-8 pb-6">
           <div className="container mx-auto px-6 max-w-4xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -85,19 +89,19 @@ const BlogPost = () => {
               transition={{ duration: 0.5 }}
             >
               {/* Category Badge */}
-              <div className="mb-6">
-                <span className="px-4 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">
+              <div className="mb-5">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary">
                   {post.category}
                 </span>
               </div>
 
               {/* Title */}
-              <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight">
+              <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-5 leading-tight">
                 {post.title}
               </h1>
 
               {/* Meta Information */}
-              <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mb-8">
+              <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground mb-6 bg-secondary/30 rounded-lg p-4">
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4" />
                   <span>{post.author}</span>
@@ -113,7 +117,7 @@ const BlogPost = () => {
               </div>
 
               {/* Share Buttons */}
-              <div className="pb-8 border-b border-border">
+              <div className="pb-6 border-b border-border">
                 <ShareButtons 
                   url={currentUrl}
                   title={post.title}
@@ -125,8 +129,11 @@ const BlogPost = () => {
         </section>
 
         {/* Blog Content */}
-        <section className="py-12">
+        <section className="py-8">
           <div className="container mx-auto px-6 max-w-4xl">
+            {/* Table of Contents - Shows on both mobile and desktop */}
+            {!loading && content && <TableOfContents content={content} />}
+            
             {loading ? (
               <div className="flex justify-center py-20">
                 <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -218,10 +225,10 @@ const BlogPost = () => {
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
-          <section className="py-16 md:py-24 section-dark">
+          <section className="py-12 md:py-16 section-dark">
             <div className="container mx-auto px-6">
-              <div className="max-w-4xl mx-auto mb-12">
-                <h2 className="font-heading text-3xl font-bold text-foreground mb-3">
+              <div className="max-w-4xl mx-auto mb-10">
+                <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-3">
                   Related Articles
                 </h2>
                 <p className="text-muted-foreground">
@@ -229,7 +236,7 @@ const BlogPost = () => {
                 </p>
               </div>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                 {relatedPosts.map((relatedPost, index) => (
                   <BlogCard key={relatedPost.slug} post={relatedPost} index={index} />
                 ))}
@@ -239,7 +246,7 @@ const BlogPost = () => {
         )}
 
         {/* CTA Section */}
-        <section className="py-20">
+        <section className="py-16">
           <div className="container mx-auto px-6 text-center max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}

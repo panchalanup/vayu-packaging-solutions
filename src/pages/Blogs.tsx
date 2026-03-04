@@ -15,7 +15,7 @@ const Blogs = () => {
     <Layout>
       <PageTransition>
         {/* Hero Section */}
-        <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">
+        <section className="pt-6 sm:pt-8 md:pt-10 pb-10 md:pb-12 section-dark">
           <div className="container mx-auto px-6 text-center max-w-4xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -40,8 +40,8 @@ const Blogs = () => {
           </div>
         </section>
 
-        {/* Category Filter */}
-        <section className="py-8 border-b border-border">
+        {/* Category Filter - Sticky */}
+        <section className="sticky top-[72px] z-40 py-6 border-b border-border bg-background/95 backdrop-blur-sm shadow-sm">
           <div className="container mx-auto px-6">
             <CategoryFilter 
               activeCategory={activeCategory} 
@@ -51,7 +51,7 @@ const Blogs = () => {
         </section>
 
         {/* Blog Grid */}
-        <section className="py-16 md:py-24">
+        <section className="py-12 md:py-16">
           <div className="container mx-auto px-6">
             {/* Results count */}
             <motion.div
@@ -60,14 +60,14 @@ const Blogs = () => {
               animate={{ opacity: 1 }}
               className="mb-8"
             >
-              <p className="text-muted-foreground text-sm">
+              <p className="text-muted-foreground text-sm font-medium">
                 {filteredBlogs.length} {filteredBlogs.length === 1 ? 'article' : 'articles'}
                 {activeCategory !== 'All' && ` in ${activeCategory}`}
               </p>
             </motion.div>
 
             {/* Blog Cards Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredBlogs.map((post, index) => (
                 <BlogCard key={post.slug} post={post} index={index} />
               ))}
@@ -95,7 +95,7 @@ const Blogs = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 section-dark">
+        <section className="py-16 section-dark">
           <div className="container mx-auto px-6 text-center max-w-3xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}

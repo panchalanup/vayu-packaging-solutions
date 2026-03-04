@@ -9,13 +9,13 @@
 /* Medium Blog Article Styling */
 .medium-article {
   font-family: 'Lora', 'Georgia', 'Cambria', 'Times New Roman', Times, serif;
-  font-size: 21px;
-  line-height: 1.58;
+  font-size: 18px;
+  line-height: 1.65;
   letter-spacing: -0.003em;
   color: rgba(41, 41, 41, 1);
   max-width: 900px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0;
   width: 100%;
 }
 
@@ -34,39 +34,39 @@
 }
 
 .medium-article h1 {
-  font-size: 42px;
+  font-size: 36px;
   line-height: 1.2;
   margin-top: 0;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .medium-article h2 {
-  font-size: 34px;
-  line-height: 1.25;
-  margin-top: 56px;
-  margin-bottom: 6px;
+  font-size: 30px;
+  line-height: 1.3;
+  margin-top: 48px;
+  margin-bottom: 16px;
 }
 
 .medium-article h3 {
-  font-size: 26px;
-  line-height: 1.3;
-  margin-top: 46px;
-  margin-bottom: 4px;
+  font-size: 23px;
+  line-height: 1.35;
+  margin-top: 36px;
+  margin-bottom: 12px;
 }
 
 .medium-article h4 {
-  font-size: 22px;
-  line-height: 1.35;
-  margin-top: 36px;
-  margin-bottom: 4px;
+  font-size: 20px;
+  line-height: 1.4;
+  margin-top: 28px;
+  margin-bottom: 10px;
 }
 
 /* Paragraphs */
 .medium-article p {
   margin-top: 0;
-  margin-bottom: 32px;
-  font-size: 21px;
-  line-height: 1.58;
+  margin-bottom: 20px;
+  font-size: 18px;
+  line-height: 1.65;
   letter-spacing: -0.003em;
 }
 
@@ -100,33 +100,47 @@
 .medium-article ul,
 .medium-article ol {
   margin-top: 0;
-  margin-bottom: 30px;
-  padding-left: 30px;
+  margin-bottom: 20px;
+  padding-left: 28px;
+}
+
+.medium-article ul {
+  list-style-type: disc;
+}
+
+.medium-article ol {
+  list-style-type: decimal;
 }
 
 .medium-article li {
-  margin-bottom: 14px;
-  font-size: 21px;
-  line-height: 1.58;
+  margin-bottom: 10px;
+  font-size: 18px;
+  line-height: 1.65;
   letter-spacing: -0.003em;
+  display: list-item;
 }
 
 .medium-article li p {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
+  display: inline;
+}
+
+.medium-article li::marker {
+  color: rgba(41, 41, 41, 0.7);
 }
 
 /* Blockquotes */
 .medium-article blockquote {
   font-family: 'Lora', Georgia, serif;
-  font-size: 24px;
+  font-size: 20px;
   font-style: italic;
-  line-height: 1.48;
+  line-height: 1.5;
   letter-spacing: -0.014em;
   border-left: 3px solid rgba(41, 41, 41, 1);
   padding-left: 20px;
   margin-left: -20px;
-  margin-top: 32px;
-  margin-bottom: 32px;
+  margin-top: 24px;
+  margin-bottom: 24px;
   color: rgba(107, 107, 107, 1);
 }
 
@@ -145,18 +159,18 @@
 .medium-article pre {
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', 'Source Code Pro', monospace;
   background: rgba(242, 242, 242, 1);
-  padding: 20px;
-  margin: 32px 0;
+  padding: 16px;
+  margin: 24px 0;
   border-radius: 4px;
   overflow-x: auto;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.5;
 }
 
 .medium-article pre code {
   background: transparent;
   padding: 0;
-  font-size: 16px;
+  font-size: 14px;
   color: rgba(36, 36, 36, 1);
 }
 
@@ -164,14 +178,14 @@
 .medium-article hr {
   border: none;
   border-top: 1px solid rgba(230, 230, 230, 1);
-  margin: 40px 0;
+  margin: 32px 0;
 }
 
 /* Tables */
 .medium-article .table-wrapper {
   width: 100%;
   overflow-x: auto;
-  margin: 32px 0;
+  margin: 24px 0;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   -webkit-overflow-scrolling: touch;
@@ -181,7 +195,7 @@
   width: 100%;
   min-width: 600px;
   border-collapse: collapse;
-  font-size: 17px;
+  font-size: 15px;
   line-height: 1.5;
   background: white;
 }
@@ -233,12 +247,12 @@
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 32px auto;
+  margin: 24px auto;
 }
 
 /* Figure */
 .medium-article figure {
-  margin: 32px 0;
+  margin: 24px 0;
 }
 
 .medium-article figcaption {
@@ -252,40 +266,48 @@
 /* Responsive adjustments */
 @media (max-width: 1024px) {
   .medium-article {
-    max-width: 85%;
-    padding: 0 20px;
+    max-width: 100%;
+    padding: 0;
   }
 }
 
 @media (max-width: 768px) {
   .medium-article {
-    font-size: 19px;
-    padding: 0 20px;
+    font-size: 17px;
+    padding: 0;
     max-width: 100%;
   }
   
   .medium-article h1 {
-    font-size: 34px;
+    font-size: 30px;
   }
   
   .medium-article h2 {
-    font-size: 28px;
-    margin-top: 40px;
+    font-size: 26px;
+    margin-top: 36px;
+    margin-bottom: 14px;
   }
   
   .medium-article h3 {
-    font-size: 23px;
-    margin-top: 32px;
+    font-size: 21px;
+    margin-top: 28px;
+    margin-bottom: 10px;
   }
   
   .medium-article h4 {
-    font-size: 20px;
+    font-size: 18px;
+  }
+  
+  .medium-article p {
+    margin-bottom: 18px;
   }
   
   .medium-article blockquote {
-    font-size: 20px;
-    margin-left: -16px;
+    font-size: 18px;
+    margin-left: -12px;
     padding-left: 16px;
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
   
   .medium-article table {
@@ -306,28 +328,30 @@
 
 @media (max-width: 480px) {
   .medium-article {
-    font-size: 18px;
-    padding: 0 16px;
+    font-size: 16px;
+    padding: 0;
   }
   
   .medium-article h1 {
-    font-size: 30px;
-  }
-  
-  .medium-article h2 {
     font-size: 26px;
   }
   
+  .medium-article h2 {
+    font-size: 23px;
+    margin-top: 32px;
+  }
+  
   .medium-article h3 {
-    font-size: 21px;
+    font-size: 19px;
+    margin-top: 24px;
   }
   
   .medium-article h4 {
-    font-size: 19px;
+    font-size: 17px;
   }
   
   .medium-article p {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
   
   .medium-article table {
