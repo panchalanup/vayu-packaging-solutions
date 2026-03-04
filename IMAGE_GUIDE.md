@@ -577,3 +577,324 @@ Professional office area where orders are managed
 If you need clarification on any image specifications or have questions about creating specific content, refer to this guide or update it as your needs evolve.
 
 **Remember:** Real photos of your actual facility, team, and products will build the most trust with customers. Avoid generic stock photos when possible.
+
+---
+
+# 📝 BLOG IMAGES SECTION
+
+## Blog Thumbnails & Social Sharing Images
+
+### **Location:** Blog Listing Page & Individual Blog Posts
+### **Purpose:** Attract readers, improve social sharing, enhance SEO
+
+## General Blog Image Guidelines
+
+### Thumbnail Images (Blog Listing Cards)
+**Dimensions:** 600x400px (3:2 aspect ratio)
+**Format:** JPG optimized
+**File Size:** 80-120KB
+**Naming Convention:** `blog-0X-thumbnail.jpg`
+
+### Social Sharing Images (Open Graph)
+**Dimensions:** 1200x630px (1.91:1 aspect ratio)
+**Format:** JPG optimized
+**File Size:** 150-250KB
+**Naming Convention:** `blog-0X-social.jpg`
+**Purpose:** Facebook, LinkedIn, Twitter preview images
+
+### In-Content Images
+**Dimensions:** 800x600px or 1200x800px (depending on importance)
+**Format:** JPG or PNG
+**File Size:** 100-200KB
+**Naming Convention:** `blog-0X-img-0Y.jpg`
+
+---
+
+## Blog 01: Types of Corrugated Boxes
+
+### BLOG-01-thumbnail (600x400px)
+**Description:** Various types of corrugated boxes displayed together
+**Shows:** 3-ply, 5-ply, 7-ply boxes, die-cut box, printed box, food-grade box
+**Composition:** Flat lay or arranged display showing variety
+**Style:** Professional product photography, clean background
+
+### BLOG-01-social (1200x630px)
+**Description:** Same as thumbnail but optimized for social sharing
+**Text Overlay:** "Complete Guide to Corrugated Box Types"
+**Branding:** Logo in corner
+
+### In-Content Images:
+
+**BLOG-01-IMG-01:** Cross-section diagram showing corrugated box layers (800x600px)
+- Shows outer liner, fluting, inner liner with labels
+- Educational diagram style
+
+**BLOG-01-IMG-02:** Stack of 3-ply boxes with one open (800x600px)
+- Light brown boxes, single wall fluting visible
+
+**BLOG-01-IMG-03:** 5-ply boxes with electronics product inside (800x600px)
+- Open box with laptop/appliance, cushioning visible
+
+**BLOG-01-IMG-04:** Heavy-duty 7-ply box with industrial component (800x600px)
+- Large sturdy box, export-quality appearance
+
+**BLOG-01-IMG-05:** Various custom-shaped die-cut boxes (800x600px)
+- Creative non-standard shapes, branded designs
+
+**BLOG-01-IMG-06:** Vibrant printed corrugated boxes (800x600px)
+- Multiple boxes with colorful logos, CMYK printing
+
+**BLOG-01-IMG-07:** Food-grade boxes with fresh produce (800x600px)
+- Clean boxes with fruits/vegetables, FSSAI mark visible
+
+---
+
+## Blog 02: Wall Differences (Single/Double/Triple)
+
+### BLOG-02-thumbnail (600x400px)
+**Description:** Side-by-side comparison of wall types
+**Shows:** Cross-sections of 3-ply, 5-ply, 7-ply clearly visible
+
+### BLOG-02-social (1200x630px)
+**Description:** Comparison graphic for social sharing
+
+### In-Content Images:
+
+**BLOG-02-IMG-01:** Side-by-side comparison diagram (1200x800px)
+- Clear cross-section diagrams showing layer differences
+
+**BLOG-02-IMG-02:** Detailed single wall construction diagram (800x600px)
+- Close-up of three layers with labels
+
+**BLOG-02-IMG-03:** Detailed double wall construction diagram (800x600px)
+- Five layers clearly shown
+
+**BLOG-02-IMG-04:** Detailed triple wall construction diagram (800x600px)
+- Seven layers with emphasis on strength
+
+---
+
+## Blog 03: Flute Types Guide
+
+### BLOG-03-thumbnail (600x400px)
+**Description:** Flute size comparison visual
+**Shows:** A, B, C, E, F flutes side by side
+
+### BLOG-03-social (1200x630px)
+**Description:** Flute types infographic for social sharing
+
+### In-Content Images:
+
+**BLOG-03-IMG-01:** Close-up flute structure (800x600px)
+- Detailed view of wavy flute pattern
+
+**BLOG-03-IMG-02:** Visual height comparison of all flutes (1200x800px)
+- A, B, C, E, F flutes with measurements
+
+**BLOG-03-IMG-03:** A-Flute box with fragile glassware (800x600px)
+- Box protecting glass items
+
+**BLOG-03-IMG-04:** B-Flute boxes with custom printing (800x600px)
+- Branded boxes with crisp printing
+
+**BLOG-03-IMG-05:** C-Flute boxes stacked in warehouse (800x600px)
+- Multiple boxes demonstrating versatility
+
+**BLOG-03-IMG-06:** E-Flute retail packaging (800x600px)
+- Sleek retail boxes on shelf
+
+**BLOG-03-IMG-07:** F-Flute luxury packaging (800x600px)
+- Premium product packaging, smartphone box
+
+---
+
+## Blog 04: GSM Calculation & Strength
+
+### BLOG-04-thumbnail (600x400px)
+**Description:** GSM concept visual
+**Shows:** Paper samples with weights, testing equipment
+
+### BLOG-04-social (1200x630px)
+**Description:** "Understanding GSM in Corrugated Boxes"
+
+### In-Content Images:
+
+**BLOG-04-IMG-01:** Visual representation of GSM (800x600px)
+- Scale with 1 square meter paper sample
+
+**BLOG-04-IMG-02:** Cross-section with GSM values (800x600px)
+- 3-ply box layers with GSM labeled
+
+**BLOG-04-IMG-03:** Graph showing GSM vs strength (1200x800px)
+- Line graph with data points
+
+**BLOG-04-IMG-04:** Virgin vs recycled kraft paper comparison (800x600px)
+- Side-by-side showing fiber differences
+
+**BLOG-04-IMG-05:** GSM testing equipment (800x600px)
+- Digital scale, paper samples, testing procedure
+
+---
+
+## Blog 05: Burst Strength & ECT Guide
+
+### BLOG-05-thumbnail (600x400px)
+**Description:** Testing equipment
+**Shows:** Burst strength tester and ECT machine
+
+### BLOG-05-social (1200x630px)
+**Description:** "BS vs ECT: Quality Standards Explained"
+
+### In-Content Images:
+
+**BLOG-05-IMG-01:** Visual comparison of BS vs ECT testing (1200x800px)
+- Side-by-side diagrams with arrows
+
+**BLOG-05-IMG-02:** Burst strength testing machine (800x600px)
+- Testing equipment with sample
+
+**BLOG-05-IMG-03:** ECT testing equipment (800x600px)
+- Edge crush test machine with sample
+
+**BLOG-05-IMG-04:** Industry shift infographic (1200x800px)
+- Timeline showing adoption of ECT
+
+**BLOG-05-IMG-05:** Calculation worksheet (800x600px)
+- Step-by-step visual guide
+
+**BLOG-05-IMG-06:** Testing facility (800x600px)
+- Professional lab with machines
+
+---
+
+## Blog 06: Box Measurements Guide
+
+### BLOG-06-thumbnail (600x400px)
+**Description:** Measuring tape on corrugated box
+**Shows:** Clear L × B × H measurement demonstration
+
+### BLOG-06-social (1200x630px)
+**Description:** "How to Measure Corrugated Boxes Correctly"
+
+### In-Content Images:
+
+**BLOG-06-IMG-01:** L, B, H dimensions diagram (800x600px)
+- Open box with arrows and labels
+
+**BLOG-06-IMG-02:** Interior vs exterior comparison (1200x800px)
+- Cross-section view highlighting differences
+
+**BLOG-06-IMG-03:** Measuring tools and setup (800x600px)
+- Measuring tape, ruler, box, notepad
+
+**BLOG-06-IMG-04:** Correct vs incorrect measuring (800x600px)
+- Side-by-side showing right and wrong ways
+
+**BLOG-06-IMG-05:** Conversion chart (800x600px)
+- Visual guide for inch-to-mm conversions
+
+---
+
+## Blog 07: Kraft Paper Grades
+
+### BLOG-07-thumbnail (600x400px)
+**Description:** Virgin and recycled kraft paper samples
+**Shows:** Side-by-side comparison of paper types
+
+### BLOG-07-social (1200x630px)
+**Description:** "Virgin vs Recycled Kraft Paper Guide"
+
+### In-Content Images:
+
+**BLOG-07-IMG-01:** Kraft paper manufacturing process (1200x800px)
+- Flowchart from wood chips to finished paper
+
+**BLOG-07-IMG-02:** Virgin kraft production (800x600px)
+- Forest → pulp mill → virgin kraft paper
+
+**BLOG-07-IMG-03:** Recycled paper process (800x600px)
+- Old boxes → recycling → new kraft paper
+
+**BLOG-07-IMG-04:** Comparison chart (1200x800px)
+- Bar graphs comparing properties
+
+**BLOG-07-IMG-05:** Food-grade certification symbols (800x600px)
+- FSSAI mark, food-grade symbols
+
+**BLOG-07-IMG-06:** Certification logos (1200x800px)
+- FSC, PEFC, BIS, FSSAI logos with explanations
+
+---
+
+## Team Avatar for Blog Author
+
+### **Location:** Blog posts (author byline)
+### **Dimensions:** 200x200px (1:1 circle crop)
+### **Format:** JPG or PNG
+### **File Name:** `team-avatar.jpg`
+
+**Description:** Professional team photo or logo
+**Shows:** Vayu Packaging Team representation
+**Style:** Professional, friendly, trustworthy
+**Usage:** Displayed as circular avatar next to author name
+
+**Options:**
+1. Team group photo (3-5 people)
+2. Company logo on branded background
+3. Professional headshot of key spokesperson
+
+---
+
+## Blog Image Creation Tips
+
+### Photography Guidelines:
+1. **Consistency:** Use same style/lighting across all blog images
+2. **Branding:** Subtle logo placement on social sharing images
+3. **Text Readability:** Ensure text overlays are legible on all devices
+4. **Color Scheme:** Match website colors (blues, primary color palette)
+5. **Professional Quality:** Use good lighting, sharp focus, clean backgrounds
+
+### Diagram Guidelines:
+1. **Clear Labels:** All parts clearly labeled with arrows
+2. **Simple Color Scheme:** 2-3 colors maximum for clarity
+3. **High Contrast:** Dark text on light background or vice versa
+4. **Vector Graphics:** Use Illustrator/Figma for scalability
+5. **Consistent Style:** Same diagram style across all blogs
+
+### Optimization:
+- Use tools like TinyPNG or ImageOptim
+- Target 70-85% JPG quality
+- Maintain aspect ratios strictly
+- Test on mobile devices
+- Ensure fast loading (<2 seconds)
+
+---
+
+## Blog Image Priority Checklist
+
+### Priority 1 (Launch Ready):
+- [ ] All 7 blog thumbnails (600x400px)
+- [ ] All 7 social sharing images (1200x630px)
+- [ ] Team avatar (200x200px)
+
+### Priority 2 (Enhanced Experience):
+- [ ] Key diagrams for each blog
+- [ ] Product photography for examples
+- [ ] Testing equipment photos
+
+### Priority 3 (Full Implementation):
+- [ ] All in-content images
+- [ ] Additional infographics
+- [ ] Animated diagrams (optional)
+
+---
+
+## Implementation Notes
+
+- Blog system currently uses placeholders
+- Images can be added progressively
+- Placeholder styling matches brand
+- Alt text should be descriptive for SEO
+- File names should match IMAGE_GUIDE specs exactly
+
+---
