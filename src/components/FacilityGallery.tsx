@@ -3,10 +3,13 @@ import { motion } from "framer-motion";
 import { ZoomIn } from "lucide-react";
 import { GALLERY_IMAGES } from "@/constants/images";
 import ImageViewer from "./ImageViewer";
+import MobileImageViewer from "./MobileImageViewer";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const FacilityGallery = () => {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const isMobile = useIsMobile();
 
   // Show only first 9 images in the grid
   const displayedImages = GALLERY_IMAGES.slice(0, 9);
@@ -121,14 +124,24 @@ const FacilityGallery = () => {
         </motion.div>
       </div>
 
-      {/* Image Viewer */}
-      <ImageViewer
-        images={GALLERY_IMAGES}
-        currentIndex={currentImageIndex}
-        isOpen={isViewerOpen}
-        onClose={() => setIsViewerOpen(false)}
-        onNavigate={handleNavigate}
-      />
+      {/* Image Viewer - Conditional based on device */}
+      {isMobile ? (
+        <MobileImageViewer
+          images={GALLERY_IMAGES}
+          currentIndex={currentImageIndex}
+          isOpen={isViewerOpen}
+          onClose={() => setIsViewerOpen(false)}
+          onNavigate={handleNavigate}
+        />
+      ) : (
+        <ImageViewer
+          images={GALLERY_IMAGES}
+          currentIndex={currentImageIndex}
+          isOpen={isViewerOpen}
+          onClose={() => setIsViewerOpen(false)}
+          onNavigate={handleNavigate}
+        />
+      )}
     </section>
   );
 };
