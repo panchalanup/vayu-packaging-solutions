@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { List, ChevronDown, ChevronUp } from "lucide-react";
+import { List } from "lucide-react";
 
 interface TOCItem {
   id: string;
@@ -15,7 +15,6 @@ interface TableOfContentsProps {
 const TableOfContents = ({ content }: TableOfContentsProps) => {
   const [headings, setHeadings] = useState<TOCItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
-  const [isOpen, setIsOpen] = useState(false); // Changed to false for mobile
   const [isHovered, setIsHovered] = useState(false); // For desktop hover
   const [isInBlogSection, setIsInBlogSection] = useState(false); // Track if in blog content area
 
@@ -95,7 +94,14 @@ const TableOfContents = ({ content }: TableOfContentsProps) => {
   const handleClick = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const offset = 100;
+      // Dynamically calculate navbar height for responsive offset
+      const navbar = document.querySelector('nav');
+      const navbarHeight = navbar ? navbar.offsetHeight : 80;
+      
+      // Add extra spacing for better UX (20px on mobile, 30px on desktop)
+      const extraSpacing = window.innerWidth < 768 ? 20 : 30;
+      const offset = navbarHeight + extraSpacing;
+      
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
 
@@ -190,63 +196,6 @@ const TableOfContents = ({ content }: TableOfContentsProps) => {
         </AnimatePresence>
       </div>
 
-      {/* Mobile TOC - Collapsible (Collapsed by Default) */}
-      <div className="lg:hidden mb-8">
-        <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="w-full flex items-center justify-between p-4 hover:bg-secondary/50 transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <List className="w-5 h-5 text-primary" />
-              <h3 className="font-semibold text-foreground">Table of Contents</h3>
-              <span className="text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">
-                {headings.length}
-              </span>
-            </div>
-            {isOpen ? (
-              <ChevronUp className="w-5 h-5 text-muted-foreground" />
-            ) : (
-              <ChevronDown className="w-5 h-5 text-muted-foreground" />
-            )}
-          </button>
-          
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <nav className="p-4 pt-0 border-t border-border">
-                  <ul className="space-y-1">
-                    {headings.map((heading) => (
-                      <li key={heading.id}>
-                        <button
-                          onClick={() => {
-                            handleClick(heading.id);
-                            setIsOpen(false);
-                          }}
-                          className={`text-left w-full text-sm transition-all hover:text-primary rounded-md px-3 py-2 ${
-                            heading.level === 3 ? 'pl-6' : ''
-                          } ${
-                            activeId === heading.id
-                              ? 'text-primary font-semibold bg-primary/10'
-                              : 'text-muted-foreground hover:bg-secondary/50'
-                          }`}
-                        >
-                          {heading.text}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
     </>
   );
 };
