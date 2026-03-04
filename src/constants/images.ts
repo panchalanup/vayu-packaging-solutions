@@ -19,6 +19,27 @@ import placeholderImage from "/placeholder.svg";
 // Import videos
 import factoryVideo from "@/assets/video/factory-top-view.mp4";
 
+// Import gallery images
+import g1 from "@/assets/Gallery/g1.png";
+import g2 from "@/assets/Gallery/g2.png";
+import g3 from "@/assets/Gallery/g3.png";
+import g4 from "@/assets/Gallery/g4.png";
+import g5 from "@/assets/Gallery/g5.png";
+import g6 from "@/assets/Gallery/g6.png";
+import g7 from "@/assets/Gallery/g7.png";
+import g8 from "@/assets/Gallery/g8.png";
+import g9 from "@/assets/Gallery/g9.png";
+import g10 from "@/assets/Gallery/g10.png";
+import g11 from "@/assets/Gallery/g11.png";
+import g12 from "@/assets/Gallery/g12.png";
+import g13 from "@/assets/Gallery/g13.png";
+import g14 from "@/assets/Gallery/g14.png";
+import g15 from "@/assets/Gallery/g15.png";
+import g16 from "@/assets/Gallery/g16.png";
+import g17 from "@/assets/Gallery/g17.png";
+import g18 from "@/assets/Gallery/g18.png";
+import g19 from "@/assets/Gallery/g19.png";
+
 // ============================================
 // LOGO IMAGES
 // ============================================
@@ -151,84 +172,136 @@ export const PRODUCT_IMAGES = [
  */
 export const GALLERY_IMAGES = [
   {
-    id: "WG-1",
-    title: "Warehouse Overview",
-    description: "Wide shot of main warehouse floor",
-    src: placeholderImage,
-    alt: "Vayu Packaging warehouse overview showing organized facility",
-    targetFilename: "warehouse-overview.jpg",
-    requiredSize: "800x600px",
+    id: "G-1",
+    title: "Facility View 1",
+    description: "Vayu Packaging facility",
+    src: g1,
+    alt: "Vayu Packaging facility view 1",
   },
   {
-    id: "WG-2",
-    title: "Storage Systems",
-    description: "Tall racking systems with organized inventory",
-    src: placeholderImage,
-    alt: "Warehouse storage systems with tall racking and organized inventory",
-    targetFilename: "storage-systems.jpg",
-    requiredSize: "800x600px",
+    id: "G-2",
+    title: "Facility View 2",
+    description: "Vayu Packaging facility",
+    src: g2,
+    alt: "Vayu Packaging facility view 2",
   },
   {
-    id: "WG-3",
-    title: "Modern Equipment",
-    description: "Forklifts and automated equipment",
-    src: placeholderImage,
-    alt: "Modern warehouse equipment including forklifts and automation",
-    targetFilename: "modern-equipment.jpg",
-    requiredSize: "800x600px",
+    id: "G-3",
+    title: "Facility View 3",
+    description: "Vayu Packaging facility",
+    src: g3,
+    alt: "Vayu Packaging facility view 3",
   },
   {
-    id: "WG-4",
-    title: "Quality Lab",
-    description: "Testing area with compression tester",
-    src: placeholderImage,
-    alt: "Quality control laboratory with compression testing equipment",
-    targetFilename: "quality-lab.jpg",
-    requiredSize: "800x600px",
+    id: "G-4",
+    title: "Facility View 4",
+    description: "Vayu Packaging facility",
+    src: g4,
+    alt: "Vayu Packaging facility view 4",
   },
   {
-    id: "WG-5",
-    title: "Team at Work",
-    description: "Workers collaborating and organizing",
-    src: placeholderImage,
-    alt: "Vayu Packaging team members working together",
-    targetFilename: "team-at-work.jpg",
-    requiredSize: "800x600px",
+    id: "G-5",
+    title: "Facility View 5",
+    description: "Vayu Packaging facility",
+    src: g5,
+    alt: "Vayu Packaging facility view 5",
   },
   {
-    id: "WG-6",
-    title: "Loading Bay",
-    description: "Trucks at loading docks",
-    src: placeholderImage,
-    alt: "Loading bay with trucks being loaded at docks",
-    targetFilename: "loading-bay.jpg",
-    requiredSize: "800x600px",
+    id: "G-6",
+    title: "Facility View 6",
+    description: "Vayu Packaging facility",
+    src: g6,
+    alt: "Vayu Packaging facility view 6",
   },
   {
-    id: "WG-7",
-    title: "Raw Materials",
-    description: "Corrugated sheets and rolls",
-    src: placeholderImage,
-    alt: "Raw materials storage - corrugated sheets and rolls",
-    targetFilename: "raw-materials.jpg",
-    requiredSize: "800x600px",
+    id: "G-7",
+    title: "Facility View 7",
+    description: "Vayu Packaging facility",
+    src: g7,
+    alt: "Vayu Packaging facility view 7",
   },
   {
-    id: "WG-8",
-    title: "Finished Products",
-    description: "Stacks of completed boxes",
-    src: placeholderImage,
-    alt: "Finished corrugated boxes ready for shipment",
-    targetFilename: "finished-products.jpg",
-    requiredSize: "800x600px",
+    id: "G-8",
+    title: "Facility View 8",
+    description: "Vayu Packaging facility",
+    src: g8,
+    alt: "Vayu Packaging facility view 8",
   },
   {
-    id: "WG-9",
-    title: "Office Space",
-    description: "Professional order management area",
-    src: placeholderImage,
-    alt: "Professional office space for order management",
-    targetFilename: "office-space.jpg",
-    requiredSize: "800x600px",
+    id: "G-9",
+    title: "Facility View 9",
+    description: "Vayu Packaging facility",
+    src: g9,
+    alt: "Vayu Packaging facility view 9",
+  },
+  {
+    id: "G-10",
+    title: "Facility View 10",
+    description: "Vayu Packaging facility",
+    src: g10,
+    alt: "Vayu Packaging facility view 10",
+  },
+  {
+    id: "G-11",
+    title: "Facility View 11",
+    description: "Vayu Packaging facility",
+    src: g11,
+    alt: "Vayu Packaging facility view 11",
+  },
+  {
+    id: "G-12",
+    title: "Facility View 12",
+    description: "Vayu Packaging facility",
+    src: g12,
+    alt: "Vayu Packaging facility view 12",
+  },
+  {
+    id: "G-13",
+    title: "Facility View 13",
+    description: "Vayu Packaging facility",
+    src: g13,
+    alt: "Vayu Packaging facility view 13",
+  },
+  {
+    id: "G-14",
+    title: "Facility View 14",
+    description: "Vayu Packaging facility",
+    src: g14,
+    alt: "Vayu Packaging facility view 14",
+  },
+  {
+    id: "G-15",
+    title: "Facility View 15",
+    description: "Vayu Packaging facility",
+    src: g15,
+    alt: "Vayu Packaging facility view 15",
+  },
+  {
+    id: "G-16",
+    title: "Facility View 16",
+    description: "Vayu Packaging facility",
+    src: g16,
+    alt: "Vayu Packaging facility view 16",
+  },
+  {
+    id: "G-17",
+    title: "Facility View 17",
+    description: "Vayu Packaging facility",
+    src: g17,
+    alt: "Vayu Packaging facility view 17",
+  },
+  {
+    id: "G-18",
+    title: "Facility View 18",
+    description: "Vayu Packaging facility",
+    src: g18,
+    alt: "Vayu Packaging facility view 18",
+  },
+  {
+    id: "G-19",
+    title: "Facility View 19",
+    description: "Vayu Packaging facility",
+    src: g19,
+    alt: "Vayu Packaging facility view 19",
   },
 ] as const;
