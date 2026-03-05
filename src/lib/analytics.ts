@@ -1,0 +1,479 @@
+// Core Analytics Service
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { onCLS, onFCP, onINP, onLCP, onTTFB, Metric } from 'web-vitals';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  AnalyticsData,
+  AnalyticsConfig,
+  VisitorInfo,
+  SessionInfo,
+  DeviceInfo,
+  PageViewData,
+  EventData,
+  SessionData,
+  PerformanceData,
+  UserJourneyData,
+  BatchData,
+} from '@/types/analytics';
+
+class AnalyticsService {
+  private config: AnalyticsConfig;
+  private eventQueue: AnalyticsData[] = [];
+  private batchTimer: NodeJS.Timeout | null = null;
+  private visitorInfo: VisitorInfo | null = null;
+  private sessionInfo: SessionInfo | null = null;
+  private deviceInfo: DeviceInfo | null = null;
+  private pageStartTime: number = 0;
+  private currentPage: string = '';
+  private journeyStep: number = 0;
+  private performanceMetrics: Partial<PerformanceData> = {};
+  private entryPage: string = '';
+
+  constructor(config: Partial<AnalyticsConfig> = {}) {
+    this.config = {
+      enabled: true,
+      debug: false,
+      batchSize: 10,
+      batchInterval: 10000, // 10 seconds
+      endpoint: 'https://script.google.com/macros/s/AKfycbyef43VWVnHxANmIzFfQH_zWmwPrH76cCnSYY_zIv10EEqN_ivMTpQRI3dGFa_CEme9kw/exec',
+      ...config,
+    };
+
+    if (this.config.enabled) {
+      this.initialize();
+    }
+  }
+
+  private async initialize() {
+    await this.initializeVisitor();
+    this.initializeSession();
+    this.initializeDevice();
+    this.setupWebVitals();
+    this.setupBeforeUnload();
+    this.startBatchTimer();
+  }
+
+  private async initializeVisitor() {
+    try {
+      // Try to get existing visitor ID
+      const storedVisitorId = localStorage.getItem('analytics_visitor_id');
+      
+      if (storedVisitorId) {
+        this.visitorInfo = {
+          visitorId: storedVisitorId,
+          isNewVisitor: false,
+        };
+      } else {
+        // Generate fingerprint for new visitor
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        const visitorId = result.visitorId;
+        
+        localStorage.setItem('analytics_visitor_id', visitorId);
+        
+        this.visitorInfo = {
+          visitorId,
+          isNewVisitor: true,
+        };
+      }
+    } catch (error) {
+      console.error('Error initializing visitor:', error);
+      // Fallback to UUID
+      const fallbackId = uuidv4();
+      localStorage.setItem('analytics_visitor_id', fallbackId);
+      this.visitorInfo = {
+        visitorId: fallbackId,
+        isNewVisitor: true,
+      };
+    }
+  }
+
+  private initializeSession() {
+    const storedSession = sessionStorage.getItem('analytics_session');
+    const now = Date.now();
+
+    if (storedSession) {
+      try {
+        const session = JSON.parse(storedSession);
+        // Check if session is still valid (within 30 minutes of last activity)
+        if (now - session.lastActivity < 30 * 60 * 1000) {
+          this.sessionInfo = session;
+          this.sessionInfo!.lastActivity = now;
+          this.entryPage = session.entryPage || window.location.pathname;
+        } else {
+          // Session expired, create new one
+          this.createNewSession();
+        }
+      } catch {
+        this.createNewSession();
+      }
+    } else {
+      this.createNewSession();
+    }
+
+    this.saveSession();
+  }
+
+  private createNewSession() {
+    this.sessionInfo = {
+      sessionId: uuidv4(),
+      sessionStart: Date.now(),
+      pagesViewed: 0,
+      lastActivity: Date.now(),
+    };
+    this.entryPage = window.location.pathname;
+    this.journeyStep = 0;
+  }
+
+  private saveSession() {
+    if (this.sessionInfo) {
+      sessionStorage.setItem('analytics_session', JSON.stringify({
+        ...this.sessionInfo,
+        entryPage: this.entryPage,
+      }));
+    }
+  }
+
+  private initializeDevice() {
+    const getDeviceType = (): 'mobile' | 'tablet' | 'desktop' => {
+      const width = window.innerWidth;
+      if (width < 768) return 'mobile';
+      if (width < 1024) return 'tablet';
+      return 'desktop';
+    };
+
+    const getBrowser = (): string => {
+      const ua = navigator.userAgent;
+      if (ua.includes('Firefox')) return 'Firefox';
+      if (ua.includes('Chrome')) return 'Chrome';
+      if (ua.includes('Safari')) return 'Safari';
+      if (ua.includes('Edge')) return 'Edge';
+      return 'Other';
+    };
+
+    const getOS = (): string => {
+      const ua = navigator.userAgent;
+      if (ua.includes('Windows')) return 'Windows';
+      if (ua.includes('Mac')) return 'macOS';
+      if (ua.includes('Linux')) return 'Linux';
+      if (ua.includes('Android')) return 'Android';
+      if (ua.includes('iOS')) return 'iOS';
+      return 'Other';
+    };
+
+    this.deviceInfo = {
+      deviceType: getDeviceType(),
+      browser: getBrowser(),
+      os: getOS(),
+      screenSize: `${window.screen.width}x${window.screen.height}`,
+      language: navigator.language,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    };
+  }
+
+  private setupWebVitals() {
+    const handleMetric = (metric: Metric) => {
+      if (!this.performanceMetrics.page) {
+        this.performanceMetrics.page = this.currentPage;
+      }
+
+      switch (metric.name) {
+        case 'CLS':
+          this.performanceMetrics.cls = metric.value;
+          break;
+        case 'FCP':
+          this.performanceMetrics.fcp = metric.value;
+          break;
+        case 'INP':
+          this.performanceMetrics.fid = metric.value;
+          break;
+        case 'LCP':
+          this.performanceMetrics.lcp = metric.value;
+          break;
+        case 'TTFB':
+          this.performanceMetrics.tti = metric.value;
+          break;
+      }
+    };
+
+    onCLS(handleMetric);
+    onFCP(handleMetric);
+    onINP(handleMetric);
+    onLCP(handleMetric);
+    onTTFB(handleMetric);
+  }
+
+  private setupBeforeUnload() {
+    window.addEventListener('beforeunload', () => {
+      this.trackPageExit();
+      this.trackSessionEnd();
+      this.flushQueue(true); // Force synchronous send
+    });
+  }
+
+  private startBatchTimer() {
+    this.batchTimer = setInterval(() => {
+      this.flushQueue();
+    }, this.config.batchInterval);
+  }
+
+  public trackPageView(page?: string) {
+    if (!this.config.enabled || !this.visitorInfo || !this.sessionInfo || !this.deviceInfo) {
+      return;
+    }
+
+    // Track exit from previous page
+    if (this.currentPage) {
+      this.trackPageExit();
+    }
+
+    const currentPage = page || window.location.pathname;
+    this.currentPage = currentPage;
+    this.pageStartTime = Date.now();
+    
+    // Update session
+    this.sessionInfo.pagesViewed++;
+    this.sessionInfo.lastActivity = Date.now();
+    this.saveSession();
+
+    // Extract UTM parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const utmSource = urlParams.get('utm_source') || undefined;
+    const utmMedium = urlParams.get('utm_medium') || undefined;
+    const utmCampaign = urlParams.get('utm_campaign') || undefined;
+
+    const pageViewData: PageViewData = {
+      type: 'pageview',
+      timestamp: Date.now(),
+      sessionId: this.sessionInfo.sessionId,
+      visitorId: this.visitorInfo.visitorId,
+      page: currentPage,
+      referrer: document.referrer,
+      entryPage: this.entryPage,
+      deviceType: this.deviceInfo.deviceType,
+      browser: this.deviceInfo.browser,
+      os: this.deviceInfo.os,
+      screenSize: this.deviceInfo.screenSize,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+    };
+
+    this.queueEvent(pageViewData);
+    
+    // Track journey step
+    this.trackJourneyStep('page_view');
+    
+    // Track performance after load
+    setTimeout(() => {
+      this.trackPerformance();
+    }, 2000);
+
+    if (this.config.debug) {
+      console.log('📊 Page View Tracked:', pageViewData);
+    }
+  }
+
+  private trackPageExit() {
+    if (!this.currentPage || !this.pageStartTime) return;
+
+    const timeOnPage = Math.round((Date.now() - this.pageStartTime) / 1000);
+
+    const exitData: Partial<PageViewData> = {
+      type: 'pageview',
+      timestamp: Date.now(),
+      sessionId: this.sessionInfo!.sessionId,
+      visitorId: this.visitorInfo!.visitorId,
+      page: this.currentPage,
+      timeOnPage,
+      exitPage: this.currentPage,
+      referrer: '',
+      deviceType: this.deviceInfo!.deviceType,
+      browser: this.deviceInfo!.browser,
+      os: this.deviceInfo!.os,
+      screenSize: this.deviceInfo!.screenSize,
+    };
+
+    this.queueEvent(exitData as PageViewData);
+  }
+
+  public trackEvent(eventName: string, eventData?: Record<string, any>, elementInfo?: {
+    type?: string;
+    text?: string;
+    x?: number;
+    y?: number;
+  }) {
+    if (!this.config.enabled || !this.visitorInfo || !this.sessionInfo) {
+      return;
+    }
+
+    const event: EventData = {
+      type: 'event',
+      timestamp: Date.now(),
+      sessionId: this.sessionInfo.sessionId,
+      visitorId: this.visitorInfo.visitorId,
+      page: this.currentPage,
+      eventType: eventData?.type || 'custom',
+      eventName,
+      eventData,
+      elementType: elementInfo?.type,
+      elementText: elementInfo?.text,
+      x: elementInfo?.x,
+      y: elementInfo?.y,
+    };
+
+    this.queueEvent(event);
+
+    if (this.config.debug) {
+      console.log('📊 Event Tracked:', event);
+    }
+  }
+
+  private trackPerformance() {
+    if (!this.sessionInfo || !this.performanceMetrics.page) return;
+
+    const performance = window.performance;
+    const timing = performance.timing;
+    const memory = (performance as any).memory;
+
+    const loadTime = timing.loadEventEnd - timing.navigationStart;
+    const connection = (navigator as any).connection;
+
+    const perfData: PerformanceData = {
+      type: 'performance',
+      timestamp: Date.now(),
+      sessionId: this.sessionInfo.sessionId,
+      page: this.currentPage,
+      loadTime,
+      fcp: this.performanceMetrics.fcp,
+      lcp: this.performanceMetrics.lcp,
+      fid: this.performanceMetrics.fid,
+      cls: this.performanceMetrics.cls,
+      tti: this.performanceMetrics.tti,
+      memory: memory ? Math.round(memory.usedJSHeapSize / 1048576) : undefined,
+      connectionType: connection?.effectiveType,
+    };
+
+    this.queueEvent(perfData);
+
+    if (this.config.debug) {
+      console.log('📊 Performance Tracked:', perfData);
+    }
+  }
+
+  private trackJourneyStep(action: string, scrollDepth?: number, clicks?: number) {
+    if (!this.sessionInfo) return;
+
+    this.journeyStep++;
+    const duration = this.pageStartTime ? Math.round((Date.now() - this.pageStartTime) / 1000) : 0;
+
+    const journeyData: UserJourneyData = {
+      type: 'journey',
+      sessionId: this.sessionInfo.sessionId,
+      stepNumber: this.journeyStep,
+      page: this.currentPage,
+      timestamp: Date.now(),
+      action,
+      duration,
+      scrollDepth,
+      clicks,
+    };
+
+    this.queueEvent(journeyData);
+  }
+
+  private trackSessionEnd() {
+    if (!this.sessionInfo || !this.visitorInfo || !this.deviceInfo) return;
+
+    const duration = Math.round((Date.now() - this.sessionInfo.sessionStart) / 1000);
+    const bounce = this.sessionInfo.pagesViewed <= 1;
+
+    const sessionData: SessionData = {
+      type: 'session',
+      sessionStart: this.sessionInfo.sessionStart,
+      sessionEnd: Date.now(),
+      sessionId: this.sessionInfo.sessionId,
+      visitorId: this.visitorInfo.visitorId,
+      pagesViewed: this.sessionInfo.pagesViewed,
+      totalDuration: duration,
+      bounce,
+      deviceType: this.deviceInfo.deviceType,
+      browser: this.deviceInfo.browser,
+      os: this.deviceInfo.os,
+      isNewVisitor: this.visitorInfo.isNewVisitor,
+      language: this.deviceInfo.language,
+    };
+
+    this.queueEvent(sessionData);
+  }
+
+  private queueEvent(event: AnalyticsData) {
+    this.eventQueue.push(event);
+
+    // Check if we should flush immediately
+    if (this.eventQueue.length >= this.config.batchSize) {
+      this.flushQueue();
+    }
+  }
+
+  private async flushQueue(sync = false) {
+    if (this.eventQueue.length === 0) return;
+
+    const events = [...this.eventQueue];
+    this.eventQueue = [];
+
+    const batchData: BatchData = {
+      type: 'batch',
+      items: events,
+    };
+
+    try {
+      if (this.config.debug) {
+        console.log('📊 Sending Batch:', events.length, 'events');
+        console.log('📊 Endpoint:', this.config.endpoint);
+        console.log('📊 Data:', batchData);
+      }
+
+      // Use fetch with no-cors mode (same as contact form)
+      const response = await fetch(this.config.endpoint, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(batchData),
+      });
+
+      if (this.config.debug) {
+        console.log('✅ Batch Sent Successfully!', events.length, 'events');
+      }
+    } catch (error) {
+      console.error('❌ Failed to send analytics:', error);
+      if (this.config.debug) {
+        console.error('Failed data:', batchData);
+      }
+      // Re-queue events on failure
+      this.eventQueue.unshift(...events);
+    }
+  }
+
+  public destroy() {
+    if (this.batchTimer) {
+      clearInterval(this.batchTimer);
+    }
+    this.flushQueue(true);
+  }
+
+  // Public API
+  public getVisitorId(): string | null {
+    return this.visitorInfo?.visitorId || null;
+  }
+
+  public getSessionId(): string | null {
+    return this.sessionInfo?.sessionId || null;
+  }
+}
+
+// Export singleton instance
+export const analytics = new AnalyticsService();
+export default AnalyticsService;
