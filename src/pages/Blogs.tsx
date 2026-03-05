@@ -6,6 +6,9 @@ import CategoryFilter from "@/components/CategoryFilter";
 import { motion } from "framer-motion";
 import { BookOpen } from "lucide-react";
 import { BLOG_POSTS, getBlogsByCategory, BlogCategory } from "@/constants/blogs";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 
 const Blogs = () => {
   const [activeCategory, setActiveCategory] = useState<BlogCategory>('All');
@@ -13,6 +16,12 @@ const Blogs = () => {
 
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.blogs} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.blogs)} />
+      
       <PageTransition>
         {/* Hero Section */}
         <section className="pt-6 sm:pt-8 md:pt-10 pb-10 md:pb-12 section-dark">

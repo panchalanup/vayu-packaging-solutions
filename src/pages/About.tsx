@@ -4,12 +4,21 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, CheckCircle } from "lucide-react";
 import { ABOUT_CONTENT, KEY_FEATURES_EXTENDED, STATS_ARRAY, WHY_VAYU_EXTENDED } from "@/constants";
 import { ABOUT_IMAGES } from "@/constants/images";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 
 const stats = STATS_ARRAY;
 
 const About = () => {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.about} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.about)} />
+      
       <PageTransition>
         {/* Hero banner */}
         <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">

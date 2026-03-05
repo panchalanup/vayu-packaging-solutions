@@ -7,6 +7,9 @@ import PageTransition from "@/components/PageTransition";
 import { STATS_ARRAY } from "@/constants";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Star, Quote } from "lucide-react";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { getOrganizationSchema, getLocalBusinessSchema, getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 
 const testimonials = [
   {
@@ -29,6 +32,14 @@ const testimonials = [
 const Index = () => {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.home} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="Organization" data={getOrganizationSchema()} />
+      <StructuredData type="LocalBusiness" data={getLocalBusinessSchema()} />
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.home)} />
+      
       <PageTransition>
         <HeroSection />
 

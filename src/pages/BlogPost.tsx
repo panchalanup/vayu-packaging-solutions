@@ -14,6 +14,9 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import '@/styles/blog.css';
+import { MetaTags, StructuredData } from '@/seo';
+import { BLOG_SEO_METADATA } from '@/seo/metadata/blogs';
+import { getArticleSchema, getBlogBreadcrumbs, getBreadcrumbSchema } from '@/seo/schema';
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -58,9 +61,32 @@ const BlogPost = () => {
   });
 
   const currentUrl = `${window.location.origin}/blogs/${post.slug}`;
+  const seoData = slug ? BLOG_SEO_METADATA[slug] : undefined;
 
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      {seoData && (
+        <>
+          <MetaTags 
+            title={post.title}
+            description={seoData.metaDescription}
+            keywords={seoData.keywords}
+            type="article"
+            publishedTime={post.date}
+            author={post.author}
+            image={seoData.ogImage}
+          />
+          
+          {/* Structured Data - Schema.org */}
+          <StructuredData type="Article" data={getArticleSchema(post)} />
+          <StructuredData 
+            type="BreadcrumbList" 
+            data={getBreadcrumbSchema(getBlogBreadcrumbs(post.title, post.slug))} 
+          />
+        </>
+      )}
+      
       {/* Reading Progress Indicator */}
       <ReadingProgress />
       {/* Scroll to Top Button */}

@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import { Package, Truck, Shield, Ruler, ArrowUpRight } from "lucide-react";
 import { SERVICES_CONTENT, INDUSTRIES } from "@/constants";
 import { SERVICES_IMAGES } from "@/constants/images";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { getBreadcrumbSchema, PAGE_BREADCRUMBS, getFAQSchema, COMMON_FAQS } from '@/seo/schema';
 
 const services = [
   { icon: Package, title: "Custom Corrugated Boxes", desc: "Tailored box sizes and flute types for your exact product dimensions and weight requirements." },
@@ -16,6 +19,13 @@ const services = [
 const Services = () => {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.services} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.services)} />
+      <StructuredData type="FAQPage" data={getFAQSchema(COMMON_FAQS.services)} />
+      
       <PageTransition>
         {/* Hero */}
         <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">

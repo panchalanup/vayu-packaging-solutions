@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, CheckCircle } from "lucide-react";
 import { BUSINESS_DETAILS } from "@/constants";
 import { PRODUCT_IMAGES } from "@/constants/images";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { PRODUCT_SCHEMAS, getBreadcrumbSchema, PAGE_BREADCRUMBS, getFAQSchema, COMMON_FAQS } from '@/seo/schema';
 
 const products = [
   {
@@ -47,6 +50,16 @@ const products = [
 const Products = () => {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.products} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['3-ply']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['5-ply']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['7-ply']} />
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.products)} />
+      <StructuredData type="FAQPage" data={getFAQSchema(COMMON_FAQS.products)} />
+      
       <PageTransition>
         {/* Hero */}
         <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">

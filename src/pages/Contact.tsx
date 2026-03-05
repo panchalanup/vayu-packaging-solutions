@@ -3,10 +3,20 @@ import PageTransition from "@/components/PageTransition";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Mail, Phone, MapPin } from "lucide-react";
 import { CONTACT_INFO, CONTACT_CONTENT, FORM_PLACEHOLDERS } from "@/constants";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { getLocalBusinessSchema, getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 
 const Contact = () => {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.contact} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="LocalBusiness" data={getLocalBusinessSchema()} />
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.contact)} />
+      
       <PageTransition>
         {/* Hero */}
         <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">
