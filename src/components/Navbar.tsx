@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowUpRight, Phone } from "lucide-react";
+import { Menu, X, ArrowUpRight, Phone, ChevronDown, Sparkles } from "lucide-react";
 import { LOGO_IMAGES } from "@/constants/images";
+import { TOOLS_MENU } from "@/constants";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -15,11 +16,13 @@ const navLinks = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const location = useLocation();
 
   // Close mobile menu when route changes
   useEffect(() => {
     setOpen(false);
+    setToolsOpen(false);
   }, [location.pathname]);
 
   return (
@@ -66,6 +69,64 @@ const Navbar = () => {
               />
             </Link>
           ))}
+          
+          {/* Tools Dropdown */}
+          <div 
+            className="relative"
+            onMouseEnter={() => setToolsOpen(true)}
+            onMouseLeave={() => setToolsOpen(false)}
+          >
+            <button
+              className={`relative px-3 lg:px-4 py-2 rounded-full transition-all duration-300 flex items-center gap-1.5 ${
+                TOOLS_MENU.some(tool => location.pathname === tool.path)
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "bg-gradient-to-r from-primary/10 to-primary/5 text-primary hover:shadow-md hover:scale-105"
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm lg:text-base font-semibold">Tools</span>
+              <ChevronDown className={`w-3 h-3 transition-transform ${toolsOpen ? 'rotate-180' : ''}`} />
+              <span className="relative flex h-2 w-2 ml-0.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+              </span>
+            </button>
+            
+            {/* Dropdown Menu */}
+            <AnimatePresence>
+              {toolsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-50"
+                >
+                  {TOOLS_MENU.map((tool) => (
+                    <Link
+                      key={tool.path}
+                      to={tool.path}
+                      className="block px-4 py-3 hover:bg-primary/5 transition-colors border-b border-gray-100 last:border-b-0"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="font-semibold text-gray-900 flex items-center gap-2">
+                            {tool.name}
+                            {tool.isNew && (
+                              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
+                                New
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">{tool.description}</p>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
         {/* Call to Action Button */}
@@ -139,6 +200,36 @@ const Navbar = () => {
                     }`}
                   >
                     {link.label}
+                  </Link>
+                </motion.div>
+              ))}
+              
+              {/* Tools Menu - Mobile */}
+              {TOOLS_MENU.map((tool, index) => (
+                <motion.div
+                  key={tool.path}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: (navLinks.length + index) * 0.05 }}
+                >
+                  <Link
+                    to={tool.path}
+                    onClick={() => setOpen(false)}
+                    className={`block py-3 px-4 rounded-lg transition-all ${
+                      location.pathname === tool.path
+                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                        : "bg-gradient-to-r from-primary/10 to-primary/5 text-primary font-semibold hover:shadow-md"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      {tool.name}
+                      {tool.isNew && (
+                        <span className="inline-flex items-center gap-1 text-xs bg-primary/20 px-2 py-0.5 rounded-full">
+                          New
+                        </span>
+                      )}
+                    </span>
                   </Link>
                 </motion.div>
               ))}

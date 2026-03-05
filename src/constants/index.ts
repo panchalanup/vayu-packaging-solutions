@@ -207,3 +207,35 @@ export const FORM_PLACEHOLDERS = {
   requirements: 'Tell us about your packaging needs — box sizes, quantity, delivery timeline...',
   requirementsShort: 'Tell us about your packaging needs...',
 } as const;
+
+// ============================================
+// WEBSITE & SOCIAL LINKS
+// ============================================
+export const WEBSITE_URL = 'https://www.vayupackaging.com' as const;
+
+export const SOCIAL_LINKS = {
+  whatsapp: 'https://wa.me/918511658600',
+  whatsappBase: 'https://wa.me/',
+  phone: 'https://wa.me/918511658600',
+} as const;
+
+// ============================================
+// TOOLS INFORMATION
+// ============================================
+export const TOOL_INFO = {
+  packagingFinder: {
+    name: 'Smart Packaging Finder',
+    path: '/compare-quote',
+    description: 'Find the perfect packaging solution for your products',
+    tagline: 'Get expert-verified packaging recommendations instantly',
+  },
+} as const;
+
+export const TOOLS_MENU = [
+  {
+    name: TOOL_INFO.packagingFinder.name,
+    path: TOOL_INFO.packagingFinder.path,
+    description: TOOL_INFO.packagingFinder.description,
+    isNew: true,
+  },
+] as const;

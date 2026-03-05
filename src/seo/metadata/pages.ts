@@ -109,6 +109,29 @@ export const PAGE_METADATA: Record<string, PageMeta> = {
     ],
     ogImage: '/og-contact.jpg',
   },
+  
+  packagingFinder: {
+    title: 'Free Packaging Finder Tool | Smart Box Selector & Cost Calculator India',
+    description: 'Find the perfect packaging in seconds! Free tool recommends corrugated boxes based on your product details. Get specifications, instant pricing & supplier quotes. 1500+ packaging solutions.',
+    keywords: [
+      'packaging finder tool',
+      'corrugated box selector',
+      'packaging calculator free',
+      'box recommendation tool',
+      'find right packaging for product',
+      'packaging cost calculator India',
+      'smart packaging tool',
+      'box size finder',
+      'packaging material selector',
+      'corrugated box advisor',
+      'packaging recommendation system',
+      'box strength calculator',
+      'packaging material guide',
+      'corrugated box finder India',
+      'free packaging tool online',
+    ],
+    ogImage: '/og-packaging-tool.jpg',
+  },
 };
 
 // Location-Specific Metadata (for future location pages)
