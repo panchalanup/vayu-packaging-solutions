@@ -15,6 +15,7 @@ import {
   PerformanceData,
   UserJourneyData,
   BatchData,
+  NewUserData,
 } from '@/types/analytics';
 
 class AnalyticsService {
@@ -51,8 +52,9 @@ class AnalyticsService {
 
   private async initialize() {
     await this.initializeVisitor();
-    this.initializeSession();
-    this.initializeDevice();
+    this.initializeSession();      // Must be before fetchIPLocation
+    this.initializeDevice();       // Must be before fetchIPLocation
+    await this.fetchIPLocation();  // Now session & device are ready for trackNewUser
     this.setupWebVitals();
     this.setupBeforeUnload();
     this.startBatchTimer();
@@ -60,14 +62,27 @@ class AnalyticsService {
 
   private async initializeVisitor() {
     try {
-      // Try to get existing visitor ID
+      // Try to get existing visitor ID and IP hash
       const storedVisitorId = localStorage.getItem('analytics_visitor_id');
+      const storedIPHash = localStorage.getItem('analytics_ip_hash');
+      const storedGeoData = localStorage.getItem('analytics_geo_data');
       
       if (storedVisitorId) {
         this.visitorInfo = {
           visitorId: storedVisitorId,
           isNewVisitor: false,
+          ipHash: storedIPHash || undefined,
         };
+        
+        // Restore geolocation data if available
+        if (storedGeoData) {
+          try {
+            const geoData = JSON.parse(storedGeoData);
+            this.visitorInfo = { ...this.visitorInfo, ...geoData };
+          } catch (e) {
+            // Ignore parsing errors
+          }
+        }
       } else {
         // Generate fingerprint for new visitor
         const fp = await FingerprintJS.load();
@@ -90,6 +105,120 @@ class AnalyticsService {
         visitorId: fallbackId,
         isNewVisitor: true,
       };
+    }
+  }
+
+  private async fetchIPLocation() {
+    // Only fetch if we don't have IP data stored
+    const storedIPHash = localStorage.getItem('analytics_ip_hash');
+    if (storedIPHash || !this.visitorInfo) {
+      return;
+    }
+
+    try {
+      // Use ipapi.co free API (1000 requests/day, no key needed)
+      // Alternative: https://api.ipify.org?format=json (IP only, no limits)
+      const response = await fetch('https://ipapi.co/json/', {
+        method: 'GET',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch IP data');
+      }
+
+      const data = await response.json();
+
+      // Hash the IP address for privacy (SHA-256)
+      const ipHash = await this.hashIP(data.ip);
+
+      // Store IP hash and location data
+      localStorage.setItem('analytics_ip_hash', ipHash);
+      
+      const geoData = {
+        country: data.country_name,
+        city: data.city,
+        region: data.region,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        timezone: data.timezone,
+        isp: data.org,
+      };
+      
+      localStorage.setItem('analytics_geo_data', JSON.stringify(geoData));
+
+      // Update visitor info
+      this.visitorInfo = {
+        ...this.visitorInfo,
+        ipHash,
+        ...geoData,
+      };
+
+      // Track new user if this is their first visit
+      if (this.visitorInfo.isNewVisitor) {
+        this.trackNewUser(data.ip);
+      }
+
+      if (this.config.debug) {
+        console.log('📍 IP Location Detected:', {
+          ipHash,
+          country: data.country_name,
+          city: data.city,
+        });
+      }
+    } catch (error) {
+      if (this.config.debug) {
+        console.warn('⚠️ Could not fetch IP location:', error);
+      }
+      // Continue without IP data - not critical for analytics
+    }
+  }
+
+  private async hashIP(ip: string): Promise<string> {
+    // Hash IP using SHA-256 for privacy
+    const encoder = new TextEncoder();
+    const data = encoder.encode(ip);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex.substring(0, 16); // Use first 16 chars for shorter storage
+  }
+
+  private trackNewUser(ipAddress?: string) {
+    if (!this.visitorInfo || !this.sessionInfo || !this.deviceInfo) {
+      return;
+    }
+
+    // Extract UTM parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    const newUserData: NewUserData = {
+      type: 'newuser',
+      timestamp: Date.now(),
+      visitorId: this.visitorInfo.visitorId,
+      ipHash: this.visitorInfo.ipHash || 'unknown',
+      country: this.visitorInfo.country,
+      city: this.visitorInfo.city,
+      region: this.visitorInfo.region,
+      latitude: this.visitorInfo.latitude,
+      longitude: this.visitorInfo.longitude,
+      timezone: this.visitorInfo.timezone,
+      isp: this.visitorInfo.isp,
+      deviceType: this.deviceInfo.deviceType,
+      browser: this.deviceInfo.browser,
+      os: this.deviceInfo.os,
+      screenSize: this.deviceInfo.screenSize,
+      language: this.deviceInfo.language,
+      referrer: document.referrer,
+      entryPage: window.location.pathname,
+      utmSource: urlParams.get('utm_source') || undefined,
+      utmMedium: urlParams.get('utm_medium') || undefined,
+      utmCampaign: urlParams.get('utm_campaign') || undefined,
+    };
+
+    this.queueEvent(newUserData);
+
+    if (this.config.debug) {
+      console.log('🆕 New User Tracked:', newUserData);
     }
   }
 
@@ -406,7 +535,10 @@ class AnalyticsService {
       browser: this.deviceInfo.browser,
       os: this.deviceInfo.os,
       isNewVisitor: this.visitorInfo.isNewVisitor,
+      country: this.visitorInfo.country,
+      city: this.visitorInfo.city,
       language: this.deviceInfo.language,
+      ipHash: this.visitorInfo.ipHash,
     };
 
     this.queueEvent(sessionData);

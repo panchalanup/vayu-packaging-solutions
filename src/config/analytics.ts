@@ -33,7 +33,7 @@ export const ANALYTICS_CONFIG = {
    * 
    * Recommended: false for production, true for development
    */
-  DEBUG: false,  // 👈 Change to true to see console logs
+  DEBUG: true,  // 👈 Change to true to see console logs
 
   /**
    * GOOGLE SHEETS ENDPOINT
@@ -41,7 +41,7 @@ export const ANALYTICS_CONFIG = {
    * The deployed Google Apps Script URL that receives analytics data.
    * Update this if you deploy a new version of the script.
    */
-  ENDPOINT: 'https://script.google.com/macros/s/AKfycbyef43VWVnHxANmIzFfQH_zWmwPrH76cCnSYY_zIv10EEqN_ivMTpQRI3dGFa_CEme9kw/exec',
+  ENDPOINT: 'https://script.google.com/macros/s/AKfycbxYLWanGlq2SuW1ChHd98jLdcfsLVVzLkZ8DIBxkSmEv_l_3fQCFUoElHHS0-klj6Se3A/exec',
 
   /**
    * BATCH SIZE

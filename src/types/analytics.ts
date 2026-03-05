@@ -3,6 +3,15 @@
 export interface VisitorInfo {
   visitorId: string;
   isNewVisitor: boolean;
+  ipAddress?: string; // Hashed IP for privacy
+  ipHash?: string; // SHA-256 hash of IP
+  country?: string;
+  city?: string;
+  region?: string;
+  latitude?: number;
+  longitude?: number;
+  timezone?: string;
+  isp?: string;
 }
 
 export interface SessionInfo {
@@ -69,7 +78,34 @@ export interface SessionData {
   os: string;
   isNewVisitor: boolean;
   country?: string;
+  city?: string;
   language: string;
+  ipHash?: string;
+}
+
+export interface NewUserData {
+  type: 'newuser';
+  timestamp: number;
+  visitorId: string;
+  ipHash: string;
+  ipAddress?: string; // Only for debugging, not sent to sheets
+  country?: string;
+  city?: string;
+  region?: string;
+  latitude?: number;
+  longitude?: number;
+  timezone?: string;
+  isp?: string;
+  deviceType: string;
+  browser: string;
+  os: string;
+  screenSize: string;
+  language: string;
+  referrer: string;
+  entryPage: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
 }
 
 export interface PerformanceData {
@@ -104,7 +140,8 @@ export type AnalyticsData =
   | EventData 
   | SessionData 
   | PerformanceData 
-  | UserJourneyData;
+  | UserJourneyData
+  | NewUserData;
 
 export interface BatchData {
   type: 'batch';

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight, Clock, Calendar } from "lucide-react";
 import { BlogPost } from "@/constants/blogs";
+import { useEventTracker } from "@/hooks/useAnalytics";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -9,12 +10,24 @@ interface BlogCardProps {
 }
 
 const BlogCard = ({ post, index }: BlogCardProps) => {
+  const { trackEvent } = useEventTracker();
+  
   // Format date
   const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric'
   });
+
+  const handleBlogClick = () => {
+    trackEvent('blog_click', {
+      blogTitle: post.title,
+      blogSlug: post.slug,
+      blogCategory: post.category,
+      readingTime: post.readingTime,
+      publishDate: post.date,
+    });
+  };
 
   // Category colors
   const categoryColors: Record<string, string> = {
@@ -34,7 +47,7 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
       transition={{ delay: index * 0.1 }}
       className="group"
     >
-      <Link to={`/blogs/${post.slug}`}>
+      <Link to={`/blogs/${post.slug}`} onClick={handleBlogClick}>
         <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
           {/* Thumbnail */}
           <div className="relative aspect-[16/9] bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">

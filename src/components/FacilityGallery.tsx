@@ -5,16 +5,29 @@ import { GALLERY_IMAGES } from "@/constants/images";
 import ImageViewer from "./ImageViewer";
 import MobileImageViewer from "./MobileImageViewer";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useEventTracker } from "@/hooks/useAnalytics";
 
 const FacilityGallery = () => {
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const isMobile = useIsMobile();
+  const { trackEvent } = useEventTracker();
 
   // Show only first 9 images in the grid
   const displayedImages = GALLERY_IMAGES.slice(0, 9);
 
   const handleImageClick = (index: number) => {
+    const image = GALLERY_IMAGES[index];
+    
+    // Track gallery image view
+    trackEvent('gallery_image_view', {
+      imageId: image.id,
+      imageTitle: image.title,
+      imageIndex: index + 1,
+      totalImages: GALLERY_IMAGES.length,
+      viewerType: isMobile ? 'mobile' : 'desktop',
+    });
+    
     setCurrentImageIndex(index);
     setIsViewerOpen(true);
   };
