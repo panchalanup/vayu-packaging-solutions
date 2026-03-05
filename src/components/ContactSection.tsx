@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, Mail, Phone, MapPin } from "lucide-react";
+import { CONTACT_INFO, CONTACT_CONTENT, FORM_PLACEHOLDERS } from "@/constants";
 
 const ContactSection = () => {
   return (
@@ -15,11 +16,10 @@ const ContactSection = () => {
               Contact Us
             </p>
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
-              Let's discuss your packaging needs
+              {CONTACT_CONTENT.heading}
             </h2>
             <p className="text-muted-foreground text-lg mb-10 leading-relaxed">
-              Whether you need a quote for bulk orders or want to explore custom packaging, 
-              our team is here to help.
+              {CONTACT_CONTENT.description}
             </p>
 
             <div className="space-y-6">
@@ -29,7 +29,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <p className="text-muted-foreground text-sm">Call us</p>
-                  <p className="text-foreground font-medium">+91 98765 43210</p>
+                  <p className="text-foreground font-medium">{CONTACT_INFO.phone}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -38,7 +38,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <p className="text-muted-foreground text-sm">Email us</p>
-                  <p className="text-foreground font-medium">info@vayupackaging.com</p>
+                  <p className="text-foreground font-medium">{CONTACT_INFO.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -47,7 +47,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <p className="text-muted-foreground text-sm">Visit us</p>
-                  <p className="text-foreground font-medium">Industrial Area, Phase II, New Delhi</p>
+                  <p className="text-foreground font-medium">{CONTACT_INFO.address}</p>
                 </div>
               </div>
             </div>
@@ -65,7 +65,7 @@ const ContactSection = () => {
                 <label className="text-sm text-muted-foreground mb-1.5 block">Full Name</label>
                 <input
                   type="text"
-                  placeholder="John Doe"
+                  placeholder={FORM_PLACEHOLDERS.name}
                   className="w-full bg-secondary text-foreground border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-muted-foreground"
                 />
               </div>
@@ -73,7 +73,7 @@ const ContactSection = () => {
                 <label className="text-sm text-muted-foreground mb-1.5 block">Company</label>
                 <input
                   type="text"
-                  placeholder="Acme Inc."
+                  placeholder={FORM_PLACEHOLDERS.company}
                   className="w-full bg-secondary text-foreground border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-muted-foreground"
                 />
               </div>
@@ -82,7 +82,7 @@ const ContactSection = () => {
               <label className="text-sm text-muted-foreground mb-1.5 block">Email</label>
               <input
                 type="email"
-                placeholder="john@company.com"
+                placeholder={FORM_PLACEHOLDERS.email}
                 className="w-full bg-secondary text-foreground border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-muted-foreground"
               />
             </div>
@@ -90,7 +90,7 @@ const ContactSection = () => {
               <label className="text-sm text-muted-foreground mb-1.5 block">Phone</label>
               <input
                 type="tel"
-                placeholder="+91 XXXXX XXXXX"
+                placeholder={FORM_PLACEHOLDERS.phone}
                 className="w-full bg-secondary text-foreground border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-muted-foreground"
               />
             </div>
@@ -98,7 +98,7 @@ const ContactSection = () => {
               <label className="text-sm text-muted-foreground mb-1.5 block">Requirements</label>
               <textarea
                 rows={4}
-                placeholder="Tell us about your packaging needs — box sizes, quantity, delivery timeline..."
+                placeholder={FORM_PLACEHOLDERS.requirements}
                 className="w-full bg-secondary text-foreground border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all placeholder:text-muted-foreground resize-none"
               />
             </div>

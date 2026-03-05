@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, CheckCircle } from "lucide-react";
+import { CTA_FEATURES, WHY_VAYU } from "@/constants";
 
 const CTASection = () => {
   return (
@@ -19,12 +20,7 @@ const CTASection = () => {
               fast turnaround, and dedicated account management.
             </p>
             <div className="space-y-4 mb-10">
-              {[
-                "3-ply, 5-ply & 7-ply corrugated boxes",
-                "Custom printing & branding options",
-                "Pan-India delivery network",
-                "Minimum order from 500 boxes",
-              ].map((item) => (
+              {CTA_FEATURES.map((item) => (
                 <div key={item} className="flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
                   <span className="text-foreground">{item}</span>
@@ -49,11 +45,7 @@ const CTASection = () => {
             <h3 className="font-heading text-2xl font-bold text-foreground mb-2">Why Vayu?</h3>
             <p className="text-muted-foreground mb-8">Our competitive advantage</p>
             <div className="space-y-6">
-              {[
-                { num: "01", title: "Direct Mill Sourcing", desc: "We source directly from top corrugated manufacturers, cutting middlemen costs." },
-                { num: "02", title: "48-Hour Dispatch", desc: "Standard sizes dispatched within 48 hours from our strategically located warehouses." },
-                { num: "03", title: "Eco-Friendly Materials", desc: "100% recyclable and biodegradable packaging that's kind to the planet." },
-              ].map((item) => (
+              {WHY_VAYU.map((item) => (
                 <div key={item.num} className="flex gap-4">
                   <span className="font-heading text-3xl font-bold text-primary/30">{item.num}</span>
                   <div>

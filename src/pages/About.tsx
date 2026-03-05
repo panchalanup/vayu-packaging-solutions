@@ -2,28 +2,33 @@ import Layout from "@/components/Layout";
 import PageTransition from "@/components/PageTransition";
 import { motion } from "framer-motion";
 import { ArrowUpRight, CheckCircle } from "lucide-react";
-import aboutImage from "@/assets/about-packaging.jpg";
+import { ABOUT_CONTENT, KEY_FEATURES_EXTENDED, STATS_ARRAY, WHY_VAYU_EXTENDED } from "@/constants";
+import { ABOUT_IMAGES } from "@/constants/images";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 
-const stats = [
-  { value: "12+", label: "Years of Experience" },
-  { value: "5000+", label: "Happy Clients" },
-  { value: "50M+", label: "Boxes Delivered" },
-  { value: "200+", label: "Cities Served" },
-];
+const stats = STATS_ARRAY;
 
 const About = () => {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.about} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.about)} />
+      
       <PageTransition>
         {/* Hero banner */}
-        <section className="pt-32 pb-16 section-dark">
+        <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">
           <div className="container mx-auto px-6 text-center max-w-3xl">
             <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-4">About Us</p>
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Reliable corrugated box distribution built on trust &amp; quality
+              {ABOUT_CONTENT.heading}
             </h1>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              Vayu Packaging Solutions is a leading distributor of corrugated boxes across India. We source from certified manufacturers and deliver custom packaging solutions tailored to your business.
+              {ABOUT_CONTENT.description}
             </p>
           </div>
         </section>
@@ -33,23 +38,23 @@ const About = () => {
           <div className="container mx-auto px-6">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative">
-                <img src={aboutImage} alt="Quality corrugated boxes inspection" className="rounded-2xl w-full object-cover aspect-square" loading="lazy" />
+                <img src={ABOUT_IMAGES.main} alt={ABOUT_IMAGES.alt} className="rounded-2xl w-full object-cover aspect-square" loading="lazy" />
                 <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground rounded-2xl p-6 shadow-2xl hidden md:block">
-                  <p className="font-heading text-3xl font-bold">12+</p>
-                  <p className="text-sm font-medium opacity-80">Years of Experience</p>
+                  <p className="font-heading text-3xl font-bold">{stats[0].value}</p>
+                  <p className="text-sm font-medium opacity-80">{stats[0].label}</p>
                 </div>
               </motion.div>
 
               <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">Our Story</h2>
                 <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
-                  Founded over a decade ago, Vayu Packaging started with a simple mission — deliver high-quality corrugated boxes at fair prices with unmatched reliability.
+                  {ABOUT_CONTENT.story.paragraph1}
                 </p>
                 <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                  Today, we serve 5,000+ businesses across e-commerce, FMCG, electronics, food, pharmaceuticals, and automotive industries with a pan-India delivery network.
+                  {ABOUT_CONTENT.story.paragraph2}
                 </p>
                 <div className="space-y-4 mb-10">
-                  {["Custom box sizes for any industry", "Bulk supply with competitive pricing", "On-time delivery guarantee", "BIS certified quality standards"].map((item) => (
+                  {KEY_FEATURES_EXTENDED.map((item) => (
                     <div key={item} className="flex items-center gap-3">
                       <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
                       <span className="text-foreground">{item}</span>
@@ -83,12 +88,7 @@ const About = () => {
           <div className="container mx-auto px-6 max-w-4xl">
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground text-center mb-16">Why Choose Vayu?</h2>
             <div className="space-y-8">
-              {[
-                { num: "01", title: "Direct Mill Sourcing", desc: "We source directly from top corrugated manufacturers, cutting middlemen costs and passing savings to you." },
-                { num: "02", title: "48-Hour Dispatch", desc: "Standard sizes dispatched within 48 hours from our strategically located warehouses across India." },
-                { num: "03", title: "Eco-Friendly Materials", desc: "100% recyclable and biodegradable packaging materials that are kind to the planet." },
-                { num: "04", title: "Dedicated Account Manager", desc: "Every client gets a dedicated point of contact for seamless communication and order management." },
-              ].map((item) => (
+              {WHY_VAYU_EXTENDED.map((item) => (
                 <motion.div key={item.num} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex gap-6 items-start">
                   <span className="font-heading text-4xl font-bold text-primary/20">{item.num}</span>
                   <div>

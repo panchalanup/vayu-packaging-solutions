@@ -2,34 +2,45 @@ import Layout from "@/components/Layout";
 import PageTransition from "@/components/PageTransition";
 import { motion } from "framer-motion";
 import { ArrowUpRight, CheckCircle } from "lucide-react";
+import { BUSINESS_DETAILS } from "@/constants";
+import { PRODUCT_IMAGES } from "@/constants/images";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { PRODUCT_SCHEMAS, getBreadcrumbSchema, PAGE_BREADCRUMBS, getFAQSchema, COMMON_FAQS } from '@/seo/schema';
 
 const products = [
   {
+    id: "PROD-1",
     title: "3-Ply Corrugated Boxes",
     desc: "Lightweight yet durable. Ideal for small and medium-weight products like apparel, accessories, and books.",
     features: ["Single wall construction", "Cost-effective", "Ideal for light goods"],
   },
   {
+    id: "PROD-2",
     title: "5-Ply Corrugated Boxes",
     desc: "Double wall strength for heavier products. Perfect for electronics, home appliances, and FMCG goods.",
     features: ["Double wall protection", "High stacking strength", "Industry standard"],
   },
   {
+    id: "PROD-3",
     title: "7-Ply Corrugated Boxes",
     desc: "Maximum protection for heavy-duty shipping. Used for industrial parts, machinery, and export packaging.",
     features: ["Triple wall construction", "Export-grade quality", "Maximum load capacity"],
   },
   {
+    id: "PROD-4",
     title: "Die-Cut Boxes",
     desc: "Custom-shaped boxes designed to fit your product perfectly. Reduces material waste and enhances unboxing experience.",
     features: ["Custom shapes & sizes", "Brand-focused design", "Minimal material waste"],
   },
   {
+    id: "PROD-5",
     title: "Printed Packaging",
     desc: "Full-color printed corrugated boxes that showcase your brand. Available in flexo and offset printing.",
     features: ["Flexo & offset printing", "CMYK full color", "Brand visibility"],
   },
   {
+    id: "PROD-6",
     title: "Food-Grade Boxes",
     desc: "FSSAI compliant corrugated boxes for food and beverage packaging with food-safe coatings.",
     features: ["FSSAI compliant", "Food-safe coating", "Moisture resistant"],
@@ -39,9 +50,19 @@ const products = [
 const Products = () => {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.products} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['3-ply']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['5-ply']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['7-ply']} />
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.products)} />
+      <StructuredData type="FAQPage" data={getFAQSchema(COMMON_FAQS.products)} />
+      
       <PageTransition>
         {/* Hero */}
-        <section className="pt-32 pb-16 section-dark">
+        <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">
           <div className="container mx-auto px-6 text-center max-w-3xl">
             <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-4">Our Products</p>
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-6">
@@ -64,17 +85,49 @@ const Products = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="bg-card border border-border rounded-2xl p-8 hover:border-primary/40 transition-all"
+                  className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-xl transition-all group"
                 >
-                  <h3 className="font-heading text-xl font-semibold text-foreground mb-3">{product.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed mb-6">{product.desc}</p>
-                  <div className="space-y-2">
-                    {product.features.map((f) => (
-                      <div key={f} className="flex items-center gap-2">
-                        <CheckCircle className="w-4 h-4 text-accent flex-shrink-0" />
-                        <span className="text-foreground text-sm">{f}</span>
-                      </div>
-                    ))}
+                  {/* Product Image */}
+                  <div className="relative aspect-square bg-gradient-to-br from-blue-50 to-blue-100">
+                    <img
+                      src={PRODUCT_IMAGES[i].src}
+                      alt={PRODUCT_IMAGES[i].alt}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    {/* Info Badge - Shows when using placeholder */}
+                    {PRODUCT_IMAGES[i].src.includes('placeholder') && (
+                      <>
+                        <div className="absolute inset-0 flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-blue-100">
+                          <div className="text-center">
+                            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
+                              <svg className="w-8 h-8 text-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            </div>
+                            <p className="text-xs font-mono text-primary/60 mb-2">{PRODUCT_IMAGES[i].id}</p>
+                            <p className="text-xs text-muted-foreground">{PRODUCT_IMAGES[i].description}</p>
+                          </div>
+                        </div>
+                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
+                          <p className="text-xs font-semibold text-primary">{PRODUCT_IMAGES[i].requiredSize}</p>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6 sm:p-8">
+                    <h3 className="font-heading text-xl font-semibold text-foreground mb-3">{product.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed mb-6">{product.desc}</p>
+                    <div className="space-y-2">
+                      {product.features.map((f) => (
+                        <div key={f} className="flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-accent flex-shrink-0" />
+                          <span className="text-foreground text-sm">{f}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -85,7 +138,7 @@ const Products = () => {
         {/* CTA */}
         <section className="py-24 section-dark">
           <div className="container mx-auto px-6 text-center max-w-2xl">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">Minimum order from 500 boxes</h2>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">{BUSINESS_DETAILS.minOrderText}</h2>
             <p className="text-muted-foreground text-lg mb-8">Get competitive bulk pricing with pan-India delivery. Custom sizes available on request.</p>
             <a href="/contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-7 py-3.5 rounded-full text-base font-semibold hover:brightness-110 transition-all">
               Get a Quote <ArrowUpRight className="w-5 h-5" />

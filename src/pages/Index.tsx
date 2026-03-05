@@ -1,14 +1,15 @@
 import Layout from "@/components/Layout";
 import HeroSection from "@/components/HeroSection";
+import VideoSection from "@/components/VideoSection";
+import ProcessTimeline from "@/components/ProcessTimeline";
+import FacilityGallery from "@/components/FacilityGallery";
 import PageTransition from "@/components/PageTransition";
+import { STATS_ARRAY } from "@/constants";
 import { motion } from "framer-motion";
-import { ArrowUpRight, CheckCircle, Star, Quote } from "lucide-react";
-
-const stats = [
-  { value: "12+", label: "Years of Experience" },
-  { value: "5000+", label: "Happy Clients" },
-  { value: "50M+", label: "Boxes Delivered" },
-];
+import { ArrowUpRight, Star, Quote } from "lucide-react";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { getOrganizationSchema, getLocalBusinessSchema, getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 
 const testimonials = [
   {
@@ -31,14 +32,22 @@ const testimonials = [
 const Index = () => {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.home} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="Organization" data={getOrganizationSchema()} />
+      <StructuredData type="LocalBusiness" data={getLocalBusinessSchema()} />
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.home)} />
+      
       <PageTransition>
         <HeroSection />
 
         {/* Stats */}
         <section className="py-20 section-dark">
           <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {stats.map((stat, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {STATS_ARRAY.map((stat, i) => (
                 <motion.div
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
@@ -54,6 +63,15 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Video Section - NEW */}
+        <VideoSection />
+
+        {/* Process Timeline - NEW */}
+        <ProcessTimeline />
+
+        {/* Facility Gallery - NEW */}
+        <FacilityGallery />
 
         {/* Quick CTA */}
         <section className="py-24">

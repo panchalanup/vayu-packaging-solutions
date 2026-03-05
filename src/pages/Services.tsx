@@ -2,7 +2,11 @@ import Layout from "@/components/Layout";
 import PageTransition from "@/components/PageTransition";
 import { motion } from "framer-motion";
 import { Package, Truck, Shield, Ruler, ArrowUpRight } from "lucide-react";
-import servicesImage from "@/assets/services-packaging.jpg";
+import { SERVICES_CONTENT, INDUSTRIES } from "@/constants";
+import { SERVICES_IMAGES } from "@/constants/images";
+import { MetaTags, StructuredData } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { getBreadcrumbSchema, PAGE_BREADCRUMBS, getFAQSchema, COMMON_FAQS } from '@/seo/schema';
 
 const services = [
   { icon: Package, title: "Custom Corrugated Boxes", desc: "Tailored box sizes and flute types for your exact product dimensions and weight requirements." },
@@ -11,21 +15,27 @@ const services = [
   { icon: Ruler, title: "Design & Prototyping", desc: "From die-cut templates to printed packaging, we bring your brand to the box." },
 ];
 
-const industries = ["E-Commerce", "FMCG", "Electronics", "Food & Beverage", "Pharmaceuticals", "Automotive"];
 
 const Services = () => {
   return (
     <Layout>
+      {/* SEO Meta Tags */}
+      <MetaTags {...PAGE_METADATA.services} />
+      
+      {/* Structured Data - Schema.org */}
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.services)} />
+      <StructuredData type="FAQPage" data={getFAQSchema(COMMON_FAQS.services)} />
+      
       <PageTransition>
         {/* Hero */}
-        <section className="pt-32 pb-16 section-dark">
+        <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">
           <div className="container mx-auto px-6 text-center max-w-3xl">
             <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-4">Our Services</p>
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-6">
-              End-to-end corrugated packaging solutions
+              {SERVICES_CONTENT.heading}
             </h1>
             <p className="text-muted-foreground text-lg leading-relaxed">
-              From sourcing raw materials to final delivery, we handle the complete packaging lifecycle.
+              {SERVICES_CONTENT.description}
             </p>
           </div>
         </section>
@@ -62,20 +72,20 @@ const Services = () => {
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                src={servicesImage}
-                alt="Corrugated boxes on conveyor belt"
+                src={SERVICES_IMAGES.main}
+                alt={SERVICES_IMAGES.alt}
                 className="rounded-2xl w-full object-cover aspect-video"
                 loading="lazy"
               />
               <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-6">
-                  Serving industries that demand excellence
+                  {SERVICES_CONTENT.industryHeading}
                 </h2>
                 <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                  Whether you're shipping electronics, food products, pharmaceuticals, or e-commerce goods — our corrugated solutions are engineered to protect and impress.
+                  {SERVICES_CONTENT.industryDescription}
                 </p>
                 <div className="flex flex-wrap gap-3">
-                  {industries.map((tag) => (
+                  {INDUSTRIES.map((tag) => (
                     <span key={tag} className="bg-secondary text-secondary-foreground px-4 py-2 rounded-full text-sm font-medium">{tag}</span>
                   ))}
                 </div>
