@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import { AnalyticsProvider } from "@/contexts/AnalyticsContext";
+import { ANALYTICS_CONFIG } from "@/config/analytics";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -49,7 +50,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AnalyticsProvider enabled={true} debug={true}>
+        <AnalyticsProvider enabled={ANALYTICS_CONFIG.ENABLED} debug={ANALYTICS_CONFIG.DEBUG}>
           <ScrollToTop />
           <AnimatedRoutes />
         </AnalyticsProvider>

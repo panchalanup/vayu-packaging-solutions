@@ -2,6 +2,7 @@
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { onCLS, onFCP, onINP, onLCP, onTTFB, Metric } from 'web-vitals';
 import { v4 as uuidv4 } from 'uuid';
+import { ANALYTICS_CONFIG } from '@/config/analytics';
 import {
   AnalyticsData,
   AnalyticsConfig,
@@ -30,17 +31,21 @@ class AnalyticsService {
   private entryPage: string = '';
 
   constructor(config: Partial<AnalyticsConfig> = {}) {
+    // Use centralized config from src/config/analytics.ts
     this.config = {
-      enabled: true,
-      debug: false,
-      batchSize: 10,
-      batchInterval: 10000, // 10 seconds
-      endpoint: 'https://script.google.com/macros/s/AKfycbyef43VWVnHxANmIzFfQH_zWmwPrH76cCnSYY_zIv10EEqN_ivMTpQRI3dGFa_CEme9kw/exec',
+      enabled: ANALYTICS_CONFIG.ENABLED,
+      debug: ANALYTICS_CONFIG.DEBUG,
+      batchSize: ANALYTICS_CONFIG.BATCH_SIZE,
+      batchInterval: ANALYTICS_CONFIG.BATCH_INTERVAL,
+      endpoint: ANALYTICS_CONFIG.ENDPOINT,
       ...config,
     };
 
+    // Only initialize if analytics is enabled
     if (this.config.enabled) {
       this.initialize();
+    } else if (this.config.debug) {
+      console.log('📊 Analytics is DISABLED via config');
     }
   }
 
