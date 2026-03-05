@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Clock, Calendar } from "lucide-react";
 import { BlogPost } from "@/constants/blogs";
 import { useEventTracker } from "@/hooks/useAnalytics";
+import { BLOG_IMAGES } from "@/constants/images";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -51,22 +52,13 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
         <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
           {/* Thumbnail */}
           <div className="relative aspect-[16/9] bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
-            {/* Placeholder with info */}
-            <div className="absolute inset-0 flex items-center justify-center p-6">
-              <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
-                  <svg className="w-8 h-8 text-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <p className="text-xs font-mono text-primary/60 mb-2">{post.thumbnail}</p>
-                <p className="text-xs text-muted-foreground">600x400px thumbnail</p>
-              </div>
-            </div>
-            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
-              <p className="text-xs font-semibold text-primary">600x400px</p>
-            </div>
-
+            <img
+              src={BLOG_IMAGES.defaultThumbnail}
+              alt={BLOG_IMAGES.alt}
+              className="absolute inset-0 w-full h-full object-cover"
+              loading="lazy"
+            />
+            
             {/* Hover overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>

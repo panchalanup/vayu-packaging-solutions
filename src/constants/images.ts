@@ -40,6 +40,17 @@ import g17 from "@/assets/Gallery/g17.png";
 import g18 from "@/assets/Gallery/g18.png";
 import g19 from "@/assets/Gallery/g19.png";
 
+// Import product images
+import prod1 from "@/assets/Products/PROD-1.png";
+import prod2 from "@/assets/Products/PROD-2.png";
+import prod3 from "@/assets/Products/PROD-3.png";
+import prod4 from "@/assets/Products/PROD-4.png";
+import prod5 from "@/assets/Products/PROD-5.png";
+import prod6 from "@/assets/Products/PROD-6.png";
+
+// Import blog images
+import blogThumbnail from "@/assets/Blogs/blog-00.png";
+
 // ============================================
 // LOGO IMAGES
 // ============================================
@@ -111,7 +122,7 @@ export const SERVICES_IMAGES = {
 export const PRODUCT_IMAGES = [
   {
     id: "PROD-1",
-    src: placeholderImage,
+    src: prod1,
     alt: "3-Ply Corrugated Boxes - Stack of 3-ply boxes, one open showing construction",
     description: "Stack of 3-ply boxes, one open showing construction",
     targetFilename: "3-ply-boxes.jpg",
@@ -119,7 +130,7 @@ export const PRODUCT_IMAGES = [
   },
   {
     id: "PROD-2",
-    src: placeholderImage,
+    src: prod2,
     alt: "5-Ply Corrugated Boxes - 5-ply boxes with electronics or appliances",
     description: "5-ply boxes with electronics or appliances",
     targetFilename: "5-ply-boxes.jpg",
@@ -127,7 +138,7 @@ export const PRODUCT_IMAGES = [
   },
   {
     id: "PROD-3",
-    src: placeholderImage,
+    src: prod3,
     alt: "7-Ply Corrugated Boxes - Heavy-duty 7-ply box with industrial product",
     description: "Heavy-duty 7-ply box with industrial product",
     targetFilename: "7-ply-heavy-duty-boxes.jpg",
@@ -135,7 +146,7 @@ export const PRODUCT_IMAGES = [
   },
   {
     id: "PROD-4",
-    src: placeholderImage,
+    src: prod4,
     alt: "Die-Cut Boxes - Unique shaped boxes, branded examples",
     description: "Unique shaped boxes, branded examples",
     targetFilename: "die-cut-custom-boxes.jpg",
@@ -143,7 +154,7 @@ export const PRODUCT_IMAGES = [
   },
   {
     id: "PROD-5",
-    src: placeholderImage,
+    src: prod5,
     alt: "Printed Packaging - Full-color printed boxes with vibrant branding",
     description: "Full-color printed boxes with vibrant branding",
     targetFilename: "printed-branded-boxes.jpg",
@@ -151,13 +162,21 @@ export const PRODUCT_IMAGES = [
   },
   {
     id: "PROD-6",
-    src: placeholderImage,
+    src: prod6,
     alt: "Food-Grade Boxes - Food packaging with safety certifications",
     description: "Food packaging with safety certifications",
     targetFilename: "food-grade-packaging-boxes.jpg",
     requiredSize: "800x800px",
   },
 ] as const;
+
+// ============================================
+// BLOG IMAGES
+// ============================================
+export const BLOG_IMAGES = {
+  defaultThumbnail: blogThumbnail,
+  alt: "Vayu Packaging Solutions - Corrugated boxes and packaging",
+} as const;
 
 // ============================================
 // FACILITY GALLERY IMAGES
