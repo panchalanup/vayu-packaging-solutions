@@ -9,7 +9,7 @@ export async function loadPackagingData(): Promise<PackagingOption[]> {
   }
 
   try {
-    const response = await fetch('/src/assets/ToolData/advanced_packaging_recommendations_v2.csv');
+    const response = await fetch('/ToolData/advanced_packaging_recommendations_v2.csv');
     const csvText = await response.text();
 
     const result = Papa.parse<PackagingOption>(csvText, {

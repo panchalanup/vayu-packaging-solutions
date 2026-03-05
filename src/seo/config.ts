@@ -6,7 +6,7 @@
 export const SEO_CONFIG = {
   // Site Information
   siteName: 'Vayu Packaging Solutions',
-  siteUrl: 'https://vayupackaging.com', // Update with actual domain when available
+  siteUrl: 'https://vayupackaging.vercel.app',
   defaultTitle: 'Vayu Packaging Solutions - Corrugated Box Distributors India',
   titleTemplate: '%s | Vayu Packaging Solutions',
   defaultDescription: 'India\'s trusted distributor of corrugated boxes. Custom sizes, bulk supply, 3-ply to 7-ply boxes, pan-India delivery. Get quote for packaging solutions.',

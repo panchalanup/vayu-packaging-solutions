@@ -23,7 +23,7 @@ export interface SoftwareAppSchemaData {
 export function getSoftwareApplicationSchema(data?: Partial<SoftwareAppSchemaData>) {
   const defaultData: SoftwareAppSchemaData = {
     name: 'Smart Packaging Finder Tool',
-    url: 'https://vayupackaging.com/compare-quote',
+    url: 'https://vayupackaging.vercel.app/compare-quote',
     description: 'Free online tool to find the perfect corrugated packaging for your products. Get instant recommendations from 1500+ packaging solutions based on product details, with pricing and specifications.',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Any',
@@ -61,7 +61,7 @@ export function getSoftwareApplicationSchema(data?: Partial<SoftwareAppSchemaDat
     provider: {
       '@type': 'Organization',
       name: 'Vayu Packaging Solutions',
-      url: 'https://vayupackaging.com',
+      url: 'https://vayupackaging.vercel.app',
     },
     ...(defaultData.aggregateRating && {
       aggregateRating: {

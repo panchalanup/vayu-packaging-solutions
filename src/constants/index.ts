@@ -211,7 +211,7 @@ export const FORM_PLACEHOLDERS = {
 // ============================================
 // WEBSITE & SOCIAL LINKS
 // ============================================
-export const WEBSITE_URL = 'https://www.vayupackaging.com' as const;
+export const WEBSITE_URL = 'https://vayupackaging.vercel.app' as const;
 
 export const SOCIAL_LINKS = {
   whatsapp: 'https://wa.me/918511658600',

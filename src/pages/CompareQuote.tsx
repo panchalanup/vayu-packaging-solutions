@@ -70,7 +70,7 @@ export default function CompareQuote() {
           title={toolMeta.title}
           description={toolMeta.description}
           keywords={toolMeta.keywords}
-          canonical="https://vayupackaging.com/compare-quote"
+          canonical="https://vayupackaging.vercel.app/compare-quote"
         />
         <StructuredData schema={getSoftwareApplicationSchema()} />
         <StructuredData schema={getToolFAQSchema()} />

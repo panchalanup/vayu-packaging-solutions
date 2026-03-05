@@ -148,7 +148,7 @@ Update these values with your actual information:
 
 ```typescript
 export const SEO_CONFIG = {
-  siteUrl: 'https://vayupackaging.com', // Your actual domain
+  siteUrl: 'https://vayupackaging.vercel.app', // Your actual domain
   foundingDate: '2020', // Your founding year
   googleAnalyticsId: 'G-XXXXXXXXXX', // Add when ready
   googleSiteVerification: 'your-verification-code', // Google Search Console

@@ -32,7 +32,7 @@ const BlogPost = () => {
       
       try {
         setLoading(true);
-        const response = await fetch(`/src/content/blogs/${slug}.md`);
+        const response = await fetch(`/content/blogs/${slug}.md`);
         const text = await response.text();
         
         // Remove frontmatter (content between --- markers)
