@@ -4,14 +4,9 @@ import VideoSection from "@/components/VideoSection";
 import ProcessTimeline from "@/components/ProcessTimeline";
 import FacilityGallery from "@/components/FacilityGallery";
 import PageTransition from "@/components/PageTransition";
+import { STATS_ARRAY } from "@/constants";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Star, Quote } from "lucide-react";
-
-const stats = [
-  { value: "12+", label: "Years of Experience" },
-  { value: "5000+", label: "Happy Clients" },
-  { value: "50M+", label: "Boxes Delivered" },
-];
 
 const testimonials = [
   {
@@ -40,8 +35,8 @@ const Index = () => {
         {/* Stats */}
         <section className="py-20 section-dark">
           <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {stats.map((stat, i) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {STATS_ARRAY.map((stat, i) => (
                 <motion.div
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}

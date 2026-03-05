@@ -9,8 +9,8 @@
 export const CONTACT_INFO = {
   phone: '+91 85116 58600',
   email: 'info.vayupackaging@gmail.com',
-  address: 'Industrial Area, Phase II, New Delhi',
-  addressFull: 'Industrial Area, Phase II, New Delhi, India',
+  address: 'Mondeal Heights, Ahmedabad',
+  addressFull: 'Mondeal Heights, SG Highway Ahmedabad, Gujarat 380015',
 } as const;
 
 // ============================================
@@ -28,19 +28,19 @@ export const COMPANY_INFO = {
 // ============================================
 export const STATS = {
   yearsExperience: {
-    value: '12+',
+    value: '5+',
     label: 'Years of Experience',
   },
   happyClients: {
-    value: '5000+',
+    value: '350+',
     label: 'Happy Clients',
   },
   boxesDelivered: {
-    value: '50M+',
+    value: '5M+',
     label: 'Boxes Delivered',
   },
   citiesServed: {
-    value: '200+',
+    value: '50+',
     label: 'Cities Served',
   },
 } as const;

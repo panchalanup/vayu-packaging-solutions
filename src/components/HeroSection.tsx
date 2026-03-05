@@ -60,7 +60,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden -mt-20">
+    <section id="home" className="relative h-[calc(100vh-4rem)] md:h-[calc(100vh-6rem)] flex items-center overflow-hidden -mt-20 pt-20">
       {/* Background images with Parallax Slide effect */}
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.img
