@@ -3,6 +3,7 @@ import { Download, FileText, Mail, Copy } from "lucide-react";
 import { ScoredResult, UserInput } from "@/types/packaging";
 import { exportToCSV, exportToPDF, generateEmailTemplate, generateWhatsAppMessage } from "@/lib/exportUtils";
 import { useToast } from "@/hooks/use-toast";
+import { useEventTracker } from "@/hooks/useAnalytics";
 
 interface ExportButtonsProps {
   result: ScoredResult;
@@ -11,9 +12,16 @@ interface ExportButtonsProps {
 
 export function ExportButtons({ result, input }: ExportButtonsProps) {
   const { toast } = useToast();
+  const { trackEvent } = useEventTracker();
 
   const handleCSVExport = () => {
     exportToCSV(result, input);
+    trackEvent('export_csv', {
+      boxStyle: result.box_style,
+      confidenceScore: result.score,
+      productName: input.product_name,
+      confidence: result.confidence,
+    });
     toast({
       title: "CSV Downloaded",
       description: "Supplier specification has been downloaded.",
@@ -22,6 +30,12 @@ export function ExportButtons({ result, input }: ExportButtonsProps) {
 
   const handlePDFExport = () => {
     exportToPDF(result, input);
+    trackEvent('export_pdf', {
+      boxStyle: result.box_style,
+      confidenceScore: result.score,
+      productName: input.product_name,
+      confidence: result.confidence,
+    });
     toast({
       title: "PDF Downloaded",
       description: "Quote document has been generated.",
@@ -31,6 +45,10 @@ export function ExportButtons({ result, input }: ExportButtonsProps) {
   const handleEmailCopy = () => {
     const template = generateEmailTemplate(result, input);
     navigator.clipboard.writeText(template);
+    trackEvent('copy_email_template', {
+      boxStyle: result.box_style,
+      productName: input.product_name,
+    });
     toast({
       title: "Email Template Copied",
       description: "Paste into your email client to send to supplier.",
@@ -41,6 +59,10 @@ export function ExportButtons({ result, input }: ExportButtonsProps) {
     const message = generateWhatsAppMessage(result, input);
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
+    trackEvent('share_whatsapp', {
+      boxStyle: result.box_style,
+      productName: input.product_name,
+    });
     toast({
       title: "Opening WhatsApp",
       description: "Share your recommendation with experts.",

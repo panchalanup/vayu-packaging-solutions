@@ -5,10 +5,12 @@ import { useState } from "react";
 import { submitContactForm } from "@/lib/googleSheets";
 import { initialContactFormState, ContactFormState } from "@/types/contact";
 import { toast } from "sonner";
+import { useEventTracker } from "@/hooks/useAnalytics";
 
 const ContactSection = () => {
   const [formData, setFormData] = useState<ContactFormState>(initialContactFormState);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { trackEvent } = useEventTracker();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -18,9 +20,16 @@ const ContactSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Track form submission attempt
+    trackEvent('contact_form_submit_attempt', {
+      hasCompany: !!formData.company,
+      hasRequirements: !!formData.requirements,
+    });
+    
     // Basic validation
     if (!formData.name || !formData.email || !formData.phone) {
       toast.error("Please fill in all required fields");
+      trackEvent('contact_form_validation_error', { error: 'missing_required_fields' });
       return;
     }
 
@@ -28,6 +37,7 @@ const ContactSection = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast.error("Please enter a valid email address");
+      trackEvent('contact_form_validation_error', { error: 'invalid_email' });
       return;
     }
 
@@ -38,12 +48,18 @@ const ContactSection = () => {
       
       if (result.success) {
         toast.success(result.message);
+        trackEvent('contact_form_submit_success', {
+          hasCompany: !!formData.company,
+          hasRequirements: !!formData.requirements,
+        });
         setFormData(initialContactFormState); // Reset form
       } else {
         toast.error(result.message);
+        trackEvent('contact_form_submit_error', { error: 'api_error' });
       }
     } catch (error) {
       toast.error("An unexpected error occurred. Please try again.");
+      trackEvent('contact_form_submit_error', { error: 'unexpected_error' });
     } finally {
       setIsSubmitting(false);
     }
