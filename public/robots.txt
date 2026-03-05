@@ -5,7 +5,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location (update URL when site is live)
-Sitemap: https://vayupackaging.com/sitemap.xml
+Sitemap: https://vayupackaging.vercel.app/sitemap.xml
 
 # Block specific user agents if needed (examples below - currently allowing all)
 # User-agent: BadBot

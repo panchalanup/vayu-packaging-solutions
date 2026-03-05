@@ -141,7 +141,7 @@ export const BLOG_AUTHOR = {
 
 // Social sharing configuration
 export const SOCIAL_SHARE_CONFIG = {
-  siteUrl: "https://vayupackaging.com", // Update with actual domain
+  siteUrl: "https://vayupackaging.vercel.app", // Update with actual domain
   twitterHandle: "@vayupackaging", // Update with actual handle
   hashtags: ["packaging", "corrugatedboxes", "supplychain"],
 } as const;
