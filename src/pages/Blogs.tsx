@@ -41,7 +41,7 @@ const Blogs = () => {
         </section>
 
         {/* Category Filter - Sticky */}
-        <section className="sticky top-[72px] z-40 py-6 border-b border-border bg-background/95 backdrop-blur-sm shadow-sm">
+        <section className="sticky top-0 z-50 py-6 border-b border-border bg-background/95 backdrop-blur-md shadow-sm">
           <div className="container mx-auto px-6">
             <CategoryFilter 
               activeCategory={activeCategory} 
