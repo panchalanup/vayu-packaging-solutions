@@ -24,6 +24,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useEventTracker } from "@/hooks/useAnalytics";
 
 const formSchema = z.object({
   product_name: z.string().min(1, "Product name is required"),
@@ -47,6 +48,7 @@ interface InputFormProps {
 
 export function InputForm({ categories, transportTypes, onSubmit, isLoading }: InputFormProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const { trackEvent } = useEventTracker();
 
   const {
     register,
@@ -68,6 +70,11 @@ export function InputForm({ categories, transportTypes, onSubmit, isLoading }: I
   const priority = watch("priority");
 
   const fillExampleData = () => {
+    // Track example usage
+    trackEvent('tool_use_example', {
+      action: 'fill_example_data',
+    });
+    
     setValue("product_name", "Glass bottle");
     setValue("weight_kg", 0.85);
     setValue("length_mm", 320);
@@ -77,6 +84,23 @@ export function InputForm({ categories, transportTypes, onSubmit, isLoading }: I
     setValue("transport_type", "Courier");
     setValue("quantity", 50);
     setValue("priority", "balanced");
+  };
+
+  const handleFormSubmit = (data: UserInput) => {
+    // Track tool usage
+    trackEvent('tool_get_recommendations', {
+      productName: data.product_name,
+      fragility: data.fragility,
+      transportType: data.transport_type,
+      quantity: data.quantity,
+      priority: data.priority,
+      hasWeight: !!data.weight_kg,
+      hasDimensions: !!(data.length_mm && data.width_mm && data.height_mm),
+      hasMaxPrice: !!data.max_price,
+    });
+    
+    // Call parent's onSubmit
+    onSubmit(data);
   };
 
   return (
@@ -103,7 +127,7 @@ export function InputForm({ categories, transportTypes, onSubmit, isLoading }: I
         </div>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
           {/* Product Name */}
           <div className="space-y-2">
             <Label htmlFor="product_name" className="flex items-center gap-2">

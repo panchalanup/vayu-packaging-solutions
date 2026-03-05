@@ -63,7 +63,7 @@ User Action → Analytics Hook → Analytics Service → Event Queue → Batch P
 
 ## 📊 Google Sheet Structure
 
-Your Google Sheet has **5 tabs** storing different types of data:
+Your Google Sheet has **6 tabs** storing different types of data:
 
 ### **Tab 1: PageViews**
 | Column | Description |
@@ -143,6 +143,32 @@ Your Google Sheet has **5 tabs** storing different types of data:
 | Scroll Depth (%) | How far scrolled |
 | Clicks | Number of clicks |
 
+### **Tab 6: NewUsers** 🆕
+| Column | Description |
+|--------|-------------|
+| First Visit | When user first visited |
+| Visitor ID | Browser fingerprint |
+| IP Hash | Hashed IP (privacy-safe) |
+| Country | User's country |
+| City | User's city |
+| Region | State/region |
+| Latitude | Geographic coordinate |
+| Longitude | Geographic coordinate |
+| Timezone | User's timezone |
+| ISP | Internet service provider |
+| Device Type | mobile/desktop/tablet |
+| Browser | Browser name |
+| OS | Operating system |
+| Screen Size | Device resolution |
+| Language | Browser language |
+| Referrer | Where they came from |
+| Entry Page | First page visited |
+| UTM Source | Campaign source |
+| UTM Medium | Campaign medium |
+| UTM Campaign | Campaign name |
+
+**Note:** This tab tracks unique new users by IP address (hashed for privacy). Each IP hash is logged only once, giving you accurate new user counts. See `IP_TRACKING_GUIDE.md` for detailed information.
+
 ---
 
 ## 💻 How to Use in Code
@@ -199,6 +225,21 @@ function MyComponent() {
 =COUNTA(UNIQUE(PageViews!C:C))-1
 ```
 
+**Total New Users (by IP) 🆕**
+```
+=COUNTA(NewUsers!B:B)-1
+```
+
+**New Users Today 🆕**
+```
+=COUNTIF(NewUsers!A:A,">="&TEXT(TODAY(),"yyyy-mm-dd"))
+```
+
+**New Users This Week 🆕**
+```
+=COUNTIF(NewUsers!A:A,">="&TEXT(TODAY()-7,"yyyy-mm-dd"))
+```
+
 **Total Page Views Today**
 ```
 =COUNTIF(PageViews!A:A,">="&TODAY())
@@ -232,6 +273,16 @@ function MyComponent() {
 **Top Referrers**
 ```
 =QUERY(PageViews!A:E,"SELECT E, COUNT(E) WHERE E != '' AND E != '' GROUP BY E ORDER BY COUNT(E) DESC LIMIT 10 LABEL E 'Referrer', COUNT(E) 'Visits'")
+```
+
+**New Users by Country 🆕**
+```
+=QUERY(NewUsers!A:D,"SELECT D, COUNT(D) WHERE D != '' GROUP BY D ORDER BY COUNT(D) DESC LABEL D 'Country', COUNT(D) 'New Users'")
+```
+
+**New Users by Traffic Source 🆕**
+```
+=QUERY(NewUsers!A:S,"SELECT R, COUNT(R) WHERE R != '' GROUP BY R ORDER BY COUNT(R) DESC LABEL R 'UTM Source', COUNT(R) 'New Users'")
 ```
 
 ---
