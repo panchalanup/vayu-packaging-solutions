@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin } from "lucide-react";
-import { CONTACT_INFO, COMPANY_INFO, NAV_LINKS } from "@/constants";
+import { Mail, Phone, MapPin, Instagram, MessageCircle } from "lucide-react";
+import { CONTACT_INFO, COMPANY_INFO, NAV_LINKS, SOCIAL_LINKS } from "@/constants";
 import { LOGO_IMAGES } from "@/constants/images";
 
 const Footer = () => {
@@ -16,12 +16,33 @@ const Footer = () => {
               {COMPANY_INFO.description}
             </p>
             <div className="flex items-center gap-4 mt-6">
-              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer">
+              <a
+                href={`mailto:${CONTACT_INFO.email}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer"
+                aria-label="Email us"
+              >
                 <Mail className="w-4 h-4 text-foreground" />
-              </div>
-              <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer">
-                <Phone className="w-4 h-4 text-foreground" />
-              </div>
+              </a>
+              <a
+                href={SOCIAL_LINKS.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer"
+                aria-label="WhatsApp"
+              >
+                <MessageCircle className="w-4 h-4 text-foreground" />
+              </a>
+              <a
+                href={SOCIAL_LINKS.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer"
+                aria-label="Instagram"
+              >
+                <Instagram className="w-4 h-4 text-foreground" />
+              </a>
             </div>
           </div>
 
