@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, Mail, Phone, MapPin } from "lucide-react";
-import { CONTACT_INFO, CONTACT_CONTENT, FORM_PLACEHOLDERS } from "@/constants";
+import { ArrowUpRight, Mail, Phone, MapPin, Instagram } from "lucide-react";
+import { CONTACT_INFO, CONTACT_CONTENT, FORM_PLACEHOLDERS, SOCIAL_LINKS } from "@/constants";
 import { useState } from "react";
 import { submitContactForm } from "@/lib/googleSheets";
 import { initialContactFormState, ContactFormState } from "@/types/contact";
@@ -111,6 +111,20 @@ const ContactSection = () => {
                   <p className="text-foreground font-medium">{CONTACT_INFO.address}</p>
                 </div>
               </div>
+              <a
+                href={SOCIAL_LINKS.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Instagram className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-sm">Follow us</p>
+                  <p className="text-foreground font-medium group-hover:text-primary transition-colors">@vayu_packaging_solutions</p>
+                </div>
+              </a>
             </div>
           </motion.div>
 

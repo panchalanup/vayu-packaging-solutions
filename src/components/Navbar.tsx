@@ -5,6 +5,8 @@ import { Menu, X, ArrowUpRight, Phone, ChevronDown, Sparkles, Download } from "l
 import { LOGO_IMAGES } from "@/constants/images";
 import { TOOLS_MENU, CONTACT_INFO } from "@/constants";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import confetti from "canvas-confetti";
+import { useEventTracker } from "@/hooks/useAnalytics";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -19,13 +21,137 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const [isCallButtonHovered, setIsCallButtonHovered] = useState(false);
+  const [isDownloadAnimating, setIsDownloadAnimating] = useState(false);
   const location = useLocation();
+  const { trackEvent } = useEventTracker();
 
   // Close mobile menu when route changes
   useEffect(() => {
     setOpen(false);
     setToolsOpen(false);
   }, [location.pathname]);
+
+  // Handle download with enhanced celebration effect
+  const handleDownloadClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Prevent multiple rapid clicks
+    if (isDownloadAnimating) return;
+    setIsDownloadAnimating(true);
+
+    // Track analytics event
+    trackEvent('brochure_download', {
+      type: 'download',
+      location: 'navbar',
+      device: window.innerWidth < 768 ? 'mobile' : 'desktop',
+      fileName: 'Vayu-Packaging-Solutions-Brochure.pdf',
+    }, {
+      type: 'button',
+      text: e.currentTarget.textContent || 'Download Brochure',
+      x: e.clientX,
+      y: e.clientY,
+    });
+
+    // Optional haptic feedback for mobile devices
+    if ('vibrate' in navigator) {
+      navigator.vibrate([10, 30, 10]); // Short vibration pattern
+    }
+
+    // Get button position for confetti origin
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (rect.left + rect.width / 2) / window.innerWidth;
+    const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    // Mobile optimization - reduce particle count on smaller screens
+    const isMobile = window.innerWidth < 768;
+    const particleMultiplier = isMobile ? 0.7 : 1;
+
+    if (prefersReducedMotion) {
+      // Simple single burst for reduced motion preference
+      confetti({
+        particleCount: Math.floor(50 * particleMultiplier),
+        spread: 60,
+        origin: { x, y },
+        colors: ['#16a34a', '#15803d', '#22c55e', '#ffd700', '#ffffff'],
+      });
+    } else {
+      // Brand colors with variations
+      const colors = ['#16a34a', '#15803d', '#22c55e', '#84cc16', '#ffd700', '#fbbf24', '#ffffff'];
+      
+      // Stage 1: Inner Core Explosion (Tight, Fast, Bright)
+      confetti({
+        particleCount: Math.floor(35 * particleMultiplier),
+        spread: 30,
+        startVelocity: 45,
+        origin: { x, y },
+        colors: ['#ffd700', '#fbbf24', '#ffffff'],
+        scalar: 1.2,
+        gravity: 0.8,
+        ticks: 180,
+        shapes: ['circle', 'square'],
+      });
+
+      // Stage 2: Main Burst (Medium spread, Mixed particles)
+      setTimeout(() => {
+        confetti({
+          particleCount: Math.floor(80 * particleMultiplier),
+          spread: 70,
+          startVelocity: 55,
+          origin: { x, y },
+          colors: colors,
+          scalar: 1.0,
+          gravity: 1.0,
+          ticks: 200,
+          shapes: ['circle', 'square'],
+          drift: 0.5,
+        });
+      }, 80);
+
+      // Stage 3: Outer Wave (Wide spread, Slower)
+      setTimeout(() => {
+        confetti({
+          particleCount: Math.floor(50 * particleMultiplier),
+          spread: 120,
+          startVelocity: 35,
+          origin: { x, y },
+          colors: colors,
+          scalar: 0.8,
+          gravity: 1.1,
+          ticks: 220,
+          shapes: ['circle', 'square'],
+          drift: 1,
+        });
+      }, 180);
+
+      // Stage 4: Sparkle Trail (Small, Slow floating particles)
+      setTimeout(() => {
+        confetti({
+          particleCount: Math.floor(30 * particleMultiplier),
+          spread: 100,
+          startVelocity: 25,
+          origin: { x, y },
+          colors: ['#ffd700', '#ffffff', '#fbbf24'],
+          scalar: 0.5,
+          gravity: 0.6,
+          ticks: 250,
+          shapes: ['circle'],
+          drift: 0.8,
+        });
+      }, 300);
+    }
+
+    // Trigger download after slight delay to feel the effect
+    setTimeout(() => {
+      const link = document.createElement('a');
+      link.href = '/brochures/Vayu-Packaging-Solutions-Company-Brochure.pdf';
+      link.download = 'Vayu-Packaging-Solutions-Brochure.pdf';
+      link.click();
+      
+      // Reset animation state
+      setTimeout(() => setIsDownloadAnimating(false), 500);
+    }, 100);
+  };
 
   return (
     <nav className="relative bg-white shadow-sm border-b border-gray-200">
@@ -130,19 +256,59 @@ const Navbar = () => {
             </AnimatePresence>
           </div>
           
-          {/* Download Brochure Button */}
+          {/* Download Brochure Button with Enhanced Animation */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <a
-                  href="/brochures/Vayu-Packaging-Solutions-Company-Brochure.pdf"
-                  download="Vayu-Packaging-Solutions-Brochure.pdf"
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 lg:px-5 py-2.5 lg:py-3 rounded-full text-sm lg:text-base font-semibold hover:shadow-lg hover:shadow-green-600/25 hover:scale-105 transition-all duration-200"
+                <motion.button
+                  onClick={handleDownloadClick}
+                  disabled={isDownloadAnimating}
+                  className="relative inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 lg:px-5 py-2.5 lg:py-3 rounded-full text-sm lg:text-base font-semibold overflow-hidden touch-manipulation"
+                  style={{ touchAction: 'manipulation' }}
                   aria-label="Download company brochure"
+                  whileHover={{ 
+                    scale: 1.05,
+                    boxShadow: "0 10px 25px rgba(22, 163, 74, 0.3)",
+                  }}
+                  whileTap={{
+                    scale: 0.95,
+                  }}
+                  animate={isDownloadAnimating ? {
+                    scale: [1, 0.95, 1.1, 1],
+                    boxShadow: [
+                      "0 4px 6px rgba(0, 0, 0, 0.1)",
+                      "0 8px 16px rgba(22, 163, 74, 0.2)",
+                      "0 12px 30px rgba(22, 163, 74, 0.4)",
+                      "0 4px 6px rgba(0, 0, 0, 0.1)",
+                    ],
+                  } : {}}
+                  transition={{
+                    duration: 0.5,
+                    ease: "easeOut",
+                  }}
                 >
-                  <Download className="w-4 h-4" />
-                  <span className="hidden lg:inline">Brochure</span>
-                </a>
+                  {/* Ripple effect overlay */}
+                  {isDownloadAnimating && (
+                    <>
+                      <motion.span
+                        className="absolute inset-0 rounded-full bg-white"
+                        initial={{ scale: 0, opacity: 0.6 }}
+                        animate={{ scale: 2.5, opacity: 0 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                      />
+                      <motion.span
+                        className="absolute inset-0 rounded-full bg-white"
+                        initial={{ scale: 0, opacity: 0.4 }}
+                        animate={{ scale: 2.5, opacity: 0 }}
+                        transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                      />
+                    </>
+                  )}
+                  
+                  {/* Button content */}
+                  <Download className="w-4 h-4 relative z-10" />
+                  <span className="hidden lg:inline relative z-10">Brochure</span>
+                </motion.button>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Download the brochure for future reference</p>
@@ -289,22 +455,60 @@ const Navbar = () => {
                 </motion.div>
               ))}
               
-              {/* Download Brochure Button - Mobile */}
+              {/* Download Brochure Button - Mobile with Enhanced Animation */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: (navLinks.length + TOOLS_MENU.length) * 0.05 }}
               >
-                <a
-                  href="/brochures/Vayu-Packaging-Solutions-Company-Brochure.pdf"
-                  download="Vayu-Packaging-Solutions-Brochure.pdf"
-                  onClick={() => setOpen(false)}
-                  className="mt-2 flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-green-600/25 transition-all touch-manipulation min-h-[44px]"
+                <motion.button
+                  onClick={(e) => {
+                    handleDownloadClick(e);
+                    setOpen(false);
+                  }}
+                  disabled={isDownloadAnimating}
+                  className="relative mt-2 flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-full text-sm font-semibold touch-manipulation min-h-[44px] w-full overflow-hidden"
+                  style={{ touchAction: 'manipulation' }}
                   aria-label="Download company brochure"
+                  whileTap={{
+                    scale: 0.95,
+                  }}
+                  animate={isDownloadAnimating ? {
+                    scale: [1, 0.95, 1.1, 1],
+                    boxShadow: [
+                      "0 4px 6px rgba(0, 0, 0, 0.1)",
+                      "0 8px 16px rgba(22, 163, 74, 0.2)",
+                      "0 12px 30px rgba(22, 163, 74, 0.4)",
+                      "0 4px 6px rgba(0, 0, 0, 0.1)",
+                    ],
+                  } : {}}
+                  transition={{
+                    duration: 0.5,
+                    ease: "easeOut",
+                  }}
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Download Brochure</span>
-                </a>
+                  {/* Ripple effect overlay for mobile */}
+                  {isDownloadAnimating && (
+                    <>
+                      <motion.span
+                        className="absolute inset-0 rounded-full bg-white"
+                        initial={{ scale: 0, opacity: 0.6 }}
+                        animate={{ scale: 2.5, opacity: 0 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                      />
+                      <motion.span
+                        className="absolute inset-0 rounded-full bg-white"
+                        initial={{ scale: 0, opacity: 0.4 }}
+                        animate={{ scale: 2.5, opacity: 0 }}
+                        transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                      />
+                    </>
+                  )}
+                  
+                  {/* Button content */}
+                  <Download className="w-4 h-4 relative z-10" />
+                  <span className="relative z-10">Download Brochure</span>
+                </motion.button>
               </motion.div>
               
               <motion.div

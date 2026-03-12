@@ -217,6 +217,7 @@ export const SOCIAL_LINKS = {
   whatsapp: 'https://wa.me/918511658600',
   whatsappBase: 'https://wa.me/',
   phone: 'https://wa.me/918511658600',
+  instagram: 'https://www.instagram.com/vayu_packaging_solutions?igsh=bnJsN2EzZTdja3Nn',
 } as const;
 
 // ============================================
