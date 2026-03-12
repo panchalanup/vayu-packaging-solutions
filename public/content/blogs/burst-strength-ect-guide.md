@@ -547,4 +547,4 @@ Understanding BS and ECT is just the first step. At Vayu Packaging Solutions, we
 
 ---
 
-*Questions about BS or ECT ratings? Need help interpreting test results? Contact our team at info.vayupackaging@gmail.com or call +91 85116 58600.*
+*Questions about BS or ECT ratings? Need help interpreting test results? Contact our team at vayu.packagingsolutions@gmail.com or call +91 85116 58600.*

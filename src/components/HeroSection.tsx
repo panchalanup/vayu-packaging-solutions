@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { HERO_CONTENT } from "@/constants";
 import { HERO_IMAGES } from "@/constants/images";
 
@@ -123,19 +124,19 @@ const HeroSection = () => {
             transition={{ delay: 0.65 }}
             className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4"
           >
-            <a
-              href="#contact"
+            <Link
+              to="/compare-quote"
               className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-sm sm:text-base font-semibold hover:brightness-110 transition-all touch-manipulation"
             >
               {HERO_CONTENT.primaryCTA}
               <ArrowUpRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </a>
-            <a
-              href="#services"
+            </Link>
+            <Link
+              to="/services"
               className="inline-flex items-center justify-center gap-2 border border-white/30 text-white px-6 sm:px-7 py-3 sm:py-3.5 rounded-full text-sm sm:text-base font-semibold hover:bg-white/10 transition-all touch-manipulation"
             >
               {HERO_CONTENT.secondaryCTA}
-            </a>
+            </Link>
           </motion.div>
         </div>
       </div>

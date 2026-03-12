@@ -3,6 +3,8 @@
  * Central configuration for all SEO-related settings
  */
 
+import { CONTACT_INFO } from '@/constants';
+
 export const SEO_CONFIG = {
   // Site Information
   siteName: 'Vayu Packaging Solutions',
@@ -24,7 +26,7 @@ export const SEO_CONFIG = {
   
   // Contact Information
   telephone: '+91 85116 58600',
-  email: 'info.vayupackaging@gmail.com',
+  email: CONTACT_INFO.email,
   whatsapp: '+91 85116 58600',
   
   // Address

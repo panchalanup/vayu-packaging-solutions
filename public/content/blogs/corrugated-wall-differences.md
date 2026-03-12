@@ -440,4 +440,4 @@ Choosing the right wall construction is critical for protecting your products an
 
 ---
 
-*Questions about wall construction? Need help choosing the right specification? Contact our team at info.vayupackaging@gmail.com or call +91 85116 58600.*
+*Questions about wall construction? Need help choosing the right specification? Contact our team at vayu.packagingsolutions@gmail.com or call +91 85116 58600.*

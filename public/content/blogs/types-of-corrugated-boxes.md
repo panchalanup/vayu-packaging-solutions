@@ -365,4 +365,4 @@ Choosing the right corrugated box type doesn't have to be complicated. At Vayu P
 
 ---
 
-*Have questions about box types? Want to discuss your specific packaging needs? Reach out to our team at info.vayupackaging@gmail.com or call +91 85116 58600.*
+*Have questions about box types? Want to discuss your specific packaging needs? Reach out to our team at vayu.packagingsolutions@gmail.com or call +91 85116 58600.*
