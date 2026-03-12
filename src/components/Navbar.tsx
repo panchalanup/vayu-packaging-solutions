@@ -5,6 +5,8 @@ import { Menu, X, ArrowUpRight, Phone, ChevronDown, Sparkles, Download } from "l
 import { LOGO_IMAGES } from "@/constants/images";
 import { TOOLS_MENU, CONTACT_INFO } from "@/constants";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import confetti from "canvas-confetti";
+import { useEventTracker } from "@/hooks/useAnalytics";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -20,12 +22,61 @@ const Navbar = () => {
   const [toolsOpen, setToolsOpen] = useState(false);
   const [isCallButtonHovered, setIsCallButtonHovered] = useState(false);
   const location = useLocation();
+  const { trackEvent } = useEventTracker();
 
   // Close mobile menu when route changes
   useEffect(() => {
     setOpen(false);
     setToolsOpen(false);
   }, [location.pathname]);
+
+  // Handle download with celebration effect
+  const handleDownloadClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // Track analytics event
+    trackEvent('brochure_download', {
+      type: 'download',
+      location: 'navbar',
+      device: window.innerWidth < 768 ? 'mobile' : 'desktop',
+      fileName: 'Vayu-Packaging-Solutions-Brochure.pdf',
+    }, {
+      type: 'button',
+      text: e.currentTarget.textContent || 'Download Brochure',
+      x: e.clientX,
+      y: e.clientY,
+    });
+
+    // Get button position for confetti origin
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (rect.left + rect.width / 2) / window.innerWidth;
+    const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+    // Trigger confetti celebration
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { x, y },
+      colors: ['#16a34a', '#15803d', '#22c55e', '#ffd700', '#ffffff'],
+      gravity: 1.2,
+      ticks: 200,
+    });
+
+    // Optional: Add a second burst for extra celebration
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { x, y },
+        colors: ['#16a34a', '#15803d', '#22c55e', '#ffd700', '#ffffff'],
+        gravity: 1.2,
+      });
+    }, 200);
+
+    // Trigger download
+    const link = document.createElement('a');
+    link.href = '/brochures/Vayu-Packaging-Solutions-Company-Brochure.pdf';
+    link.download = 'Vayu-Packaging-Solutions-Brochure.pdf';
+    link.click();
+  };
 
   return (
     <nav className="relative bg-white shadow-sm border-b border-gray-200">
@@ -134,15 +185,14 @@ const Navbar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <a
-                  href="/brochures/Vayu-Packaging-Solutions-Company-Brochure.pdf"
-                  download="Vayu-Packaging-Solutions-Brochure.pdf"
+                <button
+                  onClick={handleDownloadClick}
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 lg:px-5 py-2.5 lg:py-3 rounded-full text-sm lg:text-base font-semibold hover:shadow-lg hover:shadow-green-600/25 hover:scale-105 transition-all duration-200"
                   aria-label="Download company brochure"
                 >
                   <Download className="w-4 h-4" />
                   <span className="hidden lg:inline">Brochure</span>
-                </a>
+                </button>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Download the brochure for future reference</p>
@@ -295,16 +345,17 @@ const Navbar = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: (navLinks.length + TOOLS_MENU.length) * 0.05 }}
               >
-                <a
-                  href="/brochures/Vayu-Packaging-Solutions-Company-Brochure.pdf"
-                  download="Vayu-Packaging-Solutions-Brochure.pdf"
-                  onClick={() => setOpen(false)}
-                  className="mt-2 flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-green-600/25 transition-all touch-manipulation min-h-[44px]"
+                <button
+                  onClick={(e) => {
+                    handleDownloadClick(e);
+                    setOpen(false);
+                  }}
+                  className="mt-2 flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-green-600/25 transition-all touch-manipulation min-h-[44px] w-full"
                   aria-label="Download company brochure"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download Brochure</span>
-                </a>
+                </button>
               </motion.div>
               
               <motion.div
