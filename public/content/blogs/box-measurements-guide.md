@@ -569,4 +569,4 @@ Measuring boxes correctly is crucial for protecting your products and controllin
 
 ---
 
-*Questions about box measurements? Need help calculating dimensions? Contact our team at info.vayupackaging@gmail.com or call +91 85116 58600.*
+*Questions about box measurements? Need help calculating dimensions? Contact our team at vayu.packagingsolutions@gmail.com or call +91 85116 58600.*

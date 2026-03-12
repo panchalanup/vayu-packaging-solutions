@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowUpRight, Phone, ChevronDown, Sparkles } from "lucide-react";
+import { Menu, X, ArrowUpRight, Phone, ChevronDown, Sparkles, Download } from "lucide-react";
 import { LOGO_IMAGES } from "@/constants/images";
-import { TOOLS_MENU } from "@/constants";
+import { TOOLS_MENU, CONTACT_INFO } from "@/constants";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -17,6 +18,7 @@ const navLinks = [
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [isCallButtonHovered, setIsCallButtonHovered] = useState(false);
   const location = useLocation();
 
   // Close mobile menu when route changes
@@ -127,17 +129,70 @@ const Navbar = () => {
               )}
             </AnimatePresence>
           </div>
+          
+          {/* Download Brochure Button */}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href="/brochures/Vayu-Packaging-Solutions-Company-Brochure.pdf"
+                  download="Vayu-Packaging-Solutions-Brochure.pdf"
+                  className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 lg:px-5 py-2.5 lg:py-3 rounded-full text-sm lg:text-base font-semibold hover:shadow-lg hover:shadow-green-600/25 hover:scale-105 transition-all duration-200"
+                  aria-label="Download company brochure"
+                >
+                  <Download className="w-4 h-4" />
+                  <span className="hidden lg:inline">Brochure</span>
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Download the brochure for future reference</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
-        {/* Call to Action Button */}
-        <Link
-          to="/contact"
-          className="hidden md:inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 lg:px-6 py-2.5 lg:py-3 rounded-full text-sm lg:text-base font-semibold hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transition-all duration-200"
+        {/* Call to Action Button with Shimmer/Shine Effect */}
+        <motion.a
+          href={`tel:${CONTACT_INFO.phone.replace(/\s/g, '')}`}
+          className="hidden md:inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 lg:px-6 py-2.5 lg:py-3 rounded-full text-sm lg:text-base font-semibold relative overflow-hidden group"
+          onMouseEnter={() => setIsCallButtonHovered(true)}
+          onMouseLeave={() => setIsCallButtonHovered(false)}
+          whileHover={{
+            scale: 1.05,
+          }}
+          animate={{
+            boxShadow: isCallButtonHovered
+              ? "0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3)"
+              : "0 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+          transition={{
+            duration: 0.3,
+          }}
         >
-          <Phone className="w-4 h-4" />
-          <span>Call us now</span>
-          <ArrowUpRight className="w-4 h-4" />
-        </Link>
+          {/* Shimmer/Shine Overlay - Only visible on hover */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+            initial={{ x: "-100%", opacity: 0 }}
+            animate={{
+              x: isCallButtonHovered ? "100%" : "-100%",
+              opacity: isCallButtonHovered ? 1 : 0,
+            }}
+            transition={{
+              duration: 0.8,
+              ease: "easeInOut",
+            }}
+            style={{
+              width: "100%",
+            }}
+          />
+          
+          {/* Button Content */}
+          <span className="relative z-10 flex items-center gap-2">
+            <Phone className="w-4 h-4" />
+            <span>Call us now</span>
+            <ArrowUpRight className="w-4 h-4" />
+          </span>
+        </motion.a>
 
         {/* Mobile Menu Button */}
         <button
@@ -233,20 +288,39 @@ const Navbar = () => {
                   </Link>
                 </motion.div>
               ))}
+              
+              {/* Download Brochure Button - Mobile */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navLinks.length * 0.05 }}
+                transition={{ delay: (navLinks.length + TOOLS_MENU.length) * 0.05 }}
               >
-                <Link
-                  to="/contact"
+                <a
+                  href="/brochures/Vayu-Packaging-Solutions-Company-Brochure.pdf"
+                  download="Vayu-Packaging-Solutions-Brochure.pdf"
                   onClick={() => setOpen(false)}
-                  className="mt-4 flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full text-sm font-semibold hover:shadow-lg transition-all"
+                  className="mt-2 flex items-center justify-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-green-600/25 transition-all touch-manipulation min-h-[44px]"
+                  aria-label="Download company brochure"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download Brochure</span>
+                </a>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: (navLinks.length + TOOLS_MENU.length + 1) * 0.05 }}
+              >
+                <a
+                  href={`tel:${CONTACT_INFO.phone.replace(/\s/g, '')}`}
+                  onClick={() => setOpen(false)}
+                  className="mt-2 flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full text-sm font-semibold hover:shadow-lg transition-all touch-manipulation min-h-[44px]"
                 >
                   <Phone className="w-4 h-4" />
                   <span>Call us now</span>
                   <ArrowUpRight className="w-4 h-4" />
-                </Link>
+                </a>
               </motion.div>
             </div>
           </motion.div>

@@ -558,4 +558,4 @@ Choosing between virgin and recycled kraft paper shouldn't be guesswork. At Vayu
 
 ---
 
-*Questions about kraft paper grades? Need help choosing virgin vs recycled? Contact our team at info.vayupackaging@gmail.com or call +91 85116 58600.*
+*Questions about kraft paper grades? Need help choosing virgin vs recycled? Contact our team at vayu.packagingsolutions@gmail.com or call +91 85116 58600.*

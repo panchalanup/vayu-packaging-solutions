@@ -94,7 +94,7 @@ export const PACKAGING_TOOL_FAQS: ToolFAQItem[] = [
   },
   {
     question: 'Can I get quotes for bulk orders through the tool?',
-    answer: 'Yes! The tool provides estimated pricing per unit and total costs. You can download supplier-ready specifications as PDF/CSV or share via WhatsApp directly with manufacturers. For bulk orders above 500 boxes, contact us at +91 85116 58600 or info.vayupackaging@gmail.com for volume discounts and custom solutions.',
+    answer: 'Yes! The tool provides estimated pricing per unit and total costs. You can download supplier-ready specifications as PDF/CSV or share via WhatsApp directly with manufacturers. For bulk orders above 500 boxes, contact us at +91 85116 58600 or vayu.packagingsolutions@gmail.com for volume discounts and custom solutions.',
   },
   {
     question: 'What packaging is best for fragile items?',

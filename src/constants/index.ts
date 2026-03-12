@@ -8,7 +8,7 @@
 // ============================================
 export const CONTACT_INFO = {
   phone: '+91 85116 58600',
-  email: 'info.vayupackaging@gmail.com',
+  email: 'vayu.packagingsolutions@gmail.com',
   address: 'Mondeal Heights, Ahmedabad',
   addressFull: 'Mondeal Heights, SG Highway Ahmedabad, Gujarat 380015',
 } as const;
@@ -32,7 +32,7 @@ export const STATS = {
     label: 'Years of Experience',
   },
   happyClients: {
-    value: '350+',
+    value: '250+',
     label: 'Happy Clients',
   },
   boxesDelivered: {

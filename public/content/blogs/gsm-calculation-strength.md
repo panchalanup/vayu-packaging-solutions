@@ -489,4 +489,4 @@ Choosing the optimal GSM specification can save you thousands in material costs 
 
 ---
 
-*Questions about GSM specifications? Need test certificates or samples? Contact our team at info.vayupackaging@gmail.com or call +91 85116 58600.*
+*Questions about GSM specifications? Need test certificates or samples? Contact our team at vayu.packagingsolutions@gmail.com or call +91 85116 58600.*

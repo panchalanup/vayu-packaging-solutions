@@ -33,7 +33,7 @@ export const PAGE_METADATA: Record<string, PageMeta> = {
   
   about: {
     title: 'About Us - Trusted Corrugated Box Supplier Since 2020',
-    description: 'Vayu Packaging Solutions: 5+ years of excellence in corrugated box distribution. Serving 350+ clients across 50+ cities in India. BIS certified quality, on-time delivery guaranteed.',
+    description: 'Vayu Packaging Solutions: 5+ years of excellence in corrugated box distribution. Serving 250+ clients across 50+ cities in India. BIS certified quality, on-time delivery guaranteed.',
     keywords: [
       'about Vayu Packaging',
       'corrugated box company India',
@@ -97,7 +97,7 @@ export const PAGE_METADATA: Record<string, PageMeta> = {
   
   contact: {
     title: 'Get Quote - Corrugated Box Supplier Ahmedabad | Contact Us',
-    description: 'Contact Vayu Packaging for custom corrugated box quotes. Call +91 85116 58600 or email info.vayupackaging@gmail.com. Minimum 500 boxes. Fast response within 24 hours.',
+    description: 'Contact Vayu Packaging for custom corrugated box quotes. Call +91 85116 58600 or email vayu.packagingsolutions@gmail.com. Minimum 500 boxes. Fast response within 24 hours.',
     keywords: [
       'corrugated box quote India',
       'packaging supplier contact',

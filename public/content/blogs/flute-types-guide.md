@@ -485,4 +485,4 @@ Choosing the right flute type can dramatically improve your packaging performanc
 
 ---
 
-*Questions about flute types? Need help selecting the right specification? Contact our team at info.vayupackaging@gmail.com or call +91 85116 58600.*
+*Questions about flute types? Need help selecting the right specification? Contact our team at vayu.packagingsolutions@gmail.com or call +91 85116 58600.*
