@@ -3,13 +3,15 @@
  * Interactive tool for designing custom packaging boxes
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
 import Layout from '@/components/Layout';
 import PageTransition from '@/components/PageTransition';
 import MetaTags from '@/components/SEO/MetaTags';
 import Canvas3D from '@/components/BoxDesigner/Canvas3D';
 import RealisticBox3D from '@/components/BoxDesigner/RealisticBox3D';
+import FoldControl from '@/components/BoxDesigner/FoldControl';
 import TemplateSelector from '@/components/BoxDesigner/TemplateSelector';
 import DimensionInputs from '@/components/BoxDesigner/DimensionInputs';
 import PlySelector from '@/components/BoxDesigner/PlySelector';
@@ -18,6 +20,7 @@ import GraphicsUploader from '@/components/BoxDesigner/GraphicsUploader';
 import TextEditor from '@/components/BoxDesigner/TextEditor';
 import { BoxDimensions, BoxTemplate, PlyType, FaceImage, TextElement, BoxFace } from '@/types/boxDesigner';
 import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
+import { calculateFoldState } from '@/lib/boxDesigner/foldAnimation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -39,8 +42,34 @@ export default function BoxDesigner() {
   const [selectedFace, setSelectedFace] = useState<BoxFace | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
   const [controlMode, setControlMode] = useState<ControlMode>('rotate');
+  
+  // Fold animation state
+  const [foldPercentage, setFoldPercentage] = useState(100); // Start fully open
+  const [animatedFoldPercentage, setAnimatedFoldPercentage] = useState(100);
 
   const currentPlyConfig = PLY_OPTIONS.find(p => p.id === ply)!;
+
+  // Smooth GSAP animation for fold percentage changes
+  useEffect(() => {
+    const animation = gsap.to({ value: animatedFoldPercentage }, {
+      value: foldPercentage,
+      duration: 1.0, // Increased for smoother feel
+      ease: 'power3.out', // Smoother easing curve
+      onUpdate: function() {
+        setAnimatedFoldPercentage(this.targets()[0].value);
+      }
+    });
+
+    return () => {
+      animation.kill();
+    };
+  }, [foldPercentage]);
+
+  // Calculate animation state from fold percentage
+  const animationState = useMemo(() => 
+    calculateFoldState(animatedFoldPercentage),
+    [animatedFoldPercentage]
+  );
 
   // Image handlers
   const handleImageUpload = (face: BoxFace, imageUrl: string, file: File) => {
@@ -303,8 +332,17 @@ export default function BoxDesigner() {
                       length={dimensions.length}
                       depth={dimensions.height}
                       autoRotate={autoRotate}
+                      animationState={animationState}
                     />
                   </Canvas3D>
+                  
+                  {/* Fold Control - Below Canvas */}
+                  <div className="mt-4">
+                    <FoldControl
+                      foldPercentage={foldPercentage}
+                      onFoldChange={setFoldPercentage}
+                    />
+                  </div>
                   
                   {/* Box Info */}
                   <div className="mt-4 grid grid-cols-3 gap-4 text-center">

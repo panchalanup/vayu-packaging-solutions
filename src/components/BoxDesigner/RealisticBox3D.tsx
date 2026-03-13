@@ -22,7 +22,7 @@ interface RealisticBox3DProps {
   length?: number;
   depth?: number;
   autoRotate?: boolean;
-  openingAngle?: number; // 0 to 0.5 * Math.PI (0 = closed, PI/2 = fully open)
+  animationState?: AnimationState; // Complete animation state including flaps
 }
 
 export default function RealisticBox3D({
@@ -30,7 +30,7 @@ export default function RealisticBox3D({
   length = 80,
   depth = 45,
   autoRotate = true,
-  openingAngle = 0.5 * Math.PI, // Fully open by default
+  animationState, // Accept complete animation state
 }: RealisticBox3DProps) {
   const groupRef = useRef<THREE.Group>(null!);
   
@@ -47,10 +47,15 @@ export default function RealisticBox3D({
     [width, length, depth]
   );
 
-  // Animation state
-  const animated = useMemo<AnimationState>(
-    () => ({
-      openingAngle,
+  // Animation state - use provided state or default to fully open
+  const animated = useMemo<AnimationState>(() => {
+    if (animationState) {
+      return animationState;
+    }
+    
+    // Default: fully open box with no flap folding
+    return {
+      openingAngle: 0.5 * Math.PI,
       flapAngles: {
         backHalf: {
           width: { top: 0, bottom: 0 },
@@ -61,9 +66,8 @@ export default function RealisticBox3D({
           length: { top: 0, bottom: 0 },
         },
       },
-    }),
-    [openingAngle]
-  );
+    };
+  }, [animationState]);
 
   // Create box meshes structure
   const meshes = useMemo<BoxMeshes>(() => {
