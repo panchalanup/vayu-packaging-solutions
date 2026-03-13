@@ -15,6 +15,7 @@ import Contact from "./pages/Contact";
 import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
 import CompareQuote from "./pages/CompareQuote";
+import BoxDesigner from "./pages/BoxDesigner";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const AnimatedRoutes = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/products" element={<Products />} />
         <Route path="/compare-quote" element={<CompareQuote />} />
+        <Route path="/box-designer" element={<BoxDesigner />} />
         <Route path="/blogs" element={<Blogs />} />
         <Route path="/blogs/:slug" element={<BlogPost />} />
         <Route path="/contact" element={<Contact />} />
