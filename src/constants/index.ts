@@ -230,6 +230,12 @@ export const TOOL_INFO = {
     description: 'Find the perfect packaging solution for your products',
     tagline: 'Get expert-verified packaging recommendations instantly',
   },
+  boxDesigner: {
+    name: '3D Box Designer',
+    path: '/box-designer',
+    description: 'Design and visualize custom boxes in 3D',
+    tagline: 'Create your perfect box design with interactive 3D visualization',
+  },
 } as const;
 
 export const TOOLS_MENU = [
@@ -238,5 +244,13 @@ export const TOOLS_MENU = [
     path: TOOL_INFO.packagingFinder.path,
     description: TOOL_INFO.packagingFinder.description,
     isNew: true,
+    icon: 'Sparkles',
+  },
+  {
+    name: TOOL_INFO.boxDesigner.name,
+    path: TOOL_INFO.boxDesigner.path,
+    description: TOOL_INFO.boxDesigner.description,
+    isNew: true,
+    icon: 'Box',
   },
 ] as const;

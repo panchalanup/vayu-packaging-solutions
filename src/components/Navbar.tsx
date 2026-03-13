@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowUpRight, Phone, ChevronDown, Sparkles, Download } from "lucide-react";
+import { Menu, X, ArrowUpRight, Phone, ChevronDown, Sparkles, Download, Box } from "lucide-react";
 import { LOGO_IMAGES } from "@/constants/images";
 import { TOOLS_MENU, CONTACT_INFO } from "@/constants";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -230,27 +230,33 @@ const Navbar = () => {
                   transition={{ duration: 0.2 }}
                   className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-50"
                 >
-                  {TOOLS_MENU.map((tool) => (
-                    <Link
-                      key={tool.path}
-                      to={tool.path}
-                      className="block px-4 py-3 hover:bg-primary/5 transition-colors border-b border-gray-100 last:border-b-0"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <div className="font-semibold text-gray-900 flex items-center gap-2">
-                            {tool.name}
-                            {tool.isNew && (
-                              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
-                                New
-                              </span>
-                            )}
+                  {TOOLS_MENU.map((tool) => {
+                    const ToolIcon = tool.icon === 'Box' ? Box : Sparkles;
+                    return (
+                      <Link
+                        key={tool.path}
+                        to={tool.path}
+                        className="block px-4 py-3 hover:bg-primary/5 transition-colors border-b border-gray-100 last:border-b-0"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-start gap-3">
+                            <ToolIcon className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                            <div>
+                              <div className="font-semibold text-gray-900 flex items-center gap-2">
+                                {tool.name}
+                                {tool.isNew && (
+                                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
+                                    New
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">{tool.description}</p>
+                            </div>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">{tool.description}</p>
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -426,34 +432,37 @@ const Navbar = () => {
               ))}
               
               {/* Tools Menu - Mobile */}
-              {TOOLS_MENU.map((tool, index) => (
-                <motion.div
-                  key={tool.path}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: (navLinks.length + index) * 0.05 }}
-                >
-                  <Link
-                    to={tool.path}
-                    onClick={() => setOpen(false)}
-                    className={`block py-3 px-4 rounded-lg transition-all ${
-                      location.pathname === tool.path
-                        ? "bg-primary text-primary-foreground font-semibold shadow-md"
-                        : "bg-gradient-to-r from-primary/10 to-primary/5 text-primary font-semibold hover:shadow-md"
-                    }`}
+              {TOOLS_MENU.map((tool, index) => {
+                const ToolIcon = tool.icon === 'Box' ? Box : Sparkles;
+                return (
+                  <motion.div
+                    key={tool.path}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: (navLinks.length + index) * 0.05 }}
                   >
-                    <span className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4" />
-                      {tool.name}
-                      {tool.isNew && (
-                        <span className="inline-flex items-center gap-1 text-xs bg-primary/20 px-2 py-0.5 rounded-full">
-                          New
-                        </span>
-                      )}
-                    </span>
-                  </Link>
-                </motion.div>
-              ))}
+                    <Link
+                      to={tool.path}
+                      onClick={() => setOpen(false)}
+                      className={`block py-3 px-4 rounded-lg transition-all ${
+                        location.pathname === tool.path
+                          ? "bg-primary text-primary-foreground font-semibold shadow-md"
+                          : "bg-gradient-to-r from-primary/10 to-primary/5 text-primary font-semibold hover:shadow-md"
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <ToolIcon className="w-4 h-4" />
+                        {tool.name}
+                        {tool.isNew && (
+                          <span className="inline-flex items-center gap-1 text-xs bg-primary/20 px-2 py-0.5 rounded-full">
+                            New
+                          </span>
+                        )}
+                      </span>
+                    </Link>
+                  </motion.div>
+                );
+              })}
               
               {/* Download Brochure Button - Mobile with Enhanced Animation */}
               <motion.div
