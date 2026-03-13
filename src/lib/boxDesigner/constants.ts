@@ -31,6 +31,42 @@ export const BOX_TEMPLATES: BoxTemplateConfig[] = [
   },
 ];
 
+export type FluteType = 'A' | 'B' | 'C' | 'E';
+
+export interface FluteSpec {
+  type: FluteType;
+  height: number;  // mm
+  spacing: number; // flutes per foot
+  description: string;
+}
+
+export const FLUTE_TYPES: Record<FluteType, FluteSpec> = {
+  'A': {
+    type: 'A',
+    height: 4.8,
+    spacing: 33,
+    description: 'A-flute: Excellent cushioning, good stacking strength',
+  },
+  'B': {
+    type: 'B',
+    height: 2.4,
+    spacing: 47,
+    description: 'B-flute: Good printing surface, space-efficient',
+  },
+  'C': {
+    type: 'C',
+    height: 3.6,
+    spacing: 39,
+    description: 'C-flute: Most common, balanced performance',
+  },
+  'E': {
+    type: 'E',
+    height: 1.2,
+    spacing: 90,
+    description: 'E-flute: Thin profile, excellent print quality',
+  },
+};
+
 export const PLY_OPTIONS: PlyConfig[] = [
   {
     id: '3-ply',
@@ -38,6 +74,9 @@ export const PLY_OPTIONS: PlyConfig[] = [
     thickness: 2.5,
     strength: 'Light duty - Up to 5kg',
     color: '#D4A574',
+    fluteType: 'E',
+    roughness: 0.8,
+    metalness: 0.05,
   },
   {
     id: '5-ply',
@@ -45,6 +84,9 @@ export const PLY_OPTIONS: PlyConfig[] = [
     thickness: 4.0,
     strength: 'Medium duty - Up to 15kg',
     color: '#C89B5C',
+    fluteType: 'C',
+    roughness: 0.75,
+    metalness: 0.08,
   },
   {
     id: '7-ply',
@@ -52,6 +94,9 @@ export const PLY_OPTIONS: PlyConfig[] = [
     thickness: 6.0,
     strength: 'Heavy duty - Up to 30kg',
     color: '#B88A47',
+    fluteType: 'B',
+    roughness: 0.7,
+    metalness: 0.1,
   },
 ];
 

@@ -13,7 +13,10 @@ import Box3DModel from '@/components/BoxDesigner/Box3DModel';
 import TemplateSelector from '@/components/BoxDesigner/TemplateSelector';
 import DimensionInputs from '@/components/BoxDesigner/DimensionInputs';
 import PlySelector from '@/components/BoxDesigner/PlySelector';
-import { BoxDimensions, BoxTemplate, PlyType, FaceImage } from '@/types/boxDesigner';
+import MaterialPreview from '@/components/BoxDesigner/MaterialPreview';
+import GraphicsUploader from '@/components/BoxDesigner/GraphicsUploader';
+import TextEditor from '@/components/BoxDesigner/TextEditor';
+import { BoxDimensions, BoxTemplate, PlyType, FaceImage, TextElement, BoxFace } from '@/types/boxDesigner';
 import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -30,10 +33,45 @@ export default function BoxDesigner() {
   const [dimensions, setDimensions] = useState<BoxDimensions>(DEFAULT_DIMENSIONS);
   const [ply, setPly] = useState<PlyType>(DEFAULT_PLY);
   const [faceImages, setFaceImages] = useState<FaceImage[]>([]);
-  const [selectedFace, setSelectedFace] = useState<string | null>(null);
+  const [textElements, setTextElements] = useState<TextElement[]>([]);
+  const [selectedFace, setSelectedFace] = useState<BoxFace | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
 
   const currentPlyConfig = PLY_OPTIONS.find(p => p.id === ply)!;
+
+  // Image handlers
+  const handleImageUpload = (face: BoxFace, imageUrl: string, file: File) => {
+    const newImage: FaceImage = {
+      face,
+      imageUrl,
+      imageFile: file,
+      position: { x: 0.5, y: 0.5 },
+      scale: 0.8,
+      rotation: 0,
+    };
+
+    setFaceImages(prev => {
+      const filtered = prev.filter(img => img.face !== face);
+      return [...filtered, newImage];
+    });
+  };
+
+  const handleImageRemove = (face: BoxFace) => {
+    setFaceImages(prev => prev.filter(img => img.face !== face));
+  };
+
+  // Text handlers
+  const handleTextAdd = (element: Omit<TextElement, 'id'>) => {
+    const newText: TextElement = {
+      ...element,
+      id: `text-${Date.now()}-${Math.random()}`,
+    };
+    setTextElements(prev => [...prev, newText]);
+  };
+
+  const handleTextRemove = (id: string) => {
+    setTextElements(prev => prev.filter(t => t.id !== id));
+  };
 
   const handleReset = () => {
     setTemplate(DEFAULT_TEMPLATE);
@@ -143,10 +181,14 @@ export default function BoxDesigner() {
                     selectedPly={ply}
                     onChange={setPly}
                   />
-                  
-                  <Separator />
-                  
-                  {/* Actions */}
+                </Card>
+
+                {/* Material Preview */}
+                <MaterialPreview plyConfig={currentPlyConfig} />
+
+                {/* Actions Card */}
+                <Card className="p-6 space-y-3">
+                  <h4 className="font-semibold text-sm mb-3">Actions</h4>
                   <div className="space-y-3">
                     <Button
                       onClick={handleGetQuote}
@@ -221,6 +263,7 @@ export default function BoxDesigner() {
                       dimensions={dimensions}
                       plyConfig={currentPlyConfig}
                       faceImages={faceImages}
+                      textElements={textElements}
                       selectedFace={selectedFace}
                       onFaceClick={setSelectedFace}
                       autoRotate={autoRotate}
@@ -245,6 +288,23 @@ export default function BoxDesigner() {
                     </div>
                   </div>
                 </Card>
+
+                {/* Graphics & Text Customization */}
+                <div className="grid md:grid-cols-2 gap-6 mt-6">
+                  <GraphicsUploader
+                    selectedFace={selectedFace}
+                    faceImages={faceImages}
+                    onImageUpload={handleImageUpload}
+                    onImageRemove={handleImageRemove}
+                  />
+
+                  <TextEditor
+                    selectedFace={selectedFace}
+                    textElements={textElements}
+                    onTextAdd={handleTextAdd}
+                    onTextRemove={handleTextRemove}
+                  />
+                </div>
               </motion.div>
             </div>
 

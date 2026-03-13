@@ -23,6 +23,18 @@ export interface FaceImage {
   rotation: number;                     // 0-360 degrees
 }
 
+export interface TextElement {
+  id: string;
+  face: BoxFace;
+  text: string;
+  font: string;
+  size: number;                         // 10-200pt
+  color: string;                        // HEX color
+  position: { x: number; y: number };  // 0-1 normalized coordinates
+  rotation: number;                     // 0-360 degrees
+  align: 'left' | 'center' | 'right';
+}
+
 export interface BoxTemplateConfig {
   id: BoxTemplate;
   name: string;
@@ -37,6 +49,9 @@ export interface PlyConfig {
   strength: string;
   color: string;
   textureUrl?: string;
+  fluteType?: 'A' | 'B' | 'C' | 'E';
+  roughness?: number;   // 0-1 for PBR material
+  metalness?: number;   // 0-1 for PBR material
 }
 
 export interface BoxDesign {
