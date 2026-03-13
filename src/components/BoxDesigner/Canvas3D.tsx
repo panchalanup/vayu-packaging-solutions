@@ -35,8 +35,8 @@ export default function Canvas3D({ children, controlMode = 'rotate' }: Canvas3DP
         {/* Scene Configuration */}
         <SceneSetup />
         
-        {/* Camera - centered position for better initial view */}
-        <PerspectiveCamera makeDefault position={[70, 45, 85]} fov={50} />
+        {/* Camera - closer position for better zoom and visibility */}
+        <PerspectiveCamera makeDefault position={[15, 45, 60]} fov={45} />
         
         {/* Enhanced Lighting Setup for Clear Visibility */}
         {/* Ambient light - increased for better base illumination */}
@@ -102,11 +102,11 @@ export default function Canvas3D({ children, controlMode = 'rotate' }: Canvas3DP
           enablePan={controlMode === 'pan'}
           enableZoom={true}
           enableRotate={controlMode === 'rotate'}
-          minDistance={30}
-          maxDistance={200}
+          minDistance={25}
+          maxDistance={150}
           maxPolarAngle={Math.PI}
           minPolarAngle={0}
-          target={[0, 22.5, 0]}
+          target={[0, 5, 0]}
           enableDamping
           dampingFactor={0.08}
           mouseButtons={{
