@@ -9,7 +9,7 @@ import Layout from '@/components/Layout';
 import PageTransition from '@/components/PageTransition';
 import MetaTags from '@/components/SEO/MetaTags';
 import Canvas3D from '@/components/BoxDesigner/Canvas3D';
-import Box3DModel from '@/components/BoxDesigner/Box3DModel';
+import RealisticBox3D from '@/components/BoxDesigner/RealisticBox3D';
 import TemplateSelector from '@/components/BoxDesigner/TemplateSelector';
 import DimensionInputs from '@/components/BoxDesigner/DimensionInputs';
 import PlySelector from '@/components/BoxDesigner/PlySelector';
@@ -21,9 +21,11 @@ import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS } from '
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, FileText, RotateCcw, Sparkles } from 'lucide-react';
+import { Download, FileText, RotateCcw, Sparkles, RotateCw, Hand, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+
+type ControlMode = 'rotate' | 'pan';
 
 export default function BoxDesigner() {
   const navigate = useNavigate();
@@ -36,6 +38,7 @@ export default function BoxDesigner() {
   const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [selectedFace, setSelectedFace] = useState<BoxFace | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
+  const [controlMode, setControlMode] = useState<ControlMode>('rotate');
 
   const currentPlyConfig = PLY_OPTIONS.find(p => p.id === ply)!;
 
@@ -227,9 +230,9 @@ export default function BoxDesigner() {
                     💡 How to use:
                   </h4>
                   <ul className="text-xs text-blue-800 space-y-1">
-                    <li>• Drag to rotate the box</li>
+                    <li>• Switch between Rotate & Pan modes</li>
                     <li>• Scroll to zoom in/out</li>
-                    <li>• Click faces to select them</li>
+                    <li>• View from any angle (360°)</li>
                     <li>• Adjust dimensions in real-time</li>
                   </ul>
                 </Card>
@@ -246,26 +249,59 @@ export default function BoxDesigner() {
                     <div>
                       <h3 className="font-semibold text-lg">3D Preview</h3>
                       <p className="text-xs text-muted-foreground">
-                        {selectedFace ? `Selected: ${selectedFace}` : 'Click a face to select'}
+                        {controlMode === 'rotate' ? '🔄 Drag to rotate' : '✋ Drag to move position'}
                       </p>
                     </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => setAutoRotate(!autoRotate)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        {autoRotate ? 'Stop' : 'Rotate'}
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* Control Mode Buttons */}
+                  <div className="mb-3 flex gap-2">
                     <Button
-                      onClick={() => setAutoRotate(!autoRotate)}
+                      onClick={() => setControlMode('rotate')}
+                      variant={controlMode === 'rotate' ? 'default' : 'outline'}
+                      size="sm"
+                      className="flex-1"
+                    >
+                      <RotateCw className="w-4 h-4 mr-2" />
+                      Rotate
+                    </Button>
+                    <Button
+                      onClick={() => setControlMode('pan')}
+                      variant={controlMode === 'pan' ? 'default' : 'outline'}
+                      size="sm"
+                      className="flex-1"
+                    >
+                      <Hand className="w-4 h-4 mr-2" />
+                      Pan
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        toast.info('View reset to default');
+                        // Reset will be handled by forcing canvas remount if needed
+                        window.location.reload();
+                      }}
                       variant="outline"
                       size="sm"
+                      title="Reset camera view"
                     >
-                      {autoRotate ? 'Stop' : 'Rotate'}
+                      <Home className="w-4 h-4" />
                     </Button>
                   </div>
                   
-                  <Canvas3D>
-                    <Box3DModel
-                      dimensions={dimensions}
-                      plyConfig={currentPlyConfig}
-                      faceImages={faceImages}
-                      textElements={textElements}
-                      selectedFace={selectedFace}
-                      onFaceClick={setSelectedFace}
+                  <Canvas3D controlMode={controlMode}>
+                    <RealisticBox3D
+                      width={dimensions.width}
+                      length={dimensions.length}
+                      depth={dimensions.height}
                       autoRotate={autoRotate}
                     />
                   </Canvas3D>

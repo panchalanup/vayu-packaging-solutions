@@ -4,85 +4,116 @@
  */
 
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Grid, Environment } from '@react-three/drei';
-import { ReactNode } from 'react';
+import { OrbitControls, PerspectiveCamera, Grid } from '@react-three/drei';
+import { ReactNode, useEffect } from 'react';
+import * as THREE from 'three';
+import { useThree } from '@react-three/fiber';
 
 interface Canvas3DProps {
   children: ReactNode;
+  controlMode?: 'rotate' | 'pan';
 }
 
-export default function Canvas3D({ children }: Canvas3DProps) {
+/**
+ * Scene setup component to configure background and other scene properties
+ */
+function SceneSetup() {
+  const { scene } = useThree();
+  
+  useEffect(() => {
+    // Set a pleasant light gray background color
+    scene.background = new THREE.Color('#f5f5f5');
+  }, [scene]);
+  
+  return null;
+}
+
+export default function Canvas3D({ children, controlMode = 'rotate' }: Canvas3DProps) {
   return (
     <div className="w-full h-[550px] bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-inner">
       <Canvas shadows gl={{ antialias: true, alpha: false }}>
-        {/* Camera */}
-        <PerspectiveCamera makeDefault position={[4, 3, 4]} fov={50} />
+        {/* Scene Configuration */}
+        <SceneSetup />
         
-        {/* Enhanced Lighting for realistic materials */}
-        <ambientLight intensity={0.4} />
+        {/* Camera - centered position for better initial view */}
+        <PerspectiveCamera makeDefault position={[70, 45, 85]} fov={50} />
         
-        {/* Main key light */}
+        {/* Enhanced Lighting Setup for Clear Visibility */}
+        {/* Ambient light - increased for better base illumination */}
+        <ambientLight intensity={1.0} />
+        
+        {/* Hemisphere light for natural sky/ground lighting */}
+        <hemisphereLight
+          color="#ffffff"
+          groundColor="#b8b8b8"
+          intensity={0.6}
+        />
+        
+        {/* Main key light with shadows - increased intensity */}
         <directionalLight
-          position={[10, 10, 5]}
+          position={[50, 100, 50]}
           intensity={1.2}
           castShadow
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
-          shadow-camera-far={50}
-          shadow-camera-left={-10}
-          shadow-camera-right={10}
-          shadow-camera-top={10}
-          shadow-camera-bottom={-10}
-          shadow-bias={-0.0001}
+          shadow-camera-far={500}
+          shadow-camera-left={-100}
+          shadow-camera-right={100}
+          shadow-camera-top={100}
+          shadow-camera-bottom={-100}
         />
         
-        {/* Fill light from opposite side */}
+        {/* Fill light from opposite side - increased intensity */}
         <directionalLight
-          position={[-5, 5, -5]}
+          position={[-30, 50, -30]}
+          intensity={0.7}
+        />
+        
+        {/* Rim light for better depth - increased intensity */}
+        <directionalLight
+          position={[0, 20, -50]}
           intensity={0.5}
         />
         
-        {/* Rim light for edge definition */}
+        {/* Additional side light for better coverage */}
         <directionalLight
-          position={[0, 2, -5]}
+          position={[0, 40, 60]}
           intensity={0.4}
         />
-        
-        {/* Subtle point lights for depth */}
-        <pointLight position={[-10, 5, -5]} intensity={0.3} color="#FFF8E7" />
-        <pointLight position={[10, 3, 10]} intensity={0.2} color="#E8F4FF" />
-        
-        {/* Environment map for realistic reflections */}
-        <Environment preset="warehouse" />
 
-        {/* Grid helper - positioned at origin */}
+        {/* Grid helper - positioned at ground level */}
         <Grid
-          args={[20, 20]}
-          cellSize={1}
-          cellThickness={0.5}
-          cellColor="#cccccc"
-          sectionSize={5}
-          sectionThickness={1}
-          sectionColor="#999999"
-          fadeDistance={30}
+          args={[100, 100]}
+          cellSize={5}
+          cellThickness={0.6}
+          cellColor="#d0d0d0"
+          sectionSize={25}
+          sectionThickness={1.2}
+          sectionColor="#a0a0a0"
+          fadeDistance={150}
           fadeStrength={1}
           followCamera={false}
           infiniteGrid={false}
           position={[0, 0, 0]}
         />
 
-        {/* Orbit Controls - target the box center */}
+        {/* Orbit Controls - mode-based behavior with custom mouse buttons */}
         <OrbitControls
-          enablePan={true}
+          enablePan={controlMode === 'pan'}
           enableZoom={true}
-          enableRotate={true}
-          minDistance={2}
-          maxDistance={20}
-          maxPolarAngle={Math.PI / 1.8}
-          minPolarAngle={Math.PI / 6}
-          target={[0, 1, 0]}
+          enableRotate={controlMode === 'rotate'}
+          minDistance={30}
+          maxDistance={200}
+          maxPolarAngle={Math.PI}
+          minPolarAngle={0}
+          target={[0, 22.5, 0]}
           enableDamping
-          dampingFactor={0.05}
+          dampingFactor={0.08}
+          mouseButtons={{
+            LEFT: controlMode === 'rotate' ? THREE.MOUSE.ROTATE : THREE.MOUSE.PAN,
+            MIDDLE: THREE.MOUSE.DOLLY,
+            RIGHT: controlMode === 'rotate' ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE
+          }}
         />
 
         {/* Children (3D models) */}
