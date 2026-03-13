@@ -17,7 +17,12 @@ import {
   createCardboardMaterial,
   createCardboardMaterialWithIcons,
 } from '@/lib/boxDesigner/realisticBoxGeometry';
-import { createKraftPaperTexture } from '@/lib/boxDesigner/textureLoader';
+import { 
+  createKraftPaperTexture,
+  getAOMap,
+  getRoughnessMap,
+  getEdgeWearMap,
+} from '@/lib/boxDesigner/textureLoader';
 import { createShippingIconsTexture } from '@/lib/boxDesigner/shippingIcons';
 import { CanvasTexture } from 'three';
 
@@ -110,14 +115,23 @@ export default function RealisticBox3D({
     return texture;
   }, [showIcons, plyColor]);
 
+  // Create enhanced textures for realism
+  const aoMap = useMemo(() => getAOMap(), []);
+  const roughnessMapTexture = useMemo(() => getRoughnessMap(0.93), []);
+
   // Create box meshes structure
   const meshes = useMemo<BoxMeshes>(() => {
-    // Base material for all panels without icons
-    const baseMaterial = createCardboardMaterial(null, plyColor);
+    // Base material for all panels without icons - with enhanced realism
+    const baseMaterial = createCardboardMaterial(
+      null, 
+      plyColor, 
+      aoMap, 
+      roughnessMapTexture
+    );
     
     // Material with icons for front panel
     const frontMaterial = textureWithIcons 
-      ? createCardboardMaterialWithIcons(textureWithIcons, plyColor)
+      ? createCardboardMaterial(textureWithIcons, plyColor, aoMap, roughnessMapTexture)
       : baseMaterial;
     
     return {

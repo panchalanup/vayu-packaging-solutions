@@ -30,47 +30,56 @@ function SceneSetup() {
 
 /**
  * Professional studio lighting setup - matches product photography
+ * Enhanced for realistic cardboard rendering with soft shadows
  */
 function StudioLights() {
   return (
     <>
       {/* Main key light - top-front-right (primary illumination) */}
       <directionalLight
-        position={[10, 15, 8]}
-        intensity={1.2}
-        color="#ffffff"
+        position={[12, 18, 10]}
+        intensity={1.4}
+        color="#FFF8F0"
         castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-        shadow-camera-far={100}
-        shadow-camera-left={-20}
-        shadow-camera-right={20}
-        shadow-camera-top={20}
-        shadow-camera-bottom={-20}
-        shadow-bias={-0.0001}
+        shadow-mapSize-width={4096}
+        shadow-mapSize-height={4096}
+        shadow-camera-far={120}
+        shadow-camera-left={-30}
+        shadow-camera-right={30}
+        shadow-camera-top={30}
+        shadow-camera-bottom={-30}
+        shadow-bias={-0.00005}
+        shadow-radius={4}
       />
       
-      {/* Fill light - left side to soften shadows */}
+      {/* Fill light - left side to soften shadows and show texture detail */}
       <directionalLight
-        position={[-8, 10, 5]}
-        intensity={0.4}
-        color="#ffffff"
+        position={[-10, 12, 6]}
+        intensity={0.5}
+        color="#FFF8F0"
       />
       
-      {/* Rim/back light - adds depth and separation */}
+      {/* Rim/back light - adds depth and separation from background */}
       <directionalLight
-        position={[-5, 8, -10]}
-        intensity={0.3}
-        color="#ffffff"
+        position={[-6, 10, -12]}
+        intensity={0.35}
+        color="#FFE4B5"
       />
       
-      {/* Soft top light for even illumination */}
+      {/* Soft top light for even illumination - simulates studio softbox */}
       <pointLight
-        position={[0, 20, 0]}
-        intensity={0.3}
-        color="#ffffff"
-        distance={50}
+        position={[0, 25, 0]}
+        intensity={0.4}
+        color="#FFFFFF"
+        distance={60}
         decay={2}
+      />
+      
+      {/* Subtle ground bounce light - simulates light reflection from floor */}
+      <directionalLight
+        position={[0, -5, 8]}
+        intensity={0.15}
+        color="#F5DEB3"
       />
     </>
   );

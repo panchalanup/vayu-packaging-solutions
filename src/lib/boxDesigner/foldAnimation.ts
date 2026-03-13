@@ -123,6 +123,49 @@ function easeOutCubic(t: number): number {
 }
 
 /**
+ * Spring easing with subtle bounce - simulates cardboard elasticity
+ * Creates a slight overshoot and settle at the end
+ */
+function easeOutBack(t: number): number {
+  const c1 = 1.70158;
+  const c3 = c1 + 1;
+  
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+}
+
+/**
+ * Elastic easing for cardboard resistance
+ * Simulates the progressive resistance when folding cardboard
+ */
+function easeInOutElastic(t: number): number {
+  const c5 = (2 * Math.PI) / 4.5;
+  
+  if (t === 0) return 0;
+  if (t === 1) return 1;
+  
+  if (t < 0.5) {
+    return -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * c5)) / 2;
+  }
+  
+  return (Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * c5)) / 2 + 1;
+}
+
+/**
+ * Physics-based easing with subtle damped oscillation
+ * Simulates real cardboard fold with minimal bounce
+ */
+function easePhysicsSpring(t: number, damping: number = 0.8): number {
+  if (t === 0 || t === 1) return t;
+  
+  // Damped harmonic oscillator
+  const frequency = 1.5;
+  const decay = Math.exp(-damping * 6 * t);
+  const oscillation = Math.cos(frequency * Math.PI * 2 * t);
+  
+  return 1 - (decay * oscillation * 0.05) - (1 - t);
+}
+
+/**
  * Get human-readable fold state description
  */
 export function getFoldStateDescription(percentage: number): string {

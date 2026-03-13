@@ -235,3 +235,150 @@ export function getRoughnessMap(roughness: number): CanvasTexture {
   
   return texture;
 }
+
+/**
+ * Creates an ambient occlusion map for cardboard
+ * Adds depth to corners, edges, and fold areas
+ */
+export function createAmbientOcclusionMap(): CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 1024;
+  const ctx = canvas.getContext('2d')!;
+
+  // Base - fully lit
+  ctx.fillStyle = 'rgb(255, 255, 255)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Add corner occlusion (darker corners)
+  const corners = [
+    { x: 0, y: 0 },
+    { x: canvas.width, y: 0 },
+    { x: 0, y: canvas.height },
+    { x: canvas.width, y: canvas.height }
+  ];
+
+  corners.forEach(corner => {
+    const gradient = ctx.createRadialGradient(corner.x, corner.y, 0, corner.x, corner.y, 300);
+    gradient.addColorStop(0, 'rgba(0, 0, 0, 0.3)');
+    gradient.addColorStop(0.5, 'rgba(0, 0, 0, 0.1)');
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  });
+
+  // Add edge darkening
+  const edgeGradient = ctx.createLinearGradient(0, 0, 0, 80);
+  edgeGradient.addColorStop(0, 'rgba(0, 0, 0, 0.15)');
+  edgeGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+  
+  ctx.fillStyle = edgeGradient;
+  ctx.fillRect(0, 0, canvas.width, 80);
+  ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+
+  const texture = new CanvasTexture(canvas);
+  texture.wrapS = RepeatWrapping;
+  texture.wrapT = RepeatWrapping;
+
+  return texture;
+}
+
+/**
+ * Creates an edge wear map for realistic cardboard damage
+ * Simulates wear on corners and edges
+ */
+export function createEdgeWearMap(intensity: number = 0.5): CanvasTexture {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024;
+  canvas.height = 1024;
+  const ctx = canvas.getContext('2d')!;
+
+  // Base - no wear
+  ctx.fillStyle = 'rgb(255, 255, 255)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Edge wear - concentrated at borders
+  const wearWidth = 60 * intensity;
+  
+  // Top and bottom edges
+  for (let i = 0; i < wearWidth; i++) {
+    const alpha = (wearWidth - i) / wearWidth * 0.4 * intensity;
+    ctx.strokeStyle = `rgba(200, 180, 160, ${alpha})`;
+    ctx.lineWidth = 1;
+    
+    // Add random wear marks
+    for (let x = 0; x < canvas.width; x += 5) {
+      if (Math.random() > 0.7) {
+        ctx.beginPath();
+        ctx.moveTo(x, i);
+        ctx.lineTo(x + Math.random() * 3, i + Math.random() * 3);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(x, canvas.height - i);
+        ctx.lineTo(x + Math.random() * 3, canvas.height - i - Math.random() * 3);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Corner wear - more concentrated
+  const corners = [
+    { x: 0, y: 0 },
+    { x: canvas.width, y: 0 },
+    { x: 0, y: canvas.height },
+    { x: canvas.width, y: canvas.height }
+  ];
+  
+  const cornerSize = 100 * intensity;
+  corners.forEach(corner => {
+    for (let i = 0; i < 30; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * cornerSize;
+      const x = corner.x + Math.cos(angle) * distance;
+      const y = corner.y + Math.sin(angle) * distance;
+      
+      ctx.fillStyle = `rgba(180, 160, 140, ${0.3 * intensity})`;
+      ctx.beginPath();
+      ctx.arc(x, y, Math.random() * 2 + 1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+
+  const texture = new CanvasTexture(canvas);
+  texture.wrapS = RepeatWrapping;
+  texture.wrapT = RepeatWrapping;
+
+  return texture;
+}
+
+/**
+ * Get or create AO map
+ */
+export function getAOMap(): CanvasTexture {
+  const key = 'ao-map';
+  let texture = textureCache.get(key);
+  
+  if (!texture) {
+    texture = createAmbientOcclusionMap();
+    textureCache.set(key, texture);
+  }
+  
+  return texture;
+}
+
+/**
+ * Get or create edge wear map
+ */
+export function getEdgeWearMap(intensity: number = 0.5): CanvasTexture {
+  const key = `edge-wear-${intensity}`;
+  let texture = textureCache.get(key);
+  
+  if (!texture) {
+    texture = createEdgeWearMap(intensity);
+    textureCache.set(key, texture);
+  }
+  
+  return texture;
+}

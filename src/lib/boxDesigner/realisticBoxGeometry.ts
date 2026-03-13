@@ -254,11 +254,13 @@ export function updatePanelsTransform(
 }
 
 /**
- * Creates the cardboard material with optional texture
+ * Creates the cardboard material with optional texture and enhanced realism
  */
 export function createCardboardMaterial(
   texture?: THREE.Texture,
-  color?: string | number
+  color?: string | number,
+  aoMap?: THREE.Texture,
+  roughnessMap?: THREE.Texture
 ): THREE.MeshStandardMaterial {
   const materialColor = color || 0xC9A87C; // Default to kraft tan
   
@@ -268,6 +270,16 @@ export function createCardboardMaterial(
     side: THREE.DoubleSide,
     roughness: 0.93,
     metalness: 0.0,
+    // Enhanced realism properties
+    aoMap: aoMap || null,
+    aoMapIntensity: 0.8,
+    roughnessMap: roughnessMap || null,
+    // Subtle light transmission through cardboard
+    transparent: false,
+    opacity: 1.0,
+    // Depth and realism
+    envMapIntensity: 0.15,
+    flatShading: false,
   });
 }
 
@@ -276,7 +288,41 @@ export function createCardboardMaterial(
  */
 export function createCardboardMaterialWithIcons(
   baseTexture: THREE.CanvasTexture,
-  color?: string | number
+  color?: string | number,
+  aoMap?: THREE.Texture,
+  roughnessMap?: THREE.Texture
 ): THREE.MeshStandardMaterial {
-  return createCardboardMaterial(baseTexture, color);
+  return createCardboardMaterial(baseTexture, color, aoMap, roughnessMap);
+}
+
+/**
+ * Creates score lines (fold indicators) on box panels
+ * These are subtle indentations showing where cardboard is meant to fold
+ */
+export function createScoreLines(params: BoxParams): THREE.Group {
+  const group = new THREE.Group();
+  const lineMaterial = new THREE.LineBasicMaterial({
+    color: 0x8B7355,
+    opacity: 0.3,
+    transparent: true,
+    linewidth: 1,
+  });
+
+  // Score lines at flap attachment points (horizontal lines on panels)
+  const createScoreLine = (width: number, yPos: number) => {
+    const points = [
+      new THREE.Vector3(-width / 2, yPos, 0.31),
+      new THREE.Vector3(width / 2, yPos, 0.31),
+    ];
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    return new THREE.Line(geometry, lineMaterial);
+  };
+
+  // Add score lines for top and bottom flap attachment
+  const topScoreLine = createScoreLine(params.width, params.depth / 2);
+  const bottomScoreLine = createScoreLine(params.width, -params.depth / 2);
+  
+  group.add(topScoreLine, bottomScoreLine);
+
+  return group;
 }
