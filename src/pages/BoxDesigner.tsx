@@ -256,13 +256,13 @@ export default function BoxDesigner() {
                 {/* Instructions */}
                 <Card className="p-4 bg-blue-50 border-blue-200">
                   <h4 className="font-semibold text-sm mb-2 text-blue-900">
-                    💡 How to use:
+                    💡 Controls:
                   </h4>
                   <ul className="text-xs text-blue-800 space-y-1">
                     <li>• Switch between Rotate & Pan modes</li>
                     <li>• Scroll to zoom in/out</li>
-                    <li>• View from any angle (360°)</li>
-                    <li>• Adjust dimensions in real-time</li>
+                    <li>• Drag to rotate/move the box</li>
+                    <li>• Click faces to customize them</li>
                   </ul>
                 </Card>
               </motion.div>
@@ -335,6 +335,10 @@ export default function BoxDesigner() {
                       animationState={animationState}
                       showIcons={true}
                       plyColor={currentPlyConfig.color}
+                      faceImages={faceImages}
+                      textElements={textElements}
+                      selectedFace={selectedFace}
+                      onFaceSelect={setSelectedFace}
                     />
                   </Canvas3D>
                   
@@ -346,40 +350,64 @@ export default function BoxDesigner() {
                     />
                   </div>
                   
-                  {/* Box Info */}
-                  <div className="mt-4 grid grid-cols-3 gap-4 text-center">
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="text-xs text-muted-foreground">Volume</div>
-                      <div className="font-semibold">
-                        {(dimensions.length * dimensions.width * dimensions.height / 1000).toFixed(2)}L
+                  {/* Box Info & Selected Face */}
+                  <div className="mt-4 space-y-3">
+                    {selectedFace && (
+                      <div className="p-3 bg-green-50 border-2 border-green-300 rounded-lg text-center">
+                        <div className="text-xs text-green-700 font-medium">Selected Face</div>
+                        <div className="font-bold text-green-900 capitalize">{selectedFace}</div>
                       </div>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="text-xs text-muted-foreground">Material</div>
-                      <div className="font-semibold">{ply}</div>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="text-xs text-muted-foreground">Style</div>
-                      <div className="font-semibold text-xs">{template.toUpperCase()}</div>
+                    )}
+                    
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <div className="text-xs text-muted-foreground">Volume</div>
+                        <div className="font-semibold">
+                          {(dimensions.length * dimensions.width * dimensions.height / 1000).toFixed(2)}L
+                        </div>
+                      </div>
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <div className="text-xs text-muted-foreground">Material</div>
+                        <div className="font-semibold">{ply}</div>
+                      </div>
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <div className="text-xs text-muted-foreground">Style</div>
+                        <div className="font-semibold text-xs">{template.toUpperCase()}</div>
+                      </div>
                     </div>
                   </div>
                 </Card>
 
                 {/* Graphics & Text Customization */}
-                <div className="grid md:grid-cols-2 gap-6 mt-6">
-                  <GraphicsUploader
-                    selectedFace={selectedFace}
-                    faceImages={faceImages}
-                    onImageUpload={handleImageUpload}
-                    onImageRemove={handleImageRemove}
-                  />
+                <div className="space-y-4 mt-6">
+                  {/* Instructions */}
+                  <Card className="p-4 bg-blue-50 border-blue-200">
+                    <h4 className="font-semibold text-sm mb-2 text-blue-900">
+                      🎨 Customize Your Box:
+                    </h4>
+                    <ul className="text-xs text-blue-800 space-y-1">
+                      <li>• <strong>Click on the 3D box</strong> to select a face</li>
+                      <li>• Upload images or add text to selected face</li>
+                      <li>• Hover over faces to see them highlight</li>
+                      <li>• Selected face will glow green</li>
+                    </ul>
+                  </Card>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <GraphicsUploader
+                      selectedFace={selectedFace}
+                      faceImages={faceImages}
+                      onImageUpload={handleImageUpload}
+                      onImageRemove={handleImageRemove}
+                    />
 
-                  <TextEditor
-                    selectedFace={selectedFace}
-                    textElements={textElements}
-                    onTextAdd={handleTextAdd}
-                    onTextRemove={handleTextRemove}
-                  />
+                    <TextEditor
+                      selectedFace={selectedFace}
+                      textElements={textElements}
+                      onTextAdd={handleTextAdd}
+                      onTextRemove={handleTextRemove}
+                    />
+                  </div>
                 </div>
               </motion.div>
             </div>

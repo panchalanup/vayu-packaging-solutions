@@ -12,6 +12,7 @@ import { useThree, useFrame } from '@react-three/fiber';
 interface Canvas3DProps {
   children: ReactNode;
   controlMode?: 'rotate' | 'pan';
+  onBackgroundClick?: () => void;
 }
 
 /**
@@ -85,10 +86,16 @@ function StudioLights() {
   );
 }
 
-export default function Canvas3D({ children, controlMode = 'rotate' }: Canvas3DProps) {
+export default function Canvas3D({ children, controlMode = 'rotate', onBackgroundClick }: Canvas3DProps) {
   return (
-    <div className="w-full h-[550px] bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-inner">
-      <Canvas shadows gl={{ antialias: true, alpha: false }}>
+    <div 
+      className="w-full h-[550px] bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-inner"
+      onClick={onBackgroundClick}
+    >
+      <Canvas 
+        shadows 
+        gl={{ antialias: true, alpha: false }}
+      >
         {/* Scene Configuration */}
         <SceneSetup />
         
