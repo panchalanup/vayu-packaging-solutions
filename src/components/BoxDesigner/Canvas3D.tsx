@@ -5,9 +5,9 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Grid } from '@react-three/drei';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { useThree } from '@react-three/fiber';
+import { useThree, useFrame } from '@react-three/fiber';
 
 interface Canvas3DProps {
   children: ReactNode;
@@ -21,11 +21,59 @@ function SceneSetup() {
   const { scene } = useThree();
   
   useEffect(() => {
-    // Set a pleasant light gray background color
-    scene.background = new THREE.Color('#f5f5f5');
+    // Clean white background for professional product photography look
+    scene.background = new THREE.Color('#ffffff');
   }, [scene]);
   
   return null;
+}
+
+/**
+ * Professional studio lighting setup - matches product photography
+ */
+function StudioLights() {
+  return (
+    <>
+      {/* Main key light - top-front-right (primary illumination) */}
+      <directionalLight
+        position={[10, 15, 8]}
+        intensity={1.2}
+        color="#ffffff"
+        castShadow
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-camera-far={100}
+        shadow-camera-left={-20}
+        shadow-camera-right={20}
+        shadow-camera-top={20}
+        shadow-camera-bottom={-20}
+        shadow-bias={-0.0001}
+      />
+      
+      {/* Fill light - left side to soften shadows */}
+      <directionalLight
+        position={[-8, 10, 5]}
+        intensity={0.4}
+        color="#ffffff"
+      />
+      
+      {/* Rim/back light - adds depth and separation */}
+      <directionalLight
+        position={[-5, 8, -10]}
+        intensity={0.3}
+        color="#ffffff"
+      />
+      
+      {/* Soft top light for even illumination */}
+      <pointLight
+        position={[0, 20, 0]}
+        intensity={0.3}
+        color="#ffffff"
+        distance={50}
+        decay={2}
+      />
+    </>
+  );
 }
 
 export default function Canvas3D({ children, controlMode = 'rotate' }: Canvas3DProps) {
@@ -35,51 +83,15 @@ export default function Canvas3D({ children, controlMode = 'rotate' }: Canvas3DP
         {/* Scene Configuration */}
         <SceneSetup />
         
-        {/* Camera - closer position for better zoom and visibility */}
-        <PerspectiveCamera makeDefault position={[15, 45, 60]} fov={45} />
+        {/* Camera - positioned for 3/4 view like product photography */}
+        <PerspectiveCamera makeDefault position={[20, 25, 35]} fov={40} />
         
-        {/* Enhanced Lighting Setup for Clear Visibility */}
-        {/* Ambient light - increased for better base illumination */}
-        <ambientLight intensity={1.0} />
+        {/* Professional Studio Lighting Setup */}
+        {/* Soft ambient light - subtle base illumination */}
+        <ambientLight intensity={0.4} color="#ffffff" />
         
-        {/* Hemisphere light for natural sky/ground lighting */}
-        <hemisphereLight
-          color="#ffffff"
-          groundColor="#b8b8b8"
-          intensity={0.6}
-        />
-        
-        {/* Main key light with shadows - increased intensity */}
-        <directionalLight
-          position={[50, 100, 50]}
-          intensity={1.2}
-          castShadow
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-          shadow-camera-far={500}
-          shadow-camera-left={-100}
-          shadow-camera-right={100}
-          shadow-camera-top={100}
-          shadow-camera-bottom={-100}
-        />
-        
-        {/* Fill light from opposite side - increased intensity */}
-        <directionalLight
-          position={[-30, 50, -30]}
-          intensity={0.7}
-        />
-        
-        {/* Rim light for better depth - increased intensity */}
-        <directionalLight
-          position={[0, 20, -50]}
-          intensity={0.5}
-        />
-        
-        {/* Additional side light for better coverage */}
-        <directionalLight
-          position={[0, 40, 60]}
-          intensity={0.4}
-        />
+        {/* Main studio lights */}
+        <StudioLights />
 
         {/* Grid helper - positioned at ground level */}
         <Grid
@@ -97,7 +109,7 @@ export default function Canvas3D({ children, controlMode = 'rotate' }: Canvas3DP
           position={[0, 0, 0]}
         />
 
-        {/* Orbit Controls - mode-based behavior with custom mouse buttons */}
+        {/* Orbit Controls - mode-based behavior */}
         <OrbitControls
           enablePan={controlMode === 'pan'}
           enableZoom={true}

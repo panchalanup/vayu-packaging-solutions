@@ -254,13 +254,29 @@ export function updatePanelsTransform(
 }
 
 /**
- * Creates the cardboard material
+ * Creates the cardboard material with optional texture
  */
-export function createCardboardMaterial(): THREE.MeshStandardMaterial {
+export function createCardboardMaterial(
+  texture?: THREE.Texture,
+  color?: string | number
+): THREE.MeshStandardMaterial {
+  const materialColor = color || 0xC9A87C; // Default to kraft tan
+  
   return new THREE.MeshStandardMaterial({
-    color: new THREE.Color(0x9c8d7b), // Authentic cardboard color
+    color: new THREE.Color(materialColor),
+    map: texture || null,
     side: THREE.DoubleSide,
-    roughness: 0.85,
-    metalness: 0.05,
+    roughness: 0.93,
+    metalness: 0.0,
   });
+}
+
+/**
+ * Creates a cardboard material with shipping icons
+ */
+export function createCardboardMaterialWithIcons(
+  baseTexture: THREE.CanvasTexture,
+  color?: string | number
+): THREE.MeshStandardMaterial {
+  return createCardboardMaterial(baseTexture, color);
 }

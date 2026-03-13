@@ -158,12 +158,12 @@ export default function Box3DModel({
               normalMap={normalMap || undefined}
               normalScale={normalScale}
               roughnessMap={roughnessMap}
-              roughness={plyConfig.roughness || 0.75}
-              metalness={plyConfig.metalness || 0.08}
+              roughness={plyConfig.roughness || 0.9}
+              metalness={plyConfig.metalness || 0.03}
               color={isSelected ? '#90EE90' : isHovered ? '#FFE4B5' : '#FFFFFF'}
               emissive={isSelected ? '#2E7D32' : isHovered ? '#FFA000' : '#000000'}
-              emissiveIntensity={isSelected ? 0.2 : isHovered ? 0.15 : 0}
-              envMapIntensity={0.5}
+              emissiveIntensity={isSelected ? 0.15 : isHovered ? 0.1 : 0}
+              envMapIntensity={0.3}
             />
           );
         })}
@@ -176,7 +176,7 @@ export default function Box3DModel({
         receiveShadow
       >
         <planeGeometry args={[10, 10]} />
-        <shadowMaterial opacity={0.3} />
+        <shadowMaterial opacity={0.2} />
       </mesh>
     </group>
   );

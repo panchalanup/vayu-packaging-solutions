@@ -15,7 +15,11 @@ import {
   setGeometryHierarchy,
   updatePanelsTransform,
   createCardboardMaterial,
+  createCardboardMaterialWithIcons,
 } from '@/lib/boxDesigner/realisticBoxGeometry';
+import { createKraftPaperTexture } from '@/lib/boxDesigner/textureLoader';
+import { createShippingIconsTexture } from '@/lib/boxDesigner/shippingIcons';
+import { CanvasTexture } from 'three';
 
 interface RealisticBox3DProps {
   width?: number;
@@ -23,6 +27,8 @@ interface RealisticBox3DProps {
   depth?: number;
   autoRotate?: boolean;
   animationState?: AnimationState; // Complete animation state including flaps
+  showIcons?: boolean; // Whether to show shipping icons
+  plyColor?: string; // Cardboard color
 }
 
 export default function RealisticBox3D({
@@ -31,6 +37,8 @@ export default function RealisticBox3D({
   depth = 45,
   autoRotate = true,
   animationState, // Accept complete animation state
+  showIcons = true, // Show icons by default
+  plyColor = '#C9A87C', // Default kraft color
 }: RealisticBox3DProps) {
   const groupRef = useRef<THREE.Group>(null!);
   
@@ -69,37 +77,76 @@ export default function RealisticBox3D({
     };
   }, [animationState]);
 
+  // Create textures with icons
+  const textureWithIcons = useMemo(() => {
+    if (!showIcons) return null;
+    
+    // Create base kraft texture
+    const baseTexture = createKraftPaperTexture(plyColor, 'brown');
+    
+    // Create composite canvas with icons
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048;
+    canvas.height = 2048;
+    const ctx = canvas.getContext('2d')!;
+    
+    // Draw base texture
+    ctx.drawImage(baseTexture.image, 0, 0, canvas.width, canvas.height);
+    
+    // Create and draw icons (positioned on bottom-right like screenshot)
+    const iconsTexture = createShippingIconsTexture(plyColor, '#000000', 140);
+    const iconRowWidth = canvas.width * 0.4;
+    const iconRowHeight = iconRowWidth * 0.35;
+    const iconX = canvas.width * 0.55;
+    const iconY = canvas.height * 0.6;
+    
+    ctx.drawImage(iconsTexture.image, iconX, iconY, iconRowWidth, iconRowHeight);
+    
+    const texture = new CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.needsUpdate = true;
+    
+    return texture;
+  }, [showIcons, plyColor]);
+
   // Create box meshes structure
   const meshes = useMemo<BoxMeshes>(() => {
-    const material = createCardboardMaterial();
+    // Base material for all panels without icons
+    const baseMaterial = createCardboardMaterial(null, plyColor);
+    
+    // Material with icons for front panel
+    const frontMaterial = textureWithIcons 
+      ? createCardboardMaterialWithIcons(textureWithIcons, plyColor)
+      : baseMaterial;
     
     return {
       frontHalf: {
         width: {
-          top: new THREE.Mesh(new THREE.BufferGeometry(), material),
-          side: new THREE.Mesh(new THREE.BufferGeometry(), material),
-          bottom: new THREE.Mesh(new THREE.BufferGeometry(), material),
+          top: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
+          side: new THREE.Mesh(new THREE.BufferGeometry(), frontMaterial), // Front face gets icons
+          bottom: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
         },
         length: {
-          top: new THREE.Mesh(new THREE.BufferGeometry(), material),
-          side: new THREE.Mesh(new THREE.BufferGeometry(), material),
-          bottom: new THREE.Mesh(new THREE.BufferGeometry(), material),
+          top: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
+          side: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
+          bottom: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
         },
       },
       backHalf: {
         width: {
-          top: new THREE.Mesh(new THREE.BufferGeometry(), material),
-          side: new THREE.Mesh(new THREE.BufferGeometry(), material),
-          bottom: new THREE.Mesh(new THREE.BufferGeometry(), material),
+          top: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
+          side: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
+          bottom: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
         },
         length: {
-          top: new THREE.Mesh(new THREE.BufferGeometry(), material),
-          side: new THREE.Mesh(new THREE.BufferGeometry(), material),
-          bottom: new THREE.Mesh(new THREE.BufferGeometry(), material),
+          top: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
+          side: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
+          bottom: new THREE.Mesh(new THREE.BufferGeometry(), baseMaterial),
         },
       },
     };
-  }, []);
+  }, [textureWithIcons, plyColor]);
 
   // Generate geometries when parameters change
   useEffect(() => {

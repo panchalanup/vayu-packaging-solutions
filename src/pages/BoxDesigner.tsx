@@ -333,6 +333,8 @@ export default function BoxDesigner() {
                       depth={dimensions.height}
                       autoRotate={autoRotate}
                       animationState={animationState}
+                      showIcons={true}
+                      plyColor={currentPlyConfig.color}
                     />
                   </Canvas3D>
                   

@@ -73,30 +73,30 @@ export const PLY_OPTIONS: PlyConfig[] = [
     name: '3-Ply (Light Duty)',
     thickness: 2.5,
     strength: 'Light duty - Up to 5kg',
-    color: '#D4A574',
+    color: '#D4B896',  // Light warm tan - matches screenshot
     fluteType: 'E',
-    roughness: 0.8,
-    metalness: 0.05,
+    roughness: 0.92,  // Very matte, no shine
+    metalness: 0.0,   // Cardboard has no metallic properties
   },
   {
     id: '5-ply',
     name: '5-Ply (Medium Duty)',
     thickness: 4.0,
     strength: 'Medium duty - Up to 15kg',
-    color: '#C89B5C',
+    color: '#C9A87C',  // Perfect kraft tan from screenshot
     fluteType: 'C',
-    roughness: 0.75,
-    metalness: 0.08,
+    roughness: 0.93,  // Very matte cardboard finish
+    metalness: 0.0,   // No metallic shine
   },
   {
     id: '7-ply',
     name: '7-Ply (Heavy Duty)',
     thickness: 6.0,
     strength: 'Heavy duty - Up to 30kg',
-    color: '#B88A47',
+    color: '#B89968',  // Darker kraft but still natural
     fluteType: 'B',
-    roughness: 0.7,
-    metalness: 0.1,
+    roughness: 0.95,  // Roughest surface for heavy-duty cardboard
+    metalness: 0.0,   // No metallic properties
   },
 ];
 
