@@ -17,16 +17,19 @@ import MacTopbar from '@/components/BoxDesigner/MacTopbar';
 import BottomStatusBar from '@/components/BoxDesigner/BottomStatusBar';
 import FloatingCanvasToolbar from '@/components/BoxDesigner/FloatingCanvasToolbar';
 import BottomFloatingControls from '@/components/BoxDesigner/BottomFloatingControls';
+import MobileInfoBanner from '@/components/BoxDesigner/MobileInfoBanner';
 import { BoxDimensions, BoxTemplate, PlyType, FaceImage, TextElement, BoxFace } from '@/types/boxDesigner';
 import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
 import { calculateFoldState } from '@/lib/boxDesigner/foldAnimation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type ControlMode = 'rotate' | 'pan';
 
 export default function BoxDesigner() {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   // UI state
   const [activeTab, setActiveTab] = useState<DesignerTab>('edit');
@@ -193,34 +196,52 @@ export default function BoxDesigner() {
           </div>
         </section>
 
-        {/* macOS Grid Layout - Fixed viewport height, sticky after hero scrolls */}
+        {/* Grid Layout - Responsive (mobile vs desktop) */}
         <div 
           className="sticky top-0 w-full grid"
           style={{
             height: '100vh',
             maxHeight: '100vh',
-            gridTemplateColumns: isLeftPanelCollapsed 
-              ? '72px minmax(0, 1fr)' 
-              : '72px 320px minmax(0, 1fr)',
-            gridTemplateRows: '56px minmax(0, 1fr) 44px',
+            // Mobile: auto (banner if shown) + 1fr (canvas)
+            // Desktop: 56px (topbar) + 1fr (canvas) + 44px (status bar)
+            gridTemplateColumns: isMobile 
+              ? '1fr'
+              : isLeftPanelCollapsed 
+                ? '72px minmax(0, 1fr)' 
+                : '72px 320px minmax(0, 1fr)',
+            gridTemplateRows: isMobile
+              ? 'auto minmax(0, 1fr)'
+              : '56px minmax(0, 1fr) 44px',
             background: 'var(--mac-bg)',
             transition: 'grid-template-columns 180ms cubic-bezier(0.2, 0.9, 0.3, 1)',
             overflow: 'hidden',
           }}
         >
-          {/* Topbar - Spans all columns */}
-          <div className="col-span-full">
-            <MacTopbar onExport={handleExport} />
-          </div>
+          {/* Mobile Info Banner - Always visible on mobile */}
+          {isMobile && (
+            <div className="col-span-full">
+              <MobileInfoBanner />
+            </div>
+          )}
 
-          {/* Icon Sidebar - 72px */}
-          <div className="row-start-2">
-            <IconSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-          </div>
+          {/* Topbar - Desktop only */}
+          {!isMobile && (
+            <div className="col-span-full">
+              <MacTopbar onExport={handleExport} />
+            </div>
+          )}
 
-          {/* Left Panel - 320px collapsible */}
-          {!isLeftPanelCollapsed && (
+          {/* Icon Sidebar - Desktop only */}
+          {!isMobile && (
+            <div className="row-start-2">
+              <IconSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+            </div>
+          )}
+
+          {/* Left Panel - Desktop only, 320px collapsible */}
+          {!isMobile && !isLeftPanelCollapsed && (
             <div className="row-start-2 relative">
+
               <DesignerSidePanel
                 activeTab={activeTab}
                 template={template}
@@ -255,8 +276,8 @@ export default function BoxDesigner() {
             </div>
           )}
 
-          {/* Expand button when collapsed */}
-          {isLeftPanelCollapsed && (
+          {/* Expand button when collapsed - Desktop only */}
+          {!isMobile && isLeftPanelCollapsed && (
             <button
               onClick={() => setIsLeftPanelCollapsed(false)}
               className="absolute left-[72px] top-[72px] w-6 h-12 bg-white border border-gray-200 rounded-r-lg shadow-sm hover:bg-gray-50 flex items-center justify-center z-10 mac-transition"
@@ -266,9 +287,13 @@ export default function BoxDesigner() {
             </button>
           )}
 
-          {/* Canvas Area - Flex 1 */}
-          <div className="row-start-2 relative p-4 min-w-0">
-            <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-xl">
+          {/* Canvas Area - Full width on mobile, flex 1 on desktop */}
+          <div 
+            className={isMobile ? 'relative min-w-0' : 'row-start-2 relative p-4 min-w-0'}
+            style={isMobile ? { gridRow: '2 / -1' } : undefined}
+          >
+            <div className={`w-full h-full relative ${isMobile ? '' : 'rounded-2xl'} overflow-hidden shadow-xl`}>
+
               {/* Floating Toolbar - Top Right */}
               <div className="absolute top-4 right-4 z-20">
                 <FloatingCanvasToolbar
@@ -327,14 +352,16 @@ export default function BoxDesigner() {
             </div>
           </div>
 
-          {/* Bottom Status Bar - Spans all columns */}
-          <div className="col-span-full">
-            <BottomStatusBar
-              dimensions={dimensions}
-              ply={ply}
-              template={template}
-            />
-          </div>
+          {/* Bottom Status Bar - Desktop only */}
+          {!isMobile && (
+            <div className="col-span-full">
+              <BottomStatusBar
+                dimensions={dimensions}
+                ply={ply}
+                template={template}
+              />
+            </div>
+          )}
         </div>
       </PageTransition>
     </Layout>
