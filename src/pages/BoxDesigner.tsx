@@ -157,7 +157,7 @@ export default function BoxDesigner() {
           canonical="https://vayupackaging.vercel.app/box-designer"
         />
 
-        {/* Hero Section */}
+        {/* Hero Section - Scrolls away */}
         <section className="bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16 border-b border-gray-200">
           <div className="container mx-auto px-6 max-w-4xl text-center">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
@@ -193,16 +193,19 @@ export default function BoxDesigner() {
           </div>
         </section>
 
-        {/* macOS Grid Layout - Sticky after scroll */}
+        {/* macOS Grid Layout - Fixed viewport height, sticky after hero scrolls */}
         <div 
-          className="sticky top-0 h-screen w-screen max-w-full grid overflow-x-hidden overflow-y-hidden"
+          className="sticky top-0 w-full grid"
           style={{
+            height: '100vh',
+            maxHeight: '100vh',
             gridTemplateColumns: isLeftPanelCollapsed 
               ? '72px minmax(0, 1fr)' 
               : '72px 320px minmax(0, 1fr)',
-            gridTemplateRows: '56px 1fr 44px',
+            gridTemplateRows: '56px minmax(0, 1fr) 44px',
             background: 'var(--mac-bg)',
             transition: 'grid-template-columns 180ms cubic-bezier(0.2, 0.9, 0.3, 1)',
+            overflow: 'hidden',
           }}
         >
           {/* Topbar - Spans all columns */}

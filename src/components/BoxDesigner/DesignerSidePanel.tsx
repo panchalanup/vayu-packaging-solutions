@@ -74,7 +74,7 @@ export default function DesignerSidePanel({
   onReset,
 }: DesignerSidePanelProps) {
   return (
-    <div className="h-full bg-gray-50 border-r border-gray-200 overflow-y-auto">
+    <div className="h-full bg-gray-50 border-r border-gray-200 overflow-y-auto overflow-x-hidden">
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}

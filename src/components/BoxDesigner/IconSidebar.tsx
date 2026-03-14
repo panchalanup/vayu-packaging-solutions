@@ -74,7 +74,7 @@ export default function IconSidebar({ activeTab, onTabChange }: IconSidebarProps
                     {isActive && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 rounded-r-full"
+                        className="absolute left-0 top-2.5 w-1.5 h-11 rounded-r-full"
                         style={{ backgroundColor: tab.color }}
                         transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                       />
