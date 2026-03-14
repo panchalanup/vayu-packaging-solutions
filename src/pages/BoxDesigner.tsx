@@ -16,6 +16,7 @@ import DesignerSidePanel from '@/components/BoxDesigner/DesignerSidePanel';
 import MacTopbar from '@/components/BoxDesigner/MacTopbar';
 import BottomStatusBar from '@/components/BoxDesigner/BottomStatusBar';
 import FloatingCanvasToolbar from '@/components/BoxDesigner/FloatingCanvasToolbar';
+import BottomFloatingControls from '@/components/BoxDesigner/BottomFloatingControls';
 import { BoxDimensions, BoxTemplate, PlyType, FaceImage, TextElement, BoxFace } from '@/types/boxDesigner';
 import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
 import { calculateFoldState } from '@/lib/boxDesigner/foldAnimation';
@@ -313,6 +314,14 @@ export default function BoxDesigner() {
                   onFaceSelect={setSelectedFace}
                 />
               </Canvas3D>
+
+              {/* Bottom Floating Controls - Dock Style */}
+              <BottomFloatingControls
+                dimensions={dimensions}
+                foldPercentage={foldPercentage}
+                onDimensionsChange={setDimensions}
+                onFoldChange={setFoldPercentage}
+              />
             </div>
           </div>
 

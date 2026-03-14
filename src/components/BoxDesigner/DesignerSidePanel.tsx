@@ -85,12 +85,12 @@ export default function DesignerSidePanel({
           transition={{ duration: 0.2 }}
           className="p-6 space-y-6"
         >
-          {/* Edit Tab - Template & Dimensions */}
+          {/* Edit Tab - Template Only */}
           {activeTab === 'edit' && (
             <>
               <div>
                 <h2 className="text-xl font-bold mb-1 text-gray-900">Edit Box</h2>
-                <p className="text-sm text-gray-600">Configure box template and dimensions</p>
+                <p className="text-sm text-gray-600">Configure box template</p>
               </div>
 
               <Card className="p-5">
@@ -100,27 +100,20 @@ export default function DesignerSidePanel({
                 />
               </Card>
 
-              <Card className="p-5">
-                <DimensionInputs
-                  dimensions={dimensions}
-                  onChange={onDimensionsChange}
-                />
-              </Card>
-
               <Card className="p-4 bg-blue-50 border-blue-200">
                 <p className="text-xs text-blue-800">
-                  💡 <strong>Tip:</strong> Adjust dimensions in real-time. The 3D model updates instantly.
+                  💡 <strong>Tip:</strong> Use the floating controls below the box to adjust dimensions and flaps.
                 </p>
               </Card>
             </>
           )}
 
-          {/* Model Tab - Material & Fold Animation */}
+          {/* Model Tab - Material Only */}
           {activeTab === 'model' && (
             <>
               <div>
                 <h2 className="text-xl font-bold mb-1 text-gray-900">Model Settings</h2>
-                <p className="text-sm text-gray-600">Material strength and fold animation</p>
+                <p className="text-sm text-gray-600">Material strength configuration</p>
               </div>
 
               <Card className="p-5">
@@ -132,17 +125,9 @@ export default function DesignerSidePanel({
 
               <MaterialPreview plyConfig={plyConfig} />
 
-              <div>
-                <h3 className="font-semibold text-sm mb-3 text-gray-700">Fold Animation</h3>
-                <FoldControl
-                  foldPercentage={foldPercentage}
-                  onFoldChange={onFoldChange}
-                />
-              </div>
-
               <Card className="p-4 bg-purple-50 border-purple-200">
                 <p className="text-xs text-purple-800">
-                  💡 <strong>Tip:</strong> Use fold presets to quickly visualize box assembly stages.
+                  💡 <strong>Tip:</strong> Use the floating flaps control below the box to animate opening/closing.
                 </p>
               </Card>
             </>
