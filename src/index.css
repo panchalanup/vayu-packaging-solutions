@@ -4,6 +4,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* macOS Design System Tokens */
+:root {
+  --mac-bg: #f6f7f8;
+  --mac-panel-bg: rgba(255, 255, 255, 0.75);
+  --mac-glass-blur: 10px;
+  --mac-accent: #6b6bff;
+  --mac-accent-hover: #5555ee;
+  --mac-muted: #9ea6b2;
+  --mac-radius-lg: 14px;
+  --mac-radius-md: 10px;
+  --mac-radius-sm: 8px;
+  --mac-shadow-soft: 0 10px 30px rgba(20, 20, 30, 0.06);
+  --mac-shadow-mid: 0 6px 20px rgba(20, 20, 30, 0.08);
+  --mac-shadow-strong: 0 20px 40px rgba(20, 20, 30, 0.12);
+  --mac-spacing: 16px;
+  --mac-transition: 180ms cubic-bezier(0.2, 0.9, 0.3, 1);
+  --mac-transition-fast: 80ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+/* Glass effect utility classes */
+.glass-panel {
+  backdrop-filter: blur(var(--mac-glass-blur));
+  background: var(--mac-panel-bg);
+  border-radius: var(--mac-radius-lg);
+  box-shadow: var(--mac-shadow-soft);
+}
+
+.glass-toolbar {
+  backdrop-filter: blur(var(--mac-glass-blur));
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  box-shadow: var(--mac-shadow-mid);
+}
+
+/* macOS-style transitions */
+.mac-transition {
+  transition: transform var(--mac-transition), opacity 140ms;
+}
+
+.mac-hover:hover {
+  transform: scale(1.03);
+}
+
+/* System font stack */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 @layer base {
   :root {
     --background: 210 40% 98%;

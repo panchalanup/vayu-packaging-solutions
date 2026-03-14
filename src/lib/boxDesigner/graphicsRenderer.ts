@@ -116,7 +116,20 @@ export function getFaceDimensions(
         width: Math.floor(resolution * (length / Math.max(length, height))),
         height: Math.floor(resolution * (height / Math.max(length, height))),
       };
-    case 'top':
+    case 'top-front':
+    case 'top-back':
+      // Width flaps - same width as front/back, but flap depth is ~half of height
+      return {
+        width: Math.floor(resolution * (width / Math.max(width, height))),
+        height: Math.floor(resolution * 0.5), // Flap is typically half the box height
+      };
+    case 'top-left':
+    case 'top-right':
+      // Length flaps - same length as left/right, but flap depth is ~half of height
+      return {
+        width: Math.floor(resolution * (length / Math.max(length, height))),
+        height: Math.floor(resolution * 0.5), // Flap is typically half the box height
+      };
     case 'bottom':
       return {
         width: Math.floor(resolution * (width / Math.max(width, length))),

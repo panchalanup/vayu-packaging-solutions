@@ -6,7 +6,7 @@ export type BoxTemplate = 'rsc' | 'hsc' | 'die-cut' | 'mailer';
 
 export type PlyType = '3-ply' | '5-ply' | '7-ply';
 
-export type BoxFace = 'front' | 'back' | 'left' | 'right' | 'top' | 'bottom';
+export type BoxFace = 'front' | 'back' | 'left' | 'right' | 'top-front' | 'top-back' | 'top-left' | 'top-right' | 'bottom';
 
 export interface BoxDimensions {
   length: number;  // cm

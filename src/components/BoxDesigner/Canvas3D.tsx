@@ -4,85 +4,144 @@
  */
 
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Grid, Environment } from '@react-three/drei';
-import { ReactNode } from 'react';
+import { OrbitControls, PerspectiveCamera, Grid } from '@react-three/drei';
+import { ReactNode, useEffect, useRef } from 'react';
+import * as THREE from 'three';
+import { useThree, useFrame } from '@react-three/fiber';
 
 interface Canvas3DProps {
   children: ReactNode;
+  controlMode?: 'rotate' | 'pan';
+  onBackgroundClick?: () => void;
 }
 
-export default function Canvas3D({ children }: Canvas3DProps) {
-  return (
-    <div className="w-full h-[550px] bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-inner">
-      <Canvas shadows gl={{ antialias: true, alpha: false }}>
-        {/* Camera */}
-        <PerspectiveCamera makeDefault position={[4, 3, 4]} fov={50} />
-        
-        {/* Enhanced Lighting for realistic materials */}
-        <ambientLight intensity={0.4} />
-        
-        {/* Main key light */}
-        <directionalLight
-          position={[10, 10, 5]}
-          intensity={1.2}
-          castShadow
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-          shadow-camera-far={50}
-          shadow-camera-left={-10}
-          shadow-camera-right={10}
-          shadow-camera-top={10}
-          shadow-camera-bottom={-10}
-          shadow-bias={-0.0001}
-        />
-        
-        {/* Fill light from opposite side */}
-        <directionalLight
-          position={[-5, 5, -5]}
-          intensity={0.5}
-        />
-        
-        {/* Rim light for edge definition */}
-        <directionalLight
-          position={[0, 2, -5]}
-          intensity={0.4}
-        />
-        
-        {/* Subtle point lights for depth */}
-        <pointLight position={[-10, 5, -5]} intensity={0.3} color="#FFF8E7" />
-        <pointLight position={[10, 3, 10]} intensity={0.2} color="#E8F4FF" />
-        
-        {/* Environment map for realistic reflections */}
-        <Environment preset="warehouse" />
+/**
+ * Scene setup component to configure background and other scene properties
+ */
+function SceneSetup() {
+  const { scene } = useThree();
+  
+  useEffect(() => {
+    // Clean white background for professional product photography look
+    scene.background = new THREE.Color('#ffffff');
+  }, [scene]);
+  
+  return null;
+}
 
-        {/* Grid helper - positioned at origin */}
+/**
+ * Professional studio lighting setup - matches product photography
+ * Enhanced for realistic cardboard rendering with soft shadows
+ */
+function StudioLights() {
+  return (
+    <>
+      {/* Main key light - top-front-right (primary illumination) */}
+      <directionalLight
+        position={[12, 18, 10]}
+        intensity={1.4}
+        color="#FFF8F0"
+        castShadow
+        shadow-mapSize-width={4096}
+        shadow-mapSize-height={4096}
+        shadow-camera-far={120}
+        shadow-camera-left={-30}
+        shadow-camera-right={30}
+        shadow-camera-top={30}
+        shadow-camera-bottom={-30}
+        shadow-bias={-0.00005}
+        shadow-radius={4}
+      />
+      
+      {/* Fill light - left side to soften shadows and show texture detail */}
+      <directionalLight
+        position={[-10, 12, 6]}
+        intensity={0.5}
+        color="#FFF8F0"
+      />
+      
+      {/* Rim/back light - adds depth and separation from background */}
+      <directionalLight
+        position={[-6, 10, -12]}
+        intensity={0.35}
+        color="#FFE4B5"
+      />
+      
+      {/* Soft top light for even illumination - simulates studio softbox */}
+      <pointLight
+        position={[0, 25, 0]}
+        intensity={0.4}
+        color="#FFFFFF"
+        distance={60}
+        decay={2}
+      />
+      
+      {/* Subtle ground bounce light - simulates light reflection from floor */}
+      <directionalLight
+        position={[0, -5, 8]}
+        intensity={0.15}
+        color="#F5DEB3"
+      />
+    </>
+  );
+}
+
+export default function Canvas3D({ children, controlMode = 'rotate', onBackgroundClick }: Canvas3DProps) {
+  return (
+    <div 
+      className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-inner"
+      onClick={onBackgroundClick}
+    >
+      <Canvas 
+        shadows 
+        gl={{ antialias: true, alpha: false }}
+      >
+        {/* Scene Configuration */}
+        <SceneSetup />
+        
+        {/* Camera - positioned for 3/4 view with more zoom out for better visibility */}
+        <PerspectiveCamera makeDefault position={[30, 35, 50]} fov={45} />
+        
+        {/* Professional Studio Lighting Setup */}
+        {/* Soft ambient light - subtle base illumination */}
+        <ambientLight intensity={0.4} color="#ffffff" />
+        
+        {/* Main studio lights */}
+        <StudioLights />
+
+        {/* Grid helper - positioned at ground level */}
         <Grid
-          args={[20, 20]}
-          cellSize={1}
-          cellThickness={0.5}
-          cellColor="#cccccc"
-          sectionSize={5}
-          sectionThickness={1}
-          sectionColor="#999999"
-          fadeDistance={30}
+          args={[100, 100]}
+          cellSize={5}
+          cellThickness={0.6}
+          cellColor="#d0d0d0"
+          sectionSize={25}
+          sectionThickness={1.2}
+          sectionColor="#a0a0a0"
+          fadeDistance={150}
           fadeStrength={1}
           followCamera={false}
           infiniteGrid={false}
           position={[0, 0, 0]}
         />
 
-        {/* Orbit Controls - target the box center */}
+        {/* Orbit Controls - mode-based behavior */}
         <OrbitControls
-          enablePan={true}
+          enablePan={controlMode === 'pan'}
           enableZoom={true}
-          enableRotate={true}
-          minDistance={2}
-          maxDistance={20}
-          maxPolarAngle={Math.PI / 1.8}
-          minPolarAngle={Math.PI / 6}
-          target={[0, 1, 0]}
+          enableRotate={controlMode === 'rotate'}
+          minDistance={25}
+          maxDistance={150}
+          maxPolarAngle={Math.PI}
+          minPolarAngle={0}
+          target={[0, 5, 0]}
           enableDamping
-          dampingFactor={0.05}
+          dampingFactor={0.08}
+          mouseButtons={{
+            LEFT: controlMode === 'rotate' ? THREE.MOUSE.ROTATE : THREE.MOUSE.PAN,
+            MIDDLE: THREE.MOUSE.DOLLY,
+            RIGHT: controlMode === 'rotate' ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE
+          }}
         />
 
         {/* Children (3D models) */}

@@ -1,32 +1,36 @@
 /**
- * 3D Box Designer Page
- * Interactive tool for designing custom packaging boxes
+ * 3D Box Designer Page - macOS Style
+ * Viewport-first layout with translucent panels
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
 import Layout from '@/components/Layout';
 import PageTransition from '@/components/PageTransition';
 import MetaTags from '@/components/SEO/MetaTags';
 import Canvas3D from '@/components/BoxDesigner/Canvas3D';
-import Box3DModel from '@/components/BoxDesigner/Box3DModel';
-import TemplateSelector from '@/components/BoxDesigner/TemplateSelector';
-import DimensionInputs from '@/components/BoxDesigner/DimensionInputs';
-import PlySelector from '@/components/BoxDesigner/PlySelector';
-import MaterialPreview from '@/components/BoxDesigner/MaterialPreview';
-import GraphicsUploader from '@/components/BoxDesigner/GraphicsUploader';
-import TextEditor from '@/components/BoxDesigner/TextEditor';
+import RealisticBox3D from '@/components/BoxDesigner/RealisticBox3D';
+import IconSidebar, { DesignerTab } from '@/components/BoxDesigner/IconSidebar';
+import DesignerSidePanel from '@/components/BoxDesigner/DesignerSidePanel';
+import MacTopbar from '@/components/BoxDesigner/MacTopbar';
+import BottomStatusBar from '@/components/BoxDesigner/BottomStatusBar';
+import FloatingCanvasToolbar from '@/components/BoxDesigner/FloatingCanvasToolbar';
+import BottomFloatingControls from '@/components/BoxDesigner/BottomFloatingControls';
 import { BoxDimensions, BoxTemplate, PlyType, FaceImage, TextElement, BoxFace } from '@/types/boxDesigner';
 import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Download, FileText, RotateCcw, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { calculateFoldState } from '@/lib/boxDesigner/foldAnimation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+
+type ControlMode = 'rotate' | 'pan';
 
 export default function BoxDesigner() {
   const navigate = useNavigate();
+  
+  // UI state
+  const [activeTab, setActiveTab] = useState<DesignerTab>('edit');
+  const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
   
   // Design state
   const [template, setTemplate] = useState<BoxTemplate>(DEFAULT_TEMPLATE);
@@ -36,8 +40,35 @@ export default function BoxDesigner() {
   const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [selectedFace, setSelectedFace] = useState<BoxFace | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
+  const [controlMode, setControlMode] = useState<ControlMode>('rotate');
+  
+  // Fold animation state
+  const [foldPercentage, setFoldPercentage] = useState(100);
+  const [animatedFoldPercentage, setAnimatedFoldPercentage] = useState(100);
 
   const currentPlyConfig = PLY_OPTIONS.find(p => p.id === ply)!;
+
+  // Smooth GSAP animation for fold percentage changes
+  useEffect(() => {
+    const animation = gsap.to({ value: animatedFoldPercentage }, {
+      value: foldPercentage,
+      duration: 1.0,
+      ease: 'power3.out',
+      onUpdate: function() {
+        setAnimatedFoldPercentage(this.targets()[0].value);
+      }
+    });
+
+    return () => {
+      animation.kill();
+    };
+  }, [foldPercentage]);
+
+  // Calculate animation state from fold percentage
+  const animationState = useMemo(() => 
+    calculateFoldState(animatedFoldPercentage),
+    [animatedFoldPercentage]
+  );
 
   // Image handlers
   const handleImageUpload = (face: BoxFace, imageUrl: string, file: File) => {
@@ -78,21 +109,21 @@ export default function BoxDesigner() {
     setDimensions(DEFAULT_DIMENSIONS);
     setPly(DEFAULT_PLY);
     setFaceImages([]);
+    setTextElements([]);
     setSelectedFace(null);
     setAutoRotate(true);
+    setFoldPercentage(100);
     toast.success('Design reset to defaults');
   };
 
   const handleGetQuote = () => {
     toast.success('Redirecting to quote tool...');
-    // Pass design specs to compare-quote page
     setTimeout(() => {
       navigate('/compare-quote');
     }, 500);
   };
 
   const handleExport = () => {
-    // Simple export functionality - can be enhanced later
     const designData = {
       template,
       dimensions,
@@ -126,209 +157,184 @@ export default function BoxDesigner() {
           canonical="https://vayupackaging.vercel.app/box-designer"
         />
 
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-          {/* Hero Section */}
-          <section className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent py-12 md:py-16">
-            <div className="container mx-auto px-4">
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="max-w-4xl mx-auto text-center"
-              >
-                <div className="inline-block mb-4">
-                  <span className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold">
-                    <Sparkles className="w-4 h-4" />
-                    🎨 Interactive 3D Tool
-                  </span>
-                </div>
-                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                  3D Box Designer
-                </h1>
-                <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-                  Design your perfect packaging box with real-time 3D visualization. Customize dimensions, materials, and more.
-                </p>
-              </motion.div>
+        {/* Hero Section - Scrolls away */}
+        <section className="bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16 border-b border-gray-200">
+          <div className="container mx-auto px-6 max-w-4xl text-center">
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
+              <span className="text-2xl">🎨</span>
+              Interactive 3D Designer
             </div>
-          </section>
-
-          {/* Main Designer */}
-          <section className="container mx-auto px-4 py-8 max-w-7xl">
-            <div className="grid lg:grid-cols-[350px,1fr] gap-6">
-              {/* Left Sidebar - Controls */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="space-y-4"
-              >
-                <Card className="p-6 space-y-6">
-                  <TemplateSelector
-                    selectedTemplate={template}
-                    onChange={setTemplate}
-                  />
-                  
-                  <Separator />
-                  
-                  <DimensionInputs
-                    dimensions={dimensions}
-                    onChange={setDimensions}
-                  />
-                  
-                  <Separator />
-                  
-                  <PlySelector
-                    selectedPly={ply}
-                    onChange={setPly}
-                  />
-                </Card>
-
-                {/* Material Preview */}
-                <MaterialPreview plyConfig={currentPlyConfig} />
-
-                {/* Actions Card */}
-                <Card className="p-6 space-y-3">
-                  <h4 className="font-semibold text-sm mb-3">Actions</h4>
-                  <div className="space-y-3">
-                    <Button
-                      onClick={handleGetQuote}
-                      className="w-full"
-                      size="lg"
-                    >
-                      <FileText className="w-4 h-4 mr-2" />
-                      Get Quote
-                    </Button>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        onClick={handleExport}
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Download className="w-4 h-4 mr-2" />
-                        Export
-                      </Button>
-                      
-                      <Button
-                        onClick={handleReset}
-                        variant="outline"
-                        size="sm"
-                      >
-                        <RotateCcw className="w-4 h-4 mr-2" />
-                        Reset
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Instructions */}
-                <Card className="p-4 bg-blue-50 border-blue-200">
-                  <h4 className="font-semibold text-sm mb-2 text-blue-900">
-                    💡 How to use:
-                  </h4>
-                  <ul className="text-xs text-blue-800 space-y-1">
-                    <li>• Drag to rotate the box</li>
-                    <li>• Scroll to zoom in/out</li>
-                    <li>• Click faces to select them</li>
-                    <li>• Adjust dimensions in real-time</li>
-                  </ul>
-                </Card>
-              </motion.div>
-
-              {/* Right Side - 3D Canvas */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Card className="p-4">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg">3D Preview</h3>
-                      <p className="text-xs text-muted-foreground">
-                        {selectedFace ? `Selected: ${selectedFace}` : 'Click a face to select'}
-                      </p>
-                    </div>
-                    <Button
-                      onClick={() => setAutoRotate(!autoRotate)}
-                      variant="outline"
-                      size="sm"
-                    >
-                      {autoRotate ? 'Stop' : 'Rotate'}
-                    </Button>
-                  </div>
-                  
-                  <Canvas3D>
-                    <Box3DModel
-                      dimensions={dimensions}
-                      plyConfig={currentPlyConfig}
-                      faceImages={faceImages}
-                      textElements={textElements}
-                      selectedFace={selectedFace}
-                      onFaceClick={setSelectedFace}
-                      autoRotate={autoRotate}
-                    />
-                  </Canvas3D>
-                  
-                  {/* Box Info */}
-                  <div className="mt-4 grid grid-cols-3 gap-4 text-center">
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="text-xs text-muted-foreground">Volume</div>
-                      <div className="font-semibold">
-                        {(dimensions.length * dimensions.width * dimensions.height / 1000).toFixed(2)}L
-                      </div>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="text-xs text-muted-foreground">Material</div>
-                      <div className="font-semibold">{ply}</div>
-                    </div>
-                    <div className="p-3 bg-gray-50 rounded-lg">
-                      <div className="text-xs text-muted-foreground">Style</div>
-                      <div className="font-semibold text-xs">{template.toUpperCase()}</div>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Graphics & Text Customization */}
-                <div className="grid md:grid-cols-2 gap-6 mt-6">
-                  <GraphicsUploader
-                    selectedFace={selectedFace}
-                    faceImages={faceImages}
-                    onImageUpload={handleImageUpload}
-                    onImageRemove={handleImageRemove}
-                  />
-
-                  <TextEditor
-                    selectedFace={selectedFace}
-                    textElements={textElements}
-                    onTextAdd={handleTextAdd}
-                    onTextRemove={handleTextRemove}
-                  />
+            <h1 className="text-5xl font-bold text-gray-900 mb-4">
+              Design Your Perfect Box
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Create custom packaging with our professional 3D designer. Visualize dimensions, materials, and customize every detail in real-time.
+            </p>
+            <div className="flex items-center justify-center gap-6 text-sm text-gray-700">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                  <span className="text-green-600 font-bold">✓</span>
                 </div>
-              </motion.div>
+                <span>Real-time 3D</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <span className="text-blue-600 font-bold">✓</span>
+                </div>
+                <span>Custom Graphics</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                  <span className="text-purple-600 font-bold">✓</span>
+                </div>
+                <span>Instant Export</span>
+              </div>
             </div>
+          </div>
+        </section>
 
-            {/* Features Section */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="grid md:grid-cols-3 gap-6 mt-12"
+        {/* macOS Grid Layout - Fixed viewport height, sticky after hero scrolls */}
+        <div 
+          className="sticky top-0 w-full grid"
+          style={{
+            height: '100vh',
+            maxHeight: '100vh',
+            gridTemplateColumns: isLeftPanelCollapsed 
+              ? '72px minmax(0, 1fr)' 
+              : '72px 320px minmax(0, 1fr)',
+            gridTemplateRows: '56px minmax(0, 1fr) 44px',
+            background: 'var(--mac-bg)',
+            transition: 'grid-template-columns 180ms cubic-bezier(0.2, 0.9, 0.3, 1)',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Topbar - Spans all columns */}
+          <div className="col-span-full">
+            <MacTopbar onExport={handleExport} />
+          </div>
+
+          {/* Icon Sidebar - 72px */}
+          <div className="row-start-2">
+            <IconSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+          </div>
+
+          {/* Left Panel - 320px collapsible */}
+          {!isLeftPanelCollapsed && (
+            <div className="row-start-2 relative">
+              <DesignerSidePanel
+                activeTab={activeTab}
+                template={template}
+                dimensions={dimensions}
+                onTemplateChange={setTemplate}
+                onDimensionsChange={setDimensions}
+                ply={ply}
+                plyConfig={currentPlyConfig}
+                foldPercentage={foldPercentage}
+                onPlyChange={setPly}
+                onFoldChange={setFoldPercentage}
+                selectedFace={selectedFace}
+                faceImages={faceImages}
+                textElements={textElements}
+                onImageUpload={handleImageUpload}
+                onImageRemove={handleImageRemove}
+                onTextAdd={handleTextAdd}
+                onTextRemove={handleTextRemove}
+                onGetQuote={handleGetQuote}
+                onExport={handleExport}
+                onReset={handleReset}
+              />
+              
+              {/* Collapse Button */}
+              <button
+                onClick={() => setIsLeftPanelCollapsed(true)}
+                className="absolute top-4 -right-3 w-6 h-12 bg-white border border-gray-200 rounded-r-lg shadow-sm hover:bg-gray-50 flex items-center justify-center z-10 mac-transition"
+                title="Collapse panel"
+              >
+                <ChevronLeft className="w-3.5 h-3.5 text-gray-600" />
+              </button>
+            </div>
+          )}
+
+          {/* Expand button when collapsed */}
+          {isLeftPanelCollapsed && (
+            <button
+              onClick={() => setIsLeftPanelCollapsed(false)}
+              className="absolute left-[72px] top-[72px] w-6 h-12 bg-white border border-gray-200 rounded-r-lg shadow-sm hover:bg-gray-50 flex items-center justify-center z-10 mac-transition"
+              title="Expand panel"
             >
-              <Card className="p-6 text-center">
-                <div className="text-3xl font-bold text-primary mb-2">Real-time</div>
-                <p className="text-sm text-muted-foreground">3D Visualization</p>
-              </Card>
-              <Card className="p-6 text-center">
-                <div className="text-3xl font-bold text-primary mb-2">4 Types</div>
-                <p className="text-sm text-muted-foreground">Box Templates</p>
-              </Card>
-              <Card className="p-6 text-center">
-                <div className="text-3xl font-bold text-primary mb-2">3 Options</div>
-                <p className="text-sm text-muted-foreground">Ply Strengths</p>
-              </Card>
-            </motion.div>
-          </section>
+              <ChevronRight className="w-3.5 h-3.5 text-gray-600" />
+            </button>
+          )}
+
+          {/* Canvas Area - Flex 1 */}
+          <div className="row-start-2 relative p-4 min-w-0">
+            <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-xl">
+              {/* Floating Toolbar - Top Right */}
+              <div className="absolute top-4 right-4 z-20">
+                <FloatingCanvasToolbar
+                  controlMode={controlMode}
+                  autoRotate={autoRotate}
+                  onControlModeChange={setControlMode}
+                  onAutoRotateToggle={() => setAutoRotate(!autoRotate)}
+                  onFitView={() => toast.info('Fit to view')}
+                />
+              </div>
+
+              {/* Selected Face Indicator */}
+              {selectedFace && (
+                <div className="absolute top-4 left-4 z-20">
+                  <div 
+                    className="px-3 py-2 flex items-center gap-2"
+                    style={{
+                      backdropFilter: 'blur(var(--mac-glass-blur))',
+                      background: 'rgba(34, 197, 94, 0.9)',
+                      borderRadius: 'var(--mac-radius-md)',
+                      boxShadow: 'var(--mac-shadow-soft)',
+                    }}
+                  >
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                    <span className="text-xs font-medium text-white capitalize">
+                      Selected: {selectedFace}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* 3D Canvas */}
+              <Canvas3D controlMode={controlMode}>
+                <RealisticBox3D
+                  width={dimensions.width}
+                  length={dimensions.length}
+                  depth={dimensions.height}
+                  autoRotate={autoRotate}
+                  animationState={animationState}
+                  showIcons={true}
+                  plyColor={currentPlyConfig.color}
+                  faceImages={faceImages}
+                  textElements={textElements}
+                  selectedFace={selectedFace}
+                  onFaceSelect={setSelectedFace}
+                />
+              </Canvas3D>
+
+              {/* Bottom Floating Controls - Dock Style */}
+              <BottomFloatingControls
+                dimensions={dimensions}
+                foldPercentage={foldPercentage}
+                onDimensionsChange={setDimensions}
+                onFoldChange={setFoldPercentage}
+              />
+            </div>
+          </div>
+
+          {/* Bottom Status Bar - Spans all columns */}
+          <div className="col-span-full">
+            <BottomStatusBar
+              dimensions={dimensions}
+              ply={ply}
+              template={template}
+            />
+          </div>
         </div>
       </PageTransition>
     </Layout>
