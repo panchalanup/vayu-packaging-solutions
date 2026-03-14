@@ -277,7 +277,6 @@ export default function BoxDesigner() {
                   onControlModeChange={setControlMode}
                   onAutoRotateToggle={() => setAutoRotate(!autoRotate)}
                   onFitView={() => toast.info('Fit to view')}
-                  onResetView={() => window.location.reload()}
                 />
               </div>
 

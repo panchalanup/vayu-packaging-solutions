@@ -3,7 +3,7 @@
  * macOS-style pill toolbar for camera controls
  */
 
-import { RotateCw, Hand, Maximize2, Home, Play, Pause } from 'lucide-react';
+import { RotateCw, Hand, Maximize2, Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type ControlMode = 'rotate' | 'pan';
@@ -14,7 +14,6 @@ interface FloatingCanvasToolbarProps {
   onControlModeChange: (mode: ControlMode) => void;
   onAutoRotateToggle: () => void;
   onFitView: () => void;
-  onResetView: () => void;
 }
 
 export default function FloatingCanvasToolbar({
@@ -23,7 +22,6 @@ export default function FloatingCanvasToolbar({
   onControlModeChange,
   onAutoRotateToggle,
   onFitView,
-  onResetView,
 }: FloatingCanvasToolbarProps) {
   return (
     <div 
@@ -41,11 +39,11 @@ export default function FloatingCanvasToolbar({
         variant={controlMode === 'rotate' ? 'default' : 'ghost'}
         size="sm"
         className={`h-7 w-7 p-0 mac-transition ${controlMode === 'rotate' ? '' : 'hover:bg-gray-100/80'}`}
-        title="Orbit (Space)"
+        title="Rotate Camera - Click and drag to orbit around the box (Space)"
         aria-label="Orbit mode"
         aria-pressed={controlMode === 'rotate'}
       >
-        <RotateCw className="w-3.5 h-3.5" />
+        <RotateCw className={`w-3.5 h-3.5 ${controlMode === 'rotate' ? 'text-white' : 'text-gray-700'}`} />
       </Button>
 
       {/* Pan */}
@@ -54,11 +52,11 @@ export default function FloatingCanvasToolbar({
         variant={controlMode === 'pan' ? 'default' : 'ghost'}
         size="sm"
         className={`h-7 w-7 p-0 mac-transition ${controlMode === 'pan' ? '' : 'hover:bg-gray-100/80'}`}
-        title="Pan (W)"
+        title="Pan Camera - Move the view in any direction (W)"
         aria-label="Pan mode"
         aria-pressed={controlMode === 'pan'}
       >
-        <Hand className="w-3.5 h-3.5" />
+        <Hand className={`w-3.5 h-3.5 ${controlMode === 'pan' ? 'text-white' : 'text-gray-700'}`} />
       </Button>
 
       {/* Separator */}
@@ -70,22 +68,10 @@ export default function FloatingCanvasToolbar({
         variant="ghost"
         size="sm"
         className="h-7 w-7 p-0 hover:bg-gray-100/80 mac-transition"
-        title="Fit to View (F)"
+        title="Fit Box to View - Center and zoom to fit the entire box (F)"
         aria-label="Fit to view"
       >
-        <Maximize2 className="w-3.5 h-3.5" />
-      </Button>
-
-      {/* Reset View */}
-      <Button
-        onClick={onResetView}
-        variant="ghost"
-        size="sm"
-        className="h-7 w-7 p-0 hover:bg-gray-100/80 mac-transition"
-        title="Reset Camera"
-        aria-label="Reset camera view"
-      >
-        <Home className="w-3.5 h-3.5" />
+        <Maximize2 className="w-3.5 h-3.5 text-gray-700" />
       </Button>
 
       {/* Separator */}
@@ -97,14 +83,14 @@ export default function FloatingCanvasToolbar({
         variant={autoRotate ? 'default' : 'ghost'}
         size="sm"
         className={`h-7 w-7 p-0 mac-transition ${autoRotate ? '' : 'hover:bg-gray-100/80'}`}
-        title={autoRotate ? 'Stop Auto-Rotate' : 'Start Auto-Rotate'}
+        title={autoRotate ? 'Stop Auto-Rotate - Pause the automatic rotation' : 'Auto-Rotate - Automatically spin the box for a 360° view'}
         aria-label={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
         aria-pressed={autoRotate}
       >
         {autoRotate ? (
-          <Pause className="w-3.5 h-3.5" />
+          <Pause className="w-3.5 h-3.5 text-white" />
         ) : (
-          <Play className="w-3.5 h-3.5" />
+          <Play className="w-3.5 h-3.5 text-gray-700" />
         )}
       </Button>
     </div>
