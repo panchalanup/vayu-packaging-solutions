@@ -89,7 +89,7 @@ function StudioLights() {
 export default function Canvas3D({ children, controlMode = 'rotate', onBackgroundClick }: Canvas3DProps) {
   return (
     <div 
-      className="w-full h-[550px] bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-inner"
+      className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-inner"
       onClick={onBackgroundClick}
     >
       <Canvas 
@@ -99,8 +99,8 @@ export default function Canvas3D({ children, controlMode = 'rotate', onBackgroun
         {/* Scene Configuration */}
         <SceneSetup />
         
-        {/* Camera - positioned for 3/4 view like product photography */}
-        <PerspectiveCamera makeDefault position={[20, 25, 35]} fov={40} />
+        {/* Camera - positioned for 3/4 view with more zoom out for better visibility */}
+        <PerspectiveCamera makeDefault position={[30, 35, 50]} fov={45} />
         
         {/* Professional Studio Lighting Setup */}
         {/* Soft ambient light - subtle base illumination */}
