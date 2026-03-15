@@ -53,8 +53,8 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
           {/* Thumbnail */}
           <div className="relative aspect-[16/9] bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
             <img
-              src={BLOG_IMAGES.defaultThumbnail}
-              alt={BLOG_IMAGES.alt}
+              src={BLOG_IMAGES[post.thumbnail as keyof typeof BLOG_IMAGES] || BLOG_IMAGES.defaultThumbnail}
+              alt={post.title}
               className="absolute inset-0 w-full h-full object-cover"
               loading="lazy"
             />

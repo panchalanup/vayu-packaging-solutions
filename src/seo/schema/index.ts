@@ -10,3 +10,12 @@ export { getProductSchema, PRODUCT_SCHEMAS, type ProductSchemaData } from './pro
 export { getBreadcrumbSchema, PAGE_BREADCRUMBS, getBlogBreadcrumbs, getProductBreadcrumbs, type BreadcrumbItem } from './breadcrumb';
 export { getFAQSchema, COMMON_FAQS, type FAQItem } from './faq';
 export { getSoftwareApplicationSchema, getToolFAQSchema, PACKAGING_TOOL_FAQS, type SoftwareAppSchemaData, type ToolFAQItem } from './softwareApplication';
+export { 
+  getBoxDesignerSchema, 
+  getBoxDesignerFAQSchema, 
+  getBoxDesignerBreadcrumbSchema,
+  getBoxDesignerHowToSchema,
+  BOX_DESIGNER_FAQS,
+  type BoxDesignerSchemaData,
+  type BoxDesignerFAQItem 
+} from './boxDesigner';

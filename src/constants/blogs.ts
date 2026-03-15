@@ -107,6 +107,17 @@ export const BLOG_POSTS: BlogPost[] = [
     thumbnail: "BLOG-07-thumbnail",
     socialImage: "BLOG-07-social",
   },
+  {
+    title: "Stop Wasting Money on Wrong-Sized Boxes: Design Perfect Packaging in 3D Before You Order",
+    slug: "3d-box-designer-tool-free",
+    description: "Tired of ordering boxes that don't fit? Design and visualize your perfect corrugated packaging in 3D for FREE. No more guesswork, no more costly mistakes. Try our interactive tool now.",
+    category: "Industry Insights",
+    date: "2025-03-15",
+    readingTime: "9 min read",
+    author: "Vayu Packaging Team",
+    thumbnail: "BLOG-08-thumbnail",
+    socialImage: "BLOG-08-social",
+  },
 ];
 
 // Get blog posts by category
@@ -143,5 +154,5 @@ export const BLOG_AUTHOR = {
 export const SOCIAL_SHARE_CONFIG = {
   siteUrl: "https://vayupackaging.vercel.app", // Update with actual domain
   twitterHandle: "@vayupackaging", // Update with actual handle
-  hashtags: ["packaging", "corrugatedboxes", "supplychain"],
+  hashtags: ["packaging", "corrugatedboxes", "supplychain", "3ddesign", "boxdesigner"],
 } as const;

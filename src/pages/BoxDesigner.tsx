@@ -10,6 +10,14 @@ import gsap from 'gsap';
 import Layout from '@/components/Layout';
 import PageTransition from '@/components/PageTransition';
 import MetaTags from '@/components/SEO/MetaTags';
+import { StructuredData } from '@/components/SEO/StructuredData';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { 
+  getBoxDesignerSchema, 
+  getBoxDesignerFAQSchema, 
+  getBoxDesignerBreadcrumbSchema,
+  getBoxDesignerHowToSchema 
+} from '@/seo/schema/boxDesigner';
 import Canvas3D from '@/components/BoxDesigner/Canvas3D';
 import RealisticBox3D from '@/components/BoxDesigner/RealisticBox3D';
 import IconSidebar, { DesignerTab } from '@/components/BoxDesigner/IconSidebar';
@@ -195,12 +203,20 @@ export default function BoxDesigner() {
   return (
     <Layout>
       <PageTransition>
-        <MetaTags
-          title="3D Box Designer - Design Custom Packaging | Vayu Packaging Solutions"
-          description="Create and visualize custom corrugated boxes in 3D. Design your perfect packaging with our interactive tool."
-          keywords={['3d box designer', 'custom packaging design', 'corrugated box design', 'packaging visualization', 'box customization tool', '3d visualization']}
-          canonical="https://vayupackaging.vercel.app/box-designer"
-        />
+        {/* Enhanced SEO Meta Tags */}
+        <MetaTags {...PAGE_METADATA.boxDesigner} />
+        
+        {/* Structured Data - SoftwareApplication Schema */}
+        <StructuredData type="SoftwareApplication" data={getBoxDesignerSchema()} />
+        
+        {/* Structured Data - FAQ Schema for Rich Snippets */}
+        <StructuredData type="FAQPage" data={getBoxDesignerFAQSchema()} />
+        
+        {/* Structured Data - Breadcrumb Navigation */}
+        <StructuredData type="BreadcrumbList" data={getBoxDesignerBreadcrumbSchema()} />
+        
+        {/* Structured Data - HowTo Guide */}
+        <StructuredData type="HowTo" data={getBoxDesignerHowToSchema()} />
 
         {/* Hero Section - Scrolls away */}
         <section className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16 border-b border-gray-200 overflow-hidden">

@@ -50,6 +50,7 @@ import prod6 from "@/assets/Products/PROD-6.png";
 
 // Import blog images
 import blogThumbnail from "@/assets/Blogs/blog-00.png";
+import blog08 from "@/assets/Blogs/blog-08.png";
 
 // ============================================
 // LOGO IMAGES
@@ -175,6 +176,14 @@ export const PRODUCT_IMAGES = [
 // ============================================
 export const BLOG_IMAGES = {
   defaultThumbnail: blogThumbnail,
+  "BLOG-01-thumbnail": blogThumbnail, // types-of-corrugated-boxes
+  "BLOG-02-thumbnail": blogThumbnail, // corrugated-wall-differences
+  "BLOG-03-thumbnail": blogThumbnail, // flute-types-guide
+  "BLOG-04-thumbnail": blogThumbnail, // gsm-calculation-strength
+  "BLOG-05-thumbnail": blogThumbnail, // burst-strength-ect-guide
+  "BLOG-06-thumbnail": blogThumbnail, // box-measurements-guide
+  "BLOG-07-thumbnail": blogThumbnail, // kraft-paper-grades
+  "BLOG-08-thumbnail": blog08, // 3d-box-designer-tool-free ✨
   alt: "Vayu Packaging Solutions - Corrugated boxes and packaging",
 } as const;
 

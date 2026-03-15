@@ -169,6 +169,46 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
     targetAudience: ['sustainability managers', 'procurement teams', 'packaging buyers', 'FMCG companies'],
     ogImage: '/blog-images/kraft-paper-og.jpg',
   },
+  
+  '3d-box-designer-tool-free': {
+    focusKeyword: '3D box designer tool free',
+    keywords: [
+      '3D box designer',
+      'free box design tool',
+      'custom packaging design',
+      '3D packaging visualization',
+      'corrugated box design online',
+      'box mockup generator',
+      'packaging design software free',
+      'visualize packaging before ordering',
+      'interactive box designer',
+    ],
+    metaDescription: 'Design custom corrugated boxes in 3D for FREE. Visualize dimensions, materials, and branding before ordering. No more guesswork or costly mistakes. Try our interactive tool now - no credit card required.',
+    breadcrumbs: ['Home', 'Blogs', '3D Box Designer Tool'],
+    relatedKeywords: [
+      'packaging visualization tool',
+      'box design software online',
+      'custom box mockup',
+      '3D packaging preview',
+      'design packaging online',
+      'box dimension calculator',
+      'packaging cost estimator',
+      'real-time box design',
+      'corrugated box customization',
+      'packaging design tool',
+    ],
+    targetAudience: [
+      'e-commerce businesses',
+      'product manufacturers',
+      'FMCG distributors',
+      'import/export companies',
+      'sales teams',
+      'packaging buyers',
+      'startup founders',
+      'product designers',
+    ],
+    ogImage: '/blog-images/3d-box-designer-og.jpg',
+  },
 };
 
 // Category-wise keyword mapping
