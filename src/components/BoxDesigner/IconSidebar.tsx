@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { Edit3, Box, Palette, Save, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-export type DesignerTab = 'edit' | 'model' | 'customize' | 'export';
+export type DesignerTab = 'edit' | 'customize' | 'export';
 
 interface IconSidebarProps {
   activeTab: DesignerTab;
@@ -27,12 +27,6 @@ const TABS: TabConfig[] = [
     icon: Edit3,
     label: 'Edit Box',
     color: '#3b82f6', // blue
-  },
-  {
-    id: 'model',
-    icon: Box,
-    label: 'Model',
-    color: '#8b5cf6', // purple
   },
   {
     id: 'customize',

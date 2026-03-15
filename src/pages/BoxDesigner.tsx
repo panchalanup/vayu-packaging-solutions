@@ -18,8 +18,8 @@ import BottomStatusBar from '@/components/BoxDesigner/BottomStatusBar';
 import FloatingCanvasToolbar from '@/components/BoxDesigner/FloatingCanvasToolbar';
 import BottomFloatingControls from '@/components/BoxDesigner/BottomFloatingControls';
 import MobileInfoBanner from '@/components/BoxDesigner/MobileInfoBanner';
-import { BoxDimensions, BoxTemplate, PlyType, FaceImage, TextElement, BoxFace } from '@/types/boxDesigner';
-import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
+import { BoxDimensions, BoxTemplate, PlyType, FaceImage, TextElement, BoxFace, BoxColor } from '@/types/boxDesigner';
+import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS, DEFAULT_BOX_COLOR, BOX_COLOR_OPTIONS } from '@/lib/boxDesigner/constants';
 import { calculateFoldState } from '@/lib/boxDesigner/foldAnimation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
@@ -39,6 +39,7 @@ export default function BoxDesigner() {
   const [template, setTemplate] = useState<BoxTemplate>(DEFAULT_TEMPLATE);
   const [dimensions, setDimensions] = useState<BoxDimensions>(DEFAULT_DIMENSIONS);
   const [ply, setPly] = useState<PlyType>(DEFAULT_PLY);
+  const [boxColor, setBoxColor] = useState<BoxColor>(DEFAULT_BOX_COLOR);
   const [faceImages, setFaceImages] = useState<FaceImage[]>([]);
   const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [selectedFace, setSelectedFace] = useState<BoxFace | null>(null);
@@ -49,7 +50,14 @@ export default function BoxDesigner() {
   const [foldPercentage, setFoldPercentage] = useState(100);
   const [animatedFoldPercentage, setAnimatedFoldPercentage] = useState(100);
 
-  const currentPlyConfig = PLY_OPTIONS.find(p => p.id === ply)!;
+  // Get current color from box color selection
+  const currentBoxColor = BOX_COLOR_OPTIONS.find(c => c.id === boxColor)?.color || DEFAULT_BOX_COLOR;
+  
+  // Apply color to ply config
+  const currentPlyConfig = {
+    ...PLY_OPTIONS.find(p => p.id === ply)!,
+    color: currentBoxColor,
+  };
 
   // Smooth GSAP animation for fold percentage changes
   useEffect(() => {
@@ -111,6 +119,7 @@ export default function BoxDesigner() {
     setTemplate(DEFAULT_TEMPLATE);
     setDimensions(DEFAULT_DIMENSIONS);
     setPly(DEFAULT_PLY);
+    setBoxColor(DEFAULT_BOX_COLOR);
     setFaceImages([]);
     setTextElements([]);
     setSelectedFace(null);
@@ -246,13 +255,10 @@ export default function BoxDesigner() {
                 activeTab={activeTab}
                 template={template}
                 dimensions={dimensions}
-                onTemplateChange={setTemplate}
+                boxColor={boxColor}
                 onDimensionsChange={setDimensions}
-                ply={ply}
-                plyConfig={currentPlyConfig}
-                foldPercentage={foldPercentage}
-                onPlyChange={setPly}
-                onFoldChange={setFoldPercentage}
+                onBoxColorChange={setBoxColor}
+                onFoldReset={() => setFoldPercentage(100)}
                 selectedFace={selectedFace}
                 faceImages={faceImages}
                 textElements={textElements}
@@ -260,6 +266,7 @@ export default function BoxDesigner() {
                 onImageRemove={handleImageRemove}
                 onTextAdd={handleTextAdd}
                 onTextRemove={handleTextRemove}
+                ply={ply}
                 onGetQuote={handleGetQuote}
                 onExport={handleExport}
                 onReset={handleReset}

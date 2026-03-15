@@ -93,7 +93,7 @@ export function createKraftPaperTexture(color: string, variant: 'brown' | 'white
 /**
  * Creates a corrugated flute normal map
  */
-export function createFlutedNormalMap(fluteType: 'A' | 'B' | 'C' | 'E'): CanvasTexture {
+export function createFlutedNormalMap(fluteType: 'A' | 'B' | 'C' | 'E' | 'F'): CanvasTexture {
   const canvas = document.createElement('canvas');
   canvas.width = 512;
   canvas.height = 512;
@@ -105,6 +105,7 @@ export function createFlutedNormalMap(fluteType: 'A' | 'B' | 'C' | 'E'): CanvasT
     B: { height: 12, spacing: 32 },
     C: { height: 18, spacing: 40 },
     E: { height: 6, spacing: 16 },
+    F: { height: 4, spacing: 12 },   // Ultra-fine micro-flute
   };
 
   const spec = fluteSpecs[fluteType];
@@ -209,7 +210,7 @@ export function getKraftTexture(plyId: string, color: string): CanvasTexture {
 /**
  * Get or create flute normal map
  */
-export function getFluteNormalMap(fluteType: 'A' | 'B' | 'C' | 'E'): CanvasTexture {
+export function getFluteNormalMap(fluteType: 'A' | 'B' | 'C' | 'E' | 'F'): CanvasTexture {
   const key = `flute-${fluteType}`;
   let texture = textureCache.get(key);
   

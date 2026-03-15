@@ -17,7 +17,7 @@ import {
   createCardboardMaterial,
   createCardboardMaterialWithIcons,
 } from '@/lib/boxDesigner/realisticBoxGeometry';
-import { 
+import {
   createKraftPaperTexture,
   getAOMap,
   getRoughnessMap,

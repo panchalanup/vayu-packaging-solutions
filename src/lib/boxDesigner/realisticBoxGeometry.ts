@@ -260,7 +260,8 @@ export function createCardboardMaterial(
   texture?: THREE.Texture,
   color?: string | number,
   aoMap?: THREE.Texture,
-  roughnessMap?: THREE.Texture
+  roughnessMap?: THREE.Texture,
+  normalMap?: THREE.Texture
 ): THREE.MeshStandardMaterial {
   const materialColor = color || 0xC9A87C; // Default to kraft tan
   
@@ -274,6 +275,8 @@ export function createCardboardMaterial(
     aoMap: aoMap || null,
     aoMapIntensity: 0.8,
     roughnessMap: roughnessMap || null,
+    normalMap: normalMap || null,
+    normalScale: normalMap ? new THREE.Vector2(0.5, 0.5) : undefined,
     // Subtle light transmission through cardboard
     transparent: false,
     opacity: 1.0,
