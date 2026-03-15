@@ -74,3 +74,11 @@ export interface ExportOptions {
   includeAllFaces: boolean;
   quality?: number;  // For image exports (0-1)
 }
+
+export type ShareFormat = 'whatsapp' | 'email';
+
+export interface ShareOptions {
+  format: ShareFormat;
+  includeImage: boolean;
+  message?: string;
+}

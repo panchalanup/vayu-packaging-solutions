@@ -3,8 +3,9 @@
  * Viewport-first layout with translucent panels
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import * as THREE from 'three';
 import gsap from 'gsap';
 import Layout from '@/components/Layout';
 import PageTransition from '@/components/PageTransition';
@@ -21,6 +22,8 @@ import MobileInfoBanner from '@/components/BoxDesigner/MobileInfoBanner';
 import { BoxDimensions, BoxTemplate, PlyType, FaceImage, TextElement, BoxFace, BoxColor } from '@/types/boxDesigner';
 import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS, DEFAULT_BOX_COLOR, BOX_COLOR_OPTIONS } from '@/lib/boxDesigner/constants';
 import { calculateFoldState } from '@/lib/boxDesigner/foldAnimation';
+import { downloadCanvasImage } from '@/lib/boxDesigner/canvasCapture';
+import { getDesignFilename } from '@/lib/boxDesigner/shareUtils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -30,6 +33,7 @@ type ControlMode = 'rotate' | 'pan';
 export default function BoxDesigner() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const canvasRef = useRef<THREE.WebGLRenderer | null>(null);
   
   // UI state
   const [activeTab, setActiveTab] = useState<DesignerTab>('edit');
@@ -140,11 +144,22 @@ export default function BoxDesigner() {
       template,
       dimensions,
       ply,
+      boxColor,
       faceImages: faceImages.map(img => ({
         face: img.face,
         position: img.position,
         scale: img.scale,
         rotation: img.rotation,
+      })),
+      textElements: textElements.map(text => ({
+        face: text.face,
+        text: text.text,
+        font: text.font,
+        size: text.size,
+        color: text.color,
+        position: text.position,
+        rotation: text.rotation,
+        align: text.align,
       })),
     };
     
@@ -159,6 +174,24 @@ export default function BoxDesigner() {
     toast.success('Design exported successfully!');
   };
 
+  const handleCaptureScreenshot = async () => {
+    if (!canvasRef.current) {
+      toast.error('Canvas not ready. Please try again.');
+      return;
+    }
+
+    try {
+      // Wait for next animation frame to ensure render is complete
+      await new Promise(resolve => requestAnimationFrame(resolve));
+      
+      const filename = getDesignFilename(dimensions);
+      downloadCanvasImage(canvasRef.current, filename);
+    } catch (error) {
+      console.error('Screenshot capture failed:', error);
+      throw error;
+    }
+  };
+
   return (
     <Layout>
       <PageTransition>
@@ -170,8 +203,13 @@ export default function BoxDesigner() {
         />
 
         {/* Hero Section - Scrolls away */}
-        <section className="bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16 border-b border-gray-200">
-          <div className="container mx-auto px-6 max-w-4xl text-center">
+        <section className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16 border-b border-gray-200 overflow-hidden">
+          {/* FREE! Side Accent Text */}
+          <div className="free-accent">
+            FREE
+          </div>
+
+          <div className="container mx-auto px-6 max-w-4xl text-center relative z-10">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
               <span className="text-2xl">🎨</span>
               Interactive 3D Designer
@@ -179,9 +217,23 @@ export default function BoxDesigner() {
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
               Design Your Perfect Box
             </h1>
+            
+            {/* Pricing Display - Minimal & Professional */}
+            <div className="inline-flex items-center gap-4 mb-6">
+              <div className="flex items-baseline gap-2">
+                <span className="text-4xl font-bold text-gray-900">₹0</span>
+                <span className="text-lg text-gray-400 line-through">₹399</span>
+              </div>
+              <span className="text-sm text-gray-600 border-l-2 border-gray-300 pl-4">
+                No credit card required
+              </span>
+            </div>
+
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Create custom packaging with our professional 3D designer. Visualize dimensions, materials, and customize every detail in real-time.
             </p>
+
+
             <div className="flex items-center justify-center gap-6 text-sm text-gray-700">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
@@ -270,6 +322,7 @@ export default function BoxDesigner() {
                 onGetQuote={handleGetQuote}
                 onExport={handleExport}
                 onReset={handleReset}
+                onCaptureScreenshot={handleCaptureScreenshot}
               />
               
               {/* Collapse Button */}
@@ -333,7 +386,7 @@ export default function BoxDesigner() {
               )}
 
               {/* 3D Canvas */}
-              <Canvas3D controlMode={controlMode}>
+              <Canvas3D controlMode={controlMode} onRendererReady={(gl) => { canvasRef.current = gl; }}>
                 <RealisticBox3D
                   width={dimensions.width}
                   length={dimensions.length}

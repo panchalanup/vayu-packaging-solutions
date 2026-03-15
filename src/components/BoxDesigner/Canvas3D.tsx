@@ -13,18 +13,25 @@ interface Canvas3DProps {
   children: ReactNode;
   controlMode?: 'rotate' | 'pan';
   onBackgroundClick?: () => void;
+  onRendererReady?: (gl: THREE.WebGLRenderer) => void;
 }
 
 /**
  * Scene setup component to configure background and other scene properties
  */
-function SceneSetup() {
-  const { scene } = useThree();
+function SceneSetup({ onRendererReady }: { onRendererReady?: (gl: THREE.WebGLRenderer) => void }) {
+  const { scene, gl } = useThree();
   
   useEffect(() => {
     // Clean white background for professional product photography look
     scene.background = new THREE.Color('#ffffff');
   }, [scene]);
+  
+  useEffect(() => {
+    if (onRendererReady && gl) {
+      onRendererReady(gl);
+    }
+  }, [gl, onRendererReady]);
   
   return null;
 }
@@ -86,7 +93,7 @@ function StudioLights() {
   );
 }
 
-export default function Canvas3D({ children, controlMode = 'rotate', onBackgroundClick }: Canvas3DProps) {
+export default function Canvas3D({ children, controlMode = 'rotate', onBackgroundClick, onRendererReady }: Canvas3DProps) {
   return (
     <div 
       className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-inner"
@@ -94,10 +101,10 @@ export default function Canvas3D({ children, controlMode = 'rotate', onBackgroun
     >
       <Canvas 
         shadows 
-        gl={{ antialias: true, alpha: false }}
+        gl={{ antialias: true, alpha: false, preserveDrawingBuffer: true }}
       >
         {/* Scene Configuration */}
-        <SceneSetup />
+        <SceneSetup onRendererReady={onRendererReady} />
         
         {/* Camera - positioned for 3/4 view with more zoom out for better visibility */}
         <PerspectiveCamera makeDefault position={[30, 35, 50]} fov={45} />

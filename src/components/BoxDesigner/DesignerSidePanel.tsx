@@ -9,6 +9,7 @@ import QuickSizePresets from './QuickSizePresets';
 import ColorFinishSelector from './ColorFinishSelector';
 import GraphicsUploader from './GraphicsUploader';
 import TextEditor from './TextEditor';
+import ShareButtons from './ShareButtons';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -37,6 +38,7 @@ interface DesignerSidePanelProps {
   onGetQuote: () => void;
   onExport: () => void;
   onReset: () => void;
+  onCaptureScreenshot: () => void;
 }
 
 const panelVariants = {
@@ -64,6 +66,7 @@ export default function DesignerSidePanel({
   onGetQuote,
   onExport,
   onReset,
+  onCaptureScreenshot,
 }: DesignerSidePanelProps) {
   return (
     <div className="h-full bg-gray-50 border-r border-gray-200 overflow-y-auto overflow-x-hidden">
@@ -162,6 +165,23 @@ export default function DesignerSidePanel({
               </div>
 
               <Card className="p-5 space-y-4">
+                <div>
+                  <h3 className="font-semibold text-sm mb-3 text-gray-700">Share Design</h3>
+                  <ShareButtons
+                    dimensions={dimensions}
+                    ply={ply}
+                    template={template}
+                    faceImages={faceImages}
+                    textElements={textElements}
+                    onCaptureScreenshot={onCaptureScreenshot}
+                  />
+                  <p className="text-xs text-gray-500 mt-3">
+                    Share your design with suppliers or manufacturers
+                  </p>
+                </div>
+
+                <Separator />
+
                 <div>
                   <h3 className="font-semibold text-sm mb-3 text-gray-700">Get Pricing</h3>
                   <Button
