@@ -2,7 +2,7 @@
  * Constants for Box Designer
  */
 
-import { BoxTemplateConfig, PlyConfig } from '@/types/boxDesigner';
+import { BoxTemplateConfig, PlyConfig, BoxColor, FluteType } from '@/types/boxDesigner';
 
 export const BOX_TEMPLATES: BoxTemplateConfig[] = [
   {
@@ -30,8 +30,6 @@ export const BOX_TEMPLATES: BoxTemplateConfig[] = [
     icon: 'Mail',
   },
 ];
-
-export type FluteType = 'A' | 'B' | 'C' | 'E';
 
 export interface FluteSpec {
   type: FluteType;
@@ -64,6 +62,12 @@ export const FLUTE_TYPES: Record<FluteType, FluteSpec> = {
     height: 1.2,
     spacing: 90,
     description: 'E-flute: Thin profile, excellent print quality',
+  },
+  'F': {
+    type: 'F',
+    height: 0.8,
+    spacing: 125,
+    description: 'F-flute: Ultra-thin micro-flute, premium packaging',
   },
 };
 
@@ -114,3 +118,35 @@ export const DIMENSION_LIMITS = {
 export const DEFAULT_PLY: PlyConfig['id'] = '5-ply';
 
 export const DEFAULT_TEMPLATE: BoxTemplateConfig['id'] = 'rsc';
+
+export const DEFAULT_FLUTE: FluteType = 'C';
+
+export interface BoxColorConfig {
+  id: BoxColor;
+  name: string;
+  description: string;
+  color: string;
+}
+
+export const BOX_COLOR_OPTIONS: BoxColorConfig[] = [
+  {
+    id: 'kraft',
+    name: 'Natural Kraft',
+    description: 'Classic brown cardboard finish',
+    color: '#C9A87C',
+  },
+  {
+    id: 'white',
+    name: 'White Coated',
+    description: 'Bright white for premium look',
+    color: '#F5F5F0',
+  },
+  {
+    id: 'brown',
+    name: 'Dark Brown',
+    description: 'Rich brown kraft paper',
+    color: '#8B6F47',
+  },
+];
+
+export const DEFAULT_BOX_COLOR: BoxColor = 'kraft';

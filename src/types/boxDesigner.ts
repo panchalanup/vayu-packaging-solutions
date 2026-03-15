@@ -6,6 +6,10 @@ export type BoxTemplate = 'rsc' | 'hsc' | 'die-cut' | 'mailer';
 
 export type PlyType = '3-ply' | '5-ply' | '7-ply';
 
+export type FluteType = 'A' | 'B' | 'C' | 'E' | 'F';
+
+export type BoxColor = 'kraft' | 'white' | 'brown';
+
 export type BoxFace = 'front' | 'back' | 'left' | 'right' | 'top-front' | 'top-back' | 'top-left' | 'top-right' | 'bottom';
 
 export interface BoxDimensions {
@@ -49,7 +53,7 @@ export interface PlyConfig {
   strength: string;
   color: string;
   textureUrl?: string;
-  fluteType?: 'A' | 'B' | 'C' | 'E';
+  fluteType?: FluteType;
   roughness?: number;   // 0-1 for PBR material
   metalness?: number;   // 0-1 for PBR material
 }
@@ -69,4 +73,12 @@ export interface ExportOptions {
   includeSpecs: boolean;
   includeAllFaces: boolean;
   quality?: number;  // For image exports (0-1)
+}
+
+export type ShareFormat = 'whatsapp' | 'email';
+
+export interface ShareOptions {
+  format: ShareFormat;
+  includeImage: boolean;
+  message?: string;
 }
