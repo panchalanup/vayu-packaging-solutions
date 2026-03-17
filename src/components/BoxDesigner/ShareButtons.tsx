@@ -94,7 +94,7 @@ export default function ShareButtons({
       <Button
         onClick={handleEmailShare}
         variant="outline"
-        className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
+        className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 hover:text-blue-600"
         size="default"
       >
         <Mail className="w-4 h-4 mr-2" />
