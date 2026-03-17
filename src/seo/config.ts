@@ -83,7 +83,7 @@ export const SEO_CONFIG = {
   
   // Analytics & Tracking (add when ready)
   googleAnalyticsId: '', // GA4 measurement ID
-  googleSiteVerification: '', // Google Search Console verification
+  googleSiteVerification: 'urbp6GuM4utEKeBi3a3iLVf68akri2sVvPwzgZ8rinE', // Google Search Console verification
   bingVerification: '', // Bing Webmaster verification
   
   // Business Identifiers
