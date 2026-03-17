@@ -42,6 +42,7 @@ export default function BoxDesigner() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const canvasRef = useRef<THREE.WebGLRenderer | null>(null);
+  const toolContainerRef = useRef<HTMLDivElement | null>(null);
   
   // UI state
   const [activeTab, setActiveTab] = useState<DesignerTab>('edit');
@@ -57,10 +58,23 @@ export default function BoxDesigner() {
   const [selectedFace, setSelectedFace] = useState<BoxFace | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
   const [controlMode, setControlMode] = useState<ControlMode>('rotate');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Fold animation state
   const [foldPercentage, setFoldPercentage] = useState(100);
   const [animatedFoldPercentage, setAnimatedFoldPercentage] = useState(100);
+
+  // Fullscreen change listener
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   // Get current color from box color selection
   const currentBoxColor = BOX_COLOR_OPTIONS.find(c => c.id === boxColor)?.color || DEFAULT_BOX_COLOR;
@@ -200,6 +214,29 @@ export default function BoxDesigner() {
     }
   };
 
+  const handleFullscreenToggle = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        // Check if ref exists
+        if (!toolContainerRef.current) {
+          toast.error('Tool container not ready');
+          return;
+        }
+        
+        await toolContainerRef.current.requestFullscreen();
+        toast.success('Entered fullscreen mode', {
+          description: 'Press ESC to exit fullscreen',
+        });
+      } else {
+        await document.exitFullscreen();
+        toast.success('Exited fullscreen mode');
+      }
+    } catch (error) {
+      console.error('Fullscreen toggle failed:', error);
+      toast.error('Could not toggle fullscreen mode');
+    }
+  };
+
   return (
     <Layout>
       <PageTransition>
@@ -275,6 +312,7 @@ export default function BoxDesigner() {
 
         {/* Grid Layout - Responsive (mobile vs desktop) */}
         <div 
+          ref={toolContainerRef}
           className="sticky top-0 w-full grid"
           style={{
             height: '100vh',
@@ -375,9 +413,11 @@ export default function BoxDesigner() {
                 <FloatingCanvasToolbar
                   controlMode={controlMode}
                   autoRotate={autoRotate}
+                  isFullscreen={isFullscreen}
                   onControlModeChange={setControlMode}
                   onAutoRotateToggle={() => setAutoRotate(!autoRotate)}
                   onFitView={() => toast.info('Fit to view')}
+                  onFullscreenToggle={handleFullscreenToggle}
                 />
               </div>
 
