@@ -14,6 +14,10 @@
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
         }
       ]
     },
@@ -29,11 +33,24 @@
           "value": "public, max-age=3600, must-revalidate"
         }
       ]
+    },
+    {
+      "source": "/(.*\\.xml)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/xml; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
     }
   ],
   "rewrites": [
     {
-      "source": "/((?!brochures|.*\\.pdf|.*\\.jpg|.*\\.png|.*\\.svg|.*\\.ico|robots\\.txt|sitemap\\.xml).*)",
+      "source": "/((?!brochures|.*\\.pdf|.*\\.jpg|.*\\.png|.*\\.svg|.*\\.ico|.*\\.xml|robots\\.txt|sitemap\\.xml).*)",
       "destination": "/index.html"
     }
   ]
