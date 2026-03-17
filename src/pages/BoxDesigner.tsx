@@ -223,13 +223,68 @@ export default function BoxDesigner() {
           return;
         }
         
-        await toolContainerRef.current.requestFullscreen();
-        toast.success('Entered fullscreen mode', {
-          description: 'Press ESC to exit fullscreen',
-        });
+        const container = toolContainerRef.current;
+        
+        // Pre-fullscreen animation - subtle zoom in
+        gsap.fromTo(container,
+          { scale: 0.98, opacity: 0.95 },
+          { 
+            scale: 1, 
+            opacity: 1, 
+            duration: 0.3,
+            ease: 'power2.out',
+            onComplete: async () => {
+              // Enter fullscreen
+              await container.requestFullscreen();
+              
+              // Post-fullscreen animation - dramatic expansion
+              gsap.fromTo(container,
+                { scale: 1.05, opacity: 0 },
+                { 
+                  scale: 1, 
+                  opacity: 1, 
+                  duration: 0.4,
+                  ease: 'power3.out'
+                }
+              );
+              
+              toast.success('Entered fullscreen mode', {
+                description: 'Press ESC to exit fullscreen',
+              });
+            }
+          }
+        );
       } else {
-        await document.exitFullscreen();
-        toast.success('Exited fullscreen mode');
+        const container = toolContainerRef.current;
+        
+        if (container) {
+          // Pre-exit animation
+          gsap.to(container, {
+            scale: 0.98,
+            opacity: 0.95,
+            duration: 0.3,
+            ease: 'power2.in',
+            onComplete: async () => {
+              await document.exitFullscreen();
+              
+              // Post-exit animation
+              gsap.fromTo(container,
+                { scale: 1.02, opacity: 0.9 },
+                { 
+                  scale: 1, 
+                  opacity: 1, 
+                  duration: 0.3,
+                  ease: 'power2.out'
+                }
+              );
+              
+              toast.success('Exited fullscreen mode');
+            }
+          });
+        } else {
+          await document.exitFullscreen();
+          toast.success('Exited fullscreen mode');
+        }
       }
     } catch (error) {
       console.error('Fullscreen toggle failed:', error);
