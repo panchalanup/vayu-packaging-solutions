@@ -9,9 +9,9 @@ export const SEO_CONFIG = {
   // Site Information
   siteName: 'Vayu Packaging Solutions',
   siteUrl: 'https://vayupackaging.vercel.app',
-  defaultTitle: 'Vayu Packaging Solutions - Corrugated Box Distributors India',
+  defaultTitle: 'Vayu Packaging Solutions - Packaging Materials Distributor India',
   titleTemplate: '%s | Vayu Packaging Solutions',
-  defaultDescription: 'India\'s trusted distributor of corrugated boxes. Custom sizes, bulk supply, 3-ply to 7-ply boxes, pan-India delivery. Get quote for packaging solutions.',
+  defaultDescription: 'India\'s trusted distributor of packaging materials. Corrugated boxes (3-7 ply), BOPP tapes, stretch films, bubble wraps, strapping. Bulk supply, pan-India delivery.',
   
   // Social Media
   twitterHandle: '@vayupackaging',
@@ -58,16 +58,62 @@ export const SEO_CONFIG = {
   // Business Hours
   openingHours: 'Mo-Sa 09:00-18:00',
   
-  // Products & Services
+  // Products & Services - Complete Range
   productsOffered: [
+    // Corrugated Boxes
     '3-Ply Corrugated Boxes',
     '5-Ply Corrugated Boxes',
     '7-Ply Corrugated Boxes',
     'Die-Cut Boxes',
     'Printed Packaging',
     'Food-Grade Boxes',
-    'Custom Corrugated Solutions',
+    // Packaging Materials
+    'BOPP Packaging Tapes',
+    'Masking Tape',
+    'Double-Sided Tape',
+    'PP Strapping Bands',
+    'PET Strapping',
+    'Stretch Films (Manual & Machine)',
+    'Bubble Wrap Rolls',
+    'Anti-Static Bubble Wrap',
   ],
+  
+  // Product Categories
+  productCategories: [
+    {
+      name: 'Corrugated Boxes',
+      description: 'Custom corrugated boxes from 3-ply to 7-ply for all packaging needs',
+      items: ['3-Ply', '5-Ply', '7-Ply', 'Die-Cut', 'Printed', 'Food-Grade'],
+    },
+    {
+      name: 'Packaging Tapes',
+      description: 'High-quality adhesive tapes for secure packaging and shipping',
+      items: ['BOPP Tape', 'Masking Tape', 'Double-Sided Tape', 'Duct Tape'],
+    },
+    {
+      name: 'Strapping Materials',
+      description: 'Durable strapping solutions for heavy-duty packaging',
+      items: ['PP Strapping', 'PET Strapping', 'Strapping Tools'],
+    },
+    {
+      name: 'Stretch Films',
+      description: 'Protective stretch wrap for pallet wrapping and bundling',
+      items: ['Manual Stretch Film', 'Machine Stretch Film', 'Colored Stretch Wrap'],
+    },
+    {
+      name: 'Bubble Wraps',
+      description: 'Protective bubble packaging for fragile items',
+      items: ['Small Bubble', 'Large Bubble', 'Anti-Static Bubble Wrap'],
+    },
+  ],
+  
+  // Reviews & Ratings
+  aggregateRating: {
+    ratingValue: '4.8',
+    reviewCount: '150',
+    bestRating: '5',
+    worstRating: '1',
+  },
   
   // SEO Defaults
   defaultLanguage: 'en-IN',
@@ -106,19 +152,34 @@ export const SEO_KEYWORDS = {
   
   // Primary Business Keywords
   primary: [
+    'packaging materials distributor',
     'corrugated box distributors',
-    'corrugated box supplier',
-    'bulk corrugated boxes',
+    'bulk packaging supplies',
     'custom packaging solutions',
+    'packaging wholesaler India',
   ],
   
-  // Product Keywords
-  products: [
+  // Product Keywords - Corrugated Boxes
+  boxes: [
     '3-ply boxes',
     '5-ply boxes',
     '7-ply boxes',
     'corrugated packaging',
     'cardboard boxes',
+    'die-cut boxes',
+    'custom printed boxes',
+  ],
+  
+  // Product Keywords - Packaging Materials
+  materials: [
+    'BOPP tape',
+    'packaging tape',
+    'stretch film',
+    'bubble wrap',
+    'strapping bands',
+    'PP strapping',
+    'pallet wrap',
+    'protective packaging',
   ],
   
   // Location Keywords

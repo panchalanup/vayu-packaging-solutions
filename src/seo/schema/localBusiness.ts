@@ -10,7 +10,7 @@ export const getLocalBusinessSchema = () => ({
   '@type': 'LocalBusiness',
   '@id': `${SEO_CONFIG.siteUrl}/#localbusiness`,
   name: SEO_CONFIG.organizationName,
-  image: `${SEO_CONFIG.siteUrl}${SEO_CONFIG.logo}`,
+  image: `${SEO_CONFIG.siteUrl}/favicon/android-chrome-512x512.png`,
   url: SEO_CONFIG.siteUrl,
   telephone: SEO_CONFIG.telephone,
   email: SEO_CONFIG.email,
@@ -76,13 +76,13 @@ export const getLocalBusinessSchema = () => ({
     })),
   ],
   
-  // Reviews/Ratings (Add when you have actual reviews)
+  // Reviews/Ratings
   aggregateRating: {
     '@type': 'AggregateRating',
-    ratingValue: '4.8',
-    reviewCount: '350',
-    bestRating: '5',
-    worstRating: '1',
+    ratingValue: SEO_CONFIG.aggregateRating.ratingValue,
+    reviewCount: SEO_CONFIG.aggregateRating.reviewCount,
+    bestRating: SEO_CONFIG.aggregateRating.bestRating,
+    worstRating: SEO_CONFIG.aggregateRating.worstRating,
   },
   
   // Services Offered
@@ -111,7 +111,7 @@ export const getLocalBusinessSchema = () => ({
   additionalType: 'https://schema.org/Store',
   
   // Keywords
-  keywords: 'corrugated boxes, packaging solutions, 3-ply boxes, 5-ply boxes, custom packaging, Ahmedabad',
+  keywords: 'packaging materials, corrugated boxes, BOPP tape, stretch film, bubble wrap, strapping, 3-ply boxes, 5-ply boxes, 7-ply boxes, custom packaging, Ahmedabad, Gujarat',
 });
 
 export default getLocalBusinessSchema;

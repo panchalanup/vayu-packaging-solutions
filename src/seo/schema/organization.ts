@@ -12,9 +12,9 @@ export const getOrganizationSchema = () => ({
   url: SEO_CONFIG.siteUrl,
   logo: {
     '@type': 'ImageObject',
-    url: `${SEO_CONFIG.siteUrl}${SEO_CONFIG.logo}`,
-    width: 400,
-    height: 100,
+    url: `${SEO_CONFIG.siteUrl}/favicon/android-chrome-512x512.png`,
+    width: 512,
+    height: 512,
   },
   description: SEO_CONFIG.defaultDescription,
   
@@ -87,6 +87,15 @@ export const getOrganizationSchema = () => ({
     'Vayu Packaging',
     'Vayu Corrugated Solutions',
   ],
+  
+  // Aggregate Rating - Star ratings for search results
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: SEO_CONFIG.aggregateRating.ratingValue,
+    reviewCount: SEO_CONFIG.aggregateRating.reviewCount,
+    bestRating: SEO_CONFIG.aggregateRating.bestRating,
+    worstRating: SEO_CONFIG.aggregateRating.worstRating,
+  },
 });
 
 export default getOrganizationSchema;

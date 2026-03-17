@@ -6,7 +6,7 @@ import { BUSINESS_DETAILS } from "@/constants";
 import { PRODUCT_IMAGES } from "@/constants/images";
 import { MetaTags, StructuredData } from '@/seo';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
-import { PRODUCT_SCHEMAS, getBreadcrumbSchema, PAGE_BREADCRUMBS, getFAQSchema, COMMON_FAQS } from '@/seo/schema';
+import { PRODUCT_SCHEMAS, getBreadcrumbSchema, PAGE_BREADCRUMBS, getFAQSchema, COMMON_FAQS, getProductCatalogSchema } from '@/seo/schema';
 
 const products = [
   {
@@ -54,9 +54,24 @@ const Products = () => {
       <MetaTags {...PAGE_METADATA.products} />
       
       {/* Structured Data - Schema.org */}
+      {/* Corrugated Box Products */}
       <StructuredData type="Product" data={PRODUCT_SCHEMAS['3-ply']} />
       <StructuredData type="Product" data={PRODUCT_SCHEMAS['5-ply']} />
       <StructuredData type="Product" data={PRODUCT_SCHEMAS['7-ply']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['die-cut']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['printed']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['food-grade']} />
+      
+      {/* Packaging Materials Products */}
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['bopp-tape']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['stretch-film']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['bubble-wrap']} />
+      <StructuredData type="Product" data={PRODUCT_SCHEMAS['pp-strapping']} />
+      
+      {/* Product Catalog - Shows all products in search results */}
+      <StructuredData type="ItemList" data={getProductCatalogSchema()} />
+      
+      {/* Navigation & FAQs */}
       <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.products)} />
       <StructuredData type="FAQPage" data={getFAQSchema(COMMON_FAQS.products)} />
       

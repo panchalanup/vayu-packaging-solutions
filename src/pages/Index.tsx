@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight, Star, Quote } from "lucide-react";
 import { MetaTags, StructuredData } from '@/seo';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
-import { getOrganizationSchema, getLocalBusinessSchema, getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
+import { getOrganizationSchema, getLocalBusinessSchema, getBreadcrumbSchema, PAGE_BREADCRUMBS, getProductCatalogSchema } from '@/seo/schema';
 
 const testimonials = [
   {
@@ -39,6 +39,9 @@ const Index = () => {
       <StructuredData type="Organization" data={getOrganizationSchema()} />
       <StructuredData type="LocalBusiness" data={getLocalBusinessSchema()} />
       <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.home)} />
+      
+      {/* Product Catalog - Shows all products in search results */}
+      <StructuredData type="ItemList" data={getProductCatalogSchema()} />
       
       <PageTransition>
         <HeroSection />

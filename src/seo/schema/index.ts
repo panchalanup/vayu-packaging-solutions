@@ -7,6 +7,7 @@ export { getOrganizationSchema } from './organization';
 export { getLocalBusinessSchema } from './localBusiness';
 export { getArticleSchema, getBlogPostingSchema } from './article';
 export { getProductSchema, PRODUCT_SCHEMAS, type ProductSchemaData } from './product';
+export { getProductCatalogSchema } from './productCatalog';
 export { getBreadcrumbSchema, PAGE_BREADCRUMBS, getBlogBreadcrumbs, getProductBreadcrumbs, type BreadcrumbItem } from './breadcrumb';
 export { getFAQSchema, COMMON_FAQS, type FAQItem } from './faq';
 export { getSoftwareApplicationSchema, getToolFAQSchema, PACKAGING_TOOL_FAQS, type SoftwareAppSchemaData, type ToolFAQItem } from './softwareApplication';
