@@ -8,7 +8,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://vayupackaging.vercel.app/</loc>
-    <lastmod>2026-03-17</lastmod>
+    <lastmod>2026-03-17T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -16,7 +16,7 @@
   <!-- About Page -->
   <url>
     <loc>https://vayupackaging.vercel.app/about</loc>
-    <lastmod>2026-03-17</lastmod>
+    <lastmod>2026-03-17T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -24,7 +24,7 @@
   <!-- Services Page -->
   <url>
     <loc>https://vayupackaging.vercel.app/services</loc>
-    <lastmod>2026-03-17</lastmod>
+    <lastmod>2026-03-17T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -32,7 +32,7 @@
   <!-- Products Page -->
   <url>
     <loc>https://vayupackaging.vercel.app/products</loc>
-    <lastmod>2026-03-17</lastmod>
+    <lastmod>2026-03-17T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -40,7 +40,7 @@
   <!-- Blogs Listing Page -->
   <url>
     <loc>https://vayupackaging.vercel.app/blogs</loc>
-    <lastmod>2026-03-17</lastmod>
+    <lastmod>2026-03-17T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -48,7 +48,7 @@
   <!-- Contact Page -->
   <url>
     <loc>https://vayupackaging.vercel.app/contact</loc>
-    <lastmod>2026-03-17</lastmod>
+    <lastmod>2026-03-17T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -56,7 +56,7 @@
   <!-- Packaging Finder Tool -->
   <url>
     <loc>https://vayupackaging.vercel.app/compare-quote</loc>
-    <lastmod>2026-03-17</lastmod>
+    <lastmod>2026-03-17T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -64,7 +64,7 @@
   <!-- 3D Box Designer Tool -->
   <url>
     <loc>https://vayupackaging.vercel.app/box-designer</loc>
-    <lastmod>2026-03-17</lastmod>
+    <lastmod>2026-03-17T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -72,56 +72,56 @@
   <!-- Blog Posts -->
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/types-of-corrugated-boxes</loc>
-    <lastmod>2026-01-15</lastmod>
+    <lastmod>2026-01-15T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/corrugated-wall-differences</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-18T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/flute-types-guide</loc>
-    <lastmod>2026-01-22</lastmod>
+    <lastmod>2026-01-22T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/gsm-calculation-strength</loc>
-    <lastmod>2026-01-25</lastmod>
+    <lastmod>2026-01-25T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/burst-strength-ect-guide</loc>
-    <lastmod>2026-01-28</lastmod>
+    <lastmod>2026-01-28T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/box-measurements-guide</loc>
-    <lastmod>2026-02-01</lastmod>
+    <lastmod>2026-02-01T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/kraft-paper-grades</loc>
-    <lastmod>2026-02-05</lastmod>
+    <lastmod>2026-02-05T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/3d-box-designer-tool-free</loc>
-    <lastmod>2026-03-15</lastmod>
+    <lastmod>2026-03-15T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
