@@ -3,7 +3,7 @@
  * macOS-style pill toolbar for camera controls
  */
 
-import { RotateCw, Hand, Maximize2, Play, Pause } from 'lucide-react';
+import { RotateCw, Hand, Maximize2, Minimize2, Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type ControlMode = 'rotate' | 'pan';
@@ -11,17 +11,21 @@ type ControlMode = 'rotate' | 'pan';
 interface FloatingCanvasToolbarProps {
   controlMode: ControlMode;
   autoRotate: boolean;
+  isFullscreen: boolean;
   onControlModeChange: (mode: ControlMode) => void;
   onAutoRotateToggle: () => void;
   onFitView: () => void;
+  onFullscreenToggle: () => void;
 }
 
 export default function FloatingCanvasToolbar({
   controlMode,
   autoRotate,
+  isFullscreen,
   onControlModeChange,
   onAutoRotateToggle,
   onFitView,
+  onFullscreenToggle,
 }: FloatingCanvasToolbarProps) {
   return (
     <div 
@@ -62,16 +66,21 @@ export default function FloatingCanvasToolbar({
       {/* Separator */}
       <div className="h-4 w-px bg-gray-300 mx-0.5" />
 
-      {/* Fit View */}
+      {/* Fullscreen Toggle */}
       <Button
-        onClick={onFitView}
+        onClick={onFullscreenToggle}
         variant="ghost"
         size="sm"
         className="h-7 w-7 p-0 hover:bg-gray-100/80 mac-transition"
-        title="Fit Box to View - Center and zoom to fit the entire box (F)"
-        aria-label="Fit to view"
+        title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+        aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+        aria-pressed={isFullscreen}
       >
-        <Maximize2 className="w-3.5 h-3.5 text-gray-700" />
+        {isFullscreen ? (
+          <Minimize2 className="w-3.5 h-3.5 text-gray-700" />
+        ) : (
+          <Maximize2 className="w-3.5 h-3.5 text-gray-700" />
+        )}
       </Button>
 
       {/* Separator */}
@@ -83,7 +92,7 @@ export default function FloatingCanvasToolbar({
         variant={autoRotate ? 'default' : 'ghost'}
         size="sm"
         className={`h-7 w-7 p-0 mac-transition ${autoRotate ? '' : 'hover:bg-gray-100/80'}`}
-        title={autoRotate ? 'Stop Auto-Rotate - Pause the automatic rotation' : 'Auto-Rotate - Automatically spin the box for a 360° view'}
+        title={autoRotate ? 'Stop Rotation' : 'Auto-Rotate'}
         aria-label={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
         aria-pressed={autoRotate}
       >
