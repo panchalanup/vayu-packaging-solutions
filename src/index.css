@@ -43,6 +43,20 @@
   transition: transform var(--mac-transition), opacity 140ms;
 }
 
+/* Blur animation optimization for scroll effects */
+@media (prefers-reduced-motion: no-preference) {
+  [style*="filter: blur"] {
+    will-change: filter, opacity, transform;
+  }
+}
+
+/* Remove will-change after animation completes to save resources */
+@media (prefers-reduced-motion: no-preference) {
+  [style*="filter: blur(0px)"] {
+    will-change: auto;
+  }
+}
+
 .mac-hover:hover {
   transform: scale(1.03);
 }

@@ -36,8 +36,8 @@ const TestimonialsSection = () => {
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+              whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.15 }}
               className="bg-card border border-border rounded-2xl p-8 relative"

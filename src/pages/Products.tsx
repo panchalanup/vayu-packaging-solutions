@@ -96,8 +96,8 @@ const Products = () => {
               {products.map((product, i) => (
                 <motion.div
                   key={product.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+                  whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                   className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-xl transition-all group"

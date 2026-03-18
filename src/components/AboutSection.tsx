@@ -15,8 +15,8 @@ const AboutSection = () => {
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ filter: "blur(7px)", opacity: 0, x: -30 }}
+            whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
             className="relative"
@@ -34,8 +34,8 @@ const AboutSection = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ filter: "blur(5px)", opacity: 0, x: 30 }}
+            whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
@@ -73,8 +73,8 @@ const AboutSection = () => {
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ filter: "blur(3px)", opacity: 0, y: 20 }}
+              whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.15 }}
               className="text-center"

@@ -69,8 +69,8 @@ const ContactSection = () => {
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ filter: "blur(5px)", opacity: 0, x: -30 }}
+            whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
             <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-4">
@@ -129,8 +129,8 @@ const ContactSection = () => {
           </motion.div>
 
           <motion.form
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ filter: "blur(5px)", opacity: 0, x: 30 }}
+            whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="bg-card border border-border rounded-2xl p-8 space-y-6"
             onSubmit={handleSubmit}

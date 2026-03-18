@@ -40,8 +40,8 @@ const FacilityGallery = () => {
     <section className="py-16 sm:py-20 md:py-24 section-dark">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+          whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-12 sm:mb-16"
         >
@@ -60,8 +60,8 @@ const FacilityGallery = () => {
           {displayedImages.map((image, index) => (
             <motion.div
               key={image.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ filter: "blur(7px)", opacity: 0, y: 30 }}
+              whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
               className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 hover:shadow-xl transition-all duration-300 cursor-pointer"
@@ -101,8 +101,8 @@ const FacilityGallery = () => {
 
         {/* View All Images Notice */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ filter: "blur(3px)", opacity: 0 }}
+          whileInView={{ filter: "blur(0px)", opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
           className="mt-8 text-center"
@@ -114,8 +114,8 @@ const FacilityGallery = () => {
 
         {/* Trust Indicators */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ filter: "blur(8px)", opacity: 0 }}
+          whileInView={{ filter: "blur(0px)", opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6 }}
           className="mt-12 sm:mt-16 flex flex-wrap justify-center gap-4 sm:gap-6"

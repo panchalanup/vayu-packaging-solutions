@@ -72,16 +72,16 @@ export default function CompareQuote() {
           keywords={toolMeta.keywords}
           canonical="https://vayupackaging.vercel.app/compare-quote"
         />
-        <StructuredData schema={getSoftwareApplicationSchema()} />
-        <StructuredData schema={getToolFAQSchema()} />
+        <StructuredData type="SoftwareApplication" data={getSoftwareApplicationSchema()} />
+        <StructuredData type="FAQPage" data={getToolFAQSchema()} />
 
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
           {/* Hero Section */}
           <section className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent py-16 md:py-20">
             <div className="container mx-auto px-4">
               <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ filter: "blur(3px)", opacity: 0, y: -20 }}
+                animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="max-w-4xl mx-auto text-center"
               >
@@ -122,8 +122,8 @@ export default function CompareQuote() {
               <div className="space-y-12">
                 {/* Input Form */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ filter: "blur(3px)", opacity: 0, y: 20 }}
+                  animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                 >
                   <InputForm
@@ -138,8 +138,8 @@ export default function CompareQuote() {
                 {hasSearched && (
                   <motion.div
                     id="results-section"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    initial={{ filter: "blur(3px)", opacity: 0 }}
+                    animate={{ filter: "blur(0px)", opacity: 1 }}
                     transition={{ duration: 0.5 }}
                   >
                     {isSearching ? (

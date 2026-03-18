@@ -27,8 +27,8 @@ const Blogs = () => {
         <section className="pt-6 sm:pt-8 md:pt-10 pb-10 md:pb-12 section-dark">
           <div className="container mx-auto px-6 text-center max-w-4xl">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+              animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
               <div className="flex justify-center mb-4">
@@ -65,8 +65,8 @@ const Blogs = () => {
             {/* Results count */}
             <motion.div
               key={activeCategory}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ filter: "blur(3px)", opacity: 0 }}
+              animate={{ filter: "blur(0px)", opacity: 1 }}
               className="mb-8"
             >
               <p className="text-muted-foreground text-sm font-medium">
@@ -85,8 +85,8 @@ const Blogs = () => {
             {/* Empty State */}
             {filteredBlogs.length === 0 && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ filter: "blur(3px)", opacity: 0, y: 20 }}
+                animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
                 className="text-center py-16"
               >
                 <div className="w-24 h-24 rounded-full bg-secondary mx-auto mb-6 flex items-center justify-center">
@@ -107,8 +107,8 @@ const Blogs = () => {
         <section className="py-16 section-dark">
           <div className="container mx-auto px-6 text-center max-w-3xl">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+              whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">

@@ -47,8 +47,8 @@ const Services = () => {
               {services.map((service, i) => (
                 <motion.div
                   key={service.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+                  whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
                   className="bg-card border border-border rounded-2xl p-8 hover:border-primary/40 transition-all group"
@@ -69,15 +69,15 @@ const Services = () => {
           <div className="container mx-auto px-6">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <motion.img
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ filter: "blur(7px)", opacity: 0, x: -30 }}
+                whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 src={SERVICES_IMAGES.main}
                 alt={SERVICES_IMAGES.alt}
                 className="rounded-2xl w-full object-cover aspect-video"
                 loading="lazy"
               />
-              <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              <motion.div initial={{ filter: "blur(5px)", opacity: 0, x: 30 }} whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-6">
                   {SERVICES_CONTENT.industryHeading}
                 </h2>
