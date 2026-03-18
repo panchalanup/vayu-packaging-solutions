@@ -62,8 +62,8 @@ const VideoSection = () => {
     <section ref={sectionRef} className="py-16 sm:py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+          whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center max-w-3xl mx-auto mb-12"
         >
@@ -79,8 +79,8 @@ const VideoSection = () => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ filter: "blur(7px)", opacity: 0, y: 30 }}
+          whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
           className="relative max-w-6xl mx-auto rounded-2xl overflow-hidden shadow-2xl"
@@ -122,8 +122,8 @@ const VideoSection = () => {
 
         {/* Video Features/Benefits */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ filter: "blur(3px)", opacity: 0 }}
+          whileInView={{ filter: "blur(0px)", opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-4xl mx-auto"

@@ -46,8 +46,8 @@ const ServicesSection = () => {
           {services.map((service, i) => (
             <motion.div
               key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+              whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
               className="bg-card border border-border rounded-2xl p-8 hover:border-primary/40 transition-all group"
@@ -67,8 +67,8 @@ const ServicesSection = () => {
 
         {/* Feature image row */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ filter: "blur(7px)", opacity: 0, y: 30 }}
+          whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="mt-20 grid lg:grid-cols-2 gap-12 items-center"
         >

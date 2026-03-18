@@ -37,7 +37,7 @@ const About = () => {
         <section className="py-24">
           <div className="container mx-auto px-6">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="relative">
+              <motion.div initial={{ filter: "blur(7px)", opacity: 0, x: -30 }} whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }} viewport={{ once: true }} className="relative">
                 <img src={ABOUT_IMAGES.main} alt={ABOUT_IMAGES.alt} className="rounded-2xl w-full object-cover aspect-square" loading="lazy" />
                 <div className="absolute -bottom-6 -right-6 bg-primary text-primary-foreground rounded-2xl p-6 shadow-2xl hidden md:block">
                   <p className="font-heading text-3xl font-bold">{stats[0].value}</p>
@@ -45,7 +45,7 @@ const About = () => {
                 </div>
               </motion.div>
 
-              <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              <motion.div initial={{ filter: "blur(5px)", opacity: 0, x: 30 }} whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">Our Story</h2>
                 <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
                   {ABOUT_CONTENT.story.paragraph1}
@@ -74,7 +74,7 @@ const About = () => {
           <div className="container mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {stats.map((stat, i) => (
-                <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center">
+                <motion.div key={stat.label} initial={{ filter: "blur(3px)", opacity: 0, y: 20 }} whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center">
                   <p className="font-heading text-4xl md:text-5xl font-bold text-gradient mb-2">{stat.value}</p>
                   <p className="text-muted-foreground uppercase text-sm tracking-wider">{stat.label}</p>
                 </motion.div>
@@ -89,7 +89,7 @@ const About = () => {
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground text-center mb-16">Why Choose Vayu?</h2>
             <div className="space-y-8">
               {WHY_VAYU_EXTENDED.map((item) => (
-                <motion.div key={item.num} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex gap-6 items-start">
+                <motion.div key={item.num} initial={{ filter: "blur(5px)", opacity: 0, y: 20 }} whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }} viewport={{ once: true }} className="flex gap-6 items-start">
                   <span className="font-heading text-4xl font-bold text-primary/20">{item.num}</span>
                   <div>
                     <h3 className="font-heading text-xl font-semibold text-foreground mb-2">{item.title}</h3>

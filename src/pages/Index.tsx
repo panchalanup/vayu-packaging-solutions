@@ -53,10 +53,10 @@ const Index = () => {
               {STATS_ARRAY.map((stat, i) => (
                 <motion.div
                   key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ filter: "blur(3px)", opacity: 0, y: 20 }}
+                  whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.15 }}
+                  transition={{ delay: i * 0.1 }}
                   className="text-center"
                 >
                   <p className="font-heading text-4xl md:text-5xl font-bold text-gradient mb-2">{stat.value}</p>
@@ -79,7 +79,7 @@ const Index = () => {
         {/* Quick CTA */}
         <section className="py-24">
           <div className="container mx-auto px-6 text-center max-w-3xl">
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <motion.div initial={{ filter: "blur(5px)", opacity: 0, y: 30 }} whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }} viewport={{ once: true }}>
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
                 Ready to streamline your packaging supply?
               </h2>
@@ -109,8 +109,8 @@ const Index = () => {
               {testimonials.map((t, i) => (
                 <motion.div
                   key={t.name}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+                  whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.15 }}
                   className="bg-card border border-border rounded-2xl p-8 relative"

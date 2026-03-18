@@ -8,8 +8,8 @@ const CTASection = () => {
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ filter: "blur(5px)", opacity: 0, x: -30 }}
+            whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
@@ -37,8 +37,8 @@ const CTASection = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ filter: "blur(5px)", opacity: 0, x: 30 }}
+            whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="bg-card border border-border rounded-2xl p-10 glow-amber"
           >

@@ -46,10 +46,10 @@ const ProcessTimeline = () => {
       <div className="container mx-auto px-4 sm:px-6">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
+          whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-3xl mx-auto mb-16 sm:mb-20"
+          className="text-center max-w-2xl mx-auto mb-16"
         >
           <motion.p 
             initial={{ opacity: 0 }}
@@ -90,8 +90,8 @@ const ProcessTimeline = () => {
             {processSteps.map((step, index) => (
               <motion.div
                 key={step.number}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
+              initial={{ filter: "blur(5px)", opacity: 0, y: 40 }}
+              whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ 
                   delay: index * 0.15,

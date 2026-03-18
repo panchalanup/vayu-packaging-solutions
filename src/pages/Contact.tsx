@@ -80,7 +80,7 @@ const Contact = () => {
         <section className="py-24">
           <div className="container mx-auto px-6">
             <div className="grid lg:grid-cols-2 gap-16">
-              <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
+              <motion.div initial={{ filter: "blur(5px)", opacity: 0, x: -30 }} whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }} viewport={{ once: true }}>
                 <h2 className="font-heading text-3xl font-bold text-foreground mb-8">Get in touch</h2>
                 <div className="space-y-6 mb-10">
                   <div className="flex items-center gap-4">
@@ -128,8 +128,8 @@ const Contact = () => {
               </motion.div>
 
               <motion.form
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ filter: "blur(5px)", opacity: 0, x: 30 }}
+                whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 className="bg-card border border-border rounded-2xl p-8 space-y-6"
                 onSubmit={handleSubmit}
