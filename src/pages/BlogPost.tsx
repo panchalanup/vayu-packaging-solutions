@@ -10,6 +10,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import { motion } from "framer-motion";
 import { ArrowLeft, Clock, Calendar, User } from "lucide-react";
 import { getBlogBySlug, getRelatedBlogs, BLOG_AUTHOR } from "@/constants/blogs";
+import { BLOG_IMAGES } from "@/constants/images";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -25,6 +26,9 @@ const BlogPost = () => {
   
   const post = slug ? getBlogBySlug(slug) : undefined;
   const relatedPosts = slug ? getRelatedBlogs(slug, 3) : [];
+  const featuredImage = post
+    ? BLOG_IMAGES[post.thumbnail as keyof typeof BLOG_IMAGES] || BLOG_IMAGES.defaultThumbnail
+    : BLOG_IMAGES.defaultThumbnail;
 
   useEffect(() => {
     const loadContent = async () => {
@@ -37,7 +41,15 @@ const BlogPost = () => {
         
         // Remove frontmatter (content between --- markers)
         const contentWithoutFrontmatter = text.replace(/^---[\s\S]*?---\n/, '');
-        setContent(contentWithoutFrontmatter);
+        const escapedTitle = post?.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const contentWithoutDuplicateTitle = escapedTitle
+          ? contentWithoutFrontmatter.replace(
+              new RegExp(`^#\\s+${escapedTitle}\\s*\\n+`, "i"),
+              ""
+            )
+          : contentWithoutFrontmatter;
+
+        setContent(contentWithoutDuplicateTitle);
       } catch (error) {
         console.error('Error loading blog content:', error);
         setContent('# Content Loading Error\n\nUnable to load blog content. Please try again later.');
@@ -48,7 +60,7 @@ const BlogPost = () => {
 
     loadContent();
     window.scrollTo(0, 0);
-  }, [slug]);
+  }, [slug, post?.title]);
 
   if (!post) {
     return <Navigate to="/blogs" replace />;
@@ -148,6 +160,14 @@ const BlogPost = () => {
                   url={currentUrl}
                   title={post.title}
                   description={post.description}
+                />
+              </div>
+
+              <div className="blog-featured-image-wrapper">
+                <img
+                  src={featuredImage}
+                  alt={post.title}
+                  className="blog-featured-image"
                 />
               </div>
             </motion.div>
