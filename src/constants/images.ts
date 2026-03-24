@@ -50,6 +50,13 @@ import prod6 from "@/assets/Products/PROD-6.png";
 
 // Import blog images
 import blogThumbnail from "@/assets/Blogs/blog-00.png";
+import blog01 from "@/assets/Blogs/blog-01.png";
+import blog02 from "@/assets/Blogs/blog-02.png";
+import blog03 from "@/assets/Blogs/blog-03.png";
+import blog04 from "@/assets/Blogs/blog-04.png";
+import blog05 from "@/assets/Blogs/blog-05.png";
+import blog06 from "@/assets/Blogs/blog-06.png";
+import blog07 from "@/assets/Blogs/blog-07.png";
 import blog08 from "@/assets/Blogs/blog-08.png";
 
 // ============================================
@@ -176,13 +183,13 @@ export const PRODUCT_IMAGES = [
 // ============================================
 export const BLOG_IMAGES = {
   defaultThumbnail: blogThumbnail,
-  "BLOG-01-thumbnail": blogThumbnail, // types-of-corrugated-boxes
-  "BLOG-02-thumbnail": blogThumbnail, // corrugated-wall-differences
-  "BLOG-03-thumbnail": blogThumbnail, // flute-types-guide
-  "BLOG-04-thumbnail": blogThumbnail, // gsm-calculation-strength
-  "BLOG-05-thumbnail": blogThumbnail, // burst-strength-ect-guide
-  "BLOG-06-thumbnail": blogThumbnail, // box-measurements-guide
-  "BLOG-07-thumbnail": blogThumbnail, // kraft-paper-grades
+  "BLOG-01-thumbnail": blog01, // types-of-corrugated-boxes
+  "BLOG-02-thumbnail": blog02, // corrugated-wall-differences
+  "BLOG-03-thumbnail": blog03, // flute-types-guide
+  "BLOG-04-thumbnail": blog04, // gsm-calculation-strength
+  "BLOG-05-thumbnail": blog05, // burst-strength-ect-guide
+  "BLOG-06-thumbnail": blog06, // box-measurements-guide
+  "BLOG-07-thumbnail": blog07, // kraft-paper-grades
   "BLOG-08-thumbnail": blog08, // 3d-box-designer-tool-free ✨
   alt: "Vayu Packaging Solutions - Corrugated boxes and packaging",
 } as const;

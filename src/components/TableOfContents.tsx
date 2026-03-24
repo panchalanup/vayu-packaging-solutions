@@ -16,7 +16,7 @@ const TableOfContents = ({ content }: TableOfContentsProps) => {
   const [headings, setHeadings] = useState<TOCItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
   const [isHovered, setIsHovered] = useState(false); // For desktop hover
-  const [isInBlogSection, setIsInBlogSection] = useState(false); // Track if in blog content area
+  const [isInBlogSection, setIsInBlogSection] = useState(false); // Track if featured image has crossed the top trigger
 
   useEffect(() => {
     // Extract headings from markdown content
@@ -64,31 +64,30 @@ const TableOfContents = ({ content }: TableOfContentsProps) => {
   }, [headings]);
 
   useEffect(() => {
-    // Observe blog title to show TOC button only after it scrolls past top
-    const articleElement = document.querySelector('.medium-article');
-    if (!articleElement) return;
-
-    // Find the main title (h1) in the article
-    const blogTitle = articleElement.querySelector('h1');
-    if (!blogTitle) return;
-
-    const titleObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          // Show button when title is NOT intersecting (has scrolled past)
-          setIsInBlogSection(!entry.isIntersecting);
-        });
-      },
-      {
-        rootMargin: '-80px 0px 0px 0px', // Trigger when title reaches navbar
-        threshold: 0
+    // Show TOC button only after the featured image reaches the top trigger area
+    const updateTOCVisibility = () => {
+      const featuredImage = document.querySelector('.blog-featured-image-wrapper');
+      if (!featuredImage) {
+        setIsInBlogSection(false);
+        return;
       }
-    );
 
-    titleObserver.observe(blogTitle);
+      const navbar = document.querySelector('nav');
+      const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 80;
+      const featuredImageTop = featuredImage.getBoundingClientRect().top;
 
-    return () => titleObserver.disconnect();
-  }, []);
+      setIsInBlogSection(featuredImageTop <= navbarHeight);
+    };
+
+    updateTOCVisibility();
+    window.addEventListener('scroll', updateTOCVisibility, { passive: true });
+    window.addEventListener('resize', updateTOCVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', updateTOCVisibility);
+      window.removeEventListener('resize', updateTOCVisibility);
+    };
+  }, [content]);
 
 
   const handleClick = (id: string) => {
@@ -116,18 +115,19 @@ const TableOfContents = ({ content }: TableOfContentsProps) => {
 
   return (
     <>
-      {/* Desktop TOC - Floating Button with Popup (Right Side) - Only visible after title scrolls past */}
+      {/* Desktop TOC - Floating Button with Popup (Right Side) - Only visible after featured image reaches the top */}
       <div className="hidden lg:block">
         <AnimatePresence>
           {isInBlogSection && (
             <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0 }}
+              initial={{ opacity: 0, x: 72, scale: 0.82 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 56, scale: 0.9 }}
               transition={{ 
                 type: "spring",
-                stiffness: 260,
-                damping: 20
+                stiffness: 420,
+                damping: 22,
+                mass: 0.7
               }}
               className="fixed right-4 top-24 z-40"
               onMouseEnter={() => setIsHovered(true)}
