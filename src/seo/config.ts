@@ -5,6 +5,21 @@
 
 import { CONTACT_INFO } from '@/constants';
 
+export const GUJARAT_SERVICE_CITIES = [
+  'Ahmedabad',
+  'Gandhinagar',
+  'Mehsana',
+  'Himmatnagar',
+  'Modasa',
+  'Surat',
+  'Vadodara',
+  'Rajkot',
+  'Bhavnagar',
+  'Jamnagar',
+  'Morbi',
+  'Vapi',
+] as const;
+
 export const SEO_CONFIG = {
   // Site Information
   siteName: 'Vayu Packaging Solutions',

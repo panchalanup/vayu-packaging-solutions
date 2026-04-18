@@ -13,6 +13,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
+import Locations from "./pages/Locations";
 import Products from "./pages/Products";
 import Contact from "./pages/Contact";
 import Blogs from "./pages/Blogs";
@@ -85,6 +86,7 @@ const AnimatedRoutes = () => {
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/locations" element={<Locations />} />
           <Route path="/products" element={<Products />} />
           <Route path="/compare-quote" element={<CompareQuote />} />
           <Route path="/box-designer" element={<BoxDesigner />} />

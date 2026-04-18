@@ -5,11 +5,44 @@ import ProcessTimeline from "@/components/ProcessTimeline";
 import FacilityGallery from "@/components/FacilityGallery";
 import PageTransition from "@/components/PageTransition";
 import { STATS_ARRAY } from "@/constants";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Star, Quote } from "lucide-react";
 import { MetaTags, StructuredData } from '@/seo';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
 import { getOrganizationSchema, getLocalBusinessSchema, getBreadcrumbSchema, PAGE_BREADCRUMBS, getProductCatalogSchema } from '@/seo/schema';
+
+const DistributionMap = lazy(() => import("@/components/DistributionMap"));
+
+const distributionCities = [
+  "Ahmedabad (HQ)",
+  "Gandhinagar",
+  "Mehsana",
+  "Himmatnagar",
+  "Modasa",
+  "Surat",
+  "Vadodara",
+  "Rajkot",
+  "Bhavnagar",
+  "Jamnagar",
+  "Morbi",
+  "Vapi",
+];
+
+const distributionUseCases = [
+  {
+    problem: "Transit damage in long-distance dispatch",
+    solution: "Recommended 5-ply and 7-ply corrugated configurations with stronger burst and stacking performance.",
+  },
+  {
+    problem: "Urgent replenishment for fast-moving SKUs",
+    solution: "Ahmedabad hub-based planning supports faster dispatch cycles across major Gujarat industrial corridors.",
+  },
+  {
+    problem: "Inconsistent packaging quality across suppliers",
+    solution: "Single-vendor quality process for box strength, dimensions, and packaging consumables at scale.",
+  },
+];
 
 const testimonials = [
   {
@@ -30,6 +63,38 @@ const testimonials = [
 ];
 
 const Index = () => {
+  const mapSectionRef = useRef<HTMLElement | null>(null);
+  const [shouldLoadMap, setShouldLoadMap] = useState(false);
+
+  useEffect(() => {
+    const section = mapSectionRef.current;
+    if (!section) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoadMap(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "250px 0px",
+        threshold: 0.15,
+      }
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <Layout>
       {/* SEO Meta Tags */}
@@ -75,6 +140,78 @@ const Index = () => {
 
         {/* Facility Gallery - NEW */}
         <FacilityGallery />
+
+        {/* Distribution Network Map */}
+        <section ref={mapSectionRef} className="py-24 section-dark" aria-labelledby="distribution-network-heading">
+          <div className="container mx-auto px-6">
+            <div className="mx-auto max-w-4xl text-center mb-10">
+              <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-4">Delivery Coverage</p>
+              <h2 id="distribution-network-heading" className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-5">
+                Our Distribution Network Across Gujarat
+              </h2>
+              <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
+                We provide packaging distribution services across major cities in Gujarat including Ahmedabad, Surat, Vadodara,
+                Rajkot, and surrounding industrial zones. Ahmedabad serves as our central hub, enabling fast and dependable
+                delivery operations throughout the state.
+              </p>
+            </div>
+
+            <div className="mx-auto max-w-6xl">
+              {shouldLoadMap ? (
+                <Suspense
+                  fallback={<div className="h-[420px] w-full rounded-2xl bg-secondary/80 animate-pulse border border-border md:h-[500px]" />}
+                >
+                  <DistributionMap />
+                </Suspense>
+              ) : (
+                <div className="h-[420px] w-full rounded-2xl bg-secondary/80 animate-pulse border border-border md:h-[500px]" />
+              )}
+            </div>
+
+            <div className="mx-auto mt-8 max-w-6xl grid gap-6 lg:grid-cols-2">
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="font-heading text-xl font-semibold text-foreground mb-3">Cities We Serve in Gujarat</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  We actively support industrial and business delivery requirements across key Gujarat markets.
+                </p>
+                <ul className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm text-foreground">
+                  {distributionCities.map((city) => (
+                    <li key={city} className="rounded-lg bg-secondary/60 px-3 py-2">
+                      {city}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="font-heading text-xl font-semibold text-foreground mb-3">Common Packaging Challenges We Solve</h3>
+                <ul className="space-y-3">
+                  {distributionUseCases.map((item) => (
+                    <li key={item.problem} className="rounded-xl border border-border bg-secondary/30 p-4">
+                      <p className="text-sm font-semibold text-foreground">{item.problem}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{item.solution}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mx-auto mt-8 max-w-5xl rounded-2xl border border-border bg-card p-6 text-center">
+              <h3 className="font-heading text-xl font-semibold text-foreground mb-2">Looking for city-wise packaging support?</h3>
+              <p className="text-muted-foreground text-sm md:text-base mb-5">
+                Explore our Gujarat coverage details and choose packaging solutions by city, industry, and delivery urgency.
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <a href="/locations" className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:brightness-110 transition-all">
+                  View Gujarat Service Locations
+                </a>
+                <a href="/services" className="inline-flex items-center rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-foreground hover:bg-secondary transition-all">
+                  Explore Industry Solutions
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Quick CTA */}
         <section className="py-24">

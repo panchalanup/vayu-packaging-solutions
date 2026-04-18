@@ -51,6 +51,11 @@ export const PAGE_BREADCRUMBS = {
     { name: 'Home', url: '/' },
     { name: 'Contact Us', url: '/contact' },
   ],
+
+  locations: [
+    { name: 'Home', url: '/' },
+    { name: 'Locations', url: '/locations' },
+  ],
 };
 
 // Helper to generate blog breadcrumbs
