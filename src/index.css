@@ -227,3 +227,68 @@ body {
     right: -10%;
   }
 }
+
+/* Distribution Map */
+@keyframes distribution-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.distribution-marker {
+  border-radius: 9999px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+}
+
+.distribution-marker--hq {
+  width: 18px;
+  height: 18px;
+  background: #3b82f6;
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.85);
+  animation: distribution-pulse 2s infinite;
+}
+
+.distribution-marker--city {
+  width: 12px;
+  height: 12px;
+  background: #60a5fa;
+  box-shadow: 0 0 12px rgba(96, 165, 250, 0.55);
+}
+
+.distribution-map-popup .mapboxgl-popup-content {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 10px;
+  color: #f8fafc;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.35);
+  padding: 10px 12px;
+}
+
+.distribution-map-popup .mapboxgl-popup-tip {
+  border-top-color: rgba(15, 23, 42, 0.95);
+  border-bottom-color: rgba(15, 23, 42, 0.95);
+}
+
+.distribution-popup-content {
+  line-height: 1.2;
+}
+
+.distribution-popup-city {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.distribution-popup-status {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: #93c5fd;
+}

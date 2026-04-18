@@ -116,6 +116,25 @@ export const PAGE_METADATA: Record<string, PageMeta> = {
     ],
     ogImage: '/og-contact.jpg',
   },
+
+  locations: {
+    title: 'Packaging Distribution Network in Gujarat | Ahmedabad, Surat, Vadodara & More',
+    description: 'Vayu Packaging serves major Gujarat cities including Ahmedabad, Surat, Vadodara, Rajkot, Gandhinagar, Mehsana and more. Bulk corrugated boxes, BOPP tapes, stretch films and protective packaging with fast dispatch.',
+    keywords: [
+      'packaging supplier Gujarat',
+      'corrugated box supplier Gujarat',
+      'Ahmedabad packaging supplier',
+      'Surat corrugated boxes',
+      'Vadodara packaging distributor',
+      'Rajkot box supplier',
+      'bulk packaging materials Gujarat',
+      'delivery network Gujarat',
+      'industrial packaging Gujarat',
+      'packaging distribution Ahmedabad',
+    ],
+    canonical: '/locations',
+    ogImage: '/og-home.jpg',
+  },
   
   packagingFinder: {
     title: 'Free Packaging Finder Tool | Smart Box Selector & Cost Calculator India',

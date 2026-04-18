@@ -3,7 +3,7 @@
  * Schema.org structured data for local business SEO
  */
 
-import { SEO_CONFIG } from '../config';
+import { GUJARAT_SERVICE_CITIES, SEO_CONFIG } from '../config';
 
 export const getLocalBusinessSchema = () => ({
   '@context': 'https://schema.org',
@@ -58,14 +58,14 @@ export const getLocalBusinessSchema = () => ({
   
   // Area Served
   areaServed: [
-    {
+    ...GUJARAT_SERVICE_CITIES.map((city) => ({
       '@type': 'City',
-      name: 'Ahmedabad',
+      name: city,
       containedInPlace: {
         '@type': 'State',
         name: 'Gujarat',
       },
-    },
+    })),
     ...SEO_CONFIG.areaServed.map(state => ({
       '@type': 'State',
       name: state,
