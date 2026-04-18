@@ -3,6 +3,7 @@ import { ArrowLeft, Plus, Save, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
+import AdminPageLoader from "@/components/admin/AdminPageLoader";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
 import {
   calculateDocumentTotals,
@@ -56,43 +57,50 @@ const AdminQuotationForm = () => {
   const [termsAndConditions, setTermsAndConditions] = useState("");
   const [paymentTerms, setPaymentTerms] = useState("");
   const [preparedBy, setPreparedBy] = useState("Admin");
+  const [isInitializing, setIsInitializing] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const savedCustomers = getCustomers();
-    setCustomers(savedCustomers);
+    const loadQuotationForm = async () => {
+      setIsInitializing(true);
 
-    if (!id) {
-      setQuotationNumber(getNextQuotationNumber());
-      setQuotationDate(new Date().toISOString().slice(0, 10));
-      return;
-    }
+      try {
+        const savedCustomers = await getCustomers();
+        setCustomers(savedCustomers);
 
-    const quotation = getQuotationById(id);
+        if (!id) {
+          setQuotationNumber(await getNextQuotationNumber());
+          setQuotationDate(new Date().toISOString().slice(0, 10));
+          return;
+        }
 
-    if (!quotation) {
-      toast.error("Quotation not found");
-      navigate(ADMIN_ROUTES.quotations, { replace: true });
-      return;
-    }
+        const quotation = await getQuotationById(id);
 
-    setSelectedCustomerId(quotation.customerId);
-    setQuotationNumber(quotation.quotationNumber);
-    setQuotationDate(quotation.quotationDate);
-    setValidUntil(quotation.validUntil);
-    setStatus(quotation.status);
-    setInquiryReference(quotation.inquiryReference);
-    setItems(
-      quotation.items.length > 0
-        ? quotation.items
-        : [createEmptyLineItem()],
-    );
-    setDiscount(String(quotation.discount));
-    setShippingCharges(String(quotation.shippingCharges));
-    setNotes(quotation.notes);
-    setTermsAndConditions(quotation.termsAndConditions);
-    setPaymentTerms(quotation.paymentTerms);
-    setPreparedBy(quotation.preparedBy);
+        if (!quotation) {
+          toast.error("Quotation not found");
+          navigate(ADMIN_ROUTES.quotations, { replace: true });
+          return;
+        }
+
+        setSelectedCustomerId(quotation.customerId);
+        setQuotationNumber(quotation.quotationNumber);
+        setQuotationDate(quotation.quotationDate);
+        setValidUntil(quotation.validUntil);
+        setStatus(quotation.status);
+        setInquiryReference(quotation.inquiryReference);
+        setItems(quotation.items.length > 0 ? quotation.items : [createEmptyLineItem()]);
+        setDiscount(String(quotation.discount));
+        setShippingCharges(String(quotation.shippingCharges));
+        setNotes(quotation.notes);
+        setTermsAndConditions(quotation.termsAndConditions);
+        setPaymentTerms(quotation.paymentTerms);
+        setPreparedBy(quotation.preparedBy);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    void loadQuotationForm();
   }, [id, navigate]);
 
   const selectedCustomer = useMemo(() => {
@@ -147,7 +155,7 @@ const AdminQuotationForm = () => {
     });
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!selectedCustomer) {
@@ -158,12 +166,12 @@ const AdminQuotationForm = () => {
     setIsSaving(true);
 
     try {
-      const existingQuotation = id ? getQuotationById(id) : null;
+      const existingQuotation = id ? await getQuotationById(id) : null;
       const timestamp = new Date().toISOString();
 
-      upsertQuotation({
+      await upsertQuotation({
         id: existingQuotation?.id ?? createRecordId(),
-        quotationNumber: quotationNumber || getNextQuotationNumber(),
+        quotationNumber: quotationNumber || (await getNextQuotationNumber()),
         quotationDate,
         validUntil,
         customerId: selectedCustomer.id,
@@ -190,6 +198,10 @@ const AdminQuotationForm = () => {
       setIsSaving(false);
     }
   };
+
+  if (isInitializing) {
+    return <AdminPageLoader title="Loading quotation form..." description="Preparing quotation details from Google Sheets." />;
+  }
 
   return (
     <div className="space-y-6">

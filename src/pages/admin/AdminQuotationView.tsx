@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Download, FileSpreadsheet, PencilLine } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import AdminDocumentPreview from "@/components/admin/AdminDocumentPreview";
+import AdminPageLoader from "@/components/admin/AdminPageLoader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
@@ -14,13 +15,37 @@ const AdminQuotationView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
+  const [quotation, setQuotation] = useState<Awaited<ReturnType<typeof getQuotationById>>>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const quotation = useMemo(() => (id ? getQuotationById(id) : null), [id]);
+  useEffect(() => {
+    const loadQuotation = async () => {
+      setIsLoading(true);
+
+      try {
+        if (!id) {
+          setQuotation(null);
+          return;
+        }
+
+        setQuotation(await getQuotationById(id));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadQuotation();
+  }, [id]);
+
   const settings = useMemo(() => getDocumentSettings(), []);
 
   const openInPopup = (path: string) => {
     navigate(path, { state: { backgroundLocation: location.state?.backgroundLocation ?? location } });
   };
+
+  if (isLoading) {
+    return <AdminPageLoader title="Loading quotation..." description="Fetching quotation details from Google Sheets." />;
+  }
 
   if (!quotation) {
     return (

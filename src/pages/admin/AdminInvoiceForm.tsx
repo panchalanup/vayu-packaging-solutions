@@ -3,6 +3,7 @@ import { ArrowLeft, Plus, Save, Trash2 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
+import AdminPageLoader from "@/components/admin/AdminPageLoader";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
 import {
   calculateDocumentTotals,
@@ -60,58 +61,69 @@ const AdminInvoiceForm = () => {
   const [notes, setNotes] = useState("");
   const [paymentInstructions, setPaymentInstructions] = useState("");
   const [bankDetails, setBankDetails] = useState("");
+  const [isInitializing, setIsInitializing] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const savedCustomers = getCustomers();
-    const savedQuotations = getQuotations();
+    const loadInvoiceForm = async () => {
+      setIsInitializing(true);
 
-    setCustomers(savedCustomers);
-    setQuotations(savedQuotations);
+      try {
+        const savedCustomers = await getCustomers();
+        const savedQuotations = await getQuotations();
 
-    if (!id) {
-      setInvoiceNumber(getNextInvoiceNumber());
-      setInvoiceDate(new Date().toISOString().slice(0, 10));
+        setCustomers(savedCustomers);
+        setQuotations(savedQuotations);
 
-      const quotationIdFromQuery = new URLSearchParams(location.search).get("quotationId");
-      if (quotationIdFromQuery) {
-        const linkedQuotation = getQuotationById(quotationIdFromQuery);
+        if (!id) {
+          setInvoiceNumber(await getNextInvoiceNumber());
+          setInvoiceDate(new Date().toISOString().slice(0, 10));
 
-        if (linkedQuotation) {
-          setSelectedQuotationId(linkedQuotation.id);
-          setSelectedCustomerId(linkedQuotation.customerId);
-          setItems(linkedQuotation.items);
-          setDiscount(String(linkedQuotation.discount));
-          setShippingCharges(String(linkedQuotation.shippingCharges));
-          setNotes(linkedQuotation.notes);
-          setPaymentInstructions(linkedQuotation.paymentTerms);
+          const quotationIdFromQuery = new URLSearchParams(location.search).get("quotationId");
+          if (quotationIdFromQuery) {
+            const linkedQuotation = await getQuotationById(quotationIdFromQuery);
+
+            if (linkedQuotation) {
+              setSelectedQuotationId(linkedQuotation.id);
+              setSelectedCustomerId(linkedQuotation.customerId);
+              setItems(linkedQuotation.items);
+              setDiscount(String(linkedQuotation.discount));
+              setShippingCharges(String(linkedQuotation.shippingCharges));
+              setNotes(linkedQuotation.notes);
+              setPaymentInstructions(linkedQuotation.paymentTerms);
+            }
+          }
+
+          return;
         }
+
+        const invoice = await getInvoiceById(id);
+
+        if (!invoice) {
+          toast.error("Invoice not found");
+          navigate(ADMIN_ROUTES.invoices, { replace: true });
+          return;
+        }
+
+        setSelectedCustomerId(invoice.customerId);
+        setSelectedQuotationId(invoice.quotationId ?? "manual");
+        setInvoiceNumber(invoice.invoiceNumber);
+        setInvoiceDate(invoice.invoiceDate);
+        setDueDate(invoice.dueDate);
+        setStatus(invoice.status);
+        setItems(invoice.items.length > 0 ? invoice.items : [createEmptyLineItem()]);
+        setDiscount(String(invoice.discount));
+        setShippingCharges(String(invoice.shippingCharges));
+        setAmountPaid(String(invoice.amountPaid));
+        setNotes(invoice.notes);
+        setPaymentInstructions(invoice.paymentInstructions);
+        setBankDetails(invoice.bankDetails);
+      } finally {
+        setIsInitializing(false);
       }
+    };
 
-      return;
-    }
-
-    const invoice = getInvoiceById(id);
-
-    if (!invoice) {
-      toast.error("Invoice not found");
-      navigate(ADMIN_ROUTES.invoices, { replace: true });
-      return;
-    }
-
-    setSelectedCustomerId(invoice.customerId);
-    setSelectedQuotationId(invoice.quotationId ?? "manual");
-    setInvoiceNumber(invoice.invoiceNumber);
-    setInvoiceDate(invoice.invoiceDate);
-    setDueDate(invoice.dueDate);
-    setStatus(invoice.status);
-    setItems(invoice.items.length > 0 ? invoice.items : [createEmptyLineItem()]);
-    setDiscount(String(invoice.discount));
-    setShippingCharges(String(invoice.shippingCharges));
-    setAmountPaid(String(invoice.amountPaid));
-    setNotes(invoice.notes);
-    setPaymentInstructions(invoice.paymentInstructions);
-    setBankDetails(invoice.bankDetails);
+    void loadInvoiceForm();
   }, [id, location.search, navigate]);
 
   const selectedCustomer = useMemo(() => {
@@ -130,13 +142,13 @@ const AdminInvoiceForm = () => {
     return Number(Math.max(totals.grandTotal - parsedAmountPaid, 0).toFixed(2));
   }, [parsedAmountPaid, totals.grandTotal]);
 
-  const applyQuotationToForm = (quotationId: string) => {
+  const applyQuotationToForm = async (quotationId: string) => {
     if (quotationId === "manual") {
       setSelectedQuotationId("manual");
       return;
     }
 
-    const quotation = getQuotationById(quotationId);
+    const quotation = await getQuotationById(quotationId);
 
     if (!quotation) {
       toast.error("Selected quotation could not be loaded");
@@ -189,7 +201,7 @@ const AdminInvoiceForm = () => {
     });
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!selectedCustomer) {
@@ -200,12 +212,12 @@ const AdminInvoiceForm = () => {
     setIsSaving(true);
 
     try {
-      const existingInvoice = id ? getInvoiceById(id) : null;
+      const existingInvoice = id ? await getInvoiceById(id) : null;
       const timestamp = new Date().toISOString();
 
-      upsertInvoice({
+      await upsertInvoice({
         id: existingInvoice?.id ?? createRecordId(),
-        invoiceNumber: invoiceNumber || getNextInvoiceNumber(),
+        invoiceNumber: invoiceNumber || (await getNextInvoiceNumber()),
         invoiceDate,
         dueDate,
         quotationId: selectedQuotationId === "manual" ? null : selectedQuotationId,
@@ -233,6 +245,10 @@ const AdminInvoiceForm = () => {
       setIsSaving(false);
     }
   };
+
+  if (isInitializing) {
+    return <AdminPageLoader title="Loading invoice form..." description="Preparing invoice details from Google Sheets." />;
+  }
 
   return (
     <div className="space-y-6">

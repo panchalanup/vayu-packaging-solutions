@@ -3,6 +3,7 @@ import { ArrowLeft, Building2, Save } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
+import AdminPageLoader from "@/components/admin/AdminPageLoader";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
 import { createRecordId, getCustomerById, upsertCustomer } from "@/lib/admin-storage";
 import { CustomerFormValues } from "@/types/admin-crm";
@@ -33,34 +34,45 @@ const AdminCustomerForm = () => {
   const isEditMode = Boolean(id);
 
   const [formValues, setFormValues] = useState<CustomerFormValues>(emptyCustomerForm);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (!id) {
-      return;
-    }
+    const loadCustomer = async () => {
+      setIsInitializing(true);
 
-    const customer = getCustomerById(id);
+      try {
+        if (!id) {
+          return;
+        }
 
-    if (!customer) {
-      toast.error("Customer not found");
-      navigate(ADMIN_ROUTES.customers, { replace: true });
-      return;
-    }
+        const customer = await getCustomerById(id);
 
-    setFormValues({
-      companyName: customer.companyName,
-      contactPerson: customer.contactPerson,
-      email: customer.email,
-      phone: customer.phone,
-      gstNumber: customer.gstNumber,
-      billingAddress: customer.billingAddress,
-      shippingAddress: customer.shippingAddress,
-      city: customer.city,
-      state: customer.state,
-      pincode: customer.pincode,
-      notes: customer.notes,
-    });
+        if (!customer) {
+          toast.error("Customer not found");
+          navigate(ADMIN_ROUTES.customers, { replace: true });
+          return;
+        }
+
+        setFormValues({
+          companyName: customer.companyName,
+          contactPerson: customer.contactPerson,
+          email: customer.email,
+          phone: customer.phone,
+          gstNumber: customer.gstNumber,
+          billingAddress: customer.billingAddress,
+          shippingAddress: customer.shippingAddress,
+          city: customer.city,
+          state: customer.state,
+          pincode: customer.pincode,
+          notes: customer.notes,
+        });
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    void loadCustomer();
   }, [id, navigate]);
 
   const pageTitle = useMemo(() => {
@@ -80,15 +92,15 @@ const AdminCustomerForm = () => {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSaving(true);
 
     try {
-      const existingCustomer = id ? getCustomerById(id) : null;
+      const existingCustomer = id ? await getCustomerById(id) : null;
       const timestamp = new Date().toISOString();
 
-      upsertCustomer({
+      await upsertCustomer({
         id: existingCustomer?.id ?? createRecordId(),
         createdAt: existingCustomer?.createdAt ?? timestamp,
         updatedAt: timestamp,
@@ -101,6 +113,10 @@ const AdminCustomerForm = () => {
       setIsSaving(false);
     }
   };
+
+  if (isInitializing) {
+    return <AdminPageLoader title="Loading customer form..." description="Preparing customer details from Google Sheets." />;
+  }
 
   return (
     <div className="space-y-6">

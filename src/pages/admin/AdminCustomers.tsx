@@ -3,6 +3,7 @@ import { Building2, PencilLine, Plus, Search, Trash2, Users } from "lucide-react
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+import AdminPageLoader from "@/components/admin/AdminPageLoader";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
 import { deleteCustomer, getCustomers } from "@/lib/admin-storage";
 import { Customer } from "@/types/admin-crm";
@@ -16,10 +17,20 @@ const AdminCustomers = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    setCustomers(getCustomers());
+    const loadCustomers = async () => {
+      setIsLoading(true);
+      try {
+        setCustomers(await getCustomers());
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadCustomers();
   }, [location.key]);
 
   const filteredCustomers = useMemo(() => {
@@ -48,9 +59,9 @@ const AdminCustomers = () => {
     return new Set(customers.map((customer) => customer.city).filter(Boolean)).size;
   }, [customers]);
 
-  const handleDelete = (customerId: string) => {
-    deleteCustomer(customerId);
-    setCustomers(getCustomers());
+  const handleDelete = async (customerId: string) => {
+    await deleteCustomer(customerId);
+    setCustomers(await getCustomers());
     toast.success("Customer removed");
   };
 
@@ -142,7 +153,9 @@ const AdminCustomers = () => {
         </CardHeader>
 
         <CardContent>
-          {filteredCustomers.length === 0 ? (
+          {isLoading ? (
+            <AdminPageLoader title="Loading customers..." description="Syncing customer records from Google Sheets." />
+          ) : filteredCustomers.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-14 text-center">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-slate-700 shadow-sm">
                 <Users className="h-7 w-7" />

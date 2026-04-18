@@ -3,6 +3,7 @@ import { Copy, FileSpreadsheet, PencilLine, Plus, Search, Trash2, Wallet } from 
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+import AdminPageLoader from "@/components/admin/AdminPageLoader";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
 import { createRecordId, deleteInvoice, getInvoices, getNextInvoiceNumber, upsertInvoice } from "@/lib/admin-storage";
 import { Invoice } from "@/types/admin-crm";
@@ -24,10 +25,20 @@ const AdminInvoices = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    setInvoices(getInvoices());
+    const loadInvoices = async () => {
+      setIsLoading(true);
+      try {
+        setInvoices(await getInvoices());
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadInvoices();
   }, [location.key]);
 
   const filteredInvoices = useMemo(() => {
@@ -58,25 +69,25 @@ const AdminInvoices = () => {
     return invoices.reduce((sum, invoice) => sum + invoice.balanceDue, 0);
   }, [invoices]);
 
-  const handleDelete = (invoiceId: string) => {
-    deleteInvoice(invoiceId);
-    setInvoices(getInvoices());
+  const handleDelete = async (invoiceId: string) => {
+    await deleteInvoice(invoiceId);
+    setInvoices(await getInvoices());
     toast.success("Invoice removed");
   };
 
-  const handleDuplicate = (invoice: Invoice) => {
+  const handleDuplicate = async (invoice: Invoice) => {
     const timestamp = new Date().toISOString();
 
-    upsertInvoice({
+    await upsertInvoice({
       ...invoice,
       id: createRecordId(),
-      invoiceNumber: getNextInvoiceNumber(),
+      invoiceNumber: await getNextInvoiceNumber(),
       status: "draft",
       createdAt: timestamp,
       updatedAt: timestamp,
     });
 
-    setInvoices(getInvoices());
+    setInvoices(await getInvoices());
     toast.success("Invoice duplicated");
   };
 
@@ -168,7 +179,9 @@ const AdminInvoices = () => {
         </CardHeader>
 
         <CardContent>
-          {filteredInvoices.length === 0 ? (
+          {isLoading ? (
+            <AdminPageLoader title="Loading invoices..." description="Syncing invoice records from Google Sheets." />
+          ) : filteredInvoices.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-14 text-center">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-slate-700 shadow-sm">
                 <FileSpreadsheet className="h-7 w-7" />

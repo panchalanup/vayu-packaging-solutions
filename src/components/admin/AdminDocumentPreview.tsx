@@ -166,7 +166,11 @@ const AdminDocumentPreview = ({ type, document, settings }: AdminDocumentPreview
   return (
     <Card className="border-slate-200 shadow-sm">
       <CardContent className="p-0">
-        <div id={`admin-${type}-preview`} className="bg-white p-8 sm:p-10">
+        <div className="overflow-x-auto bg-slate-100/70 p-3 sm:p-4">
+          <div
+            id={`admin-${type}-preview`}
+            className="mx-auto min-h-[1123px] w-[794px] bg-white p-8 shadow-[0_10px_28px_rgba(15,23,42,0.08)] sm:p-10"
+          >
           <div className="space-y-8">
             <div className="flex flex-col gap-6 border-b border-slate-200 pb-8 lg:flex-row lg:items-start lg:justify-between">
               <div className="space-y-4">
@@ -303,7 +307,7 @@ const AdminDocumentPreview = ({ type, document, settings }: AdminDocumentPreview
                       />
                     </div>
                   )}
-                  <p className="font-medium text-slate-700">
+                  <p className="whitespace-nowrap font-medium text-slate-700">
                     {type === "quotation" ? (document as Quotation).preparedBy || "Prepared by admin" : "Authorised Signatory"}
                   </p>
                   <p className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-400">
@@ -313,6 +317,7 @@ const AdminDocumentPreview = ({ type, document, settings }: AdminDocumentPreview
               </div>
             </div>
           </div>
+        </div>
         </div>
       </CardContent>
     </Card>

@@ -3,6 +3,7 @@ import { Copy, FileText, PencilLine, Plus, ReceiptText, Search, Trash2 } from "l
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+import AdminPageLoader from "@/components/admin/AdminPageLoader";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
 import { createRecordId, deleteQuotation, getNextQuotationNumber, getQuotations, upsertQuotation } from "@/lib/admin-storage";
 import { Quotation } from "@/types/admin-crm";
@@ -24,10 +25,20 @@ const AdminQuotations = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [quotations, setQuotations] = useState<Quotation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    setQuotations(getQuotations());
+    const loadQuotations = async () => {
+      setIsLoading(true);
+      try {
+        setQuotations(await getQuotations());
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadQuotations();
   }, [location.key]);
 
   const filteredQuotations = useMemo(() => {
@@ -59,25 +70,25 @@ const AdminQuotations = () => {
     return quotations.filter((quotation) => quotation.status === "approved").length;
   }, [quotations]);
 
-  const handleDelete = (quotationId: string) => {
-    deleteQuotation(quotationId);
-    setQuotations(getQuotations());
+  const handleDelete = async (quotationId: string) => {
+    await deleteQuotation(quotationId);
+    setQuotations(await getQuotations());
     toast.success("Quotation removed");
   };
 
-  const handleDuplicate = (quotation: Quotation) => {
+  const handleDuplicate = async (quotation: Quotation) => {
     const timestamp = new Date().toISOString();
 
-    upsertQuotation({
+    await upsertQuotation({
       ...quotation,
       id: createRecordId(),
-      quotationNumber: getNextQuotationNumber(),
+      quotationNumber: await getNextQuotationNumber(),
       status: "draft",
       createdAt: timestamp,
       updatedAt: timestamp,
     });
 
-    setQuotations(getQuotations());
+    setQuotations(await getQuotations());
     toast.success("Quotation duplicated");
   };
 
@@ -169,7 +180,9 @@ const AdminQuotations = () => {
         </CardHeader>
 
         <CardContent>
-          {filteredQuotations.length === 0 ? (
+          {isLoading ? (
+            <AdminPageLoader title="Loading quotations..." description="Syncing quotation records from Google Sheets." />
+          ) : filteredQuotations.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-6 py-14 text-center">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-white text-slate-700 shadow-sm">
                 <FileText className="h-7 w-7" />

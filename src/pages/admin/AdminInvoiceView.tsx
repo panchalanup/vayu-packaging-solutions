@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Download, PencilLine } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import AdminDocumentPreview from "@/components/admin/AdminDocumentPreview";
+import AdminPageLoader from "@/components/admin/AdminPageLoader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
@@ -14,13 +15,37 @@ const AdminInvoiceView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
+  const [invoice, setInvoice] = useState<Awaited<ReturnType<typeof getInvoiceById>>>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const invoice = useMemo(() => (id ? getInvoiceById(id) : null), [id]);
+  useEffect(() => {
+    const loadInvoice = async () => {
+      setIsLoading(true);
+
+      try {
+        if (!id) {
+          setInvoice(null);
+          return;
+        }
+
+        setInvoice(await getInvoiceById(id));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadInvoice();
+  }, [id]);
+
   const settings = useMemo(() => getDocumentSettings(), []);
 
   const openInPopup = (path: string) => {
     navigate(path, { state: { backgroundLocation: location.state?.backgroundLocation ?? location } });
   };
+
+  if (isLoading) {
+    return <AdminPageLoader title="Loading invoice..." description="Fetching invoice details from Google Sheets." />;
+  }
 
   if (!invoice) {
     return (
