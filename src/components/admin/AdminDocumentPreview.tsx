@@ -182,12 +182,12 @@ const AdminDocumentPreview = ({ type, document, settings }: AdminDocumentPreview
                     <p className="text-2xl font-semibold tracking-tight text-slate-950">{settings.companyName}</p>
                     <p className="text-sm text-slate-500">{settings.companyEmail || "Business email not configured"}</p>
                     <p className="text-sm text-slate-500">{settings.companyPhone || "Business phone not configured"}</p>
+                    <p className="text-sm text-slate-500">GSTIN: {settings.companyGstNumber || "24BDEPS4284E1ZI"}</p>
                   </div>
                 </div>
 
                 <div className="max-w-lg text-sm leading-6 text-slate-500">
                   <p>{settings.companyAddress || "Business address will be configured in document settings."}</p>
-                  {settings.companyGstNumber && <p className="mt-1">GST: {settings.companyGstNumber}</p>}
                 </div>
               </div>
 
