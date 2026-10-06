@@ -22,9 +22,9 @@ export default function MacTopbar({ onExport, title = "3D Box Designer" }: MacTo
     >
       {/* Left: Title */}
       <div className="flex items-center">
-        <h1 className="text-sm font-semibold text-gray-800 select-none">
+        <p className="text-sm font-semibold text-gray-800 select-none">
           {title}
-        </h1>
+        </p>
       </div>
 
       {/* Right: Global Actions */}

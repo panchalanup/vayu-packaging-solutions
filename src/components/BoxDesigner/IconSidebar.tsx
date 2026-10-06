@@ -62,6 +62,8 @@ export default function IconSidebar({ activeTab, onTabChange }: IconSidebarProps
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => onTabChange(tab.id)}
+                    aria-label={tab.label}
+                    aria-current={isActive ? 'page' : undefined}
                     className="relative w-full h-16 flex items-center justify-center group"
                   >
                     {/* Active indicator */}

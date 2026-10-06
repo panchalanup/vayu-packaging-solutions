@@ -2,13 +2,12 @@
  * Type definitions for 3D Box Designer
  */
 
-export type BoxTemplate = 'rsc' | 'hsc' | 'die-cut' | 'mailer';
+export type BoxTemplate = 'rsc' | 'hsc' | 'mailer';
 
 export type PlyType = '3-ply' | '5-ply' | '7-ply';
 
 export type FluteType = 'A' | 'B' | 'C' | 'E' | 'F';
 
-export type BoxColor = 'kraft' | 'white' | 'brown';
 
 export type BoxFace = 'front' | 'back' | 'left' | 'right' | 'top-front' | 'top-back' | 'top-left' | 'top-right' | 'bottom';
 
@@ -42,30 +41,24 @@ export interface TextElement {
 export interface BoxTemplateConfig {
   id: BoxTemplate;
   name: string;
+  shortName: string;
+  fefco: string;
   description: string;
   icon: string;
+  /** false = selectable for quotes but without a 3D model yet */
+  available: boolean;
 }
 
-export interface PlyConfig {
-  id: PlyType;
-  name: string;
-  thickness: number;  // mm
-  strength: string;
-  color: string;
-  textureUrl?: string;
-  fluteType?: FluteType;
-  roughness?: number;   // 0-1 for PBR material
-  metalness?: number;   // 0-1 for PBR material
-}
-
+/** Everything that defines a design (single source of truth, saved, shared and undoable) */
 export interface BoxDesign {
-  id?: string;
   template: BoxTemplate;
   dimensions: BoxDimensions;
   ply: PlyType;
+  flutes: FluteType[];
+  colorHex: string;
+  showIcons: boolean;
   faceImages: FaceImage[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  textElements: TextElement[];
 }
 
 export interface ExportOptions {
