@@ -16,7 +16,7 @@
     <meta name="google-site-verification" content="dbHxdiDlubdb5wNF7VpoTmx8lbHb6I2uL4s-Xm5l5DU" />
     
     <!-- Theme Color -->
-    <meta name="theme-color" content="#0066CC" />
+    <meta name="theme-color" content="#FBF8F3" />
     
     <!-- Favicon Package -->
     <link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" />
@@ -57,8 +57,18 @@
     <meta name="ICBM" content="23.0489, 72.5075" />
     
     <!-- Preconnect for Performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fonts are self-hosted (public/fonts): no third-party font requests. Licences: Clash Display + Satoshi = ITF Free Font License (Fontshare), Geist Mono = SIL OFL. VERIFY-LATER[FONT-01]: re-read the ITF licence text before launch. -->
+    <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
+    <style>
+      @font-face{font-family:'Clash Display';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/clash-display-500.woff2') format('woff2');}
+      @font-face{font-family:'Clash Display';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/clash-display-600.woff2') format('woff2');}
+      @font-face{font-family:'Satoshi';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/satoshi-400.woff2') format('woff2');}
+      @font-face{font-family:'Satoshi';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/satoshi-500.woff2') format('woff2');}
+      @font-face{font-family:'Satoshi';font-style:normal;font-weight:700;font-display:swap;src:url('/fonts/satoshi-700.woff2') format('woff2');}
+      @font-face{font-family:'Geist Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/geist-mono-400.woff2') format('woff2');}
+      @font-face{font-family:'Geist Mono';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/geist-mono-500.woff2') format('woff2');}
+    </style>
   </head>
 
   <body>

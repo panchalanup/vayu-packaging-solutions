@@ -1699,4 +1699,55 @@ These are out of design scope, but **they must be fixed during P1–P2** under c
 
 ---
 
+## Implementation status (updated 7 Oct 2026, end of day)
+
+`tsc`, `npm run build`, `vitest` (146 tests) and lint all pass. Every public route was loaded in headless Edge on the production build at 1440×900 and 390×844: no console errors and no horizontal overflow. Not yet checked on a real phone or with real data.
+
+**Review queue:** the owner asked that nothing block the build, so every unverified fact, image or claim is marked in code with `VERIFY-LATER[AREA-NN]` (55 unique markers). List them with `grep -rn "VERIFY-LATER" src api index.html`. Biggest groups: FACT (17, in `src/content/facts.ts`), IMG (5), SPEC (4).
+
+### Done
+
+| Phase | Item | Where |
+|---|---|---|
+| P0 | One fact set with `VERIFY-LATER` markers; hero alt texts fixed; AI mock-up images with fake brands or a fake licence stamp replaced or flagged (`IMG-05`) | `src/content/facts.ts`, `src/content/home.ts`, `src/constants/images.ts` |
+| P1 | Design tokens, `data-theme` ink/kraft, type scale, Tailwind colours and fonts | `src/index.css`, `tailwind.config.ts` |
+| P1 | **Fonts self-hosted** (Clash Display, Satoshi, Geist Mono, Lora), two preloads, no third-party font requests. (The earlier CDN link silently loaded only Clash Display, so Satoshi never loaded.) | `public/fonts/`, `index.html`, `src/styles/blog.css` |
+| P1 | **Logo cut out to a transparent PNG**, plus a light-text variant used on dark navbar states (no more white box) | `src/assets/logo-horizontal*.png`, `SiteNavbar.tsx` |
+| P1 | Route-level lazy loading, `manualChunks`, `MotionConfig`, 150 ms page fade. Main bundle is now ~200 KB gzipped (was ~3 MB uncompressed) | `src/App.tsx`, `vite.config.ts` |
+| P1 | Motion tokens, device tiers (`?quality=`, `VITE_HERO_3D=off`), **Lenis smooth scroll** (high tier, fine pointer, off on `/box-designer` and `/admin`, synced with GSAP) | `src/lib/motion/` |
+| P1 | `Cta`, `Section`, `SectionHeader`, `FactStrip`, `MadeSourcedBadge`, `StatLedger`, `ImageSlot`, decor, sticky theme-aware navbar, mega footer, `WhatsAppFab`, `MobileActionBar` | `src/components/site/` |
+| P1 | Lint rule banning raw internal `<a href="/…">` | `eslint.config.js` |
+| P1 | Unused code and packages removed: old home components, `Index.tsx`, `App.css`, dead map CSS, duplicate shadcn toaster; `mapbox-gl`, `embla`, `recharts`, `canvas-confetti`, `swiper` uninstalled | repo-wide |
+| P2 | `/quote`, 3-step `QuoteForm`, server-side `api/quote.ts`, URL prefill with allow-lists | `src/pages/Quote.tsx`, `src/components/quote/`, `api/quote.ts` |
+| P2 | Contact redesign (real `tel:`/`mailto:`/`wa.me`, shared form, static map card) | `src/pages/Contact.tsx` |
+| P2 | Packaging Finder: 3-step wizard, prefill from Box Designer and URL, real quantity (default 500), `Select` bug and 800 ms delay fixed, "Indicative" prices, "Request this quote", `finder_*` events | `src/pages/CompareQuote.tsx`, `src/components/CompareQuote/`, `src/lib/finderPrefill.ts` |
+| P2 | Box Designer re-skinned to Vayu tokens (cyan selection), slim header with always-visible "Quote this design", `designer_*` events | `src/pages/BoxDesigner.tsx`, `src/components/BoxDesigner/` |
+| P3 | Home S1–S9, Distribution moved to `/locations`; mobile and overflow fixes (grid columns, hero H1 size, compact ply cross-section on phones) | `src/pages/Home.tsx`, `src/components/home/` |
+| P4 | Hero fold (SVG posters, lazy 3D canvas, GSAP pin), "Inside the Board" with a cross-section from `getBoardSpec`, "Watch 60s" video lightbox | `src/components/home/` |
+| P5 | Products index (filters synced to the URL) and 10 product detail pages from one typed file | `src/content/products.ts`, `src/pages/Products.tsx`, `ProductDetail.tsx` |
+| P5 | Industries hub (`/services`) and `/industries/:slug` (6 pages) | `src/pages/Services.tsx`, `IndustryDetail.tsx`, `src/content/industries.ts` |
+| P5 | About (hybrid model diagram, capacity), Locations (SVG Gujarat map with drawn routes, city cards, FAQ), 404 inside the layout with `404_hit` | `src/pages/About.tsx`, `Locations.tsx`, `NotFound.tsx` |
+| P5 | Blog refresh: featured post, search, new chips, sticky and mobile ToC, safe markdown, real images, fetch error state, mid-article CTA cards | `src/pages/Blog*.tsx`, `src/components/Blog*.tsx`, `src/styles/blog.css` |
+| SEO | Missing OG images fall back to `/og-image.jpg`; sitemap now has 35 URLs including new routes; FAQ and Product schema only where the content is visible | `MetaTags.tsx`, `public/sitemap.xml`, `src/seo/` |
+| Security | Baseline headers + immutable caching in `vercel.json` (CSP is **Report-Only** for now); **analytics consent**: no fingerprint, no IP lookup and no stored ID until the visitor accepts; consent banner and draft `/privacy` page | `vercel.json`, `src/lib/consent.ts`, `ConsentBanner.tsx`, `Privacy.tsx` |
+
+### Still to do
+
+**Owner or asset work (cannot be done in code)**
+1. Answer the `VERIFY-LATER` queue, starting with `FACT-*` (one agreed set of numbers), `CERT-*`, `SPEC-*` and `SVC-01`.
+2. Real photography and video per §10.5; swap into the slots and set `kind: 'photo'`. Until then the AI images stay illustrative (`IMG-*`).
+3. Compress the 20 MB brochure to ≤ 3 MB (`ASSET-01`) and the 5 MB factory video; add a video poster frame. No ffmpeg or Ghostscript was available in this environment.
+4. Replace the 2–2.7 MB PNG masters with AVIF/WebP at several widths (§10.3). The pipeline is not built yet, so mobile image weight is still high. This is the biggest remaining speed win.
+5. Per-page OG images at 1200×630 (`SEO-01`), the SVG logo, GSTIN/Udyam, real testimonials and client logos (`TEST-*`), WhatsApp number and reply SLA (`FACT-13`), privacy text review (`LEGAL-*`).
+6. Custom domain and domain email.
+
+**Code**
+7. Switch the CSP from `Content-Security-Policy-Report-Only` to enforcing after checking every page in the browser console.
+8. Security items not done: **S1** admin login still runs in the browser (move to server-side auth and rotate the password), **S2** the analytics and admin-CRM Apps Script URLs are still in client code (put them behind a server function like `api/quote.ts`), **S3** the signature image is still bundled. Also `api/quote.ts` falls back to the public script URL when `LEAD_WEBHOOK_URL` is unset (`SEC-02`) and its rate limit is per warm instance (`SEC-03`).
+9. Get the initial JavaScript under the 180 KB gzipped budget (now ~200 KB), and re-check Lighthouse on a real mid-range Android phone (LCP, INP, CLS).
+10. Test the pinned hero and "Inside the Board" on real devices; confirm the cyan selection in the 3D designer and a real form submit end to end.
+11. Update `SOCIAL_LINKS.phone` in `src/constants/index.ts` (still a wa.me link), and the Designer HowTo schema's "millimeters or inches" (the tool uses cm).
+12. `tsconfig.app.json` shows a TS 6 deprecation warning for `baseUrl`; add `@types/node` to the API config.
+13. Remaining pre-existing lint errors are old `any` types, outside this redesign.
+
 Data Classification: Internal

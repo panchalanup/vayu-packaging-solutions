@@ -1,32 +1,43 @@
-import { motion } from "framer-motion";
-import { BLOG_CATEGORIES, BlogCategory } from "@/constants/blogs";
+import { BLOG_CATEGORIES, BlogCategory } from '@/constants/blogs';
+import { cn } from '@/lib/utils';
+import { CATEGORY_META } from './BlogMeta';
 
 interface CategoryFilterProps {
   activeCategory: BlogCategory;
   onCategoryChange: (category: BlogCategory) => void;
+  /** Optional post count per category, shown in each chip */
+  counts?: Partial<Record<BlogCategory, number>>;
+  className?: string;
 }
 
-const CategoryFilter = ({ activeCategory, onCategoryChange }: CategoryFilterProps) => {
-  return (
-    <div className="flex flex-wrap gap-3 justify-center">
-      {BLOG_CATEGORIES.map((category, index) => (
-        <motion.button
+/** Toggle buttons (aria-pressed), one active at a time; scrolls sideways on phones instead of wrapping */
+const CategoryFilter = ({ activeCategory, onCategoryChange, counts, className }: CategoryFilterProps) => (
+  <div
+    role="group"
+    aria-label="Filter articles by category"
+    className={cn('-mx-4 flex gap-2 overflow-x-auto px-4 py-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:py-0', className)}
+  >
+    {BLOG_CATEGORIES.map((category) => {
+      const { icon: Icon } = CATEGORY_META[category];
+      const pressed = activeCategory === category;
+      return (
+        <button
           key={category}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.05 }}
+          type="button"
+          aria-pressed={pressed}
           onClick={() => onCategoryChange(category)}
-          className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-            activeCategory === category
-              ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-              : 'bg-secondary text-secondary-foreground hover:bg-primary/10 hover:text-primary'
-          }`}
+          className={cn(
+            'inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors duration-quick ease-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+            pressed ? 'border-foreground bg-foreground text-background' : 'border-foreground/20 hover:border-foreground/50'
+          )}
         >
+          <Icon aria-hidden="true" className="h-4 w-4" />
           {category}
-        </motion.button>
-      ))}
-    </div>
-  );
-};
+          {counts?.[category] !== undefined && <span className="tabular text-xs opacity-70">{counts[category]}</span>}
+        </button>
+      );
+    })}
+  </div>
+);
 
 export default CategoryFilter;

@@ -14,7 +14,8 @@ export const getArticleSchema = (post: BlogPost) => ({
   description: post.description,
   image: {
     '@type': 'ImageObject',
-    url: `${SEO_CONFIG.siteUrl}/blog-images/${post.slug}-hero.jpg`,
+    // /blog-images/* files do not exist (plan B5), so point at the default share image
+    url: `${SEO_CONFIG.siteUrl}${SEO_CONFIG.defaultImage}`,
     width: 1200,
     height: 630,
   },

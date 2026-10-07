@@ -8,6 +8,7 @@ export { SEO_CONFIG, SEO_KEYWORDS, OG_DEFAULTS, TWITTER_DEFAULTS } from './confi
 
 // Metadata
 export { PAGE_METADATA, LOCATION_METADATA, INDUSTRY_METADATA, type PageMeta } from './metadata/pages';
+export { getProductMetadata } from './metadata/products';
 export { BLOG_SEO_METADATA, BLOG_CATEGORY_KEYWORDS, BLOG_COMMON_FAQS, type BlogSEOMeta } from './metadata/blogs';
 
 // Schema.org Structured Data

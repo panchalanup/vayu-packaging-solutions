@@ -33,7 +33,7 @@ export const ANALYTICS_CONFIG = {
    * 
    * Recommended: false for production, true for development
    */
-  DEBUG: true,  // 👈 Change to true to see console logs
+  DEBUG: import.meta.env.DEV,
 
   /**
    * GOOGLE SHEETS ENDPOINT

@@ -28,10 +28,14 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
   // Build canonical URL
   const canonicalUrl = canonical || (typeof window !== 'undefined' ? window.location.href : SEO_CONFIG.siteUrl);
   
-  // Build image URL
-  const imageUrl = image.startsWith('http') 
-    ? image 
-    : `${SEO_CONFIG.siteUrl}${image}`;
+  // Build image URL. Page metadata names per-page OG files that were never created (/og-about.jpg, /blog-images/...),
+  // so only paths that really exist in /public are used; anything else falls back to the default image.
+  // VERIFY-LATER[SEO-01]: design per-page OG images (1200x630) and add them to KNOWN_OG_IMAGES.
+  const KNOWN_OG_IMAGES = ['/og-image.jpg'];
+  const resolvedImage = image.startsWith('http') || KNOWN_OG_IMAGES.includes(image) ? image : SEO_CONFIG.defaultImage;
+  const imageUrl = resolvedImage.startsWith('http')
+    ? resolvedImage
+    : `${SEO_CONFIG.siteUrl}${resolvedImage}`;
 
   // Robots directive
   const robotsContent = noindex || nofollow

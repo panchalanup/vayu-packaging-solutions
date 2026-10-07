@@ -1,60 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
+/**
+ * Reading progress bar (green-600, §9.7). Writes a transform through a ref inside requestAnimationFrame,
+ * so scrolling never re-renders React. Purely decorative, so it is hidden from assistive tech.
+ */
 const ReadingProgress = () => {
-  const [progress, setProgress] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Calculate scroll progress
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
       const scrolled = window.scrollY;
-      const progress = (scrolled / documentHeight) * 100;
-
-      // Update progress
-      setProgress(Math.min(progress, 100));
-
-      // Show bar only when scrolled past 50px
-      setIsVisible(scrolled > 50);
+      const ratio = max > 0 ? Math.min(Math.max(scrolled / max, 0), 1) : 0;
+      if (barRef.current) barRef.current.style.transform = `scaleX(${ratio})`;
+      if (wrapRef.current) wrapRef.current.style.opacity = scrolled > 50 ? '1' : '0';
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
     };
 
-    // Add scroll listener with passive flag for better performance
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    
-    // Initial calculation
-    handleScroll();
-
-    // Cleanup
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (
     <div
-      className={`fixed top-0 left-0 right-0 z-[9999] h-1 transition-opacity duration-300 ${
-        isVisible ? 'opacity-100' : 'opacity-0'
-      }`}
-      style={{ pointerEvents: 'none' }}
+      ref={wrapRef}
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-[3px] bg-foreground/10 opacity-0 transition-opacity duration-base motion-reduce:transition-none"
     >
-      {/* Background track */}
-      <div className="absolute inset-0 bg-gradient-to-r from-gray-200 to-gray-300 opacity-20" />
-      
-      {/* Progress bar with gradient */}
-      <div
-        className="h-full bg-gradient-to-r from-[#667eea] via-[#764ba2] to-[#667eea] shadow-lg transition-all duration-100 ease-out relative"
-        style={{
-          width: `${progress}%`,
-          boxShadow: '0 2px 8px rgba(102, 126, 234, 0.5), 0 0 12px rgba(118, 75, 162, 0.3)',
-        }}
-      >
-        {/* Glow effect at the end */}
-        <div 
-          className="absolute right-0 top-0 h-full w-8 bg-gradient-to-r from-transparent to-white opacity-40"
-          style={{
-            filter: 'blur(4px)',
-          }}
-        />
-      </div>
+      <div ref={barRef} className="h-full origin-left scale-x-0 bg-green-600" />
     </div>
   );
 };
