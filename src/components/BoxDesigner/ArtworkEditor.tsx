@@ -165,7 +165,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
               aria-checked={face === f}
               onClick={() => onSelectFace(face === f ? null : f)}
               className={`px-2 py-1.5 rounded-md text-xs border text-left transition-colors ${
-                face === f ? 'bg-primary text-white border-primary' : 'border-gray-200 hover:border-primary/60'
+                face === f ? 'bg-primary text-white border-primary' : 'border-border hover:border-primary/60'
               }`}
             >
               {FACE_LABELS[f]}
@@ -175,14 +175,14 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
             </button>
           ))}
         </div>
-        <p className="text-xs text-gray-500">Tip: you can also click a face on the 3D box.</p>
+        <p className="text-xs text-muted-foreground">Tip: you can also click a face on the 3D box.</p>
       </Card>
 
       {face && size && (
         <Card className="p-4 space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-sm">{FACE_LABELS[face]}</h3>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-muted-foreground">
               {Math.round(size.widthCm * 10) / 10} x {Math.round(size.heightCm * 10) / 10} cm
             </span>
           </div>
@@ -203,7 +203,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
               e.preventDefault();
               handleFile(e.dataTransfer.files?.[0]);
             }}
-            className="relative w-full overflow-hidden rounded-md border border-gray-300 shadow-inner select-none touch-none focus:outline-none focus:ring-2 focus:ring-primary"
+            className="relative w-full overflow-hidden rounded-md border border-border shadow-inner select-none touch-none focus:outline-none focus:ring-2 focus:ring-primary"
             style={{ aspectRatio: `${size.widthCm} / ${size.heightCm}`, backgroundColor: design.colorHex }}
           >
             {image && (
@@ -271,11 +271,11 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
           {/* Layers */}
           {(image || texts.length > 0) && (
             <div className="space-y-1">
-              <Label className="text-xs text-gray-600">On this surface</Label>
+              <Label className="text-xs text-muted-foreground">On this surface</Label>
               {image && (
                 <button
                   onClick={() => setSelection({ kind: 'image' })}
-                  className={`w-full text-left text-xs px-2 py-1.5 rounded border ${selection?.kind === 'image' ? 'border-primary bg-primary/5' : 'border-gray-200'}`}
+                  className={`w-full text-left text-xs px-2 py-1.5 rounded border ${selection?.kind === 'image' ? 'border-primary bg-primary/5' : 'border-border'}`}
                 >
                   🖼 Image
                 </button>
@@ -285,7 +285,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
                   key={t.id}
                   onClick={() => setSelection({ kind: 'text', id: t.id })}
                   className={`w-full text-left text-xs px-2 py-1.5 rounded border truncate ${
-                    selection?.kind === 'text' && selection.id === t.id ? 'border-primary bg-primary/5' : 'border-gray-200'
+                    selection?.kind === 'text' && selection.id === t.id ? 'border-primary bg-primary/5' : 'border-border'
                   }`}
                 >
                   T {t.text || '(empty)'}
@@ -312,7 +312,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
             <Button variant="outline" size="sm" onClick={() => updateImage({ position: { x: 0.5, y: 0.5 }, rotation: 0 })}>
               <Crosshair className="w-4 h-4 mr-1" /> Centre
             </Button>
-            <Button variant="outline" size="sm" className="text-red-600" onClick={removeSelected}>
+            <Button variant="outline" size="sm" className="text-destructive" onClick={removeSelected}>
               <Trash2 className="w-4 h-4 mr-1" /> Remove
             </Button>
           </div>
@@ -384,7 +384,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
                 key={c}
                 aria-label={`Colour ${c}`}
                 onClick={() => updateText(selectedText.id, { color: c })}
-                className={`w-6 h-6 rounded-full border ${selectedText.color.toLowerCase() === c.toLowerCase() ? 'ring-2 ring-primary' : 'border-gray-300'}`}
+                className={`w-6 h-6 rounded-full border ${selectedText.color.toLowerCase() === c.toLowerCase() ? 'ring-2 ring-primary' : 'border-border'}`}
                 style={{ backgroundColor: c }}
               />
             ))}
@@ -413,7 +413,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
             >
               <Copy className="w-4 h-4 mr-1" /> Duplicate
             </Button>
-            <Button variant="outline" size="sm" className="text-red-600" onClick={removeSelected}>
+            <Button variant="outline" size="sm" className="text-destructive" onClick={removeSelected}>
               <Trash2 className="w-4 h-4 mr-1" /> Delete
             </Button>
           </div>

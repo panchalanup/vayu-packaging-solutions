@@ -1,202 +1,178 @@
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { List } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronDown, List } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface TOCItem {
   id: string;
   text: string;
-  level: number;
+  level: 2 | 3;
 }
 
 interface TableOfContentsProps {
+  /** Markdown source; used only as a change signal. Headings are read from the rendered article so ids always match. */
   content: string;
+  /** CSS selector of the rendered article(s) */
+  articleSelector?: string;
+  className?: string;
 }
 
-const TableOfContents = ({ content }: TableOfContentsProps) => {
-  const [headings, setHeadings] = useState<TOCItem[]>([]);
-  const [activeId, setActiveId] = useState<string>("");
-  const [isHovered, setIsHovered] = useState(false); // For desktop hover
-  const [isInBlogSection, setIsInBlogSection] = useState(false); // Track if featured image has crossed the top trigger
+const slugify = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .slice(0, 60) || 'section';
 
+const reduceMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+/**
+ * Article navigation (§9.7).
+ * - Desktop: sticky list with the active section highlighted (lg+).
+ * - Mobile: a collapsible "On this page" disclosure (a real <button> with aria-expanded: works by tap and keyboard,
+ *   no hover-only behaviour).
+ * Headings are discovered in the DOM after render, so the ids can never drift from the markdown output.
+ * SECURITY: ids are generated from heading text with a strict [a-z0-9-] slug; text is rendered as text.
+ */
+const TableOfContents = ({ content, articleSelector = '.medium-article', className }: TableOfContentsProps) => {
+  const [items, setItems] = useState<TOCItem[]>([]);
+  const [activeId, setActiveId] = useState('');
+  const [open, setOpen] = useState(false);
+  const panelId = 'toc-mobile-panel';
+  const itemsRef = useRef<TOCItem[]>([]);
+
+  // Collect headings and give each a unique id
   useEffect(() => {
-    // Extract headings from markdown content
-    const headingRegex = /^(#{2,3})\s+(.+)$/gm;
-    const matches = Array.from(content.matchAll(headingRegex));
-    
-    const tocItems: TOCItem[] = matches.map((match, index) => {
-      const level = match[1].length; // Number of # symbols
-      const text = match[2].trim();
-      const id = `heading-${index}`;
-      return { id, text, level };
+    const all = Array.from(document.querySelectorAll<HTMLHeadingElement>(`${articleSelector} h2, ${articleSelector} h3`));
+    // Every heading gets an id (for deep links), but the list shows sections (h2) only; long guides have 40+ sub-headings.
+    // Articles with fewer than 3 sections list their sub-headings too.
+    const sections = all.filter((h) => h.tagName === 'H2');
+    const headings = sections.length >= 3 ? sections : all;
+    // Ids are always regenerated from the text, so re-running this effect gives the same ids
+    const used = new Set<string>();
+    all.forEach((heading) => {
+      const base = slugify(heading.textContent ?? '');
+      let id = base;
+      let n = 2;
+      while (used.has(id)) id = `${base}-${n++}`;
+      used.add(id);
+      heading.id = id;
+      heading.tabIndex = -1; // lets us move focus here after a ToC jump
     });
+    const found: TOCItem[] = headings.map((heading) => ({
+      id: heading.id,
+      text: (heading.textContent ?? '').trim(),
+      level: heading.tagName === 'H3' ? 3 : 2,
+    }));
+    itemsRef.current = found;
+    setItems(found);
+    setActiveId(found[0]?.id ?? '');
+  }, [content, articleSelector]);
 
-    setHeadings(tocItems);
-  }, [content]);
-
+  // Active section: the last heading whose top has passed just under the sticky nav
   useEffect(() => {
-    // Add IDs to headings in the DOM and setup intersection observer
-    const articleElement = document.querySelector('.medium-article');
-    if (!articleElement) return;
-
-    const allHeadings = articleElement.querySelectorAll('h2, h3');
-    allHeadings.forEach((heading, index) => {
-      heading.id = `heading-${index}`;
-    });
-
-    // Setup Intersection Observer for active heading
-    const observerOptions = {
-      rootMargin: '-100px 0px -66%',
-      threshold: 0
-    };
-
-    const observerCallback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveId(entry.target.id);
-        }
-      });
-    };
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-    allHeadings.forEach((heading) => observer.observe(heading));
-
-    return () => observer.disconnect();
-  }, [headings]);
-
-  useEffect(() => {
-    // Show TOC button only after the featured image reaches the top trigger area
-    const updateTOCVisibility = () => {
-      const featuredImage = document.querySelector('.blog-featured-image-wrapper');
-      if (!featuredImage) {
-        setIsInBlogSection(false);
-        return;
+    if (items.length === 0) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 72;
+      // A section counts as current once its heading is in the upper third of the viewport
+      const line = Math.max(navH + 32, window.innerHeight * 0.3);
+      let current = itemsRef.current[0]?.id ?? '';
+      for (const item of itemsRef.current) {
+        const el = document.getElementById(item.id);
+        if (el && el.getBoundingClientRect().top <= line) current = item.id;
+        else break;
       }
-
-      const navbar = document.querySelector('nav');
-      const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 80;
-      const featuredImageTop = featuredImage.getBoundingClientRect().top;
-
-      setIsInBlogSection(featuredImageTop <= navbarHeight);
+      setActiveId(current);
     };
-
-    updateTOCVisibility();
-    window.addEventListener('scroll', updateTOCVisibility, { passive: true });
-    window.addEventListener('resize', updateTOCVisibility);
-
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
     return () => {
-      window.removeEventListener('scroll', updateTOCVisibility);
-      window.removeEventListener('resize', updateTOCVisibility);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
     };
-  }, [content]);
+  }, [items]);
 
+  const jumpTo = useCallback((event: React.MouseEvent, id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    event.preventDefault();
+    // html { scroll-padding-top } already offsets the sticky nav
+    el.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'start' });
+    el.focus({ preventScroll: true });
+    setActiveId(id);
+    setOpen(false);
+  }, []);
 
-  const handleClick = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      // Dynamically calculate navbar height for responsive offset
-      const navbar = document.querySelector('nav');
-      const navbarHeight = navbar ? navbar.offsetHeight : 80;
-      
-      // Add extra spacing for better UX (20px on mobile, 30px on desktop)
-      const extraSpacing = window.innerWidth < 768 ? 20 : 30;
-      const offset = navbarHeight + extraSpacing;
-      
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
+  if (items.length < 2) return null;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
-  };
-
-  if (headings.length === 0) return null;
+  const list = (
+    <ul className="space-y-0.5">
+      {items.map((item) => {
+        const current = activeId === item.id;
+        return (
+          <li key={item.id}>
+            <a
+              href={`#${item.id}`}
+              onClick={(event) => jumpTo(event, item.id)}
+              aria-current={current ? 'location' : undefined}
+              className={cn(
+                'block rounded-md border-l-2 py-2 pr-2 text-sm leading-snug transition-colors duration-quick ease-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                item.level === 3 ? 'pl-6' : 'pl-3',
+                current
+                  ? 'border-green-600 font-semibold text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {item.text}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  );
 
   return (
-    <>
-      {/* Desktop TOC - Floating Button with Popup (Right Side) - Only visible after featured image reaches the top */}
-      <div className="hidden lg:block">
-        <AnimatePresence>
-          {isInBlogSection && (
-            <motion.div
-              initial={{ opacity: 0, x: 72, scale: 0.82 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 56, scale: 0.9 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 420,
-                damping: 22,
-                mass: 0.7
-              }}
-              className="fixed right-4 top-24 z-40"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-            >
-              {/* Floating Button - Bubble Style with Horizontal Lines */}
-              <motion.button
-                className="w-12 h-12 rounded-full bg-card border-2 border-border shadow-lg flex flex-col items-center justify-center gap-1.5 hover:border-primary hover:bg-primary/5 transition-all group"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                aria-label="Table of Contents"
-              >
-                {/* Three horizontal lines */}
-                <span className="w-5 h-0.5 bg-foreground rounded-full group-hover:bg-primary transition-colors"></span>
-                <span className="w-5 h-0.5 bg-foreground rounded-full group-hover:bg-primary transition-colors"></span>
-                <span className="w-5 h-0.5 bg-foreground rounded-full group-hover:bg-primary transition-colors"></span>
-              </motion.button>
-
-              {/* Popup TOC - Opens to the LEFT of button with fixed height from top */}
-              <AnimatePresence>
-                {isHovered && (
-                  <motion.div
-                    initial={{ opacity: 0, x: 20, scale: 0.95 }}
-                    animate={{ opacity: 1, x: 0, scale: 1 }}
-                    exit={{ opacity: 0, x: 20, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute top-0 right-[calc(100%+12px)] w-[280px] max-w-[calc(100vw-100px)]"
-                    style={{ 
-                      height: 'calc(100vh - 140px)',
-                    }}
-                  >
-                    <div className="bg-card border border-border rounded-xl p-5 shadow-2xl h-full flex flex-col">
-                      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border flex-shrink-0">
-                        <List className="w-5 h-5 text-primary" />
-                        <h3 className="font-semibold text-foreground">Table of Contents</h3>
-                        <span className="ml-auto text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded-full">
-                          {headings.length}
-                        </span>
-                      </div>
-                      <nav className="overflow-y-auto pr-2 flex-1 min-h-0">
-                        <ul className="space-y-1">
-                          {headings.map((heading) => (
-                            <li key={heading.id}>
-                              <button
-                                onClick={() => handleClick(heading.id)}
-                                className={`text-left w-full text-sm transition-all hover:text-primary rounded-md px-3 py-2 ${
-                                  heading.level === 3 ? 'pl-6' : ''
-                                } ${
-                                  activeId === heading.id
-                                    ? 'text-primary font-semibold bg-primary/10'
-                                    : 'text-muted-foreground hover:bg-secondary/50'
-                                }`}
-                              >
-                                {heading.text}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </nav>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          )}
-        </AnimatePresence>
+    <div className={cn('lg:h-full', className)}>
+      {/* Mobile and tablet: collapsible disclosure */}
+      <div className="rounded-lg border border-border bg-card lg:hidden">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={() => setOpen((v) => !v)}
+          className="flex min-h-12 w-full items-center gap-2 px-4 text-left text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <List aria-hidden="true" className="h-4 w-4" />
+          On this page
+          <span className="tabular ml-1 text-xs font-normal text-muted-foreground">{items.length} sections</span>
+          <ChevronDown aria-hidden="true" className={cn('ml-auto h-4 w-4 transition-transform duration-quick motion-reduce:transition-none', open && 'rotate-180')} />
+        </button>
+        {open && (
+          <nav id={panelId} aria-label="On this page" className="max-h-[60vh] overflow-y-auto border-t border-border px-2 py-2">
+            {list}
+          </nav>
+        )}
       </div>
 
-    </>
+      {/* Desktop: sticky with active highlight */}
+      <nav
+        aria-label="On this page"
+        className="sticky top-[calc(var(--nav-h)+24px)] hidden max-h-[calc(100vh-var(--nav-h)-48px)] overflow-y-auto lg:block"
+      >
+        <p className="label-mono mb-3 flex items-center gap-2 text-muted-foreground">
+          <List aria-hidden="true" className="h-3.5 w-3.5" />
+          On this page
+        </p>
+        {list}
+      </nav>
+    </div>
   );
 };
 

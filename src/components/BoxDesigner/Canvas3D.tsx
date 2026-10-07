@@ -143,7 +143,7 @@ export default function Canvas3D({
   );
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden shadow-inner">
+    <div className="w-full h-full bg-paper-100 rounded-lg overflow-hidden shadow-inner">
       <Canvas
         frameloop="demand"
         dpr={[1, settings.maxDpr]}

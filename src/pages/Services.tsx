@@ -1,112 +1,203 @@
-import Layout from "@/components/Layout";
-import PageTransition from "@/components/PageTransition";
-import { motion } from "framer-motion";
-import { Package, Truck, Shield, Ruler, ArrowUpRight } from "lucide-react";
-import { SERVICES_CONTENT, INDUSTRIES } from "@/constants";
-import { SERVICES_IMAGES } from "@/constants/images";
+/**
+ * /services: "Industries & Services" hub (§9.4). The route stays /services; only the UI name changes.
+ * The FAQ is rendered visibly, so the FAQPage schema is valid here (the old page emitted schema with no visible FAQ).
+ * SECURITY: static content; no user input is rendered.
+ */
+
+import { motion } from 'framer-motion';
+import { CalendarClock, Package, Printer, Ruler, type LucideIcon } from 'lucide-react';
+import Layout from '@/components/Layout';
+import PageTransition from '@/components/PageTransition';
 import { MetaTags, StructuredData } from '@/seo';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
-import { getBreadcrumbSchema, PAGE_BREADCRUMBS, getFAQSchema, COMMON_FAQS } from '@/seo/schema';
+import { getBreadcrumbSchema, getFAQSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
+import { Section } from '@/components/site/Section';
+import { Cta } from '@/components/site/Cta';
+import { SectionHeader } from '@/components/site/Blocks';
+import { ImageSlot } from '@/components/site/ImageSlot';
+import { PageHero } from '@/components/pages/PageHero';
+import { FaqAccordion, type FaqItem } from '@/components/pages/FaqAccordion';
+import { CtaBand } from '@/components/pages/CtaBand';
+import { INDUSTRY_PAGES } from '@/content/industries';
+import { FACTS } from '@/content/facts';
+import { quoteHref } from '@/lib/quotePrefill';
+import { whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';
+import { reveal, STAGGER } from '@/lib/motion/tokens';
 
-const services = [
-  { icon: Package, title: "Custom Corrugated Boxes", desc: "Tailored box sizes and flute types for your exact product dimensions and weight requirements." },
-  { icon: Truck, title: "Bulk Distribution", desc: "Seamless supply chain with bulk orders delivered to your warehouse on schedule, every time." },
-  { icon: Shield, title: "Quality Assurance", desc: "Every box meets BIS standards with rigorous burst and compression strength testing." },
-  { icon: Ruler, title: "Design & Prototyping", desc: "From die-cut templates to printed packaging, we bring your brand to the box." },
+// VERIFY-LATER[SVC-01]: confirm which of these services Vayu actually offers today. Remove any row that is not offered.
+const WHAT_WE_DO: { icon: LucideIcon; title: string; body: string }[] = [
+  { icon: Ruler, title: 'Custom sizing', body: 'Boxes cut to your product dimensions in 3, 5 or 7 ply, so nothing rattles and no board is wasted.' },
+  { icon: Printer, title: 'Printing', body: 'Flexo print in 1–4 colours, with full-colour options on request. Printed orders start at 1,000 boxes.' },
+  { icon: Package, title: 'Sampling', body: `${FACTS.samplePolicy}, so you can test fit and strength before a bulk order.` },
+  { icon: CalendarClock, title: 'Scheduled replenishment', body: 'Plan a regular supply of boxes and supplies so your line never waits on packaging.' },
 ];
 
+const FAQS: FaqItem[] = [
+  {
+    question: 'What industries do you serve?',
+    answer: `${INDUSTRY_PAGES.map((i) => i.name).join(', ')}. Each has its own page with the recommended spec and the reason behind it.`,
+  },
+  {
+    question: 'What can be customised?',
+    answer: 'Box size, ply (3, 5 or 7), die-cut shapes and inserts, and flexo print in 1–4 colours. Printed orders start at 1,000 boxes.',
+  },
+  {
+    question: 'How fast can you dispatch?',
+    answer: `Stock sizes are dispatched within ${FACTS.dispatchHours} hours from ${FACTS.city}. Custom boxes usually take 5–7 days.`,
+  },
+  { question: 'Do you send samples?', answer: `${FACTS.samplePolicy}. Choose "Sample" in the quote form or message us on WhatsApp.` },
+  {
+    question: 'Can you supply on a regular schedule?',
+    answer: 'Yes. Tell us your monthly volume in the quote form and we will plan scheduled supply around it.',
+  },
+];
 
-const Services = () => {
-  return (
-    <Layout>
-      {/* SEO Meta Tags */}
-      <MetaTags {...PAGE_METADATA.services} />
-      
-      {/* Structured Data - Schema.org */}
-      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.services)} />
-      <StructuredData type="FAQPage" data={getFAQSchema(COMMON_FAQS.services)} />
-      
-      <PageTransition>
-        {/* Hero */}
-        <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">
-          <div className="container mx-auto px-6 text-center max-w-3xl">
-            <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-4">Our Services</p>
-            <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-6">
-              {SERVICES_CONTENT.heading}
-            </h1>
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              {SERVICES_CONTENT.description}
-            </p>
-          </div>
-        </section>
+const container = 'mx-auto max-w-content px-4 md:px-6 lg:px-10';
 
-        {/* Service cards */}
-        <section className="py-24">
-          <div className="container mx-auto px-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {services.map((service, i) => (
-                <motion.div
-                  key={service.title}
-                  initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
-                  whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="bg-card border border-border rounded-2xl p-8 hover:border-primary/40 transition-all group"
-                >
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
-                    <service.icon className="w-7 h-7 text-primary" />
-                  </div>
-                  <h3 className="font-heading text-xl font-semibold text-foreground mb-3">{service.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed text-sm">{service.desc}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
+const Services = () => (
+  <Layout>
+    <MetaTags {...PAGE_METADATA.services} />
+    <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.services)} />
+    <StructuredData type="FAQPage" data={getFAQSchema(FAQS)} />
 
-        {/* Industries */}
-        <section className="py-24 section-dark">
-          <div className="container mx-auto px-6">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <motion.img
-                initial={{ filter: "blur(7px)", opacity: 0, x: -30 }}
-                whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                src={SERVICES_IMAGES.main}
-                alt={SERVICES_IMAGES.alt}
-                className="rounded-2xl w-full object-cover aspect-video"
-                loading="lazy"
-              />
-              <motion.div initial={{ filter: "blur(5px)", opacity: 0, x: 30 }} whileInView={{ filter: "blur(0px)", opacity: 1, x: 0 }} viewport={{ once: true }}>
-                <h2 className="font-heading text-2xl md:text-3xl font-bold text-foreground mb-6">
-                  {SERVICES_CONTENT.industryHeading}
-                </h2>
-                <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                  {SERVICES_CONTENT.industryDescription}
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {INDUSTRIES.map((tag) => (
-                    <span key={tag} className="bg-secondary text-secondary-foreground px-4 py-2 rounded-full text-sm font-medium">{tag}</span>
-                  ))}
+    <PageTransition>
+      <PageHero
+        index="Industries & Services"
+        title="Packaging built around what you ship."
+        lead="Pick your industry to see the problem we solve, the spec we recommend, and why it works."
+        actions={
+          <>
+            <Cta id="services.hero.quote" intent="quote" size="lg" href={quoteHref({ src: 'services' })} arrow>
+              Get a quote
+            </Cta>
+            <Cta
+              id="services.hero.whatsapp"
+              intent="whatsapp"
+              size="lg"
+              variant="secondary"
+              href={whatsappHref(pageWhatsAppMessage('/services'))}
+            >
+              WhatsApp us
+            </Cta>
+          </>
+        }
+      />
+
+      {/* INDUSTRY CARDS */}
+      <Section name="industries" theme="kraft" aria-labelledby="industries-heading" className="section-y">
+        <div className={container}>
+          <SectionHeader id="industries-heading" index="01 — Industries" title="Six industries, six specs." align="split" />
+          <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {INDUSTRY_PAGES.map((ind, i) => (
+              <motion.li
+                key={ind.slug}
+                {...reveal}
+                transition={{ ...reveal.transition, delay: (i % 3) * STAGGER }}
+                className="flex flex-col overflow-hidden rounded-[14px] bg-paper-50"
+              >
+                <ImageSlot slot={ind.image} aspect="16 / 10" sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 100vw" />
+                <div className="flex flex-1 flex-col p-6">
+                  <h3 className="font-display text-h3">{ind.name}</h3>
+                  <dl className="mb-6 mt-4 space-y-3 text-sm">
+                    <div>
+                      <dt className="label-mono text-muted-foreground">The problem</dt>
+                      <dd className="mt-1">{ind.problem}</dd>
+                    </div>
+                    <div>
+                      <dt className="label-mono text-muted-foreground">Our spec</dt>
+                      <dd className="mt-1 font-semibold">{ind.spec}</dd>
+                    </div>
+                  </dl>
+                  <Cta
+                    id={`services.industries.${ind.slug}`}
+                    intent="navigate"
+                    variant="secondary"
+                    href={`/industries/${ind.slug}`}
+                    meta={{ industry: ind.slug }}
+                    arrow
+                    className="mt-auto self-start"
+                  >
+                    See the {ind.name} spec
+                  </Cta>
                 </div>
-              </motion.div>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+      </Section>
+
+      {/* WHAT WE DO */}
+      <Section name="services" aria-labelledby="services-heading" className="section-y">
+        <div className={container}>
+          <SectionHeader id="services-heading" index="02 — What we do" title="Beyond the box." align="split" />
+          <ul className="mt-10 grid border-t border-border sm:grid-cols-2 lg:grid-cols-4">
+            {WHAT_WE_DO.map(({ icon: Icon, title, body }, i) => (
+              <li key={title} className={`border-b border-border py-8 sm:pr-6 ${i > 0 ? 'lg:border-l lg:pl-6' : ''} ${i % 2 === 1 ? 'sm:border-l sm:pl-6' : ''}`}>
+                <Icon aria-hidden="true" className="h-7 w-7 text-green-600" strokeWidth={1.5} />
+                <h3 className="mt-4 font-display text-h3">{title}</h3>
+                <p className="mt-2 text-muted-foreground">{body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Section>
+
+      {/* TOOLS BAND */}
+      <Section name="tools" theme="ink" aria-labelledby="tools-heading" className="section-y">
+        <div className={container}>
+          <SectionHeader
+            id="tools-heading"
+            index="03 — Free tools"
+            title="Size it yourself first."
+            lead="Two free tools to work out the spec before you talk to anyone."
+            align="split"
+          />
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
+            <div className="flex flex-col rounded-[14px] border border-border bg-card p-6 md:p-8">
+              <p className="label-mono text-paper-muted">Packaging Finder</p>
+              <h3 className="mt-3 font-display text-h3">Get a spec and a price range</h3>
+              <p className="mt-2 text-paper-muted">Answer three short steps and get the recommended ply, with an indicative price range.</p>
+              <Cta id="services.tools.finder" intent="finder" href="/compare-quote" arrow className="mt-6 self-start">
+                Find my box spec
+              </Cta>
+            </div>
+            <div className="flex flex-col rounded-[14px] border border-border bg-card p-6 md:p-8">
+              <p className="label-mono text-paper-muted">3D box designer</p>
+              <h3 className="mt-3 font-display text-h3">See your box in 3D</h3>
+              <p className="mt-2 text-paper-muted">Set the size, ply and print, then send the design with your quote request. Free, no sign-up.</p>
+              <Cta id="services.tools.designer" intent="designer" variant="secondary" href="/box-designer" arrow className="mt-6 self-start">
+                Design in 3D
+              </Cta>
             </div>
           </div>
-        </section>
+        </div>
+      </Section>
 
-        {/* CTA */}
-        <section className="py-24">
-          <div className="container mx-auto px-6 text-center max-w-2xl">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">Need a custom packaging solution?</h2>
-            <p className="text-muted-foreground text-lg mb-8">Tell us your requirements and we'll get back to you within 24 hours.</p>
-            <a href="/contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-7 py-3.5 rounded-full text-base font-semibold hover:brightness-110 transition-all">
-              Request a Quote <ArrowUpRight className="w-5 h-5" />
-            </a>
+      {/* FAQ (visible, so the FAQPage schema above is valid) */}
+      <Section name="faq" aria-labelledby="faq-heading" className="section-y">
+        <div className={container}>
+          <SectionHeader id="faq-heading" index="04 — FAQ" title="Common questions." align="split" />
+          <div className="mt-8 lg:ml-[33.333%]">
+            <FaqAccordion items={FAQS} idPrefix="svc-faq" />
           </div>
-        </section>
-      </PageTransition>
-    </Layout>
-  );
-};
+        </div>
+      </Section>
+
+      <CtaBand
+        name="services-cta"
+        title="Need a custom packaging solution?"
+        lead="Tell us what you ship and how many. We will spec it and price it."
+        note={`Reply within ${FACTS.replySla}. ${FACTS.businessHours}.`}
+      >
+        <Cta id="services.cta.quote" intent="quote" size="lg" href={quoteHref({ src: 'services.cta' })} arrow>
+          Get a quote
+        </Cta>
+        <Cta id="services.cta.products" intent="navigate" variant="link" href="/products">
+          View products
+        </Cta>
+      </CtaBand>
+    </PageTransition>
+  </Layout>
+);
 
 export default Services;

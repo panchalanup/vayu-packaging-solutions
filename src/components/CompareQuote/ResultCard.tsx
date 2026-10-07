@@ -1,131 +1,106 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ScoredResult } from "@/types/packaging";
-import { ConfidenceBadge } from "./ConfidenceBadge";
-import { Package, Box, Layers, Shield } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { DetailView } from "./DetailView";
-import { UserInput } from "@/types/packaging";
+/** One recommended spec. Prices are labelled "Indicative" everywhere (§9.8). */
+
+import { Check, TriangleAlert } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import type { ScoredResult, UserInput } from '@/types/packaging';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { ConfidenceBadge } from './ConfidenceBadge';
+import { DetailView } from './DetailView';
+import { ResultActions } from './ResultActions';
+import { formatInr } from './pricing';
 
 interface ResultCardProps {
   result: ScoredResult;
   input: UserInput;
+  index: number;
 }
 
-export function ResultCard({ result, input }: ResultCardProps) {
-  const getLabelColor = () => {
-    switch (result.label) {
-      case 'Best Protection':
-        return 'bg-blue-500/10 text-blue-700 border-blue-200';
-      case 'Best Value':
-        return 'bg-green-500/10 text-green-700 border-green-200';
-      case 'Economy':
-        return 'bg-purple-500/10 text-purple-700 border-purple-200';
-    }
-  };
+const LABEL_STYLE: Record<ScoredResult['label'], string> = {
+  'Best Protection': 'bg-ink-900 text-paper-50',
+  'Best Value': 'bg-green-600 text-white',
+  Economy: 'bg-kraft-300 text-ink-900',
+};
 
-  const getIcon = (type: string) => {
-    if (type !== 'None') {
-      return <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-        <Shield className="w-4 h-4 text-primary" />
-      </div>;
-    }
-    return <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-      <Shield className="w-4 h-4 text-gray-400" />
-    </div>;
-  };
+export function ResultCard({ result, input, index }: ResultCardProps) {
+  const specs: [string, string][] = [
+    ['Box style', result.box_style],
+    ['Board', `${result.board_type} · ${result.flute_type} flute`],
+    ['Strength', `ECT ${result.ECT_lb_per_in} lb/in`],
+    ['Protection', result.internal_protection],
+    ['Tape', result.tape_type],
+  ];
+  if (result.strapping_type !== 'None') specs.push(['Strapping', result.strapping_type]);
+  if (result.extra_packaging !== 'None') specs.push(['Extras', result.extra_packaging]);
 
   return (
-    <Card className="hover:shadow-lg transition-shadow">
-      <CardHeader>
-        <div className="flex items-start justify-between mb-2">
-          <Badge variant="outline" className={`${getLabelColor()} text-sm font-semibold`}>
-            {result.label}
-          </Badge>
-          <ConfidenceBadge confidence={result.confidence} />
-        </div>
-        <CardTitle className="text-2xl">₹{result.estimated_price_inr.toFixed(2)}</CardTitle>
-        <p className="text-sm text-muted-foreground">per unit</p>
-      </CardHeader>
+    <article className="flex h-full flex-col rounded-lg border border-border bg-card p-5 md:p-6" aria-label={`${result.label}: ${result.board_type} ${result.box_style}`}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className={cn('rounded-md px-2.5 py-1 text-xs font-semibold', LABEL_STYLE[result.label])}>{result.label}</span>
+        <ConfidenceBadge confidence={result.confidence} />
+      </div>
 
-      <CardContent className="space-y-4">
-        {/* Key Specs */}
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="flex items-center gap-2">
-            <Box className="w-4 h-4 text-muted-foreground" />
-            <span className="font-medium">{result.box_style}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-muted-foreground" />
-            <span className="font-medium">{result.board_type}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-muted-foreground" />
-            <span className="text-xs">ECT: {result.ECT_lb_per_in}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Package className="w-4 h-4 text-muted-foreground" />
-            <span className="text-xs">{result.flute_type} Flute</span>
-          </div>
-        </div>
+      <div className="mt-5">
+        <p className="label-mono text-muted-foreground">Indicative price · per unit</p>
+        <p className="tabular mt-1 font-display text-h2">{formatInr(result.estimated_price_inr)}</p>
+        <p className="tabular mt-1 text-sm text-muted-foreground">
+          About {formatInr(result.estimated_price_inr * input.quantity)} for {input.quantity.toLocaleString('en-IN')} units
+        </p>
+      </div>
 
-        {/* Icon Row */}
-        <div className="flex items-center gap-2 pt-2 border-t">
-          {getIcon(result.internal_protection)}
-          {getIcon(result.tape_type)}
-          {getIcon(result.strapping_type)}
-          {getIcon(result.extra_packaging)}
-        </div>
-
-        {/* Pros & Cons */}
-        <div className="space-y-2 text-sm">
-          <div>
-            <span className="text-green-600 font-medium">✓</span>
-            <span className="ml-2 text-muted-foreground">{result.pros}</span>
+      <dl className="mt-5 divide-y divide-border border-y border-border text-sm">
+        {specs.map(([label, value]) => (
+          <div key={label} className="flex justify-between gap-4 py-2">
+            <dt className="text-muted-foreground">{label}</dt>
+            <dd className="text-right font-semibold">{value}</dd>
           </div>
-          <div>
-            <span className="text-amber-600 font-medium">⚠</span>
-            <span className="ml-2 text-muted-foreground">{result.cons}</span>
-          </div>
-        </div>
+        ))}
+      </dl>
 
-        {/* Reasons */}
-        <div className="space-y-1">
-          {result.reasons.slice(0, 2).map((reason, idx) => (
-            <p key={idx} className="text-xs text-muted-foreground flex items-start gap-1">
-              <span className="text-primary">•</span>
-              {reason}
-            </p>
+      <ul className="mt-4 space-y-2 text-sm">
+        <li className="flex items-start gap-2">
+          <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-green-600" />
+          <span>
+            <span className="sr-only">Pro: </span>
+            {result.pros}
+          </span>
+        </li>
+        <li className="flex items-start gap-2">
+          <TriangleAlert aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-warning-700" />
+          <span>
+            <span className="sr-only">Con: </span>
+            {result.cons}
+          </span>
+        </li>
+      </ul>
+
+      {result.reasons.length > 0 && (
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-xs text-muted-foreground">
+          {result.reasons.slice(0, 2).map((reason) => (
+            <li key={reason}>{reason}</li>
           ))}
-        </div>
-      </CardContent>
+        </ul>
+      )}
 
-      <CardFooter className="flex flex-col gap-2">
+      <div className="mt-auto pt-6">
+        <ResultActions result={result} input={input} slot={`card-${index + 1}`} />
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" className="w-full">
-              View Details
-            </Button>
+            <button
+              type="button"
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-lg text-sm font-semibold underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              View full specification
+            </button>
           </SheetTrigger>
-          <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
+          <SheetContent className="w-full overflow-y-auto sm:max-w-2xl">
             <SheetHeader>
-              <SheetTitle>Packaging Specification</SheetTitle>
-              <SheetDescription>
-                Complete details and supplier-ready specifications
-              </SheetDescription>
+              <SheetTitle className="font-display">Packaging specification</SheetTitle>
+              <SheetDescription>Complete details and supplier-ready exports.</SheetDescription>
             </SheetHeader>
-            <DetailView result={result} input={input} />
+            <DetailView result={result} input={input} index={index} />
           </SheetContent>
         </Sheet>
-      </CardFooter>
-    </Card>
+      </div>
+    </article>
   );
 }

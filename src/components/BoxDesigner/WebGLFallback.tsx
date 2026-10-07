@@ -4,18 +4,21 @@
  * Keeps the visitor moving toward a quote with the dimensions they have chosen.
  */
 
-import { Box, RefreshCw, MessageSquare } from 'lucide-react';
+import { Box, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Cta } from '@/components/site/Cta';
 import { BoxDimensions } from '@/types/boxDesigner';
 
 interface WebGLFallbackProps {
   reason: 'unsupported' | 'error';
   dimensions: BoxDimensions;
   onRetry?: () => void;
-  onGetQuote: () => void;
+  /** /quote?... link built from the current size */
+  quoteHref: string;
+  onQuote: () => void;
 }
 
-export default function WebGLFallback({ reason, dimensions, onRetry, onGetQuote }: WebGLFallbackProps) {
+export default function WebGLFallback({ reason, dimensions, onRetry, quoteHref, onQuote }: WebGLFallbackProps) {
   const title =
     reason === 'unsupported'
       ? "3D preview isn't available on this device"
@@ -28,15 +31,15 @@ export default function WebGLFallback({ reason, dimensions, onRetry, onGetQuote 
   return (
     <div
       role="alert"
-      className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-6"
+      className="w-full h-full flex items-center justify-center bg-paper-100 p-6"
     >
       <div className="max-w-md text-center space-y-4">
-        <div className="mx-auto w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center">
-          <Box className="w-7 h-7 text-gray-500" aria-hidden="true" />
+        <div className="mx-auto w-14 h-14 rounded-lg bg-card border border-border flex items-center justify-center">
+          <Box className="w-7 h-7 text-ink-500" aria-hidden="true" />
         </div>
-        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-        <p className="text-sm text-gray-600">{body}</p>
-        <p className="text-xs text-gray-500">
+        <h2 className="font-display text-lg text-foreground">{title}</h2>
+        <p className="text-sm text-muted-foreground">{body}</p>
+        <p className="text-xs text-muted-foreground">
           Current size: {dimensions.length} × {dimensions.width} × {dimensions.height} cm (L × W × H)
         </p>
         <div className="flex items-center justify-center gap-2 pt-1">
@@ -46,10 +49,9 @@ export default function WebGLFallback({ reason, dimensions, onRetry, onGetQuote 
               Try again
             </Button>
           )}
-          <Button size="sm" onClick={onGetQuote}>
-            <MessageSquare className="w-4 h-4 mr-2" aria-hidden="true" />
-            Get a quote
-          </Button>
+          <Cta id="designer.fallback.quote" intent="designer" href={quoteHref} onClick={onQuote}>
+            Quote this size
+          </Cta>
         </div>
       </div>
     </div>

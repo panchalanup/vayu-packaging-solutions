@@ -1,6 +1,6 @@
 /**
  * Icon Sidebar Component
- * iOS-style vertical icon navigation for designer tabs
+ * Vertical icon navigation for designer tabs (ink chrome, green-400 active state, §9.9)
  */
 
 import { motion } from 'framer-motion';
@@ -26,29 +26,29 @@ const TABS: TabConfig[] = [
     id: 'edit',
     icon: Edit3,
     label: 'Edit Box',
-    color: '#3b82f6', // blue
+    color: '#3DBA5A', // green-400
   },
   {
     id: 'customize',
     icon: Palette,
     label: 'Customize',
-    color: '#ec4899', // pink
+    color: '#3DBA5A', // green-400
   },
   {
     id: 'export',
     icon: Save,
     label: 'Actions',
-    color: '#10b981', // green
+    color: '#3DBA5A', // green-400
   },
 ];
 
 export default function IconSidebar({ activeTab, onTabChange }: IconSidebarProps) {
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="flex flex-col h-full bg-white border-r border-gray-200 shadow-sm">
+      <div className="flex flex-col h-full bg-ink-900 border-r border-ink-800">
         {/* Logo/Brand */}
-        <div className="h-16 flex items-center justify-center border-b border-gray-200">
-          <Box className="w-7 h-7 text-primary" />
+        <div className="h-16 flex items-center justify-center border-b border-ink-800">
+          <Box className="w-7 h-7 text-green-400" aria-hidden="true" />
         </div>
 
         {/* Tab Icons */}
@@ -81,15 +81,15 @@ export default function IconSidebar({ activeTab, onTabChange }: IconSidebarProps
                       className={`flex items-center justify-center w-11 h-11 rounded-xl transition-all ${
                         isActive
                           ? 'shadow-md scale-100'
-                          : 'scale-90 hover:scale-95 hover:bg-gray-100'
+                          : 'scale-90 hover:scale-95 hover:bg-ink-800'
                       }`}
                       style={{
-                        backgroundColor: isActive ? `${tab.color}15` : 'transparent',
+                        backgroundColor: isActive ? `${tab.color}26` : 'transparent',
                       }}
                     >
                       <Icon
                         className={`w-5 h-5 transition-colors ${
-                          isActive ? '' : 'text-gray-600 group-hover:text-gray-900'
+                          isActive ? '' : 'text-paper-muted group-hover:text-paper-50'
                         }`}
                         style={{ color: isActive ? tab.color : undefined }}
                       />
@@ -105,12 +105,12 @@ export default function IconSidebar({ activeTab, onTabChange }: IconSidebarProps
         </div>
 
         {/* Info button at bottom */}
-        <div className="border-t border-gray-200 py-4">
+        <div className="border-t border-ink-800 py-4">
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="w-full h-12 flex items-center justify-center group">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors">
-                  <Info className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
+              <button type="button" aria-label="Help and info" className="w-full h-12 flex items-center justify-center group">
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-ink-800 transition-colors">
+                  <Info className="w-5 h-5 text-paper-muted group-hover:text-paper-50" />
                 </div>
               </button>
             </TooltipTrigger>

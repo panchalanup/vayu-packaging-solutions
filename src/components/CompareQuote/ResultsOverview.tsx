@@ -1,8 +1,10 @@
-import { ScoredResult, UserInput } from "@/types/packaging";
-import { ResultCard } from "./ResultCard";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
+import type { ScoredResult, UserInput } from '@/types/packaging';
+import { DUR, EASE, STAGGER } from '@/lib/motion/tokens';
+import { useSiteTier } from '@/lib/motion/siteTier';
+import { Cta } from '@/components/site/Cta';
+import { ResultCard } from './ResultCard';
+import { PRICE_NOTE } from './pricing';
 
 interface ResultsOverviewProps {
   results: ScoredResult[];
@@ -10,61 +12,45 @@ interface ResultsOverviewProps {
 }
 
 export function ResultsOverview({ results, input }: ResultsOverviewProps) {
+  const site = useSiteTier();
+  const animate = !site.reducedMotion && site.tier !== 'low';
+
   if (results.length === 0) {
     return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>No Matches Found</AlertTitle>
-        <AlertDescription>
-          We couldn't find packaging options matching your criteria. Try:
-          <ul className="list-disc list-inside mt-2 space-y-1">
-            <li>Relaxing weight or dimension constraints</li>
-            <li>Selecting a different transport type</li>
-            <li>Removing the maximum price constraint</li>
-          </ul>
-        </AlertDescription>
-      </Alert>
+      <div role="status" className="rounded-lg border border-border bg-card p-6 md:p-8">
+        <h3 className="font-display text-h3">No close match found</h3>
+        <p className="mt-2 text-muted-foreground">We could not match those details. Try one of these:</p>
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-sm">
+          <li>Remove the weight or size</li>
+          <li>Pick a different transport type</li>
+          <li>Remove the maximum price</li>
+        </ul>
+        <p className="mt-4 text-sm">Or ask us directly, we will spec it by hand.</p>
+        <Cta id="finder.nomatch.quote" intent="quote" href="/quote?src=finder.nomatch" arrow className="mt-4">
+          Get a quote
+        </Cta>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Summary Alert */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <Alert>
-          <CheckCircle2 className="h-4 w-4" />
-          <AlertTitle>Top {results.length} Recommendations Found</AlertTitle>
-          <AlertDescription>
-            Based on your requirements, we've identified the best packaging solutions. Compare
-            them below and download supplier-ready specifications.
-          </AlertDescription>
-        </Alert>
-      </motion.div>
-
-      {/* Results Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div>
+      <p className="max-w-[68ch] text-sm text-muted-foreground">
+        {PRICE_NOTE} Share these specs with your supplier, check them against your product, and test a sample before a bulk order.
+      </p>
+      <ul className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {results.map((result, index) => (
-          <motion.div
+          <motion.li
             key={result.id}
-            initial={{ opacity: 0, y: 20 }}
+            initial={animate ? { opacity: 0, y: 16 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ duration: DUR.slow, ease: EASE.paper, delay: index * STAGGER * 2 }}
+            className="min-w-0"
           >
-            <ResultCard result={result} input={input} />
-          </motion.div>
+            <ResultCard result={result} input={input} index={index} />
+          </motion.li>
         ))}
-      </div>
-
-      {/* Comparison Tip */}
-      <div className="text-center text-sm text-muted-foreground">
-        <p>
-          Need help choosing? Click "View Details" to see complete specifications and
-          download options.
-        </p>
-      </div>
+      </ul>
     </div>
   );
 }

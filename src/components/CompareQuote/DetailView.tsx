@@ -1,198 +1,135 @@
-import { ScoredResult, UserInput } from "@/types/packaging";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { ExportButtons } from "./ExportButtons";
-import { Package, Box, Layers, Shield, DollarSign, TrendingUp } from "lucide-react";
+import type { ReactNode } from 'react';
+import type { ScoredResult, UserInput } from '@/types/packaging';
+import { Separator } from '@/components/ui/separator';
+import { ExportButtons } from './ExportButtons';
+import { ResultActions } from './ResultActions';
+import { PRICE_NOTE, formatInr } from './pricing';
 
 interface DetailViewProps {
   result: ScoredResult;
   input: UserInput;
+  index: number;
 }
 
-export function DetailView({ result, input }: DetailViewProps) {
+function Block({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section>
+      <h3 className="label-mono mb-3 text-muted-foreground">{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+function Rows({ rows }: { rows: [string, ReactNode][] }) {
+  return (
+    <dl className="space-y-2 text-sm">
+      {rows.map(([label, value]) => (
+        <div key={label} className="flex justify-between gap-4">
+          <dt className="text-muted-foreground">{label}</dt>
+          <dd className="text-right font-semibold">{value}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+export function DetailView({ result, input, index }: DetailViewProps) {
   const totalCost = result.estimated_price_inr * input.quantity;
 
   return (
     <div className="space-y-6 py-6">
-      {/* Export Buttons */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3">Export Options</h3>
+      <ResultActions result={result} input={input} slot={`sheet-${index + 1}`} layout="row" />
+
+      <Separator />
+
+      <Block title="Export">
         <ExportButtons result={result} input={input} />
-      </div>
+      </Block>
 
       <Separator />
 
-      {/* Product Summary */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <Package className="w-4 h-4" />
-          Product Summary
-        </h3>
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <div>
-            <span className="text-muted-foreground">Product:</span>
-            <p className="font-medium">{input.product_name}</p>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Quantity:</span>
-            <p className="font-medium">{input.quantity} units</p>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Weight:</span>
-            <p className="font-medium">{result.product_weight_kg} kg</p>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Dimensions:</span>
-            <p className="font-medium">{result.product_length_mm} × {result.product_width_mm} × {result.product_height_mm} mm</p>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Fragility:</span>
-            <p className="font-medium">{result.fragility_level}</p>
-          </div>
-          <div>
-            <span className="text-muted-foreground">Transport:</span>
-            <p className="font-medium">{result.transport_type}</p>
-          </div>
-        </div>
-      </div>
+      <Block title="Closest reference product">
+        <Rows
+          rows={[
+            ['Your product', input.product_name],
+            ['Quantity', `${input.quantity.toLocaleString('en-IN')} units`],
+            ['Weight', `${result.product_weight_kg} kg`],
+            ['Size', `${result.product_length_mm} × ${result.product_width_mm} × ${result.product_height_mm} mm`],
+            ['Fragility', result.fragility_level],
+            ['Transport', result.transport_type],
+          ]}
+        />
+        <p className="mt-2 text-xs text-muted-foreground">Weight and size are those of the matched database entry, shown for reference. Fragility is its rating.</p>
+      </Block>
 
       <Separator />
 
-      {/* Box Specifications */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <Box className="w-4 h-4" />
-          Box Specifications
-        </h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Box Style:</span>
-            <span className="font-medium">{result.box_style}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Board Type:</span>
-            <span className="font-medium">{result.board_type}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Flute Type:</span>
-            <span className="font-medium">{result.flute_type}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Liner GSM:</span>
-            <span className="font-medium">{result.liner_gsm}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Fluting GSM:</span>
-            <span className="font-medium">{result.fluting_gsm}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Total GSM (est):</span>
-            <span className="font-medium">{result.liner_gsm + result.fluting_gsm}</span>
-          </div>
-        </div>
-      </div>
+      <Block title="Box specification">
+        <Rows
+          rows={[
+            ['Box style', result.box_style],
+            ['Board', result.board_type],
+            ['Flute', result.flute_type],
+            ['Liner GSM', result.liner_gsm],
+            ['Fluting GSM', result.fluting_gsm],
+            ['Total GSM (est.)', result.liner_gsm + result.fluting_gsm],
+          ]}
+        />
+      </Block>
 
       <Separator />
 
-      {/* Strength Specifications */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <Shield className="w-4 h-4" />
-          Strength Specifications
-        </h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">ECT (Edge Crush Test):</span>
-            <Badge variant="outline">{result.ECT_lb_per_in} lb/in</Badge>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Burst Strength:</span>
-            <Badge variant="outline">{result.burst_strength_kg_cm2} kg/cm²</Badge>
-          </div>
-          <p className="text-xs text-muted-foreground italic mt-2">
-            Higher ECT values indicate better stacking strength and compression resistance.
-          </p>
-        </div>
-      </div>
+      <Block title="Strength">
+        <Rows
+          rows={[
+            ['Edge crush test (ECT)', `${result.ECT_lb_per_in} lb/in`],
+            ['Burst strength', `${result.burst_strength_kg_cm2} kg/cm²`],
+          ]}
+        />
+        <p className="mt-2 text-xs text-muted-foreground">Higher ECT means better stacking strength and compression resistance.</p>
+      </Block>
 
       <Separator />
 
-      {/* Protection & Accessories */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <Layers className="w-4 h-4" />
-          Protection & Accessories
-        </h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Internal Protection:</span>
-            <span className="font-medium">{result.internal_protection}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Tape Type:</span>
-            <span className="font-medium">{result.tape_type}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Strapping:</span>
-            <span className="font-medium">{result.strapping_type}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Extras:</span>
-            <span className="font-medium">{result.extra_packaging}</span>
-          </div>
-        </div>
-      </div>
+      <Block title="Protection & accessories">
+        <Rows
+          rows={[
+            ['Internal protection', result.internal_protection],
+            ['Tape', result.tape_type],
+            ['Strapping', result.strapping_type],
+            ['Extras', result.extra_packaging],
+          ]}
+        />
+      </Block>
 
       <Separator />
 
-      {/* Pricing */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <DollarSign className="w-4 h-4" />
-          Pricing
-        </h3>
+      <Block title="Indicative pricing">
         <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Price per Unit:</span>
-            <span className="text-xl font-bold">₹{result.estimated_price_inr.toFixed(2)}</span>
+          <div className="flex items-baseline justify-between gap-4">
+            <span className="text-sm text-muted-foreground">Per unit</span>
+            <span className="tabular font-display text-h3">{formatInr(result.estimated_price_inr)}</span>
           </div>
-          <div className="flex justify-between items-center p-3 bg-primary/5 rounded-lg">
-            <span className="font-medium">Total Cost (estimated):</span>
-            <span className="text-2xl font-bold text-primary">₹{totalCost.toFixed(2)}</span>
+          <div className="flex items-baseline justify-between gap-4 rounded-lg bg-paper-100 p-3">
+            <span className="text-sm font-semibold">Total for {input.quantity.toLocaleString('en-IN')} units</span>
+            <span className="tabular font-display text-h3">{formatInr(totalCost)}</span>
           </div>
-          <p className="text-xs text-muted-foreground italic">
-            * Prices are estimates. Contact supplier for final quote including taxes and shipping.
-          </p>
+          <p className="text-xs text-muted-foreground">{PRICE_NOTE} Taxes and freight are not included.</p>
         </div>
-      </div>
+      </Block>
 
       <Separator />
 
-      {/* Score Breakdown */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
-          <TrendingUp className="w-4 h-4" />
-          Why This Recommendation
-        </h3>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Protection Score:</span>
-            <Badge variant="outline">{result.protection_score.toFixed(0)}/100</Badge>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Fit Score:</span>
-            <Badge variant="outline">{result.fit_score.toFixed(0)}/100</Badge>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Cost Score:</span>
-            <Badge variant="outline">{result.cost_score.toFixed(0)}/100</Badge>
-          </div>
-          <div className="flex justify-between items-center pt-2 border-t">
-            <span className="font-medium">Overall Score:</span>
-            <Badge className="text-base">{result.score.toFixed(1)}/100</Badge>
-          </div>
-        </div>
-      </div>
+      <Block title="Why this match">
+        <Rows
+          rows={[
+            ['Protection score', `${result.protection_score.toFixed(0)}/100`],
+            ['Fit score', `${result.fit_score.toFixed(0)}/100`],
+            ['Cost score', `${result.cost_score.toFixed(0)}/100`],
+            ['Overall', `${result.score.toFixed(1)}/100`],
+          ]}
+        />
+      </Block>
     </div>
   );
 }

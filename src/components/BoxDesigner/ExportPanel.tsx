@@ -4,10 +4,11 @@
  */
 
 import { useRef, useState } from 'react';
-import { Camera, FileDown, FileText, Link2, Mail, MessageCircle, RotateCcw, Save, Upload } from 'lucide-react';
+import { Camera, FileDown, Link2, Mail, MessageCircle, RotateCcw, Save, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Cta } from '@/components/site/Cta';
 import { Separator } from '@/components/ui/separator';
 import type { BoxDesign } from '@/types/boxDesigner';
 import { BOX_TEMPLATES, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
@@ -22,11 +23,15 @@ interface ExportPanelProps {
   capture: () => Promise<Blob | null>;
   onImport: (design: BoxDesign) => void;
   onReset: () => void;
-  onGetQuote: () => void;
+  /** /quote?... link built from the design by the page (allow-listed values only) */
+  quoteHref: string;
+  onQuote: () => void;
+  /** Analytics hook: which share route was used (no design content is sent) */
+  onShare: (method: 'link' | 'whatsapp' | 'email') => void;
 }
 
-
-export default function ExportPanel({ design, capture, onImport, onReset, onGetQuote }: ExportPanelProps) {
+// SECURITY: share links only carry the design spec (no images, no personal data); imports are validated by parseDesign()
+export default function ExportPanel({ design, capture, onImport, onReset, quoteHref, onQuote, onShare }: ExportPanelProps) {
   const [working, setWorking] = useState<string | null>(null);
   const importRef = useRef<HTMLInputElement>(null);
   const template = BOX_TEMPLATES.find((t) => t.id === design.template)!;
@@ -58,6 +63,7 @@ export default function ExportPanel({ design, capture, onImport, onReset, onGetQ
   };
 
   const copyLink = async () => {
+    onShare('link');
     const url = getShareUrl(design);
     try {
       await navigator.clipboard.writeText(url);
@@ -91,18 +97,24 @@ export default function ExportPanel({ design, capture, onImport, onReset, onGetQ
     <div className="space-y-4">
       <Card className="p-4 space-y-3">
         <h3 className="font-semibold text-sm">Get your box made</h3>
-        <Button className="w-full" size="lg" onClick={onGetQuote}>
-          <FileText className="w-4 h-4 mr-2" /> Get Quote
-        </Button>
+        <Cta id="designer.panel.quote" intent="designer" href={quoteHref} arrow onClick={onQuote} className="w-full" size="lg">
+          Quote this design
+        </Cta>
         <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" size="sm" onClick={() => shareViaWhatsApp(design, getShareUrl(design))}>
+          <Button variant="outline" size="sm" onClick={() => {
+            onShare('whatsapp');
+            shareViaWhatsApp(design, getShareUrl(design));
+          }}>
             <MessageCircle className="w-4 h-4 mr-1" /> WhatsApp us
           </Button>
-          <Button variant="outline" size="sm" onClick={() => shareViaEmail(design, getShareUrl(design))}>
+          <Button variant="outline" size="sm" onClick={() => {
+            onShare('email');
+            shareViaEmail(design, getShareUrl(design));
+          }}>
             <Mail className="w-4 h-4 mr-1" /> Email us
           </Button>
         </div>
-        <p className="text-xs text-gray-500">Sends your size, board, colour and a link to this design to Vayu Packaging.</p>
+        <p className="text-xs text-muted-foreground">Sends your size, board, colour and a link to this design to Vayu Packaging.</p>
       </Card>
 
       <Card className="p-4 space-y-3">
@@ -152,7 +164,7 @@ export default function ExportPanel({ design, capture, onImport, onReset, onGetQ
 
       <Card className="p-4 space-y-3">
         <h3 className="font-semibold text-sm">Save & share</h3>
-        <p className="text-xs text-gray-500">Your design is saved automatically in this browser.</p>
+        <p className="text-xs text-muted-foreground">Your design is saved automatically in this browser.</p>
         <Button variant="outline" className="w-full justify-start" onClick={copyLink}>
           <Link2 className="w-4 h-4 mr-2" /> Copy share link
         </Button>
@@ -178,7 +190,7 @@ export default function ExportPanel({ design, capture, onImport, onReset, onGetQ
         <Button
           variant="ghost"
           size="sm"
-          className="w-full text-red-600 hover:text-red-700"
+          className="w-full text-destructive hover:text-destructive"
           onClick={() => {
             if (window.confirm('Start a new design? You can still undo this.')) onReset();
           }}
@@ -187,7 +199,7 @@ export default function ExportPanel({ design, capture, onImport, onReset, onGetQ
         </Button>
       </Card>
 
-      <Card className="p-4 bg-blue-50 border-blue-200 text-xs text-blue-900 space-y-1">
+      <Card className="p-4 bg-paper-100 border-border text-xs text-ink-900 space-y-1">
         <div className="font-semibold mb-1">Design summary</div>
         <div className="flex justify-between"><span>Inside size</span><span>{design.dimensions.length} x {design.dimensions.width} x {design.dimensions.height} cm</span></div>
         <div className="flex justify-between"><span>Style</span><span>{template.shortName} · FEFCO {template.fefco}</span></div>

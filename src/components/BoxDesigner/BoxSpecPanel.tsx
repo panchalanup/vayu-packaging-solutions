@@ -49,7 +49,7 @@ function DimensionField({ label, value, onCommit }: { label: string; value: numb
   const id = `dim-${label.toLowerCase()}`;
   return (
     <div className="space-y-1">
-      <Label htmlFor={id} className="text-xs text-gray-600">
+      <Label htmlFor={id} className="text-xs text-muted-foreground">
         {label}
       </Label>
       <div className="relative">
@@ -60,10 +60,10 @@ function DimensionField({ label, value, onCommit }: { label: string; value: numb
           onChange={(e) => setText(e.target.value)}
           onBlur={(e) => commit(e.currentTarget.value)}
           onKeyDown={(e) => e.key === 'Enter' && (e.currentTarget as HTMLInputElement).blur()}
-          className="w-full h-10 rounded-md border border-gray-300 bg-white pl-3 pr-9 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full h-10 rounded-md border border-border bg-white pl-3 pr-9 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
           aria-describedby="dim-help"
         />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">cm</span>
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/70">cm</span>
       </div>
     </div>
   );
@@ -95,17 +95,17 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
                 onClick={() => update({ template: t.id })}
                 title={t.description}
                 className={`p-2 rounded-lg border-2 text-center transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                  active ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'
+                  active ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
                 }`}
               >
-                <Icon className="w-5 h-5 mx-auto mb-1 text-gray-700" />
+                <Icon className="w-5 h-5 mx-auto mb-1 text-ink-900" />
                 <div className="text-xs font-semibold">{t.shortName}</div>
-                <div className="text-[10px] text-gray-500">{t.available ? `FEFCO ${t.fefco}` : 'Soon'}</div>
+                <div className="text-[10px] text-muted-foreground">{t.available ? `FEFCO ${t.fefco}` : 'Soon'}</div>
               </button>
             );
           })}
         </div>
-        <p className="text-xs text-gray-500">{BOX_TEMPLATES.find((t) => t.id === design.template)?.description}</p>
+        <p className="text-xs text-muted-foreground">{BOX_TEMPLATES.find((t) => t.id === design.template)?.description}</p>
       </Card>
 
       {/* Dimensions */}
@@ -118,7 +118,7 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
           <DimensionField label="Width" value={dimensions.width} onCommit={(v) => setDims({ width: v })} />
           <DimensionField label="Height" value={dimensions.height} onCommit={(v) => setDims({ height: v })} />
         </div>
-        <p id="dim-help" className="text-xs text-gray-500">
+        <p id="dim-help" className="text-xs text-muted-foreground">
           {DIMENSION_LIMITS.min}-{DIMENSION_LIMITS.max} cm, decimals allowed. Outside is about{' '}
           {Math.round((dimensions.length + thicknessMm / 5) * 10) / 10} x{' '}
           {Math.round((dimensions.width + thicknessMm / 5) * 10) / 10} x{' '}
@@ -143,18 +143,18 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
                 aria-checked={active}
                 onClick={() => update({ ply: option.id, flutes: option.flutes[0] })}
                 className={`w-full p-3 rounded-lg border-2 text-left transition-all ${
-                  active ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'
+                  active ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="font-semibold text-sm">
-                      {option.name} <span className="font-normal text-gray-500">· {option.wall}</span>
+                      {option.name} <span className="font-normal text-muted-foreground">· {option.wall}</span>
                     </div>
-                    <div className="text-xs text-gray-500">{option.useCase}</div>
+                    <div className="text-xs text-muted-foreground">{option.useCase}</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-xs font-medium text-gray-700">~{spec.caliperMm} mm</div>
+                    <div className="text-xs font-medium text-ink-900">~{spec.caliperMm} mm</div>
                     {active && <Check className="w-4 h-4 text-primary ml-auto" />}
                   </div>
                 </div>
@@ -167,7 +167,7 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
           if (option.flutes.length < 2) return null;
           return (
             <div className="flex items-center gap-2 flex-wrap" role="radiogroup" aria-label="Flute">
-              <span className="text-xs text-gray-600">Flute:</span>
+              <span className="text-xs text-muted-foreground">Flute:</span>
               {option.flutes.map((stack) => {
                 const key = stack.join('');
                 const active = design.flutes.join('') === key;
@@ -178,7 +178,7 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
                     aria-checked={active}
                     onClick={() => update({ flutes: stack })}
                     className={`px-3 py-1 rounded-full text-xs border ${
-                      active ? 'bg-primary text-white border-primary' : 'border-gray-300 hover:border-primary'
+                      active ? 'bg-primary text-white border-primary' : 'border-border hover:border-primary'
                     }`}
                   >
                     {key} · {getBoardSpec(design.ply, stack).caliperMm} mm
@@ -188,7 +188,7 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
             </div>
           );
         })()}
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-muted-foreground">
           The 3D edges show the real flute layers. Thickness is indicative; we confirm the final specification with your quote.
         </p>
       </Card>
@@ -210,7 +210,7 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
                 title={c.name}
                 onClick={() => update({ colorHex: c.color })}
                 className={`h-10 rounded-lg border-2 transition-transform hover:scale-105 ${
-                  active ? 'border-primary ring-2 ring-primary/30' : 'border-gray-200'
+                  active ? 'border-primary ring-2 ring-primary/30' : 'border-border'
                 }`}
                 style={{ backgroundColor: c.color }}
               />
@@ -222,14 +222,14 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
             type="color"
             value={design.colorHex}
             onChange={(e) => update({ colorHex: e.target.value }, 'custom-colour')}
-            className="w-10 h-10 rounded cursor-pointer border border-gray-300"
+            className="w-10 h-10 rounded cursor-pointer border border-border"
             aria-label="Custom colour"
           />
-          <span className="text-gray-700">
-            Custom colour <span className="text-gray-400 font-mono text-xs">{design.colorHex.toUpperCase()}</span>
+          <span className="text-ink-900">
+            Custom colour <span className="text-muted-foreground/70 font-mono text-xs">{design.colorHex.toUpperCase()}</span>
           </span>
         </label>
-        <p className="text-xs text-gray-500">Colour is applied to the whole board: outside, inside and edges.</p>
+        <p className="text-xs text-muted-foreground">Colour is applied to the whole board: outside, inside and edges.</p>
       </Card>
 
       {/* Marks */}
@@ -237,7 +237,7 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
         <div className="flex items-center justify-between">
           <Label htmlFor="show-icons" className="text-sm">
             Handling marks on front
-            <span className="block text-xs text-gray-500 font-normal">Fragile, this side up, keep dry</span>
+            <span className="block text-xs text-muted-foreground font-normal">Fragile, this side up, keep dry</span>
           </Label>
           <Switch id="show-icons" checked={design.showIcons} onCheckedChange={(v) => update({ showIcons: v })} />
         </div>
