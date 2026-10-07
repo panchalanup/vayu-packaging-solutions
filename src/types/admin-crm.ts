@@ -117,7 +117,7 @@ export const DEFAULT_DOCUMENT_SETTINGS: DocumentSettings = {
   companyEmail: "vayu.packagingsolutions@gmail.com",
   companyPhone: "+91 8511658600",
   companyAddress: "Ahmedabad, Gujarat, India",
-  companyGstNumber: "",
+  companyGstNumber: "24BDEPS4284E1ZI",
   quotationPrefix: "VPS-Q",
   invoicePrefix: "VPS-I",
   currencySymbol: "₹",

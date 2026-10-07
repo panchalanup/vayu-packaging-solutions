@@ -31,6 +31,13 @@ interface ControlConfig {
   color: string;
 }
 
+/** Named points of the fold timeline (see rig/foldPose.ts) */
+const FOLD_STOP_BUTTONS = [
+  { label: 'Flat', value: 0 },
+  { label: 'Open top', value: 72 },
+  { label: 'Sealed', value: 100 },
+];
+
 export default function BottomFloatingControls({
   dimensions,
   foldPercentage,
@@ -76,7 +83,7 @@ export default function BottomFloatingControls({
     {
       id: 'flaps',
       icon: FoldVertical,
-      label: 'Flaps',
+      label: 'Assembly',
       value: foldPercentage,
       unit: '%',
       min: 0,
@@ -104,7 +111,7 @@ export default function BottomFloatingControls({
   const activeControlConfig = controls.find(c => c.id === activeControl);
 
   return (
-    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
+    <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-30">
       <div className="flex flex-col items-center gap-3">
         {/* Expandable Slider Panel */}
         <AnimatePresence mode="wait">
@@ -119,7 +126,7 @@ export default function BottomFloatingControls({
                 stiffness: 400,
                 damping: 25,
               }}
-              className="glass-panel px-6 py-4 min-w-[320px]"
+              className="glass-panel px-5 py-3 min-w-[300px] max-w-[calc(100vw-2rem)]"
               style={{
                 backdropFilter: 'blur(16px)',
                 background: 'rgba(255, 255, 255, 0.85)',
@@ -172,11 +179,29 @@ export default function BottomFloatingControls({
                   />
                 </div>
 
-                {/* Min/Max Labels */}
-                <div className="flex justify-between text-xs text-gray-500">
-                  <span>{activeControlConfig.min}{activeControlConfig.unit}</span>
-                  <span>{activeControlConfig.max}{activeControlConfig.unit}</span>
-                </div>
+                {/* Min/Max labels, or named assembly stops */}
+                {activeControl === 'flaps' ? (
+                  <div className="flex justify-between gap-2" role="group" aria-label="Assembly stops">
+                    {FOLD_STOP_BUTTONS.map((stop) => (
+                      <button
+                        key={stop.value}
+                        onClick={() => onFoldChange(stop.value)}
+                        className={`flex-1 text-xs py-1.5 rounded-md border transition-colors ${
+                          Math.round(foldPercentage) === stop.value
+                            ? 'bg-amber-500 text-white border-amber-500'
+                            : 'border-gray-200 text-gray-700 hover:border-amber-400'
+                        }`}
+                      >
+                        {stop.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>{activeControlConfig.min}{activeControlConfig.unit}</span>
+                    <span>{activeControlConfig.max}{activeControlConfig.unit}</span>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -201,6 +226,8 @@ export default function BottomFloatingControls({
               <motion.button
                 key={control.id}
                 onClick={() => handleIconClick(control.id)}
+                aria-label={control.label}
+                aria-expanded={isActive}
                 className="relative group"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}

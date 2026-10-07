@@ -3,7 +3,7 @@
  * macOS-style pill toolbar for camera controls
  */
 
-import { RotateCw, Hand, Maximize2, Minimize2, Play, Pause } from 'lucide-react';
+import { RotateCw, Hand, Maximize2, Minimize2, Play, Pause, Scan } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type ControlMode = 'rotate' | 'pan';
@@ -65,6 +65,18 @@ export default function FloatingCanvasToolbar({
 
       {/* Separator */}
       <div className="h-4 w-px bg-gray-300 mx-0.5" />
+
+      {/* Fit view: re-frame the box from the default angle */}
+      <Button
+        onClick={onFitView}
+        variant="ghost"
+        size="sm"
+        className="h-7 w-7 p-0 hover:bg-gray-100/80 mac-transition"
+        title="Fit view - frame the whole box (F)"
+        aria-label="Fit view"
+      >
+        <Scan className="w-3.5 h-3.5 text-gray-700" />
+      </Button>
 
       {/* Fullscreen Toggle */}
       <Button

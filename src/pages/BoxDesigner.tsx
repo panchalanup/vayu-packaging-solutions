@@ -1,25 +1,24 @@
 /**
- * 3D Box Designer Page - macOS Style
- * Viewport-first layout with translucent panels
+ * 3D Box Designer Page
+ * Viewport-first layout. All design data lives in one undoable store (useDesignStore) that the 3D view,
+ * side panels, export and share features read from.
  */
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import * as THREE from 'three';
-import gsap from 'gsap';
+import { Pencil, Palette, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { toast } from 'sonner';
 import Layout from '@/components/Layout';
 import PageTransition from '@/components/PageTransition';
 import MetaTags from '@/components/SEO/MetaTags';
 import { StructuredData } from '@/components/SEO/StructuredData';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
-import { 
-  getBoxDesignerSchema, 
-  getBoxDesignerFAQSchema, 
+import {
+  getBoxDesignerSchema,
+  getBoxDesignerFAQSchema,
   getBoxDesignerBreadcrumbSchema,
-  getBoxDesignerHowToSchema 
+  getBoxDesignerHowToSchema,
 } from '@/seo/schema/boxDesigner';
-import Canvas3D from '@/components/BoxDesigner/Canvas3D';
-import RealisticBox3D from '@/components/BoxDesigner/RealisticBox3D';
 import IconSidebar, { DesignerTab } from '@/components/BoxDesigner/IconSidebar';
 import DesignerSidePanel from '@/components/BoxDesigner/DesignerSidePanel';
 import MacTopbar from '@/components/BoxDesigner/MacTopbar';
@@ -27,513 +26,387 @@ import BottomStatusBar from '@/components/BoxDesigner/BottomStatusBar';
 import FloatingCanvasToolbar from '@/components/BoxDesigner/FloatingCanvasToolbar';
 import BottomFloatingControls from '@/components/BoxDesigner/BottomFloatingControls';
 import MobileInfoBanner from '@/components/BoxDesigner/MobileInfoBanner';
-import { BoxDimensions, BoxTemplate, PlyType, FaceImage, TextElement, BoxFace, BoxColor } from '@/types/boxDesigner';
-import { DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, PLY_OPTIONS, DEFAULT_BOX_COLOR, BOX_COLOR_OPTIONS } from '@/lib/boxDesigner/constants';
-import { calculateFoldState } from '@/lib/boxDesigner/foldAnimation';
-import { downloadCanvasImage } from '@/lib/boxDesigner/canvasCapture';
-import { getDesignFilename } from '@/lib/boxDesigner/shareUtils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { toast } from 'sonner';
+import CanvasErrorBoundary from '@/components/BoxDesigner/CanvasErrorBoundary';
+import WebGLFallback from '@/components/BoxDesigner/WebGLFallback';
+import { FACE_LABELS } from '@/lib/boxDesigner/constants';
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/components/ui/drawer';
+import type { BoxDesign, BoxFace } from '@/types/boxDesigner';
+import { isWebGLAvailable } from '@/lib/boxDesigner/webglSupport';
+import { getInitialDesignOrigin, useDesignStore } from '@/lib/boxDesigner/designStore';
+import { getBoardSpec, getBoardThicknessCm } from '@/lib/boxDesigner/boardSpecs';
+import { computeRscLayout, getFaceSizes } from '@/lib/boxDesigner/rig/rscLayout';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+// The whole three.js stack loads on demand so it stays out of every other route's bundle
+const BoxDesigner3D = lazy(() => import('@/components/BoxDesigner/BoxDesigner3D'));
+
 type ControlMode = 'rotate' | 'pan';
+
+const MOBILE_TABS: { id: DesignerTab; label: string; icon: typeof Pencil }[] = [
+  { id: 'edit', label: 'Edit', icon: Pencil },
+  { id: 'customize', label: 'Artwork', icon: Palette },
+  { id: 'export', label: 'Quote & share', icon: Share2 },
+];
 
 export default function BoxDesigner() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const canvasRef = useRef<THREE.WebGLRenderer | null>(null);
   const toolContainerRef = useRef<HTMLDivElement | null>(null);
-  
+  const webglSupported = useMemo(() => isWebGLAvailable(), []);
+  const { design, update, undo, redo, replace, reset, canUndo, canRedo } = useDesignStore();
+
   // UI state
   const [activeTab, setActiveTab] = useState<DesignerTab>('edit');
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
-  
-  // Design state
-  const [template, setTemplate] = useState<BoxTemplate>(DEFAULT_TEMPLATE);
-  const [dimensions, setDimensions] = useState<BoxDimensions>(DEFAULT_DIMENSIONS);
-  const [ply, setPly] = useState<PlyType>(DEFAULT_PLY);
-  const [boxColor, setBoxColor] = useState<BoxColor>(DEFAULT_BOX_COLOR);
-  const [faceImages, setFaceImages] = useState<FaceImage[]>([]);
-  const [textElements, setTextElements] = useState<TextElement[]>([]);
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const [selectedFace, setSelectedFace] = useState<BoxFace | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
   const [controlMode, setControlMode] = useState<ControlMode>('rotate');
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
-  // Fold animation state
+  const [fitSignal, setFitSignal] = useState(0);
+  // 0 = flat blank, 72 = open top, 100 = sealed (the 3D view animates toward it in its own render loop)
   const [foldPercentage, setFoldPercentage] = useState(100);
-  const [animatedFoldPercentage, setAnimatedFoldPercentage] = useState(100);
 
-  // Fullscreen change listener
+  // Clean high-resolution capture is provided by the 3D scene once it has loaded
+  const captureRef = useRef<() => Promise<Blob | null>>(async () => null);
+  const handleCaptureReady = useCallback((capture: () => Promise<Blob | null>) => {
+    captureRef.current = capture;
+  }, []);
+  const capture = useCallback(() => captureRef.current(), []);
+
+  // Real surface sizes for the artwork editor (same layout as the 3D model)
+  const faceSizes = useMemo(() => {
+    const board = getBoardSpec(design.ply, design.flutes);
+    const layout = computeRscLayout(design.dimensions, getBoardThicknessCm(board, design.dimensions), {
+      topFlaps: design.template !== 'hsc',
+    });
+    return getFaceSizes(layout);
+  }, [design.ply, design.flutes, design.dimensions, design.template]);
+
+  // A selected top flap disappears when switching to an open-top (HSC) box
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
+    if (selectedFace && !faceSizes[selectedFace]) setSelectedFace(null);
+  }, [faceSizes, selectedFace]);
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
+  useEffect(() => {
+    const origin = getInitialDesignOrigin();
+    if (origin === 'shared') toast.success('Shared design loaded', { description: 'Images are not included in share links.' });
+    else if (origin === 'restored') toast('Welcome back! Your last design was restored.');
   }, []);
 
-  // Get current color from box color selection
-  const currentBoxColor = BOX_COLOR_OPTIONS.find(c => c.id === boxColor)?.color || DEFAULT_BOX_COLOR;
-  
-  // Apply color to ply config
-  const currentPlyConfig = {
-    ...PLY_OPTIONS.find(p => p.id === ply)!,
-    color: currentBoxColor,
-  };
-
-  // Smooth GSAP animation for fold percentage changes
+  // Fullscreen state
   useEffect(() => {
-    const animation = gsap.to({ value: animatedFoldPercentage }, {
-      value: foldPercentage,
-      duration: 1.0,
-      ease: 'power3.out',
-      onUpdate: function() {
-        setAnimatedFoldPercentage(this.targets()[0].value);
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  const handleFullscreenToggle = useCallback(async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (toolContainerRef.current?.requestFullscreen) await toolContainerRef.current.requestFullscreen();
+      else toast.info('Fullscreen is not supported in this browser');
+    } catch {
+      toast.error('Could not toggle fullscreen');
+    }
+  }, []);
+
+  // Keyboard shortcuts (ignored while typing in a field)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('input, textarea, select, [contenteditable="true"], [role="application"]')) return;
+      const mod = e.ctrlKey || e.metaKey;
+      if (mod && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        if (e.shiftKey) redo();
+        else undo();
+      } else if (mod && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        redo();
+      } else if (!mod && e.key.toLowerCase() === 'f') {
+        setFitSignal((n) => n + 1);
+      } else if (!mod && e.code === 'Space' && !target.closest('button')) {
+        e.preventDefault();
+        setAutoRotate((v) => !v);
+      } else if (!mod && e.key.toLowerCase() === 'w') {
+        setControlMode((m) => (m === 'rotate' ? 'pan' : 'rotate'));
+      } else if (e.key === 'Escape') {
+        setSelectedFace(null);
       }
-    });
-
-    return () => {
-      animation.kill();
     };
-  }, [foldPercentage]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [undo, redo]);
 
-  // Calculate animation state from fold percentage
-  const animationState = useMemo(() => 
-    calculateFoldState(animatedFoldPercentage),
-    [animatedFoldPercentage]
+  const handleFaceSelect = useCallback(
+    (face: BoxFace | null) => {
+      setSelectedFace(face);
+      if (face) {
+        setActiveTab('customize');
+        setIsLeftPanelCollapsed(false);
+      }
+    },
+    []
   );
+  const handleBackgroundClick = useCallback(() => setSelectedFace(null), []);
 
-  // Image handlers
-  const handleImageUpload = (face: BoxFace, imageUrl: string, file: File) => {
-    const newImage: FaceImage = {
-      face,
-      imageUrl,
-      imageFile: file,
-      position: { x: 0.5, y: 0.5 },
-      scale: 0.8,
-      rotation: 0,
-    };
+  const handleGetQuote = useCallback(() => {
+    const { length, width, height } = design.dimensions;
+    const params = new URLSearchParams({ l: String(length), w: String(width), h: String(height), ply: design.ply, style: design.template });
+    navigate(`/compare-quote?${params.toString()}`, { state: { boxDesign: { ...design, faceImages: [] } } });
+  }, [design, navigate]);
 
-    setFaceImages(prev => {
-      const filtered = prev.filter(img => img.face !== face);
-      return [...filtered, newImage];
-    });
-  };
-
-  const handleImageRemove = (face: BoxFace) => {
-    setFaceImages(prev => prev.filter(img => img.face !== face));
-  };
-
-  // Text handlers
-  const handleTextAdd = (element: Omit<TextElement, 'id'>) => {
-    const newText: TextElement = {
-      ...element,
-      id: `text-${Date.now()}-${Math.random()}`,
-    };
-    setTextElements(prev => [...prev, newText]);
-  };
-
-  const handleTextRemove = (id: string) => {
-    setTextElements(prev => prev.filter(t => t.id !== id));
-  };
-
-  const handleReset = () => {
-    setTemplate(DEFAULT_TEMPLATE);
-    setDimensions(DEFAULT_DIMENSIONS);
-    setPly(DEFAULT_PLY);
-    setBoxColor(DEFAULT_BOX_COLOR);
-    setFaceImages([]);
-    setTextElements([]);
+  const handleImport = useCallback((next: BoxDesign) => replace(next), [replace]);
+  const handleReset = useCallback(() => {
+    reset();
     setSelectedFace(null);
-    setAutoRotate(true);
     setFoldPercentage(100);
-    toast.success('Design reset to defaults');
+    toast.success('New design started', { description: 'Press Ctrl+Z to undo.' });
+  }, [reset]);
+
+  const handleTabChange = (tab: DesignerTab) => {
+    setActiveTab(tab);
+    setIsLeftPanelCollapsed(false);
   };
 
-  const handleGetQuote = () => {
-    toast.success('Redirecting to quote tool...');
-    setTimeout(() => {
-      navigate('/compare-quote');
-    }, 500);
-  };
-
-  const handleExport = () => {
-    const designData = {
-      template,
-      dimensions,
-      ply,
-      boxColor,
-      faceImages: faceImages.map(img => ({
-        face: img.face,
-        position: img.position,
-        scale: img.scale,
-        rotation: img.rotation,
-      })),
-      textElements: textElements.map(text => ({
-        face: text.face,
-        text: text.text,
-        font: text.font,
-        size: text.size,
-        color: text.color,
-        position: text.position,
-        rotation: text.rotation,
-        align: text.align,
-      })),
-    };
-    
-    const blob = new Blob([JSON.stringify(designData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `box-design-${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    toast.success('Design exported successfully!');
-  };
-
-  const handleCaptureScreenshot = async () => {
-    if (!canvasRef.current) {
-      toast.error('Canvas not ready. Please try again.');
-      return;
-    }
-
-    try {
-      // Wait for next animation frame to ensure render is complete
-      await new Promise(resolve => requestAnimationFrame(resolve));
-      
-      const filename = getDesignFilename(dimensions);
-      downloadCanvasImage(canvasRef.current, filename);
-    } catch (error) {
-      console.error('Screenshot capture failed:', error);
-      throw error;
-    }
-  };
-
-  const handleFullscreenToggle = async () => {
-    try {
-      if (!document.fullscreenElement) {
-        // Check if ref exists
-        if (!toolContainerRef.current) {
-          toast.error('Tool container not ready');
-          return;
-        }
-        
-        const container = toolContainerRef.current;
-        
-        // Pre-fullscreen animation - subtle zoom in
-        gsap.fromTo(container,
-          { scale: 0.98, opacity: 0.95 },
-          { 
-            scale: 1, 
-            opacity: 1, 
-            duration: 0.3,
-            ease: 'power2.out',
-            onComplete: async () => {
-              // Enter fullscreen
-              await container.requestFullscreen();
-              
-              // Post-fullscreen animation - dramatic expansion
-              gsap.fromTo(container,
-                { scale: 1.05, opacity: 0 },
-                { 
-                  scale: 1, 
-                  opacity: 1, 
-                  duration: 0.4,
-                  ease: 'power3.out'
-                }
-              );
-              
-              toast.success('Entered fullscreen mode', {
-                description: 'Press ESC to exit fullscreen',
-              });
-            }
-          }
-        );
-      } else {
-        const container = toolContainerRef.current;
-        
-        if (container) {
-          // Pre-exit animation
-          gsap.to(container, {
-            scale: 0.98,
-            opacity: 0.95,
-            duration: 0.3,
-            ease: 'power2.in',
-            onComplete: async () => {
-              await document.exitFullscreen();
-              
-              // Post-exit animation
-              gsap.fromTo(container,
-                { scale: 1.02, opacity: 0.9 },
-                { 
-                  scale: 1, 
-                  opacity: 1, 
-                  duration: 0.3,
-                  ease: 'power2.out'
-                }
-              );
-              
-              toast.success('Exited fullscreen mode');
-            }
-          });
-        } else {
-          await document.exitFullscreen();
-          toast.success('Exited fullscreen mode');
-        }
-      }
-    } catch (error) {
-      console.error('Fullscreen toggle failed:', error);
-      toast.error('Could not toggle fullscreen mode');
-    }
-  };
+  const panel = (embedded: boolean) => (
+    <DesignerSidePanel
+      activeTab={activeTab}
+      design={design}
+      update={update}
+      selectedFace={selectedFace}
+      onSelectFace={setSelectedFace}
+      faceSizes={faceSizes}
+      capture={capture}
+      onImport={handleImport}
+      onReset={handleReset}
+      onGetQuote={handleGetQuote}
+      onFoldReset={() => setFoldPercentage(100)}
+      embedded={embedded}
+    />
+  );
 
   return (
     <Layout>
       <PageTransition>
-        {/* Enhanced SEO Meta Tags */}
         <MetaTags {...PAGE_METADATA.boxDesigner} />
-        
-        {/* Structured Data - SoftwareApplication Schema */}
         <StructuredData type="SoftwareApplication" data={getBoxDesignerSchema()} />
-        
-        {/* Structured Data - FAQ Schema for Rich Snippets */}
         <StructuredData type="FAQPage" data={getBoxDesignerFAQSchema()} />
-        
-        {/* Structured Data - Breadcrumb Navigation */}
         <StructuredData type="BreadcrumbList" data={getBoxDesignerBreadcrumbSchema()} />
-        
-        {/* Structured Data - HowTo Guide */}
         <StructuredData type="HowTo" data={getBoxDesignerHowToSchema()} />
 
         {/* Hero Section - Scrolls away */}
-        <section className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-white py-16 border-b border-gray-200 overflow-hidden">
-          {/* FREE! Side Accent Text */}
-          <div className="free-accent">
-            FREE
-          </div>
-
+        <section className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-white py-12 md:py-16 border-b border-gray-200 overflow-hidden">
+          <div className="free-accent">FREE</div>
           <div className="container mx-auto px-6 max-w-4xl text-center relative z-10">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-6">
-              <span className="text-2xl">🎨</span>
+              <span className="text-2xl" aria-hidden="true">🎨</span>
               Interactive 3D Designer
             </div>
-            <h1 className="text-5xl font-bold text-gray-900 mb-4">
-              Design Your Perfect Box
-            </h1>
-            
-            {/* Pricing Display - Minimal & Professional */}
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Design Your Perfect Box</h1>
             <div className="inline-flex items-center gap-4 mb-6">
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-bold text-gray-900">₹0</span>
-                <span className="text-lg text-gray-400 line-through">₹399</span>
-              </div>
-              <span className="text-sm text-gray-600 border-l-2 border-gray-300 pl-4">
-                No credit card required
-              </span>
+              <span className="text-4xl font-bold text-gray-900">₹0</span>
+              <span className="text-sm text-gray-600 border-l-2 border-gray-300 pl-4">No sign-up, no credit card</span>
             </div>
-
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Create custom packaging with our professional 3D designer. Visualize dimensions, materials, and customize every detail in real-time.
+            <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              Choose the size, 3/5/7-ply board and colour, add your logo, see it fold in real 3D and download a print-ready dieline.
             </p>
-
-
-            <div className="flex items-center justify-center gap-6 text-sm text-gray-700">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                  <span className="text-green-600 font-bold">✓</span>
+            <div className="flex items-center justify-center gap-4 md:gap-6 text-sm text-gray-700 flex-wrap">
+              {['Real-time 3D', 'Your logo & text', 'Dieline PDF'].map((label) => (
+                <div key={label} className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                    <span className="text-green-600 font-bold">✓</span>
+                  </div>
+                  <span>{label}</span>
                 </div>
-                <span>Real-time 3D</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="text-blue-600 font-bold">✓</span>
-                </div>
-                <span>Custom Graphics</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                  <span className="text-purple-600 font-bold">✓</span>
-                </div>
-                <span>Instant Export</span>
-              </div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* Grid Layout - Responsive (mobile vs desktop) */}
-        <div 
+        {/* Tool */}
+        <div
           ref={toolContainerRef}
           className="sticky top-0 w-full grid"
           style={{
-            height: '100vh',
-            maxHeight: '100vh',
-            // Mobile: auto (banner if shown) + 1fr (canvas)
-            // Desktop: 56px (topbar) + 1fr (canvas) + 44px (status bar)
-            gridTemplateColumns: isMobile 
-              ? '1fr'
-              : isLeftPanelCollapsed 
-                ? '72px minmax(0, 1fr)' 
-                : '72px 320px minmax(0, 1fr)',
-            gridTemplateRows: isMobile
-              ? 'auto minmax(0, 1fr)'
-              : '56px minmax(0, 1fr) 44px',
+            height: '100dvh',
+            maxHeight: '100dvh',
+            gridTemplateColumns: isMobile ? '1fr' : isLeftPanelCollapsed ? '72px minmax(0, 1fr)' : '72px 340px minmax(0, 1fr)',
+            gridTemplateRows: isMobile ? 'auto minmax(0, 1fr) auto' : '56px minmax(0, 1fr) 44px',
             background: 'var(--mac-bg)',
-            transition: 'grid-template-columns 180ms cubic-bezier(0.2, 0.9, 0.3, 1)',
             overflow: 'hidden',
           }}
         >
-          {/* Mobile Info Banner - Always visible on mobile */}
           {isMobile && (
             <div className="col-span-full">
               <MobileInfoBanner />
             </div>
           )}
 
-          {/* Topbar - Desktop only */}
           {!isMobile && (
             <div className="col-span-full">
-              <MacTopbar onExport={handleExport} />
+              <MacTopbar onExport={() => handleTabChange('export')} />
             </div>
           )}
 
-          {/* Icon Sidebar - Desktop only */}
           {!isMobile && (
             <div className="row-start-2">
-              <IconSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+              <IconSidebar activeTab={activeTab} onTabChange={handleTabChange} />
             </div>
           )}
 
-          {/* Left Panel - Desktop only, 320px collapsible */}
           {!isMobile && !isLeftPanelCollapsed && (
-            <div className="row-start-2 relative">
-
-              <DesignerSidePanel
-                activeTab={activeTab}
-                template={template}
-                dimensions={dimensions}
-                boxColor={boxColor}
-                onDimensionsChange={setDimensions}
-                onBoxColorChange={setBoxColor}
-                onFoldReset={() => setFoldPercentage(100)}
-                selectedFace={selectedFace}
-                faceImages={faceImages}
-                textElements={textElements}
-                onImageUpload={handleImageUpload}
-                onImageRemove={handleImageRemove}
-                onTextAdd={handleTextAdd}
-                onTextRemove={handleTextRemove}
-                ply={ply}
-                onGetQuote={handleGetQuote}
-                onExport={handleExport}
-                onReset={handleReset}
-                onCaptureScreenshot={handleCaptureScreenshot}
-              />
-              
-              {/* Collapse Button */}
+            <div className="row-start-2 relative min-h-0">
+              {panel(false)}
               <button
                 onClick={() => setIsLeftPanelCollapsed(true)}
-                className="absolute top-4 -right-3 w-6 h-12 bg-white border border-gray-200 rounded-r-lg shadow-sm hover:bg-gray-50 flex items-center justify-center z-10 mac-transition"
-                title="Collapse panel"
+                className="absolute top-4 -right-3 w-6 h-12 bg-white border border-gray-200 rounded-r-lg shadow-sm hover:bg-gray-50 flex items-center justify-center z-10"
+                aria-label="Collapse panel"
               >
                 <ChevronLeft className="w-3.5 h-3.5 text-gray-600" />
               </button>
             </div>
           )}
 
-          {/* Expand button when collapsed - Desktop only */}
           {!isMobile && isLeftPanelCollapsed && (
             <button
               onClick={() => setIsLeftPanelCollapsed(false)}
-              className="absolute left-[72px] top-[72px] w-6 h-12 bg-white border border-gray-200 rounded-r-lg shadow-sm hover:bg-gray-50 flex items-center justify-center z-10 mac-transition"
-              title="Expand panel"
+              className="absolute left-[72px] top-[72px] w-6 h-12 bg-white border border-gray-200 rounded-r-lg shadow-sm hover:bg-gray-50 flex items-center justify-center z-10"
+              aria-label="Expand panel"
             >
               <ChevronRight className="w-3.5 h-3.5 text-gray-600" />
             </button>
           )}
 
-          {/* Canvas Area - Full width on mobile, flex 1 on desktop */}
-          <div 
-            className={isMobile ? 'relative min-w-0' : 'row-start-2 relative p-4 min-w-0'}
-            style={isMobile ? { gridRow: '2 / -1' } : undefined}
-          >
+          {/* Canvas */}
+          <div className={isMobile ? 'relative min-w-0 min-h-0' : 'row-start-2 relative p-4 min-w-0 min-h-0'}>
             <div className={`w-full h-full relative ${isMobile ? '' : 'rounded-2xl'} overflow-hidden shadow-xl`}>
-
-              {/* Floating Toolbar - Top Right */}
-              <div className="absolute top-4 right-4 z-20">
-                <FloatingCanvasToolbar
-                  controlMode={controlMode}
-                  autoRotate={autoRotate}
-                  isFullscreen={isFullscreen}
-                  onControlModeChange={setControlMode}
-                  onAutoRotateToggle={() => setAutoRotate(!autoRotate)}
-                  onFitView={() => toast.info('Fit to view')}
-                  onFullscreenToggle={handleFullscreenToggle}
-                />
-              </div>
-
-              {/* Selected Face Indicator */}
-              {selectedFace && (
-                <div className="absolute top-4 left-4 z-20">
-                  <div 
-                    className="px-3 py-2 flex items-center gap-2"
-                    style={{
-                      backdropFilter: 'blur(var(--mac-glass-blur))',
-                      background: 'rgba(34, 197, 94, 0.9)',
-                      borderRadius: 'var(--mac-radius-md)',
-                      boxShadow: 'var(--mac-shadow-soft)',
-                    }}
-                  >
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                    <span className="text-xs font-medium text-white capitalize">
-                      Selected: {selectedFace}
-                    </span>
-                  </div>
+              {webglSupported && (
+                <div className="absolute top-3 right-3 md:top-4 md:right-4 z-20">
+                  <FloatingCanvasToolbar
+                    controlMode={controlMode}
+                    autoRotate={autoRotate}
+                    isFullscreen={isFullscreen}
+                    onControlModeChange={setControlMode}
+                    onAutoRotateToggle={() => setAutoRotate((v) => !v)}
+                    onFitView={() => setFitSignal((n) => n + 1)}
+                    onFullscreenToggle={handleFullscreenToggle}
+                  />
                 </div>
               )}
 
-              {/* 3D Canvas */}
-              <Canvas3D controlMode={controlMode} onRendererReady={(gl) => { canvasRef.current = gl; }}>
-                <RealisticBox3D
-                  width={dimensions.width}
-                  length={dimensions.length}
-                  depth={dimensions.height}
-                  autoRotate={autoRotate}
-                  animationState={animationState}
-                  showIcons={true}
-                  plyColor={currentPlyConfig.color}
-                  faceImages={faceImages}
-                  textElements={textElements}
-                  selectedFace={selectedFace}
-                  onFaceSelect={setSelectedFace}
-                />
-              </Canvas3D>
+              {selectedFace && (
+                <div className="absolute top-3 left-3 md:top-4 md:left-4 z-20">
+                  <button
+                    onClick={() => setSelectedFace(null)}
+                    className="px-3 py-1.5 flex items-center gap-2 rounded-lg shadow text-xs font-medium text-white"
+                    style={{ background: 'rgba(26, 111, 230, 0.92)' }}
+                    aria-label="Clear selected surface"
+                  >
+                    <span className="w-2 h-2 bg-white rounded-full" />
+                    Selected: {FACE_LABELS[selectedFace]} ✕
+                  </button>
+                </div>
+              )}
 
-              {/* Bottom Floating Controls - Dock Style */}
+              {webglSupported ? (
+                <CanvasErrorBoundary
+                  fallback={({ reset: retry }) => (
+                    <WebGLFallback reason="error" dimensions={design.dimensions} onRetry={retry} onGetQuote={handleGetQuote} />
+                  )}
+                >
+                  <Suspense
+                    fallback={
+                      <div role="status" aria-live="polite" className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 text-sm text-gray-500">
+                        Loading 3D studio…
+                      </div>
+                    }
+                  >
+                    <BoxDesigner3D
+                      design={design}
+                      foldTarget={foldPercentage / 100}
+                      selectedFace={selectedFace}
+                      controlMode={controlMode}
+                      autoRotate={autoRotate}
+                      fitSignal={fitSignal}
+                      onFaceSelect={handleFaceSelect}
+                      onBackgroundClick={handleBackgroundClick}
+                      onCaptureReady={handleCaptureReady}
+                    />
+                  </Suspense>
+                </CanvasErrorBoundary>
+              ) : (
+                <WebGLFallback reason="unsupported" dimensions={design.dimensions} onGetQuote={handleGetQuote} />
+              )}
+
               <BottomFloatingControls
-                dimensions={dimensions}
+                dimensions={design.dimensions}
                 foldPercentage={foldPercentage}
-                onDimensionsChange={setDimensions}
+                onDimensionsChange={(dimensions) => update({ dimensions }, 'dock-dimensions')}
                 onFoldChange={setFoldPercentage}
               />
             </div>
           </div>
 
-          {/* Bottom Status Bar - Desktop only */}
+          {/* Mobile: bottom tab bar opening a sheet with the full panels */}
+          {isMobile && (
+            <nav className="grid grid-cols-3 border-t border-gray-200 bg-white" aria-label="Designer sections" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+              {MOBILE_TABS.map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => {
+                    setActiveTab(id);
+                    setMobileSheetOpen(true);
+                  }}
+                  className={`py-2.5 flex flex-col items-center gap-0.5 text-xs ${activeTab === id && mobileSheetOpen ? 'text-primary' : 'text-gray-600'}`}
+                >
+                  <Icon className="w-5 h-5" />
+                  {label}
+                </button>
+              ))}
+            </nav>
+          )}
+
           {!isMobile && (
             <div className="col-span-full">
               <BottomStatusBar
-                dimensions={dimensions}
-                ply={ply}
-                template={template}
+                dimensions={design.dimensions}
+                ply={design.ply}
+                template={design.template}
+                onUndo={undo}
+                onRedo={redo}
+                canUndo={canUndo}
+                canRedo={canRedo}
               />
             </div>
           )}
         </div>
+
+        {isMobile && (
+          <Drawer open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
+            <DrawerContent className="max-h-[80dvh]">
+              <DrawerTitle className="sr-only">Box designer options</DrawerTitle>
+              <DrawerDescription className="sr-only">Edit the box, add artwork, or get a quote and share</DrawerDescription>
+              <div className="flex gap-2 px-4 pt-2">
+                {MOBILE_TABS.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    onClick={() => setActiveTab(id)}
+                    className={`flex-1 text-xs py-1.5 rounded-full border ${activeTab === id ? 'bg-primary text-white border-primary' : 'border-gray-200'}`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2 px-4 pt-2">
+                <button disabled={!canUndo} onClick={undo} className="text-xs text-primary disabled:text-gray-300">Undo</button>
+                <button disabled={!canRedo} onClick={redo} className="text-xs text-primary disabled:text-gray-300">Redo</button>
+              </div>
+              <div className="overflow-y-auto">{panel(true)}</div>
+            </DrawerContent>
+          </Drawer>
+        )}
       </PageTransition>
     </Layout>
   );
