@@ -1,39 +1,50 @@
-import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useNavigate, type Location as RouterLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { MotionConfig } from "framer-motion";
+import { lazy, Suspense, useEffect } from "react";
 import { AnalyticsProvider } from "@/contexts/AnalyticsContext";
 import { ANALYTICS_CONFIG } from "@/config/analytics";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
-import Index from "./pages/Index";
-import About from "./pages/About";
-import Services from "./pages/Services";
-import Locations from "./pages/Locations";
-import Products from "./pages/Products";
-import Contact from "./pages/Contact";
-import Blogs from "./pages/Blogs";
-import BlogPost from "./pages/BlogPost";
-import CompareQuote from "./pages/CompareQuote";
-import BoxDesigner from "./pages/BoxDesigner";
-import NotFound from "./pages/NotFound";
+import Index from "./pages/Home";
 import AdminRouteGuard from "@/components/admin/AdminRouteGuard";
-import AdminLayout from "@/components/admin/AdminLayout";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
-import AdminLogin from "./pages/admin/AdminLogin";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminCustomers from "./pages/admin/AdminCustomers";
-import AdminCustomerForm from "./pages/admin/AdminCustomerForm";
-import AdminQuotations from "./pages/admin/AdminQuotations";
-import AdminQuotationForm from "./pages/admin/AdminQuotationForm";
-import AdminQuotationView from "./pages/admin/AdminQuotationView";
-import AdminInvoices from "./pages/admin/AdminInvoices";
-import AdminInvoiceForm from "./pages/admin/AdminInvoiceForm";
-import AdminInvoiceView from "./pages/admin/AdminInvoiceView";
+
+// Every route except Home is code-split so visitors only download what they open (admin + jsPDF included)
+const About = lazy(() => import("./pages/About"));
+const Services = lazy(() => import("./pages/Services"));
+const Locations = lazy(() => import("./pages/Locations"));
+const Products = lazy(() => import("./pages/Products"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const IndustryDetail = lazy(() => import("./pages/IndustryDetail"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Quote = lazy(() => import("./pages/Quote"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Blogs = lazy(() => import("./pages/Blogs"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const CompareQuote = lazy(() => import("./pages/CompareQuote"));
+const BoxDesigner = lazy(() => import("./pages/BoxDesigner"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const AdminLayout = lazy(() => import("@/components/admin/AdminLayout"));
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers"));
+const AdminCustomerForm = lazy(() => import("./pages/admin/AdminCustomerForm"));
+const AdminQuotations = lazy(() => import("./pages/admin/AdminQuotations"));
+const AdminQuotationForm = lazy(() => import("./pages/admin/AdminQuotationForm"));
+const AdminQuotationView = lazy(() => import("./pages/admin/AdminQuotationView"));
+const AdminInvoices = lazy(() => import("./pages/admin/AdminInvoices"));
+const AdminInvoiceForm = lazy(() => import("./pages/admin/AdminInvoiceForm"));
+const AdminInvoiceView = lazy(() => import("./pages/admin/AdminInvoiceView"));
+
+const RouteFallback = () => (
+  <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-label="Loading">
+    <span aria-hidden="true" className="h-6 w-6 animate-spin rounded-full border-2 border-ink-900/15 border-t-green-600" />
+  </div>
+);
 
 const queryClient = new QueryClient();
 
@@ -80,14 +91,17 @@ const AnimatedRoutes = () => {
   const backgroundLocation = state?.backgroundLocation;
 
   return (
-    <>
-      <AnimatePresence mode="wait">
-        <Routes location={backgroundLocation || location} key={(backgroundLocation || location).pathname}>
+    <Suspense fallback={<RouteFallback />}>
+        <Routes location={backgroundLocation || location}>
           <Route path="/" element={<Index />} />
           <Route path="/about" element={<About />} />
           <Route path="/services" element={<Services />} />
           <Route path="/locations" element={<Locations />} />
           <Route path="/products" element={<Products />} />
+          <Route path="/products/:slug" element={<ProductDetail />} />
+          <Route path="/industries/:slug" element={<IndustryDetail />} />
+          <Route path="/quote" element={<Quote />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/compare-quote" element={<CompareQuote />} />
           <Route path="/box-designer" element={<BoxDesigner />} />
           <Route path="/blogs" element={<Blogs />} />
@@ -113,7 +127,6 @@ const AnimatedRoutes = () => {
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </AnimatePresence>
 
       {backgroundLocation && (
         <Routes>
@@ -131,14 +144,14 @@ const AnimatedRoutes = () => {
           </Route>
         </Routes>
       )}
-    </>
+    </Suspense>
   );
 };
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <MotionConfig reducedMotion="user">
     <TooltipProvider>
-      <Toaster />
       <Sonner />
       <BrowserRouter>
         <AnalyticsProvider enabled={ANALYTICS_CONFIG.ENABLED} debug={ANALYTICS_CONFIG.DEBUG}>
@@ -147,6 +160,7 @@ const App = () => (
         </AnalyticsProvider>
       </BrowserRouter>
     </TooltipProvider>
+    </MotionConfig>
   </QueryClientProvider>
 );
 

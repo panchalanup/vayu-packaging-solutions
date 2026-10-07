@@ -1,50 +1,42 @@
-import { Badge } from "@/components/ui/badge";
-import { HelpCircle } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { HelpCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ConfidenceBadgeProps {
   confidence: 'High' | 'Medium' | 'Low';
 }
 
+// Text label plus colour, so meaning never relies on colour alone
+const STYLE: Record<ConfidenceBadgeProps['confidence'], string> = {
+  High: 'border-green-600/40 text-green-700',
+  Medium: 'border-warning-700/40 text-warning-700',
+  Low: 'border-error-700/40 text-error-700',
+};
+
+const MESSAGE: Record<ConfidenceBadgeProps['confidence'], string> = {
+  High: 'High confidence: all key details were provided.',
+  Medium: 'Medium confidence: some details are missing. Add size or weight to improve it.',
+  Low: 'Low confidence: several details are missing. Add more to sharpen the match.',
+};
+
 export function ConfidenceBadge({ confidence }: ConfidenceBadgeProps) {
-  const getColor = () => {
-    switch (confidence) {
-      case 'High':
-        return 'bg-green-500/10 text-green-700 border-green-200 hover:bg-green-500/20';
-      case 'Medium':
-        return 'bg-yellow-500/10 text-yellow-700 border-yellow-200 hover:bg-yellow-500/20';
-      case 'Low':
-        return 'bg-red-500/10 text-red-700 border-red-200 hover:bg-red-500/20';
-    }
-  };
-
-  const getMessage = () => {
-    switch (confidence) {
-      case 'High':
-        return 'High confidence - All key parameters provided';
-      case 'Medium':
-        return 'Medium confidence - Some parameters missing. Add dimensions or weight to improve.';
-      case 'Low':
-        return 'Low confidence - Multiple parameters missing. Provide more details for better recommendations.';
-    }
-  };
-
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Badge variant="outline" className={`${getColor()} flex items-center gap-1`}>
+          <button
+            type="button"
+            className={cn(
+              'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              STYLE[confidence]
+            )}
+          >
             Confidence: {confidence}
-            <HelpCircle className="w-3 h-3" />
-          </Badge>
+            <HelpCircle aria-hidden="true" className="h-3 w-3" />
+          </button>
         </TooltipTrigger>
         <TooltipContent className="max-w-xs">
-          <p>{getMessage()}</p>
+          <p>{MESSAGE[confidence]}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

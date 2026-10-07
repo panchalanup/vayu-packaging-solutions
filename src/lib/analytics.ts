@@ -1,5 +1,5 @@
 // Core Analytics Service
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { getConsent, CONSENT_EVENT } from '@/lib/consent';
 import { onCLS, onFCP, onINP, onLCP, onTTFB, Metric } from 'web-vitals';
 import { v4 as uuidv4 } from 'uuid';
 import { ANALYTICS_CONFIG } from '@/config/analytics';
@@ -51,6 +51,10 @@ class AnalyticsService {
   }
 
   private async initialize() {
+    // Consent can be granted/withdrawn at any time: re-run identity set-up when it changes
+    window.addEventListener(CONSENT_EVENT, () => {
+      void this.initializeVisitor().then(() => this.fetchIPLocation());
+    });
     await this.initializeVisitor();
     this.initializeSession();      // Must be before fetchIPLocation
     this.initializeDevice();       // Must be before fetchIPLocation
@@ -61,6 +65,22 @@ class AnalyticsService {
   }
 
   private async initializeVisitor() {
+    // SECURITY/PRIVACY: no consent => no fingerprint, no localStorage identifiers, no IP lookup.
+    // A random, session-scoped id keeps page-level analytics working without identifying the person.
+    if (getConsent() !== 'granted') {
+      let anonId = '';
+      try {
+        anonId = sessionStorage.getItem('analytics_anon_id') || '';
+        if (!anonId) {
+          anonId = `anon-${uuidv4()}`;
+          sessionStorage.setItem('analytics_anon_id', anonId);
+        }
+      } catch {
+        anonId = `anon-${uuidv4()}`;
+      }
+      this.visitorInfo = { visitorId: anonId, isNewVisitor: true };
+      return;
+    }
     try {
       // Try to get existing visitor ID and IP hash
       const storedVisitorId = localStorage.getItem('analytics_visitor_id');
@@ -84,7 +104,8 @@ class AnalyticsService {
           }
         }
       } else {
-        // Generate fingerprint for new visitor
+        // Generate fingerprint for new visitor (consent granted). Loaded lazily so the library is not in the main bundle.
+        const { default: FingerprintJS } = await import('@fingerprintjs/fingerprintjs');
         const fp = await FingerprintJS.load();
         const result = await fp.get();
         const visitorId = result.visitorId;
@@ -109,7 +130,8 @@ class AnalyticsService {
   }
 
   private async fetchIPLocation() {
-    // Only fetch if we don't have IP data stored
+    // Only fetch if consent is granted and we don't have IP data stored
+    if (getConsent() !== 'granted') return;
     const storedIPHash = localStorage.getItem('analytics_ip_hash');
     if (storedIPHash || !this.visitorInfo) {
       return;

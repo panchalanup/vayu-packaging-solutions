@@ -1,26 +1,28 @@
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ArrowRight, Clock, Calendar } from "lucide-react";
-import { BlogPost } from "@/constants/blogs";
-import { useEventTracker } from "@/hooks/useAnalytics";
-import { BLOG_IMAGES } from "@/constants/images";
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ArrowRight, Clock } from 'lucide-react';
+import type { BlogPost } from '@/constants/blogs';
+import { useEventTracker } from '@/hooks/useAnalytics';
+import { BLOG_IMAGES } from '@/constants/images';
+import { reveal } from '@/lib/motion/tokens';
+import { cn } from '@/lib/utils';
+import { CategoryChip, formatBlogDate } from './BlogMeta';
 
 interface BlogCardProps {
   post: BlogPost;
-  index: number;
+  /** Kept for API compatibility; reveal is no longer staggered (§8.3, quiet motion) */
+  index?: number;
+  /** "featured" is the large first card on /blogs */
+  variant?: 'default' | 'featured';
 }
 
-const BlogCard = ({ post, index }: BlogCardProps) => {
+const BlogCard = ({ post, variant = 'default' }: BlogCardProps) => {
   const { trackEvent } = useEventTracker();
-  
-  // Format date
-  const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  });
+  const featured = variant === 'featured';
+  const image = BLOG_IMAGES[post.thumbnail as keyof typeof BLOG_IMAGES] || BLOG_IMAGES.defaultThumbnail;
 
   const handleBlogClick = () => {
+    // Non-personal analytics only
     trackEvent('blog_click', {
       blogTitle: post.title,
       blogSlug: post.slug,
@@ -30,77 +32,61 @@ const BlogCard = ({ post, index }: BlogCardProps) => {
     });
   };
 
-  // Category colors
-  const categoryColors: Record<string, string> = {
-    'Buying Guide': 'bg-blue-100 text-blue-700',
-    'Technical Guide': 'bg-purple-100 text-purple-700',
-    'Quality Standards': 'bg-green-100 text-green-700',
-    'Industry Insights': 'bg-orange-100 text-orange-700',
-  };
-
-  const categoryColor = categoryColors[post.category] || 'bg-gray-100 text-gray-700';
-
   return (
-    <motion.div
-      initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
-      whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
-      className="group"
-    >
-      <Link to={`/blogs/${post.slug}`} onClick={handleBlogClick}>
-        <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
-          {/* Thumbnail */}
-          <div className="relative aspect-[16/9] bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
-            <img
-              src={BLOG_IMAGES[post.thumbnail as keyof typeof BLOG_IMAGES] || BLOG_IMAGES.defaultThumbnail}
-              alt={post.title}
-              className="absolute inset-0 w-full h-full object-cover"
-              loading="lazy"
-            />
-            
-            {/* Hover overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <motion.article {...reveal} className="group h-full">
+      <Link
+        to={`/blogs/${post.slug}`}
+        onClick={handleBlogClick}
+        className={cn(
+          'flex h-full overflow-hidden rounded-[14px] border border-border bg-card transition-[border-color,box-shadow] duration-quick ease-paper hover:border-foreground/30 hover:shadow-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+          featured ? 'flex-col lg:flex-row' : 'flex-col'
+        )}
+      >
+        <div className={cn('relative overflow-hidden bg-paper-200', featured ? 'aspect-[16/9] lg:aspect-auto lg:w-[55%]' : 'aspect-[16/9]')}>
+          <img
+            src={image}
+            alt=""
+            loading={featured ? 'eager' : 'lazy'}
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-slow ease-paper group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          />
+        </div>
+
+        <div className={cn('flex flex-1 flex-col p-5 sm:p-6', featured && 'lg:justify-center lg:p-10')}>
+          <div className="mb-3 flex flex-wrap items-center gap-3">
+            {featured && <span className="label-mono text-muted-foreground">Featured</span>}
+            <CategoryChip category={post.category} />
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Clock aria-hidden="true" className="h-3.5 w-3.5" />
+              {post.readingTime}
+            </span>
           </div>
 
-          {/* Content */}
-          <div className="p-5 sm:p-6 flex-1 flex flex-col">
-            {/* Meta */}
-            <div className="flex items-center gap-3 mb-3">
-              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${categoryColor}`}>
-                {post.category}
-              </span>
-              <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Clock className="w-3.5 h-3.5" />
-                {post.readingTime}
-              </span>
-            </div>
+          <h3
+            className={cn(
+              'font-display font-semibold group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4',
+              featured ? 'text-h3 lg:text-h2 lg:leading-[1.1]' : 'line-clamp-3 text-h3'
+            )}
+          >
+            {post.title}
+          </h3>
 
-            {/* Title */}
-            <h3 className="font-heading text-lg font-bold text-foreground mb-2.5 line-clamp-2 group-hover:text-primary transition-colors">
-              {post.title}
-            </h3>
+          <p className={cn('mt-3 text-sm text-muted-foreground md:text-base', featured ? 'line-clamp-4' : 'line-clamp-2 flex-1')}>
+            {post.description}
+          </p>
 
-            {/* Description */}
-            <p className="text-muted-foreground text-sm leading-relaxed mb-3 line-clamp-2 flex-1">
-              {post.description}
-            </p>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between pt-3 border-t border-border">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Calendar className="w-3.5 h-3.5" />
-                <span>{formattedDate}</span>
-              </div>
-              <div className="flex items-center gap-1 text-primary font-semibold text-sm group-hover:gap-2 transition-all">
-                Read More
-                <ArrowRight className="w-4 h-4" />
-              </div>
-            </div>
+          <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-sm">
+            <time dateTime={post.date} className="tabular text-muted-foreground">
+              {formatBlogDate(post.date)}
+            </time>
+            <span className="inline-flex items-center gap-1 font-semibold text-accent">
+              Read article
+              <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform duration-quick ease-paper group-hover:translate-x-0.5" />
+            </span>
           </div>
         </div>
       </Link>
-    </motion.div>
+    </motion.article>
   );
 };
 

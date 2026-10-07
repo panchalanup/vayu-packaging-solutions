@@ -1,6 +1,6 @@
 /**
  * Bottom Status Bar Component
- * Shows box info, undo/redo, and export status
+ * Shows box info and undo/redo (ink chrome, §9.9)
  */
 
 import { Undo2, Redo2 } from 'lucide-react';
@@ -30,30 +30,26 @@ export default function BottomStatusBar({
 
   return (
     <footer 
-      className="h-11 px-4 flex items-center justify-between border-t border-gray-200/50"
-      style={{
-        backdropFilter: 'blur(var(--mac-glass-blur))',
-        background: 'rgba(255, 255, 255, 0.6)',
-      }}
+      className="h-11 px-4 flex items-center justify-between border-t border-ink-800 bg-ink-900 text-paper-50"
     >
       {/* Left: Box Info */}
-      <div className="flex items-center gap-4 text-xs text-gray-600">
+      <div className="flex items-center gap-4 text-xs text-paper-muted">
         <div className="flex items-center gap-1.5">
-          <span className="font-medium text-gray-700">Volume:</span>
+          <span className="font-medium text-paper-50">Volume:</span>
           <span>{volume}L</span>
         </div>
         
-        <div className="h-3 w-px bg-gray-300" />
+        <div className="h-3 w-px bg-ink-500" />
         
         <div className="flex items-center gap-1.5">
-          <span className="font-medium text-gray-700">Material:</span>
+          <span className="font-medium text-paper-50">Material:</span>
           <span>{ply}</span>
         </div>
         
-        <div className="h-3 w-px bg-gray-300" />
+        <div className="h-3 w-px bg-ink-500" />
         
         <div className="flex items-center gap-1.5">
-          <span className="font-medium text-gray-700">Style:</span>
+          <span className="font-medium text-paper-50">Style:</span>
           <span className="capitalize">{template}</span>
         </div>
       </div>
@@ -65,7 +61,7 @@ export default function BottomStatusBar({
           disabled={!canUndo}
           variant="ghost"
           size="sm"
-          className="h-7 w-7 p-0 hover:bg-gray-100/80 mac-transition disabled:opacity-30"
+          className="h-7 w-7 p-0 text-paper-50 hover:bg-ink-800 hover:text-paper-50 mac-transition disabled:opacity-30"
           title="Undo (Cmd+Z)"
         >
           <Undo2 className="w-3.5 h-3.5" />
@@ -76,7 +72,7 @@ export default function BottomStatusBar({
           disabled={!canRedo}
           variant="ghost"
           size="sm"
-          className="h-7 w-7 p-0 hover:bg-gray-100/80 mac-transition disabled:opacity-30"
+          className="h-7 w-7 p-0 text-paper-50 hover:bg-ink-800 hover:text-paper-50 mac-transition disabled:opacity-30"
           title="Redo (Cmd+Shift+Z)"
         >
           <Redo2 className="w-3.5 h-3.5" />

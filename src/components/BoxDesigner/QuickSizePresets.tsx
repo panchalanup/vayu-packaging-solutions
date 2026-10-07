@@ -45,7 +45,7 @@ export default function QuickSizePresets({ currentDimensions, onChange, onFoldRe
 
   return (
     <div className="space-y-2">
-      <div className="text-xs text-gray-600">Quick presets</div>
+      <div className="text-xs text-muted-foreground">Quick presets</div>
       <div className="grid grid-cols-3 gap-2">
         {PRESETS.map((preset) => {
           const Icon = preset.icon;
@@ -61,13 +61,13 @@ export default function QuickSizePresets({ currentDimensions, onChange, onFoldRe
               className={`p-3 rounded-lg border-2 transition-all ${
                 isSelected
                   ? 'border-primary bg-primary/5 shadow-md'
-                  : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50'
+                  : 'border-border hover:border-primary/50 hover:bg-foreground/5'
               }`}
             >
               <div className="flex flex-col items-center gap-2">
-                <Icon className={`w-6 h-6 ${isSelected ? 'text-primary' : 'text-gray-600'}`} />
+                <Icon className={`w-6 h-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'}`} />
                 <div className="text-xs font-semibold">{preset.name}</div>
-                <div className="text-[10px] text-gray-500">{preset.description}</div>
+                <div className="text-[10px] text-muted-foreground">{preset.description}</div>
               </div>
             </button>
           );

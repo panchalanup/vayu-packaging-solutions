@@ -3,6 +3,8 @@
  * Optimized meta tags for all main pages
  */
 
+import { SEO_CONFIG } from '../config';
+
 export interface PageMeta {
   title: string;
   description: string;
@@ -36,56 +38,56 @@ export const PAGE_METADATA: Record<string, PageMeta> = {
   },
   
   about: {
-    title: 'About Us - Trusted Corrugated Box Supplier Since 2020',
-    description: 'Vayu Packaging Solutions: 5+ years of excellence in corrugated box distribution. Serving 250+ clients across 50+ cities in India. BIS certified quality, on-time delivery guaranteed.',
+    title: 'About Vayu Packaging Solutions | Corrugated Box Supplier, Ahmedabad',
+    // Figures follow src/content/facts.ts; unverified claims (BIS, "guaranteed") removed (VERIFY-LATER[CERT-01])
+    description: 'Vayu Packaging Solutions supplies corrugated boxes and packaging materials from Ahmedabad: 5+ years, 250+ businesses served. Boxes made to order or sourced from vetted mills, all through one quality check.',
     keywords: [
       'about Vayu Packaging',
       'corrugated box company India',
       'packaging supplier background',
       'box distributor history',
       'trusted packaging company',
-      'BIS certified boxes',
       'quality packaging solutions',
     ],
-    ogImage: '/og-about.jpg',
+    // Only /og-image.jpg exists in /public (plan B5)
+    ogImage: '/og-image.jpg',
   },
   
   products: {
-    title: 'Packaging Materials & Corrugated Boxes | Complete Product Range',
-    description: 'Complete packaging materials range: Corrugated boxes (3-ply to 7-ply), BOPP tapes, stretch films, bubble wraps, PP strapping, die-cut boxes, printed packaging. Custom sizes available. Get instant quote.',
+    title: 'Corrugated Boxes & Packaging Supplies | 3, 5 and 7-ply Range',
+    description: 'Corrugated boxes in 3, 5 and 7 ply, die-cut, printed and food-grade boxes, plus BOPP tape, stretch film, bubble wrap and PP strapping. Custom sizes, MOQ 500, GST invoice. Request a price.',
     keywords: [
-      'packaging materials products',
+      'corrugated boxes Ahmedabad',
       'types of corrugated boxes',
-      '3-ply boxes price',
+      '3-ply boxes',
       '5-ply corrugated boxes',
       '7-ply heavy duty boxes',
-      'BOPP tape brown transparent',
-      'stretch film manual machine',
+      'die-cut boxes',
+      'printed packaging boxes',
+      'food grade boxes',
+      'BOPP tape',
+      'stretch film',
       'bubble wrap rolls',
       'PP strapping bands',
-      'custom die-cut boxes India',
-      'printed packaging boxes',
-      'food grade boxes FSSAI',
-      'packaging tape wholesale',
-      'protective packaging materials',
     ],
-    ogImage: '/og-products.jpg',
+    // OG image: only /og-image.jpg exists in /public (plan B5); canonical is set on the page so ?filters never leak into it
+    ogImage: '/og-image.jpg',
   },
   
   services: {
-    title: 'Bulk Corrugated Box Distribution Services | Custom Printing India',
-    description: 'End-to-end packaging solutions: custom box design, bulk distribution, quality testing, custom printing, pan-India delivery. Serving e-commerce, FMCG, electronics, food industries.',
+    title: 'Industries & Services | Corrugated Packaging by Industry | Vayu Packaging',
+    description: 'Corrugated packaging specs for e-commerce, FMCG, electronics, food and beverage, pharma and automotive. Custom sizing, printing, sampling and scheduled supply from Ahmedabad.',
     keywords: [
       'corrugated box distribution services',
       'bulk packaging supplier India',
       'custom box printing services',
       'packaging solutions provider',
       'box design services',
-      'quality assurance packaging',
-      'pan-India delivery',
       'e-commerce packaging services',
+      'FMCG packaging boxes',
+      'automotive heavy duty boxes',
     ],
-    ogImage: '/og-services.jpg',
+    ogImage: '/og-image.jpg',
   },
   
   blogs: {
@@ -132,8 +134,9 @@ export const PAGE_METADATA: Record<string, PageMeta> = {
       'industrial packaging Gujarat',
       'packaging distribution Ahmedabad',
     ],
-    canonical: '/locations',
-    ogImage: '/og-home.jpg',
+    // Absolute canonical (the relative one was invalid)
+    canonical: `${SEO_CONFIG.siteUrl}/locations`,
+    ogImage: '/og-image.jpg',
   },
   
   packagingFinder: {

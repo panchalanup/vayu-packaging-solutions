@@ -7,6 +7,7 @@
 // Import all images
 import logoMain from "@/assets/logo.png";
 import logoHorizontal from "@/assets/logo-horizontal.png";
+import logoHorizontalLight from "@/assets/logo-horizontal-light.png";
 import heroImage1 from "@/assets/hero-section/h1.png";
 import heroImage2 from "@/assets/hero-section/h2.png";
 import heroImage3 from "@/assets/hero-section/h3.png";
@@ -65,31 +66,34 @@ import blog08 from "@/assets/Blogs/blog-08.png";
 export const LOGO_IMAGES = {
   main: logoMain,
   horizontal: logoHorizontal,
+  /** Transparent, light-text variant for ink (dark) backgrounds */
+  horizontalLight: logoHorizontalLight,
 } as const;
 
 // ============================================
 // HERO SECTION IMAGES
 // ============================================
+// VERIFY-LATER[IMG-01]: AI-generated images (alt text describes what is actually shown). h4 shows a fictitious "BOXC" brand: do not use.
 export const HERO_IMAGES = [
   {
     src: heroImage1,
-    alt: "Modern logistics warehouse with trucks loading boxes",
+    alt: "Warehouse aisle with pallets of corrugated boxes",
   },
   {
     src: heroImage2,
-    alt: "Cargo airplane loading shipments at sunset",
+    alt: "Corrugated sheets moving along a converting line",
   },
   {
     src: heroImage3,
-    alt: "Container ship on the ocean",
+    alt: "Worker checking a finished corrugated box",
   },
   {
     src: heroImage4,
-    alt: "Fleet of delivery trucks on highway",
+    alt: "Delivery truck loaded with boxes",
   },
   {
     src: heroImage5,
-    alt: "Inside a modern warehouse with forklifts",
+    alt: "Discussing corrugated box samples at a table",
   },
 ] as const;
 

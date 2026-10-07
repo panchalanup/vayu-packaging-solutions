@@ -1,131 +1,169 @@
-import { useState } from "react";
-import Layout from "@/components/Layout";
-import PageTransition from "@/components/PageTransition";
-import BlogCard from "@/components/BlogCard";
-import CategoryFilter from "@/components/CategoryFilter";
-import { motion } from "framer-motion";
-import { BookOpen } from "lucide-react";
-import { BLOG_POSTS, getBlogsByCategory, BlogCategory } from "@/constants/blogs";
-import { MetaTags, StructuredData } from '@/seo';
+/**
+ * /blogs: featured first article, category chips and client-side search (plan §9.7).
+ * SECURITY: the search text stays in component state and is only compared with static post metadata;
+ * it is never written to the URL, stored or sent anywhere, and never rendered as HTML.
+ */
+
+import { useMemo, useState } from 'react';
+import { Search, X } from 'lucide-react';
+import Layout from '@/components/Layout';
+import PageTransition from '@/components/PageTransition';
+import BlogCard from '@/components/BlogCard';
+import CategoryFilter from '@/components/CategoryFilter';
+import { PageHero } from '@/components/pages/PageHero';
+import { CtaBand } from '@/components/pages/CtaBand';
+import { Section } from '@/components/site/Section';
+import { Cta } from '@/components/site/Cta';
+import { BLOG_CATEGORIES, BLOG_POSTS, type BlogCategory } from '@/constants/blogs';
+import { FACTS } from '@/content/facts';
+import { quoteHref } from '@/lib/quotePrefill';
+import { MetaTags, StructuredData, SEO_CONFIG } from '@/seo';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
 import { getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 
+const norm = (value: string) => value.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}\s]/gu, ' ');
+
+/** Newest first (ISO dates sort lexically) */
+const byNewest = [...BLOG_POSTS].sort((a, b) => b.date.localeCompare(a.date));
+
 const Blogs = () => {
   const [activeCategory, setActiveCategory] = useState<BlogCategory>('All');
-  const filteredBlogs = getBlogsByCategory(activeCategory);
+  const [query, setQuery] = useState('');
+
+  const counts = useMemo(
+    () =>
+      Object.fromEntries(
+        BLOG_CATEGORIES.map((c) => [c, c === 'All' ? BLOG_POSTS.length : BLOG_POSTS.filter((p) => p.category === c).length])
+      ) as Record<BlogCategory, number>,
+    []
+  );
+
+  const terms = useMemo(() => norm(query).split(/\s+/).filter(Boolean), [query]);
+  const filtered = useMemo(
+    () =>
+      byNewest.filter((post) => {
+        if (activeCategory !== 'All' && post.category !== activeCategory) return false;
+        if (terms.length === 0) return true;
+        const haystack = norm(`${post.title} ${post.description} ${post.category}`);
+        return terms.every((term) => haystack.includes(term));
+      }),
+    [activeCategory, terms]
+  );
+
+  // The first article in the list is the pillar guide; it leads the page until the reader filters or searches
+  const unfiltered = activeCategory === 'All' && terms.length === 0;
+  const featured = unfiltered ? BLOG_POSTS[0] : undefined;
+  const grid = featured ? filtered.filter((p) => p.slug !== featured.slug) : filtered;
+  const clear = () => {
+    setQuery('');
+    setActiveCategory('All');
+  };
 
   return (
     <Layout>
-      {/* SEO Meta Tags */}
-      <MetaTags {...PAGE_METADATA.blogs} />
-      
-      {/* Structured Data - Schema.org */}
+      <MetaTags {...PAGE_METADATA.blogs} canonical={`${SEO_CONFIG.siteUrl}/blogs`} />
       <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.blogs)} />
-      
+
       <PageTransition>
-        {/* Hero Section */}
-        <section className="pt-6 sm:pt-8 md:pt-10 pb-10 md:pb-12 section-dark">
-          <div className="container mx-auto px-6 text-center max-w-4xl">
-            <motion.div
-              initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
-              animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <BookOpen className="w-8 h-8 text-primary" />
-                </div>
+        <PageHero
+          name="blogs-hero"
+          index="Blog — packaging guides"
+          title="Corrugated packaging guides"
+          lead="Plain-language guides on choosing the right board, understanding strength tests and sizing your boxes."
+        />
+
+        <Section name="blogs-list" aria-labelledby="articles-heading" className="pb-16 md:pb-24">
+          <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
+            <h2 id="articles-heading" className="sr-only">
+              Articles
+            </h2>
+
+            <div className="flex flex-col gap-4 border-y border-border py-5 lg:flex-row lg:items-center lg:justify-between">
+              <CategoryFilter activeCategory={activeCategory} onCategoryChange={setActiveCategory} counts={counts} />
+
+              <div role="search" className="relative w-full lg:max-w-xs">
+                <label htmlFor="blog-search" className="sr-only">
+                  Search articles
+                </label>
+                <Search aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  id="blog-search"
+                  type="search"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value.slice(0, 80))}
+                  placeholder="Search articles"
+                  autoComplete="off"
+                  className="min-h-11 w-full rounded-lg border border-input bg-background pl-10 pr-10 text-base placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&::-webkit-search-cancel-button]:hidden"
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery('')}
+                    aria-label="Clear search"
+                    className="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    <X aria-hidden="true" className="h-4 w-4" />
+                  </button>
+                )}
               </div>
-              <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-4">
-                Knowledge Hub
-              </p>
-              <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-6">
-                Corrugated Packaging Insights & Guides
-              </h1>
-              <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto">
-                Expert insights on choosing the right packaging, understanding quality standards, and making informed decisions for your business.
-              </p>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Category Filter - Sticky */}
-        <section className="sticky top-0 z-50 py-6 border-b border-border bg-background/95 backdrop-blur-md shadow-sm">
-          <div className="container mx-auto px-6">
-            <CategoryFilter 
-              activeCategory={activeCategory} 
-              onCategoryChange={setActiveCategory}
-            />
-          </div>
-        </section>
-
-        {/* Blog Grid */}
-        <section className="py-12 md:py-16">
-          <div className="container mx-auto px-6">
-            {/* Results count */}
-            <motion.div
-              key={activeCategory}
-              initial={{ filter: "blur(3px)", opacity: 0 }}
-              animate={{ filter: "blur(0px)", opacity: 1 }}
-              className="mb-8"
-            >
-              <p className="text-muted-foreground text-sm font-medium">
-                {filteredBlogs.length} {filteredBlogs.length === 1 ? 'article' : 'articles'}
-                {activeCategory !== 'All' && ` in ${activeCategory}`}
-              </p>
-            </motion.div>
-
-            {/* Blog Cards Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredBlogs.map((post, index) => (
-                <BlogCard key={post.slug} post={post} index={index} />
-              ))}
             </div>
 
-            {/* Empty State */}
-            {filteredBlogs.length === 0 && (
-              <motion.div
-                initial={{ filter: "blur(3px)", opacity: 0, y: 20 }}
-                animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                className="text-center py-16"
-              >
-                <div className="w-24 h-24 rounded-full bg-secondary mx-auto mb-6 flex items-center justify-center">
-                  <BookOpen className="w-12 h-12 text-muted-foreground" />
+            <p role="status" aria-live="polite" className="tabular mt-5 text-sm text-muted-foreground">
+              {filtered.length} {filtered.length === 1 ? 'article' : 'articles'}
+              {activeCategory !== 'All' && ` in ${activeCategory}`}
+              {terms.length > 0 && ` matching "${query.trim()}"`}
+            </p>
+
+            {featured && (
+              <div className="mt-6">
+                <BlogCard post={featured} variant="featured" />
+              </div>
+            )}
+
+            {grid.length > 0 && (
+              <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {grid.map((post) => (
+                  <li key={post.slug}>
+                    <BlogCard post={post} />
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {filtered.length === 0 && (
+              <div className="mt-6 rounded-[14px] border border-dashed border-foreground/25 p-8 text-center md:p-12">
+                <p className="font-display text-h3 font-semibold">No articles found.</p>
+                <p className="mx-auto mt-2 max-w-[48ch] text-muted-foreground">Try another word or category, or ask us directly.</p>
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={clear}
+                    className="inline-flex min-h-11 items-center rounded-lg border border-foreground/20 px-5 text-sm font-semibold hover:border-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    Show all articles
+                  </button>
+                  <Cta id="blogs.empty.quote" intent="quote" href={quoteHref({ src: 'blogs.empty' })} arrow>
+                    Get a quote
+                  </Cta>
                 </div>
-                <h3 className="font-heading text-2xl font-bold text-foreground mb-3">
-                  No articles found
-                </h3>
-                <p className="text-muted-foreground">
-                  Try selecting a different category to explore more content.
-                </p>
-              </motion.div>
+              </div>
             )}
           </div>
-        </section>
+        </Section>
 
-        {/* CTA Section */}
-        <section className="py-16 section-dark">
-          <div className="container mx-auto px-6 text-center max-w-3xl">
-            <motion.div
-              initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
-              whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Need expert guidance on your packaging?
-              </h2>
-              <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
-                Our team is here to help you choose the perfect corrugated packaging solutions for your business needs.
-              </p>
-              <a 
-                href="/contact" 
-                className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-7 py-3.5 rounded-full text-base font-semibold hover:brightness-110 transition-all"
-              >
-                Get Expert Consultation
-              </a>
-            </motion.div>
-          </div>
-        </section>
+        <CtaBand
+          name="blogs-cta"
+          title="Need expert guidance on your packaging?"
+          lead="Tell us what you ship and we will recommend the board, size and print."
+          note={`${FACTS.samplePolicy}. ${FACTS.businessHours}.`}
+        >
+          <Cta id="blogs.band.quote" intent="quote" size="lg" href={quoteHref({ src: 'blogs.band' })} arrow>
+            Get a quote
+          </Cta>
+          <Cta id="blogs.band.finder" intent="finder" variant="secondary" size="lg" href="/compare-quote">
+            Find my spec
+          </Cta>
+        </CtaBand>
       </PageTransition>
     </Layout>
   );

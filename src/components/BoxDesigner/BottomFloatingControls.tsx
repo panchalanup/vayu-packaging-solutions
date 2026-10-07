@@ -56,7 +56,7 @@ export default function BottomFloatingControls({
       min: DIMENSION_LIMITS.min,
       max: DIMENSION_LIMITS.max,
       step: 1,
-      color: '#3b82f6', // blue
+      color: '#23803A', // green-600
     },
     {
       id: 'width',
@@ -67,7 +67,7 @@ export default function BottomFloatingControls({
       min: DIMENSION_LIMITS.min,
       max: DIMENSION_LIMITS.max,
       step: 1,
-      color: '#8b5cf6', // purple
+      color: '#066A8D', // cyan-700
     },
     {
       id: 'height',
@@ -78,7 +78,7 @@ export default function BottomFloatingControls({
       min: DIMENSION_LIMITS.min,
       max: DIMENSION_LIMITS.max,
       step: 1,
-      color: '#10b981', // green
+      color: '#8A6440', // kraft-700
     },
     {
       id: 'flaps',
@@ -89,7 +89,7 @@ export default function BottomFloatingControls({
       min: 0,
       max: 100,
       step: 1,
-      color: '#f59e0b', // amber
+      color: '#4A5A50', // ink-500
     },
   ];
 
@@ -150,7 +150,7 @@ export default function BottomFloatingControls({
                         style={{ color: activeControlConfig.color }}
                       />
                     </div>
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="text-sm font-semibold text-foreground">
                       {activeControlConfig.label}
                     </span>
                   </div>
@@ -158,7 +158,7 @@ export default function BottomFloatingControls({
                     <span className="text-2xl font-bold" style={{ color: activeControlConfig.color }}>
                       {Math.round(activeControlConfig.value)}
                     </span>
-                    <span className="text-sm text-gray-600 ml-1">
+                    <span className="text-sm text-muted-foreground ml-1">
                       {activeControlConfig.unit}
                     </span>
                   </div>
@@ -188,8 +188,8 @@ export default function BottomFloatingControls({
                         onClick={() => onFoldChange(stop.value)}
                         className={`flex-1 text-xs py-1.5 rounded-md border transition-colors ${
                           Math.round(foldPercentage) === stop.value
-                            ? 'bg-amber-500 text-white border-amber-500'
-                            : 'border-gray-200 text-gray-700 hover:border-amber-400'
+                            ? 'bg-ink-500 text-white border-ink-500'
+                            : 'border-border text-ink-900 hover:border-ink-500'
                         }`}
                       >
                         {stop.label}
@@ -197,7 +197,7 @@ export default function BottomFloatingControls({
                     ))}
                   </div>
                 ) : (
-                  <div className="flex justify-between text-xs text-gray-500">
+                  <div className="flex justify-between text-xs text-muted-foreground">
                     <span>{activeControlConfig.min}{activeControlConfig.unit}</span>
                     <span>{activeControlConfig.max}{activeControlConfig.unit}</span>
                   </div>
@@ -250,7 +250,7 @@ export default function BottomFloatingControls({
                   <Icon
                     className="w-5 h-5 transition-colors"
                     style={{
-                      color: isActive ? control.color : '#6b7280',
+                      color: isActive ? control.color : '#4A5A50',
                     }}
                   />
                 </div>
@@ -260,7 +260,7 @@ export default function BottomFloatingControls({
                   className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap"
                   style={{
                     backdropFilter: 'blur(12px)',
-                    background: 'rgba(17, 24, 39, 0.9)',
+                    background: 'rgba(15, 26, 20, 0.92)',
                     color: 'white',
                     padding: '4px 8px',
                     borderRadius: '6px',

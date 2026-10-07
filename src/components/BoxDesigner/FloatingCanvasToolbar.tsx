@@ -42,12 +42,12 @@ export default function FloatingCanvasToolbar({
         onClick={() => onControlModeChange('rotate')}
         variant={controlMode === 'rotate' ? 'default' : 'ghost'}
         size="sm"
-        className={`h-7 w-7 p-0 mac-transition ${controlMode === 'rotate' ? '' : 'hover:bg-gray-100/80'}`}
+        className={`h-7 w-7 p-0 mac-transition ${controlMode === 'rotate' ? '' : 'hover:bg-foreground/5'}`}
         title="Rotate Camera - Click and drag to orbit around the box (Space)"
         aria-label="Orbit mode"
         aria-pressed={controlMode === 'rotate'}
       >
-        <RotateCw className={`w-3.5 h-3.5 ${controlMode === 'rotate' ? 'text-white' : 'text-gray-700'}`} />
+        <RotateCw className={`w-3.5 h-3.5 ${controlMode === 'rotate' ? 'text-white' : 'text-ink-900'}`} />
       </Button>
 
       {/* Pan */}
@@ -55,27 +55,27 @@ export default function FloatingCanvasToolbar({
         onClick={() => onControlModeChange('pan')}
         variant={controlMode === 'pan' ? 'default' : 'ghost'}
         size="sm"
-        className={`h-7 w-7 p-0 mac-transition ${controlMode === 'pan' ? '' : 'hover:bg-gray-100/80'}`}
+        className={`h-7 w-7 p-0 mac-transition ${controlMode === 'pan' ? '' : 'hover:bg-foreground/5'}`}
         title="Pan Camera - Move the view in any direction (W)"
         aria-label="Pan mode"
         aria-pressed={controlMode === 'pan'}
       >
-        <Hand className={`w-3.5 h-3.5 ${controlMode === 'pan' ? 'text-white' : 'text-gray-700'}`} />
+        <Hand className={`w-3.5 h-3.5 ${controlMode === 'pan' ? 'text-white' : 'text-ink-900'}`} />
       </Button>
 
       {/* Separator */}
-      <div className="h-4 w-px bg-gray-300 mx-0.5" />
+      <div className="h-4 w-px bg-border mx-0.5" />
 
       {/* Fit view: re-frame the box from the default angle */}
       <Button
         onClick={onFitView}
         variant="ghost"
         size="sm"
-        className="h-7 w-7 p-0 hover:bg-gray-100/80 mac-transition"
+        className="h-7 w-7 p-0 hover:bg-foreground/5 mac-transition"
         title="Fit view - frame the whole box (F)"
         aria-label="Fit view"
       >
-        <Scan className="w-3.5 h-3.5 text-gray-700" />
+        <Scan className="w-3.5 h-3.5 text-ink-900" />
       </Button>
 
       {/* Fullscreen Toggle */}
@@ -83,27 +83,27 @@ export default function FloatingCanvasToolbar({
         onClick={onFullscreenToggle}
         variant="ghost"
         size="sm"
-        className="h-7 w-7 p-0 hover:bg-gray-100/80 mac-transition"
+        className="h-7 w-7 p-0 hover:bg-foreground/5 mac-transition"
         title={isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
         aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
         aria-pressed={isFullscreen}
       >
         {isFullscreen ? (
-          <Minimize2 className="w-3.5 h-3.5 text-gray-700" />
+          <Minimize2 className="w-3.5 h-3.5 text-ink-900" />
         ) : (
-          <Maximize2 className="w-3.5 h-3.5 text-gray-700" />
+          <Maximize2 className="w-3.5 h-3.5 text-ink-900" />
         )}
       </Button>
 
       {/* Separator */}
-      <div className="h-4 w-px bg-gray-300 mx-0.5" />
+      <div className="h-4 w-px bg-border mx-0.5" />
 
       {/* Auto-Rotate */}
       <Button
         onClick={onAutoRotateToggle}
         variant={autoRotate ? 'default' : 'ghost'}
         size="sm"
-        className={`h-7 w-7 p-0 mac-transition ${autoRotate ? '' : 'hover:bg-gray-100/80'}`}
+        className={`h-7 w-7 p-0 mac-transition ${autoRotate ? '' : 'hover:bg-foreground/5'}`}
         title={autoRotate ? 'Stop Rotation' : 'Auto-Rotate'}
         aria-label={autoRotate ? 'Stop auto-rotate' : 'Start auto-rotate'}
         aria-pressed={autoRotate}
@@ -111,7 +111,7 @@ export default function FloatingCanvasToolbar({
         {autoRotate ? (
           <Pause className="w-3.5 h-3.5 text-white" />
         ) : (
-          <Play className="w-3.5 h-3.5 text-gray-700" />
+          <Play className="w-3.5 h-3.5 text-ink-900" />
         )}
       </Button>
     </div>

@@ -1,168 +1,255 @@
-import Layout from "@/components/Layout";
-import PageTransition from "@/components/PageTransition";
-import { motion } from "framer-motion";
-import { ArrowUpRight, CheckCircle } from "lucide-react";
-import { BUSINESS_DETAILS } from "@/constants";
-import { PRODUCT_IMAGES } from "@/constants/images";
-import { MetaTags, StructuredData } from '@/seo';
-import { PAGE_METADATA } from '@/seo/metadata/pages';
-import { PRODUCT_SCHEMAS, getBreadcrumbSchema, PAGE_BREADCRUMBS, getFAQSchema, COMMON_FAQS, getProductCatalogSchema } from '@/seo/schema';
+/**
+ * /products: filterable range (plan §9.3). Filtering is client-side over src/content/products.ts.
+ * SECURITY: filter values come from the URL (?ply=5&type=…) so each one is checked against an allow-list
+ * before use; they are only ever compared with static data, never rendered as HTML.
+ * SEO: the canonical is fixed to /products so filter query strings never become indexable URLs, and the
+ * ItemList schema describes the full range, which is what the page shows before any filter is applied.
+ */
 
-const products = [
-  {
-    id: "PROD-1",
-    title: "3-Ply Corrugated Boxes",
-    desc: "Lightweight yet durable. Ideal for small and medium-weight products like apparel, accessories, and books.",
-    features: ["Single wall construction", "Cost-effective", "Ideal for light goods"],
-  },
-  {
-    id: "PROD-2",
-    title: "5-Ply Corrugated Boxes",
-    desc: "Double wall strength for heavier products. Perfect for electronics, home appliances, and FMCG goods.",
-    features: ["Double wall protection", "High stacking strength", "Industry standard"],
-  },
-  {
-    id: "PROD-3",
-    title: "7-Ply Corrugated Boxes",
-    desc: "Maximum protection for heavy-duty shipping. Used for industrial parts, machinery, and export packaging.",
-    features: ["Triple wall construction", "Export-grade quality", "Maximum load capacity"],
-  },
-  {
-    id: "PROD-4",
-    title: "Die-Cut Boxes",
-    desc: "Custom-shaped boxes designed to fit your product perfectly. Reduces material waste and enhances unboxing experience.",
-    features: ["Custom shapes & sizes", "Brand-focused design", "Minimal material waste"],
-  },
-  {
-    id: "PROD-5",
-    title: "Printed Packaging",
-    desc: "Full-color printed corrugated boxes that showcase your brand. Available in flexo and offset printing.",
-    features: ["Flexo & offset printing", "CMYK full color", "Brand visibility"],
-  },
-  {
-    id: "PROD-6",
-    title: "Food-Grade Boxes",
-    desc: "FSSAI compliant corrugated boxes for food and beverage packaging with food-safe coatings.",
-    features: ["FSSAI compliant", "Food-safe coating", "Moisture resistant"],
-  },
+import { useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import Layout from '@/components/Layout';
+import PageTransition from '@/components/PageTransition';
+import { MetaTags, StructuredData, SEO_CONFIG } from '@/seo';
+import { PAGE_METADATA } from '@/seo/metadata/pages';
+import { getBreadcrumbSchema, getProductListSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
+import { Section } from '@/components/site/Section';
+import { Cta } from '@/components/site/Cta';
+import { FactStrip } from '@/components/site/Blocks';
+import { PageHero } from '@/components/pages/PageHero';
+import { CtaBand } from '@/components/pages/CtaBand';
+import { ProductCard } from '@/components/pages/ProductCard';
+import {
+  PRODUCTS,
+  PRODUCT_TYPE_LABELS,
+  INDUSTRY_NAMES,
+  type PlyNumber,
+  type ProductType,
+  type IndustrySlug,
+} from '@/content/products';
+import type { MadeOrSourced } from '@/components/site/Blocks';
+import { INDUSTRY_SLUGS } from '@/lib/quoteSchema';
+import { FACTS } from '@/content/facts';
+import { quoteHref } from '@/lib/quotePrefill';
+import { whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';
+import { cn } from '@/lib/utils';
+
+type FilterKey = 'ply' | 'type' | 'industry' | 'source';
+
+interface Option {
+  value: string;
+  label: string;
+}
+
+const PLY_OPTIONS: Option[] = [
+  { value: '3', label: '3-ply' },
+  { value: '5', label: '5-ply' },
+  { value: '7', label: '7-ply' },
+];
+const TYPE_OPTIONS: Option[] = (Object.keys(PRODUCT_TYPE_LABELS) as ProductType[]).map((value) => ({
+  value,
+  label: PRODUCT_TYPE_LABELS[value],
+}));
+const INDUSTRY_OPTIONS: Option[] = INDUSTRY_SLUGS.map((value) => ({ value, label: INDUSTRY_NAMES[value] }));
+const SOURCE_OPTIONS: Option[] = [
+  { value: 'made', label: 'Custom-made' },
+  { value: 'sourced', label: 'Sourced & QC-checked' },
 ];
 
-const Products = () => {
+const GROUPS: { key: FilterKey; label: string; options: Option[] }[] = [
+  { key: 'ply', label: 'Ply', options: PLY_OPTIONS },
+  { key: 'type', label: 'Type', options: TYPE_OPTIONS },
+  { key: 'industry', label: 'Industry', options: INDUSTRY_OPTIONS },
+  { key: 'source', label: 'Made or sourced', options: SOURCE_OPTIONS },
+];
+
+/** Reads one filter from the URL, accepting only values in its allow-list */
+const readFilter = (params: URLSearchParams, key: FilterKey): string | null => {
+  const raw = params.get(key);
+  const group = GROUPS.find((g) => g.key === key);
+  return raw && group?.options.some((o) => o.value === raw) ? raw : null;
+};
+
+export default function Products() {
+  const [params, setParams] = useSearchParams();
+
+  const active = useMemo(
+    () => ({
+      ply: readFilter(params, 'ply'),
+      type: readFilter(params, 'type'),
+      industry: readFilter(params, 'industry'),
+      source: readFilter(params, 'source'),
+    }),
+    [params]
+  );
+  const activeCount = Object.values(active).filter(Boolean).length;
+
+  const results = useMemo(
+    () =>
+      PRODUCTS.filter(
+        (p) =>
+          (!active.ply || p.plies.includes(Number(active.ply) as PlyNumber)) &&
+          (!active.type || p.type === (active.type as ProductType)) &&
+          (!active.industry || p.industries.includes(active.industry as IndustrySlug)) &&
+          (!active.source || p.madeOrSourced === (active.source as MadeOrSourced))
+      ),
+    [active]
+  );
+
+  const toggle = useCallback(
+    (key: FilterKey, value: string) => {
+      const next = new URLSearchParams(params);
+      if (next.get(key) === value) next.delete(key);
+      else next.set(key, value);
+      setParams(next, { replace: true, preventScrollReset: true });
+    },
+    [params, setParams]
+  );
+
+  const clear = useCallback(() => setParams({}, { replace: true, preventScrollReset: true }), [setParams]);
+
   return (
     <Layout>
-      {/* SEO Meta Tags */}
-      <MetaTags {...PAGE_METADATA.products} />
-      
-      {/* Structured Data - Schema.org */}
-      {/* Corrugated Box Products */}
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['3-ply']} />
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['5-ply']} />
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['7-ply']} />
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['die-cut']} />
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['printed']} />
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['food-grade']} />
-      
-      {/* Packaging Materials Products */}
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['bopp-tape']} />
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['stretch-film']} />
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['bubble-wrap']} />
-      <StructuredData type="Product" data={PRODUCT_SCHEMAS['pp-strapping']} />
-      
-      {/* Product Catalog - Shows all products in search results */}
-      <StructuredData type="ItemList" data={getProductCatalogSchema()} />
-      
-      {/* Navigation & FAQs */}
+      <MetaTags {...PAGE_METADATA.products} canonical={`${SEO_CONFIG.siteUrl}/products`} />
       <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.products)} />
-      <StructuredData type="FAQPage" data={getFAQSchema(COMMON_FAQS.products)} />
-      
+      <StructuredData type="ItemList" data={getProductListSchema()} />
+
       <PageTransition>
-        {/* Hero */}
-        <section className="pt-8 sm:pt-12 md:pt-16 pb-12 md:pb-16 section-dark">
-          <div className="container mx-auto px-6 text-center max-w-3xl">
-            <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-4">Our Products</p>
-            <h1 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-6">
-              Corrugated boxes for every need
-            </h1>
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              From 3-ply lightweight to 7-ply heavy-duty, we offer the full range of corrugated packaging solutions.
-            </p>
-          </div>
-        </section>
+        <PageHero
+          name="products-hero"
+          index={`Products — ${PRODUCTS.length} items`}
+          title="Corrugated boxes and packaging supplies"
+          lead="3, 5 and 7-ply boxes in your size, die-cut and printed boxes, and the tape, film and strapping that go with them. Every item is labelled as custom-made or sourced and QC-checked."
+          actions={
+            <>
+              <Cta id="products.hero.quote" intent="quote" size="lg" href={quoteHref({ src: 'products.hero' })} arrow>
+                Get a quote
+              </Cta>
+              <Cta id="products.hero.finder" intent="finder" variant="secondary" size="lg" href="/compare-quote">
+                Find my spec
+              </Cta>
+            </>
+          }
+          footer={
+            <FactStrip
+              facts={[
+                { label: 'MOQ', value: `${FACTS.moqBoxes} boxes` },
+                { label: 'Dispatch', value: `${FACTS.dispatchHours} hrs stock sizes*` },
+                { label: 'Invoice', value: 'GST' },
+              ]}
+            />
+          }
+        />
 
-        {/* Product grid */}
-        <section className="py-24">
-          <div className="container mx-auto px-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.map((product, i) => (
-                <motion.div
-                  key={product.title}
-                  initial={{ filter: "blur(5px)", opacity: 0, y: 30 }}
-                  whileInView={{ filter: "blur(0px)", opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-xl transition-all group"
-                >
-                  {/* Product Image */}
-                  <div className="relative aspect-square bg-gradient-to-br from-blue-50 to-blue-100">
-                    <img
-                      src={PRODUCT_IMAGES[i].src}
-                      alt={PRODUCT_IMAGES[i].alt}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                    {/* Info Badge - Shows when using placeholder */}
-                    {PRODUCT_IMAGES[i].src.includes('placeholder') && (
-                      <>
-                        <div className="absolute inset-0 flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 to-blue-100">
-                          <div className="text-center">
-                            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
-                              <svg className="w-8 h-8 text-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                            </div>
-                            <p className="text-xs font-mono text-primary/60 mb-2">{PRODUCT_IMAGES[i].id}</p>
-                            <p className="text-xs text-muted-foreground">{PRODUCT_IMAGES[i].description}</p>
-                          </div>
-                        </div>
-                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
-                          <p className="text-xs font-semibold text-primary">{PRODUCT_IMAGES[i].requiredSize}</p>
-                        </div>
-                      </>
-                    )}
-                  </div>
+        <Section name="products-range" aria-labelledby="range-heading" className="pb-16 md:pb-24">
+          <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
+            <h2 id="range-heading" className="sr-only">
+              Product range
+            </h2>
 
-                  {/* Content */}
-                  <div className="p-6 sm:p-8">
-                    <h3 className="font-heading text-xl font-semibold text-foreground mb-3">{product.title}</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed mb-6">{product.desc}</p>
-                    <div className="space-y-2">
-                      {product.features.map((f) => (
-                        <div key={f} className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-accent flex-shrink-0" />
-                          <span className="text-foreground text-sm">{f}</span>
-                        </div>
-                      ))}
-                    </div>
+            <div
+              role="group"
+              aria-label="Filter products"
+              className="grid grid-cols-1 gap-5 border-y border-border py-6 sm:grid-cols-2 lg:grid-cols-[auto_1fr_1fr_auto] lg:gap-x-10"
+            >
+              {GROUPS.map((group) => (
+                <div key={group.key} role="group" aria-labelledby={`filter-${group.key}`}>
+                  <p id={`filter-${group.key}`} className="label-mono mb-2.5 text-muted-foreground">
+                    {group.label}
+                  </p>
+                  <div className="-mx-4 flex gap-2 overflow-x-auto px-4 py-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:py-0">
+                    {group.options.map((option) => {
+                      const pressed = active[group.key] === option.value;
+                      return (
+                        <button
+                          key={option.value}
+                          type="button"
+                          aria-pressed={pressed}
+                          onClick={() => toggle(group.key, option.value)}
+                          className={cn(
+                            'min-h-11 shrink-0 rounded-full border px-4 text-sm font-semibold transition-colors duration-quick ease-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+                            pressed
+                              ? 'border-foreground bg-foreground text-background'
+                              : 'border-foreground/20 hover:border-foreground/50'
+                          )}
+                        >
+                          {option.label}
+                        </button>
+                      );
+                    })}
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
-          </div>
-        </section>
 
-        {/* CTA */}
-        <section className="py-24 section-dark">
-          <div className="container mx-auto px-6 text-center max-w-2xl">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">{BUSINESS_DETAILS.minOrderText}</h2>
-            <p className="text-muted-foreground text-lg mb-8">Get competitive bulk pricing with pan-India delivery. Custom sizes available on request.</p>
-            <a href="/contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-7 py-3.5 rounded-full text-base font-semibold hover:brightness-110 transition-all">
-              Get a Quote <ArrowUpRight className="w-5 h-5" />
-            </a>
+            <div className="mt-6 flex min-h-11 flex-wrap items-center justify-between gap-3">
+              <p role="status" aria-live="polite" className="tabular text-sm text-muted-foreground">
+                Showing {results.length} of {PRODUCTS.length} products
+              </p>
+              {activeCount > 0 && (
+                <button
+                  type="button"
+                  onClick={clear}
+                  className="min-h-11 rounded-md px-2 text-sm font-semibold text-accent underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  Clear filters
+                </button>
+              )}
+            </div>
+
+            {results.length > 0 ? (
+              <ul className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {results.map((product) => (
+                  <li key={product.slug}>
+                    <ProductCard product={product} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="mt-4 rounded-[14px] border border-dashed border-foreground/25 p-8 text-center md:p-12">
+                <p className="font-display text-h3 font-semibold">No product matches all of those filters.</p>
+                <p className="mx-auto mt-2 max-w-[52ch] text-muted-foreground">
+                  Clear a filter, or tell us what you ship and we will recommend a spec.
+                </p>
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={clear}
+                    className="inline-flex min-h-11 items-center rounded-lg border border-foreground/20 px-5 text-sm font-semibold hover:border-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    Clear filters
+                  </button>
+                  <Cta id="products.empty.quote" intent="quote" href={quoteHref({ src: 'products.empty' })} arrow>
+                    Get a quote
+                  </Cta>
+                </div>
+              </div>
+            )}
+
+            <p className="mt-8 text-sm text-muted-foreground">*{FACTS.dispatchFootnote} Custom sizes take longer; see each product.</p>
           </div>
-        </section>
+        </Section>
+
+        <CtaBand
+          name="products-cta"
+          title="Not sure which board you need?"
+          lead="Tell us what you ship, the weight and the size. We recommend the ply, sample it and quote it."
+          note={`${FACTS.samplePolicy}. ${FACTS.businessHours}.`}
+        >
+          <Cta id="products.band.quote" intent="quote" size="lg" href={quoteHref({ src: 'products.band' })} arrow>
+            Get a quote
+          </Cta>
+          <Cta
+            id="products.band.whatsapp"
+            intent="whatsapp"
+            variant="whatsapp"
+            size="lg"
+            href={whatsappHref(pageWhatsAppMessage('/products'))}
+          >
+            WhatsApp us
+          </Cta>
+        </CtaBand>
       </PageTransition>
     </Layout>
   );
-};
-
-export default Products;
+}

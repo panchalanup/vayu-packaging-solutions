@@ -52,8 +52,9 @@ const AO_BOTTOM_FLAP = { left: true, right: true, bottom: false, top: true };
 const AO_NONE = { left: false, right: false, bottom: false, top: false };
 type AoSides = typeof AO_NONE;
 
-/** Brand blue used for selection */
-const HIGHLIGHT = new THREE.Color('#1A6FE6');
+/** Selection colour: Vayu cyan-400 (§5.1), visible on kraft board. Hover frame is a lighter tint of the same hue. */
+const HIGHLIGHT = new THREE.Color('#1FB5E0');
+const HIGHLIGHT_HOVER = '#7FD6EE';
 /** Decal / highlight offsets in front of the outer liner (cm) */
 const PRINT_OFFSET = 0.015;
 const HIGHLIGHT_OFFSET = 0.03;
@@ -149,7 +150,7 @@ export class BoxRig {
   private readonly fillSelected = overlayMaterial(HIGHLIGHT, 0.1);
   private readonly fillHover = overlayMaterial(HIGHLIGHT, 0.05);
   private readonly frameSelected = overlayMaterial(HIGHLIGHT, 1);
-  private readonly frameHover = overlayMaterial('#6ea8ff', 0.85);
+  private readonly frameHover = overlayMaterial(HIGHLIGHT_HOVER, 0.85);
   private readonly blob: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
 
   private layout: RscLayout | null = null;

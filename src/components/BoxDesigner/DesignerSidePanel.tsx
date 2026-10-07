@@ -23,7 +23,9 @@ interface DesignerSidePanelProps {
   capture: () => Promise<Blob | null>;
   onImport: (design: BoxDesign) => void;
   onReset: () => void;
-  onGetQuote: () => void;
+  quoteHref: string;
+  onQuote: () => void;
+  onShare: (method: 'link' | 'whatsapp' | 'email') => void;
   onFoldReset: () => void;
   /** Mobile sheet supplies its own scroll container */
   embedded?: boolean;
@@ -38,7 +40,7 @@ const TITLES: Record<DesignerTab, { title: string; subtitle: string }> = {
 export default function DesignerSidePanel(props: DesignerSidePanelProps) {
   const { activeTab, design, update, embedded } = props;
   return (
-    <div className={embedded ? '' : 'h-full bg-gray-50 border-r border-gray-200 overflow-y-auto overflow-x-hidden'}>
+    <div className={embedded ? '' : 'h-full bg-paper-100 border-r border-border overflow-y-auto overflow-x-hidden'}>
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}
@@ -49,8 +51,8 @@ export default function DesignerSidePanel(props: DesignerSidePanelProps) {
           className={embedded ? 'p-4 space-y-4' : 'p-5 space-y-5'}
         >
           <div>
-            <h2 className="text-xl font-bold text-gray-900">{TITLES[activeTab].title}</h2>
-            <p className="text-sm text-gray-600">{TITLES[activeTab].subtitle}</p>
+            <h2 className="font-display text-xl text-foreground">{TITLES[activeTab].title}</h2>
+            <p className="text-sm text-muted-foreground">{TITLES[activeTab].subtitle}</p>
           </div>
 
           {activeTab === 'edit' && <BoxSpecPanel design={design} update={update} onFoldReset={props.onFoldReset} />}
@@ -69,7 +71,9 @@ export default function DesignerSidePanel(props: DesignerSidePanelProps) {
               capture={props.capture}
               onImport={props.onImport}
               onReset={props.onReset}
-              onGetQuote={props.onGetQuote}
+              quoteHref={props.quoteHref}
+              onQuote={props.onQuote}
+              onShare={props.onShare}
             />
           )}
         </motion.div>
