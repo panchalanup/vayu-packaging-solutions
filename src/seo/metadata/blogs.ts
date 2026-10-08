@@ -36,7 +36,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'choosing corrugated boxes',
     ],
     targetAudience: ['e-commerce owners', 'FMCG distributors', 'procurement managers', 'packaging buyers'],
-    ogImage: '/blog-images/types-of-boxes-og.jpg',
+    ogImage: '/blog-images/types-of-boxes-og.png',
   },
   
   'corrugated-wall-differences': {
@@ -57,6 +57,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'box strength comparison',
     ],
     targetAudience: ['packaging engineers', 'quality managers', 'export businesses'],
+    ogImage: '/blog-images/walls-og.png',
   },
   
   'flute-types-guide': {
@@ -79,7 +80,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'packaging flute selection',
     ],
     targetAudience: ['packaging engineers', 'quality managers', 'technical buyers', 'product designers'],
-    ogImage: '/blog-images/flute-types-og.jpg',
+    ogImage: '/blog-images/flute-types-og.png',
   },
   
   'gsm-calculation-strength': {
@@ -101,7 +102,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'GSM to strength ratio',
     ],
     targetAudience: ['procurement managers', 'quality engineers', 'packaging buyers', 'cost analysts'],
-    ogImage: '/blog-images/gsm-guide-og.jpg',
+    ogImage: '/blog-images/gsm-guide-og.png',
   },
   
   'burst-strength-ect-guide': {
@@ -123,7 +124,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'stacking strength boxes',
     ],
     targetAudience: ['quality managers', 'packaging engineers', 'procurement teams', 'warehouse managers'],
-    ogImage: '/blog-images/burst-ect-og.jpg',
+    ogImage: '/blog-images/burst-ect-og.png',
   },
   
   'box-measurements-guide': {
@@ -145,7 +146,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'box clearance requirements',
     ],
     targetAudience: ['e-commerce businesses', 'packaging buyers', 'warehouse staff', 'product managers'],
-    ogImage: '/blog-images/measurements-og.jpg',
+    ogImage: '/blog-images/measurements-og.png',
   },
   
   'kraft-paper-grades': {
@@ -167,7 +168,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'paper quality packaging',
     ],
     targetAudience: ['sustainability managers', 'procurement teams', 'packaging buyers', 'FMCG companies'],
-    ogImage: '/blog-images/kraft-paper-og.jpg',
+    ogImage: '/blog-images/kraft-paper-og.png',
   },
   
   '3d-box-designer-tool-free': {
@@ -207,7 +208,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'startup founders',
       'product designers',
     ],
-    ogImage: '/blog-images/3d-box-designer-og.jpg',
+    ogImage: '/blog-images/3d-box-designer-og.png',
   },
 };
 

@@ -3,13 +3,21 @@
  * One typed source so the home page, quote options and (later) product pages agree.
  */
 
-import { HERO_IMAGES, PRODUCT_IMAGES } from '@/constants/images';
+import { INDUSTRY_IMAGES, PRODUCT_IMAGES, PROCESS_IMAGES, SUPPLY_IMAGES } from '@/constants/images';
 import type { ImageSlotData } from '@/components/site/ImageSlot';
 import type { MadeOrSourced } from '@/components/site/Blocks';
 import type { QuoteInput } from '@/lib/quoteSchema';
 import { FACTS } from './facts';
 
-const prod = (i: number) => PRODUCT_IMAGES[i].src;
+/** Own-artwork slot from an image-constants entry (illustrations never carry factual captions) */
+const art = (id: string, img: { src: string; alt: string; width: number; height: number }, alt = img.alt): ImageSlotData => ({
+  id,
+  src: img.src,
+  alt,
+  kind: 'illustration',
+  width: img.width,
+  height: img.height,
+});
 
 export interface RangeItem {
   slug: string;
@@ -34,8 +42,7 @@ export const RANGE: RangeItem[] = [
     moq: `MOQ ${FACTS.moqBoxes}`,
     leadTime: `Stock sizes ${FACTS.dispatchHours} hrs · custom 5–7 days`,
     quoteProduct: '5-ply',
-    // VERIFY-LATER[IMG-03]: AI-generated product images
-    image: { id: 'home.range.corrugated', src: prod(0), alt: 'Stack of plain kraft corrugated shipping boxes', kind: 'illustrative' },
+    image: art('home.range.corrugated', PRODUCT_IMAGES[0]),
   },
   {
     slug: 'die-cut-mailer-boxes',
@@ -45,8 +52,7 @@ export const RANGE: RangeItem[] = [
     moq: `MOQ ${FACTS.moqBoxes}`,
     leadTime: '7–10 days',
     quoteProduct: 'die-cut',
-    // VERIFY-LATER[IMG-05]: PROD-4 shows sample brand 'RoyalCrafts' (AI mock-up); replace with a real die-cut photo
-    image: { id: 'home.range.diecut', src: prod(3), alt: 'Die-cut corrugated mailer boxes in different shapes', kind: 'illustrative' },
+    image: art('home.range.diecut', PRODUCT_IMAGES[3]),
   },
   {
     slug: 'printed-branded-boxes',
@@ -56,8 +62,7 @@ export const RANGE: RangeItem[] = [
     moq: 'MOQ 1,000',
     leadTime: '7–10 days',
     quoteProduct: 'printed',
-    // VERIFY-LATER[IMG-05]: PROD-5 shows AI mock-up brands (DAZZLE, Kerala Spice Co., Snack Attack); replace with real printed-box photos
-    image: { id: 'home.range.printed', src: prod(4), alt: 'Corrugated boxes printed with brand graphics', kind: 'illustrative' },
+    image: art('home.range.printed', PRODUCT_IMAGES[4]),
   },
   {
     slug: 'heavy-duty-boxes',
@@ -67,7 +72,7 @@ export const RANGE: RangeItem[] = [
     moq: `MOQ ${FACTS.moqBoxes}`,
     leadTime: '5–7 days',
     quoteProduct: '7-ply',
-    image: { id: 'home.range.heavy', src: prod(2), alt: 'Heavy-duty triple-wall corrugated box with an industrial part', kind: 'illustrative' },
+    image: art('home.range.heavy', PRODUCT_IMAGES[2]),
   },
   {
     slug: 'food-grade-boxes',
@@ -77,8 +82,7 @@ export const RANGE: RangeItem[] = [
     moq: `MOQ ${FACTS.moqBoxes}`,
     leadTime: '5–7 days',
     quoteProduct: 'printed',
-    // VERIFY-LATER[IMG-05]: PROD-6 shows a fake 'Lic. No' stamp (implies a food-safety certificate), so a plain box image is used until a real photo exists
-    image: { id: 'home.range.foodgrade', src: prod(0), alt: 'Plain corrugated boxes suitable for packed goods', kind: 'illustrative' },
+    image: art('home.range.foodgrade', PRODUCT_IMAGES[5]),
   },
   {
     slug: 'packaging-supplies',
@@ -88,8 +92,7 @@ export const RANGE: RangeItem[] = [
     moq: 'Per roll / carton',
     leadTime: `${FACTS.dispatchHours} hrs from stock`,
     quoteProduct: 'supplies',
-    // VERIFY-LATER[IMG-04]: no supplies image exists yet; reusing a product image
-    image: { id: 'home.range.supplies', src: prod(1), alt: 'Corrugated boxes ready for taping and wrapping', kind: 'illustrative', focal: { x: 0.5, y: 0.7 } },
+    image: art('home.range.supplies', SUPPLY_IMAGES['bopp-tape']),
   },
 ];
 
@@ -110,7 +113,7 @@ export const INDUSTRY_PANELS: IndustryItem[] = [
     problem: 'Crushed corners and returns in courier networks.',
     spec: '3-ply B-flute mailer or RSC, 1-colour print',
     why: 'B-flute resists crush and prints crisply, at a low weight per box.',
-    image: { id: 'industries.ecommerce', src: prod(3), alt: 'Mailer boxes packed for courier dispatch', kind: 'illustrative' },
+    image: art('industries.ecommerce', INDUSTRY_IMAGES['e-commerce']),
   },
   {
     slug: 'fmcg',
@@ -118,7 +121,7 @@ export const INDUSTRY_PANELS: IndustryItem[] = [
     problem: 'Outer cartons buckling when stacked high in warehouses.',
     spec: '5-ply B+C double wall RSC',
     why: 'Double wall adds stacking strength for long dwell times.',
-    image: { id: 'industries.fmcg', src: prod(1), alt: 'Stacked double-wall cartons on a pallet', kind: 'illustrative' },
+    image: art('industries.fmcg', INDUSTRY_IMAGES.fmcg),
   },
   {
     slug: 'electronics',
@@ -126,7 +129,7 @@ export const INDUSTRY_PANELS: IndustryItem[] = [
     problem: 'Drops and vibration damaging fragile goods in transit.',
     spec: '5-ply box with die-cut inserts',
     why: 'Fitted inserts stop movement; double wall absorbs knocks.',
-    image: { id: 'industries.electronics', src: prod(1), alt: 'Double-wall box for electronics', kind: 'illustrative', focal: { x: 0.3, y: 0.5 } },
+    image: art('industries.electronics', INDUSTRY_IMAGES.electronics),
   },
   {
     slug: 'food-beverage',
@@ -134,8 +137,7 @@ export const INDUSTRY_PANELS: IndustryItem[] = [
     problem: 'Moisture and contact safety for food products.',
     spec: 'Food-grade liners, water-based inks',
     why: 'Safe contact surfaces with print that holds up in cold chains.',
-    // VERIFY-LATER[IMG-05]: see home.range.foodgrade
-    image: { id: 'industries.food', src: prod(0), alt: 'Plain corrugated boxes for packed goods', kind: 'illustrative', focal: { x: 0.3, y: 0.6 } },
+    image: art('industries.food', INDUSTRY_IMAGES['food-beverage']),
   },
   {
     slug: 'pharma',
@@ -143,7 +145,7 @@ export const INDUSTRY_PANELS: IndustryItem[] = [
     problem: 'Batch-wise traceability and consistent box quality.',
     spec: '3- or 5-ply RSC with printed batch panel',
     why: 'Consistent dimensions and a clean panel for labels and codes.',
-    image: { id: 'industries.pharma', src: prod(0), alt: 'Plain corrugated shipper boxes', kind: 'illustrative' },
+    image: art('industries.pharma', INDUSTRY_IMAGES.pharma),
   },
   {
     slug: 'automotive',
@@ -151,18 +153,18 @@ export const INDUSTRY_PANELS: IndustryItem[] = [
     problem: 'Heavy, sharp-edged parts tearing through boxes.',
     spec: '7-ply C+B+C triple wall',
     why: 'Triple wall carries heavy loads and resists puncture.',
-    image: { id: 'industries.auto', src: prod(2), alt: 'Heavy-duty box holding an auto part', kind: 'illustrative' },
+    image: art('industries.auto', INDUSTRY_IMAGES.automotive),
   },
 ];
 
-// VERIFY-LATER[IMG-01]: AI images; h3 is cropped so the garbled certificate text never shows. h4 (fictitious brand) is never used.
+// Steps 02 and 03 use licensed, credited photos; steps 01 and 04 use original illustrations. None implies it shows Vayu's own plant.
 export const PROCESS_STEPS = [
   {
     n: '01',
     title: 'Spec & sample',
     body: 'We size, spec and sample before you commit.',
     datum: FACTS.samplePolicy,
-    image: { id: 'home.process.spec', src: HERO_IMAGES[4].src, alt: 'Discussing box samples and sizes', kind: 'illustrative' } as ImageSlotData,
+    image: PROCESS_IMAGES.spec,
   },
   {
     n: '02',
@@ -170,27 +172,21 @@ export const PROCESS_STEPS = [
     // VERIFY-LATER[FACT-05]: hybrid wording pending owner confirmation of what is made vs sourced
     body: 'Board sourced from vetted mills, converted and printed to your spec.',
     datum: '3, 5 and 7 ply · custom sizes',
-    image: { id: 'home.process.convert', src: HERO_IMAGES[1].src, alt: 'Corrugated sheets on a converting line', kind: 'illustrative' } as ImageSlotData,
+    image: PROCESS_IMAGES.convert,
   },
   {
     n: '03',
     title: 'Convert & QC',
     body: 'Die-cut, glued or stitched, with checks on every batch.',
     datum: 'Size, print and strength checks',
-    image: {
-      id: 'home.process.qc',
-      src: HERO_IMAGES[2].src,
-      alt: 'Checking a finished corrugated box',
-      kind: 'illustrative',
-      focal: { x: 0.5, y: 0.85 },
-    } as ImageSlotData,
+    image: PROCESS_IMAGES.qc,
   },
   {
     n: '04',
     title: 'Pack & dispatch',
     body: `Stock sizes out in ${FACTS.dispatchHours} hrs from Ahmedabad.`,
     datum: `${FACTS.dispatchHours}-hour dispatch*`,
-    image: { id: 'home.process.dispatch', src: HERO_IMAGES[0].src, alt: 'Warehouse aisle with pallets of boxes', kind: 'illustrative' } as ImageSlotData,
+    image: PROCESS_IMAGES.dispatch,
   },
 ];
 

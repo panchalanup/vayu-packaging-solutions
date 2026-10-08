@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react';
+import Layout from '@/components/Layout';
 import { Section } from '@/components/site/Section';
 import { SectionHeader } from '@/components/site/Blocks';
 import { Cta } from '@/components/site/Cta';
@@ -23,7 +24,7 @@ const BLOCKS: [string, string][] = [
 export default function Privacy() {
   const [choice, setChoice] = useState(getConsent());
   return (
-    <>
+    <Layout>
       <MetaTags title="Privacy notice" description="How Vayu Packaging Solutions handles the details you send us and website analytics." canonical="/privacy" />
       <Section name="privacy" className="paper-grain">
         <div className="mx-auto max-w-content px-4 py-16 md:px-6 lg:px-10 lg:py-24">
@@ -63,6 +64,6 @@ export default function Privacy() {
           </div>
         </div>
       </Section>
-    </>
+    </Layout>
   );
 }

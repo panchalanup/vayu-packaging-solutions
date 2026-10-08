@@ -32,8 +32,8 @@ const ModelDiagram = lazy(() => import('@/components/pages/ModelDiagram'));
 // VERIFY-LATER[ASSET-01]: the brochure PDF is ~20 MB; compress it to 3 MB or less before promoting this link further
 const BROCHURE_HREF = '/brochures/Vayu-Packaging-Solutions-Company-Brochure.pdf';
 
-// VERIFY-LATER[IMG-01]: AI-generated stand-in image, shown without a caption. Replace with a real photo of the facility.
-const HERO_IMAGE: ImageSlotData = { id: 'about.hero', src: ABOUT_IMAGES.main, alt: ABOUT_IMAGES.alt, kind: 'illustrative' };
+// Original illustration, not a photo of our facility. Swap for a real photo (kind: 'photo') after the shoot, see docs/Design-Improvement §10.5.
+const HERO_IMAGE: ImageSlotData = { id: 'about.hero', src: ABOUT_IMAGES.main, alt: ABOUT_IMAGES.alt, kind: 'illustration', width: ABOUT_IMAGES.width, height: ABOUT_IMAGES.height };
 
 // VERIFY-LATER[QC-01]: confirm which checks are really done in-house (burst / ECT testing, caliper, print match) before listing more detail
 const QUALITY_STEPS = [

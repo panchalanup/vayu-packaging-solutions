@@ -23,6 +23,7 @@ const IndustryDetail = lazy(() => import("./pages/IndustryDetail"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Quote = lazy(() => import("./pages/Quote"));
 const Privacy = lazy(() => import("./pages/Privacy"));
+const ImageCredits = lazy(() => import("./pages/ImageCredits"));
 const Blogs = lazy(() => import("./pages/Blogs"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const CompareQuote = lazy(() => import("./pages/CompareQuote"));
@@ -102,6 +103,7 @@ const AnimatedRoutes = () => {
           <Route path="/industries/:slug" element={<IndustryDetail />} />
           <Route path="/quote" element={<Quote />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/image-credits" element={<ImageCredits />} />
           <Route path="/compare-quote" element={<CompareQuote />} />
           <Route path="/box-designer" element={<BoxDesigner />} />
           <Route path="/blogs" element={<Blogs />} />
