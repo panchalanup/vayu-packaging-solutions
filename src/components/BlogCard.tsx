@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Clock } from 'lucide-react';
 import type { BlogPost } from '@/constants/blogs';
 import { useEventTracker } from '@/hooks/useAnalytics';
-import { BLOG_IMAGES } from '@/constants/images';
+import { BLOG_IMAGES, BLOG_IMAGE_CREDITS } from '@/constants/images';
+import { ImageCredit } from '@/components/site/ImageCredit';
 import { reveal } from '@/lib/motion/tokens';
 import { cn } from '@/lib/utils';
 import { CategoryChip, formatBlogDate } from './BlogMeta';
@@ -20,6 +21,7 @@ const BlogCard = ({ post, variant = 'default' }: BlogCardProps) => {
   const { trackEvent } = useEventTracker();
   const featured = variant === 'featured';
   const image = BLOG_IMAGES[post.thumbnail as keyof typeof BLOG_IMAGES] || BLOG_IMAGES.defaultThumbnail;
+  const credit = BLOG_IMAGE_CREDITS[post.thumbnail as keyof typeof BLOG_IMAGE_CREDITS];
 
   const handleBlogClick = () => {
     // Non-personal analytics only
@@ -50,6 +52,8 @@ const BlogCard = ({ post, variant = 'default' }: BlogCardProps) => {
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-slow ease-paper group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
+          {/* Plain text here: the whole card is a link and anchors cannot nest. The full credit link is on the article. */}
+          {credit && <ImageCredit credit={credit} asText />}
         </div>
 
         <div className={cn('flex flex-1 flex-col p-5 sm:p-6', featured && 'lg:justify-center lg:p-10')}>

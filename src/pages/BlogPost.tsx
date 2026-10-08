@@ -27,7 +27,8 @@ import { Cta } from '@/components/site/Cta';
 import { SectionHeader } from '@/components/site/Blocks';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { BLOG_AUTHOR, getBlogBySlug, getRelatedBlogs } from '@/constants/blogs';
-import { BLOG_IMAGES } from '@/constants/images';
+import { BLOG_IMAGES, BLOG_IMAGE_CREDITS } from '@/constants/images';
+import { ImageCredit } from '@/components/site/ImageCredit';
 import { pickBlogCta } from '@/content/blogCtas';
 import { FACTS } from '@/content/facts';
 import { classifyHref, isSafeImageSrc, looksLikeHtmlShell, splitAtMidHeading, stripFrontmatter, stripLeadingTitle } from '@/lib/blogMarkdown';
@@ -146,6 +147,7 @@ const BlogPost = () => {
 
   const relatedPosts = getRelatedBlogs(post.slug, 3);
   const featuredImage = BLOG_IMAGES[post.thumbnail as keyof typeof BLOG_IMAGES] || BLOG_IMAGES.defaultThumbnail;
+  const featuredCredit = BLOG_IMAGE_CREDITS[post.thumbnail as keyof typeof BLOG_IMAGE_CREDITS];
   const seoData = BLOG_SEO_METADATA[post.slug];
   const url = `${SEO_CONFIG.siteUrl}/blogs/${post.slug}`;
   const midCta = pickBlogCta(post.slug);
@@ -217,8 +219,15 @@ const BlogPost = () => {
             </header>
 
             <div className="blog-featured-image-wrapper mt-8">
-              {/* VERIFY-LATER[IMG-03]: AI-generated article thumbnail; replace with a real photo or diagram. Decorative. */}
-              <img src={featuredImage} alt="" className="blog-featured-image" decoding="async" />
+              <img
+                src={featuredImage}
+                alt={`${featuredCredit ? 'Photo' : 'Illustration'} for the article: ${post.title}`}
+                width={1600}
+                height={900}
+                className="blog-featured-image"
+                decoding="async"
+              />
+              {featuredCredit && <ImageCredit credit={featuredCredit} variant="inline" className="mt-2 block" />}
             </div>
           </div>
         </Section>

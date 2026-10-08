@@ -21,8 +21,8 @@ export function getProductDetailSchema(product: Product) {
     '@id': `${url}#product`,
     name: product.name,
     description: product.short,
-    // VERIFY-LATER[IMG-03]: illustrative AI image; replace with a real photo.
-    image: abs(product.image.src),
+    // Stable, crawlable raster export of the illustration (npm run illustrations:seo). The bundled SVG URL is hashed per build.
+    image: abs(`/images/products/${product.slug}.png`),
     category: product.group === 'box' ? 'Corrugated boxes' : 'Packaging supplies',
     sku: product.slug,
     url,

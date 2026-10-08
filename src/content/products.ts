@@ -8,7 +8,7 @@
  * Review queue: grep -rn "VERIFY-LATER" src/content/products.ts
  */
 
-import { PRODUCT_IMAGES } from '@/constants/images';
+import { PRODUCT_IMAGES, SUPPLY_IMAGES } from '@/constants/images';
 import type { ImageSlotData } from '@/components/site/ImageSlot';
 import type { MadeOrSourced } from '@/components/site/Blocks';
 import { INDUSTRY_SLUGS, type QuoteInput } from '@/lib/quoteSchema';
@@ -83,7 +83,15 @@ export interface Product {
   related: ProductSlug[];
 }
 
-const prod = (i: number) => PRODUCT_IMAGES[i].src;
+/** Own-artwork slot from an image-constants entry (illustrations never carry factual captions) */
+const art = (id: string, img: { src: string; alt: string; width: number; height: number }): ImageSlotData => ({
+  id,
+  src: img.src,
+  alt: img.alt,
+  kind: 'illustration',
+  width: img.width,
+  height: img.height,
+});
 
 const MOQ_BOXES = `${FACTS.moqBoxes} boxes`;
 const STOCK_AND_CUSTOM = `Stock sizes ${FACTS.dispatchHours} hrs · custom 5–7 days`;
@@ -107,9 +115,6 @@ function boardRows(ply: PlyType, wall: string, plyCount: number): SpecRow[] {
     { label: 'BCT / ECT', value: TEST_REPORT },
   ];
 }
-
-// VERIFY-LATER[IMG-03]: AI-generated product images; replace with real photography (plan §10).
-// VERIFY-LATER[IMG-05]: PROD-4/5/6 contain AI-made third-party sample brands (RoyalCrafts, DAZZLE, a "Lic. No" stamp). Swap before launch.
 export const PRODUCTS: Product[] = [
   {
     slug: '3-ply',
@@ -131,12 +136,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['Apparel and accessories', 'Books and stationery', 'Light e-commerce parcels', 'Retail cartons'],
     industries: ['e-commerce', 'pharma'],
     quoteProduct: '3-ply',
-    image: {
-      id: 'products.3-ply',
-      src: prod(0),
-      alt: 'Stack of plain kraft corrugated boxes, one open to show the board',
-      kind: 'illustrative',
-    },
+    image: art('products.3-ply', PRODUCT_IMAGES[0]),
     specs: [
       ...boardRows('3-ply', 'Single wall', 3),
       { label: 'Box style', value: 'RSC (regular slotted container); other styles on request' },
@@ -179,12 +179,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['Electronics and home appliances', 'FMCG outer cartons', 'Pallet stacking', 'Pharma shippers'],
     industries: ['fmcg', 'electronics', 'pharma', 'e-commerce'],
     quoteProduct: '5-ply',
-    image: {
-      id: 'products.5-ply',
-      src: prod(1),
-      alt: 'Double-wall corrugated boxes stacked for dispatch',
-      kind: 'illustrative',
-    },
+    image: art('products.5-ply', PRODUCT_IMAGES[1]),
     specs: [
       ...boardRows('5-ply', 'Double wall', 5),
       { label: 'Box style', value: 'RSC (regular slotted container); other styles on request' },
@@ -226,12 +221,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['Industrial parts and machinery', 'Automotive components', 'Export packaging', 'Heavy loads on pallets'],
     industries: ['automotive'],
     quoteProduct: '7-ply',
-    image: {
-      id: 'products.7-ply',
-      src: prod(2),
-      alt: 'Heavy-duty triple-wall corrugated box holding an industrial part',
-      kind: 'illustrative',
-    },
+    image: art('products.7-ply', PRODUCT_IMAGES[2]),
     specs: [
       ...boardRows('7-ply', 'Triple wall', 7),
       { label: 'Box style', value: 'RSC (regular slotted container); other styles on request' },
@@ -273,13 +263,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['E-commerce mailers', 'Fitted inserts for electronics', 'Subscription and gift boxes', 'Retail-ready shapes'],
     industries: ['e-commerce', 'electronics'],
     quoteProduct: 'die-cut',
-    // VERIFY-LATER[IMG-05]: PROD-4 contains AI-made third-party sample brand text.
-    image: {
-      id: 'products.die-cut',
-      src: prod(3),
-      alt: 'Die-cut corrugated mailer boxes in different shapes',
-      kind: 'illustrative',
-    },
+    image: art('products.die-cut', PRODUCT_IMAGES[3]),
     specs: [
       { label: 'Construction', value: 'Single or double wall, to your design' },
       // VERIFY-LATER[SPEC-04]: ply options for die-cut.
@@ -326,13 +310,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['Brand-led e-commerce shipping', 'Retail and FMCG cartons', 'Batch and handling panels', 'Logo-only one-colour boxes'],
     industries: ['e-commerce', 'fmcg', 'food-beverage', 'pharma'],
     quoteProduct: 'printed',
-    // VERIFY-LATER[IMG-05]: PROD-5 contains AI-made third-party sample brand text.
-    image: {
-      id: 'products.printed',
-      src: prod(4),
-      alt: 'Corrugated boxes printed with brand graphics',
-      kind: 'illustrative',
-    },
+    image: art('products.printed', PRODUCT_IMAGES[4]),
     specs: [
       { label: 'Board', value: '3-ply or 5-ply, on request' },
       { label: 'Paper GSM / BF', value: TEST_REPORT },
@@ -378,13 +356,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['Bakery and sweet boxes', 'Food delivery cartons', 'Beverage shippers', 'Cold-chain packing'],
     industries: ['food-beverage'],
     quoteProduct: 'printed',
-    // VERIFY-LATER[IMG-05]: PROD-6 (fake "Lic. No" stamp) is not used; a plain box image stands in until a real food-grade photo exists.
-    image: {
-      id: 'products.food-grade',
-      src: prod(0),
-      alt: 'Plain corrugated boxes suitable for packed goods',
-      kind: 'illustrative',
-    },
+    image: art('products.food-grade', PRODUCT_IMAGES[5]),
     specs: [
       { label: 'Liners and inks', value: 'Food-safe liners, water-based inks' },
       // VERIFY-LATER[CERT-01]: the old page said "FSSAI compliant" with no certificate; shown as "on request" until confirmed.
@@ -428,14 +400,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['Sealing shipping cartons', 'Warehouse and dispatch lines', 'E-commerce packing benches'],
     industries: ['e-commerce', 'fmcg', 'electronics', 'food-beverage', 'pharma', 'automotive'],
     quoteProduct: 'supplies',
-    // VERIFY-LATER[IMG-04]: no supplies photo exists; reusing PROD-1 with a crop.
-    image: {
-      id: 'products.bopp-tape',
-      src: prod(0),
-      alt: 'Corrugated boxes ready for taping',
-      kind: 'illustrative',
-      focal: { x: 0.2, y: 0.8 },
-    },
+    image: art('products.bopp-tape', SUPPLY_IMAGES['bopp-tape']),
     specs: [
       // VERIFY-LATER[SPEC-02]: width, micron, length and core are not supplied; shown as on request.
       { label: 'Width', value: ON_REQUEST },
@@ -474,14 +439,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['Pallet wrapping', 'Bundling cartons', 'Dispatch and export loads'],
     industries: ['fmcg', 'automotive', 'e-commerce', 'pharma', 'food-beverage', 'electronics'],
     quoteProduct: 'supplies',
-    // VERIFY-LATER[IMG-04]: no supplies photo exists; reusing PROD-1 with a crop.
-    image: {
-      id: 'products.stretch-film',
-      src: prod(0),
-      alt: 'Stacked corrugated boxes ready to be pallet wrapped',
-      kind: 'illustrative',
-      focal: { x: 0.5, y: 0.35 },
-    },
+    image: art('products.stretch-film', SUPPLY_IMAGES['stretch-film']),
     specs: [
       // VERIFY-LATER[SPEC-02]: width, micron, length and core are not supplied; shown as on request.
       { label: 'Width', value: ON_REQUEST },
@@ -520,14 +478,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['Fragile and glass items', 'Electronics (anti-static)', 'Void fill inside cartons'],
     industries: ['e-commerce', 'electronics'],
     quoteProduct: 'supplies',
-    // VERIFY-LATER[IMG-04]: no supplies photo exists; reusing PROD-1 with a crop.
-    image: {
-      id: 'products.bubble-wrap',
-      src: prod(0),
-      alt: 'Corrugated boxes used with protective packing',
-      kind: 'illustrative',
-      focal: { x: 0.8, y: 0.7 },
-    },
+    image: art('products.bubble-wrap', SUPPLY_IMAGES['bubble-wrap']),
     specs: [
       // VERIFY-LATER[SPEC-02]: width, micron, length and core are not supplied; shown as on request.
       { label: 'Width', value: ON_REQUEST },
@@ -567,14 +518,7 @@ export const PRODUCTS: Product[] = [
     useCases: ['Securing pallets', 'Heavy and export cartons', 'Bundling long items'],
     industries: ['automotive', 'fmcg', 'e-commerce', 'electronics', 'food-beverage', 'pharma'],
     quoteProduct: 'supplies',
-    // VERIFY-LATER[IMG-04]: no supplies photo exists; reusing PROD-1 with a crop.
-    image: {
-      id: 'products.pp-strapping',
-      src: prod(0),
-      alt: 'Corrugated boxes stacked for strapping',
-      kind: 'illustrative',
-      focal: { x: 0.5, y: 0.95 },
-    },
+    image: art('products.pp-strapping', SUPPLY_IMAGES['pp-strapping']),
     specs: [
       // VERIFY-LATER[SPEC-02]: width, micron, length and core are not supplied; shown as on request.
       { label: 'Width', value: ON_REQUEST },

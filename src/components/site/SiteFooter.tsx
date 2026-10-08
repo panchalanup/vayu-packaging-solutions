@@ -105,6 +105,7 @@ export default function SiteFooter() {
                 <li><Link to="/locations" className={link}>Locations</Link></li>
                 <li><Link to="/blogs" className={link}>Blog</Link></li>
                 <li><Link to="/contact" className={link}>Contact</Link></li>
+                <li><Link to="/image-credits" className={link}>Image credits</Link></li>
               </ul>
             </nav>
             <div className="col-span-2 md:col-span-1">

@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "illustrations": "node scripts/illustrations/build.mjs",
+    "illustrations:seo": "node scripts/illustrations/export-seo.mjs"
   },
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^5.1.0",
