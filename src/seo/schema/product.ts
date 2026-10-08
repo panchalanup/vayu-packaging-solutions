@@ -75,7 +75,7 @@ export const PRODUCT_SCHEMAS = {
   '3-ply': getProductSchema({
     name: '3-Ply Corrugated Boxes',
     description: 'Lightweight yet durable single wall corrugated boxes. Ideal for small and medium-weight products like apparel, accessories, and books.',
-    image: `${SEO_CONFIG.siteUrl}/src/assets/Products/PROD-1.png`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/3-ply.png`,
     category: 'Single Wall Corrugated Boxes',
     sku: '3PLY-STD',
   }),
@@ -83,7 +83,7 @@ export const PRODUCT_SCHEMAS = {
   '5-ply': getProductSchema({
     name: '5-Ply Corrugated Boxes',
     description: 'Double wall strength corrugated boxes for heavier products. Perfect for electronics, home appliances, and FMCG goods.',
-    image: `${SEO_CONFIG.siteUrl}/src/assets/Products/PROD-2.png`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/5-ply.png`,
     category: 'Double Wall Corrugated Boxes',
     sku: '5PLY-STD',
   }),
@@ -91,7 +91,7 @@ export const PRODUCT_SCHEMAS = {
   '7-ply': getProductSchema({
     name: '7-Ply Corrugated Boxes',
     description: 'Maximum protection triple wall corrugated boxes for heavy-duty shipping. Used for industrial parts, machinery, and export packaging.',
-    image: `${SEO_CONFIG.siteUrl}/src/assets/Products/PROD-3.png`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/7-ply.png`,
     category: 'Triple Wall Corrugated Boxes',
     sku: '7PLY-HD',
   }),
@@ -99,7 +99,7 @@ export const PRODUCT_SCHEMAS = {
   'die-cut': getProductSchema({
     name: 'Die-Cut Boxes',
     description: 'Custom-shaped boxes designed to fit your product perfectly. Reduces material waste and enhances unboxing experience.',
-    image: `${SEO_CONFIG.siteUrl}/src/assets/Products/PROD-4.png`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/die-cut.png`,
     category: 'Custom Corrugated Boxes',
     sku: 'DIECUT-CUSTOM',
   }),
@@ -107,7 +107,7 @@ export const PRODUCT_SCHEMAS = {
   'printed': getProductSchema({
     name: 'Printed Packaging Boxes',
     description: 'Full-color printed corrugated boxes that showcase your brand. Available in flexo and offset printing.',
-    image: `${SEO_CONFIG.siteUrl}/src/assets/Products/PROD-5.png`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/printed.png`,
     category: 'Branded Packaging',
     sku: 'PRINT-CUSTOM',
   }),
@@ -115,7 +115,7 @@ export const PRODUCT_SCHEMAS = {
   'food-grade': getProductSchema({
     name: 'Food-Grade Boxes',
     description: 'FSSAI compliant corrugated boxes for food and beverage packaging with food-safe coatings.',
-    image: `${SEO_CONFIG.siteUrl}/src/assets/Products/PROD-6.png`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/food-grade.png`,
     category: 'Food Packaging',
     sku: 'FOOD-FSSAI',
   }),
@@ -124,7 +124,7 @@ export const PRODUCT_SCHEMAS = {
   'bopp-tape': getProductSchema({
     name: 'BOPP Packaging Tape',
     description: 'High-quality BOPP (Biaxially Oriented Polypropylene) adhesive tape for secure sealing of corrugated boxes. Available in brown and transparent.',
-    image: `${SEO_CONFIG.siteUrl}/og-image.jpg`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/bopp-tape.png`,
     category: 'Packaging Tapes',
     sku: 'TAPE-BOPP',
   }),
@@ -132,7 +132,7 @@ export const PRODUCT_SCHEMAS = {
   'stretch-film': getProductSchema({
     name: 'Stretch Film',
     description: 'Durable stretch wrap film for pallet wrapping and bundling. Available in manual and machine grade with superior cling properties.',
-    image: `${SEO_CONFIG.siteUrl}/og-image.jpg`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/stretch-film.png`,
     category: 'Stretch Films',
     sku: 'FILM-STRETCH',
   }),
@@ -140,7 +140,7 @@ export const PRODUCT_SCHEMAS = {
   'bubble-wrap': getProductSchema({
     name: 'Bubble Wrap',
     description: 'Protective bubble packaging in roll or sheet form. Small and large bubble options available. Anti-static variants for electronics.',
-    image: `${SEO_CONFIG.siteUrl}/og-image.jpg`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/bubble-wrap.png`,
     category: 'Protective Packaging',
     sku: 'WRAP-BUBBLE',
   }),
@@ -148,7 +148,7 @@ export const PRODUCT_SCHEMAS = {
   'pp-strapping': getProductSchema({
     name: 'PP Strapping Bands',
     description: 'Durable polypropylene strapping for heavy-duty packaging. Ideal for securing large shipments and pallets.',
-    image: `${SEO_CONFIG.siteUrl}/og-image.jpg`,
+    image: `${SEO_CONFIG.siteUrl}/images/products/pp-strapping.png`,
     category: 'Strapping Materials',
     sku: 'STRAP-PP',
   }),

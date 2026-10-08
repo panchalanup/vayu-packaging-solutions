@@ -32,7 +32,9 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
   // so only paths that really exist in /public are used; anything else falls back to the default image.
   // VERIFY-LATER[SEO-01]: design per-page OG images (1200x630) and add them to KNOWN_OG_IMAGES.
   const KNOWN_OG_IMAGES = ['/og-image.jpg'];
-  const resolvedImage = image.startsWith('http') || KNOWN_OG_IMAGES.includes(image) ? image : SEO_CONFIG.defaultImage;
+  // /blog-images/*-og.png are exported from the blog illustrations (scripts/illustrations/export-seo.mjs)
+  const isBlogOg = /^\/blog-images\/[a-z0-9-]+-og\.png$/.test(image);
+  const resolvedImage = image.startsWith('http') || KNOWN_OG_IMAGES.includes(image) || isBlogOg ? image : SEO_CONFIG.defaultImage;
   const imageUrl = resolvedImage.startsWith('http')
     ? resolvedImage
     : `${SEO_CONFIG.siteUrl}${resolvedImage}`;

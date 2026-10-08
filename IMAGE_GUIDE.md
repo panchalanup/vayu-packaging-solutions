@@ -1,5 +1,8 @@
 # Vayu Packaging Solutions - Image & Video Guide
 
+> **Update 8 Oct 2026: how images work now.** The AI images described below were removed. Marketing images are original SVG illustrations (`npm run illustrations`) or credited open-licence photos (`src/content/imageCredits.ts`, shown on `/image-credits`). After editing any scene in `scripts/illustrations/`, run `npm run illustrations` and then `npm run illustrations:seo` (needs Edge or Chrome) to refresh the PNG copies used by structured data and social cards. The shot list below is still the brief for a real photo shoot.
+
+
 ## 🎯 Purpose
 This guide provides detailed specifications and descriptions for all images and videos needed throughout the website. Each image is designed to build trust, showcase expertise, and help customers understand your solutions.
 
