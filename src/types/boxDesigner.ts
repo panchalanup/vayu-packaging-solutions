@@ -19,7 +19,39 @@ export type PlyType = '3-ply' | '5-ply' | '7-ply';
 export type FluteType = 'A' | 'B' | 'C' | 'E' | 'F';
 
 
-export type BoxFace = 'front' | 'back' | 'left' | 'right' | 'top-front' | 'top-back' | 'top-left' | 'top-right' | 'bottom';
+/** Printable surfaces. Lid faces are used by telescope (separate lid) and mailer/pizza (hinged lid). */
+export type BoxFace =
+  | 'front'
+  | 'back'
+  | 'left'
+  | 'right'
+  | 'top-front'
+  | 'top-back'
+  | 'top-left'
+  | 'top-right'
+  | 'bottom'
+  | 'lid'
+  | 'lid-front'
+  | 'lid-back'
+  | 'lid-left'
+  | 'lid-right';
+
+export const BOX_FACES: readonly BoxFace[] = [
+  'front',
+  'back',
+  'left',
+  'right',
+  'top-front',
+  'top-back',
+  'top-left',
+  'top-right',
+  'bottom',
+  'lid',
+  'lid-front',
+  'lid-back',
+  'lid-left',
+  'lid-right',
+];
 
 export interface BoxDimensions {
   length: number;  // cm

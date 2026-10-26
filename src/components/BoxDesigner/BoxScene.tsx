@@ -8,20 +8,25 @@
  *  - Artwork is rendered per surface into decal textures, debounced and cancellable.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { BoxRig } from '@/lib/boxDesigner/rig/boxRig';
-import type { RscLayout } from '@/lib/boxDesigner/rig/rscLayout';
+import { createCartonRig, type CartonRig } from '@/lib/boxDesigner/rig/createRig';
+import { getRigKey, type CartonLayout } from '@/lib/boxDesigner/styles/registry';
 import type { BoardSpec } from '@/lib/boxDesigner/boardSpecs';
 import { setSurfaceTextureAnisotropy } from '@/lib/boxDesigner/textures/surfaceTextures';
 import { printContentKey, renderPrintCanvas } from '@/lib/boxDesigner/textures/printLayer';
-import type { BoxFace, FaceImage, TextElement } from '@/types/boxDesigner';
+import type { BoxFace, FaceImage, PrintFinish, TextElement } from '@/types/boxDesigner';
 
 interface BoxSceneProps {
-  layout: RscLayout;
+  layout: CartonLayout;
   board: BoardSpec;
   colorHex: string;
+  finish?: PrintFinish;
+  /** Inside liner colour; null = a shade of the board colour */
+  insideColorHex?: string | null;
+  /** Hide the front wall to show the inside */
+  cutaway?: boolean;
   /** Target fold progress: 0 = flat blank, 1 = sealed */
   foldTarget: number;
   faceImages: FaceImage[];
@@ -31,6 +36,8 @@ interface BoxSceneProps {
   onFaceSelect: (face: BoxFace | null) => void;
   /** Receives a function that renders a clean, high-resolution PNG of the current view */
   onCaptureReady?: (capture: () => Promise<Blob | null>) => void;
+  /** The live carton rig (null on unmount), for scenes that need it (snapshots, bounds) */
+  onRigReady?: (rig: CartonRig | null) => void;
 }
 
 /** Wait for edits to settle before redrawing artwork (dimension drags, typing) */
@@ -45,6 +52,9 @@ export default function BoxScene({
   layout,
   board,
   colorHex,
+  finish = 'matte',
+  insideColorHex = null,
+  cutaway = false,
   foldTarget,
   faceImages,
   textElements,
@@ -52,12 +62,16 @@ export default function BoxScene({
   selectedFace,
   onFaceSelect,
   onCaptureReady,
+  onRigReady,
 }: BoxSceneProps) {
   const invalidate = useThree((state) => state.invalidate);
   const gl = useThree((state) => state.gl);
   const scene = useThree((state) => state.scene);
   const camera = useThree((state) => state.camera);
-  const [rig] = useState(() => new BoxRig());
+  // One rig per rig kind: resizing updates it in place; only a style switch to another kind builds a new one
+  const rigKey = getRigKey(layout);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- rebuilt only when the rig kind changes
+  const rig = useMemo(() => createCartonRig(layout), [rigKey]);
 
   const targetRef = useRef(foldTarget);
   const progressRef = useRef(foldTarget);
@@ -76,6 +90,22 @@ export default function BoxScene({
     rig.setColor(colorHex);
     invalidate();
   }, [rig, colorHex, invalidate]);
+
+  useEffect(() => {
+    rig.setInsideColor(insideColorHex);
+    rig.setFinish(finish);
+    invalidate();
+  }, [rig, insideColorHex, finish, invalidate]);
+
+  useEffect(() => {
+    rig.setCutaway(cutaway);
+    invalidate();
+  }, [rig, cutaway, invalidate]);
+
+  useEffect(() => {
+    onRigReady?.(rig);
+    return () => onRigReady?.(null);
+  }, [rig, onRigReady]);
 
   useEffect(() => {
     setSurfaceTextureAnisotropy(gl.capabilities.getMaxAnisotropy());
@@ -102,10 +132,11 @@ export default function BoxScene({
     invalidate();
   }, [rig, selectedFace, invalidate]);
 
-  // Free GPU resources and never leave the pointer cursor behind
+  // Free GPU resources (also when a style switch replaces the rig) and never leave the pointer cursor behind
   useEffect(
     () => () => {
       gl.domElement.style.cursor = '';
+      hoveredRef.current = null;
       rig.dispose();
     },
     [rig, gl]

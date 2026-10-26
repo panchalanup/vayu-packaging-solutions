@@ -1,0 +1,200 @@
+[
+  {
+    "file": "designer-style-picker.png",
+    "path": "/box-designer",
+    "state": "Spec panel open with the style picker card grid visible (all styles with best-for text)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-fit-checker.png",
+    "path": "/box-designer",
+    "state": "Fit checker open with a product size, padding and fragile ticked, showing the recommended inside size",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-estimate-tiers.png",
+    "path": "/box-designer",
+    "state": "Estimate panel showing per-box and total indicative prices at 100/500/1000/5000 with the indicative label",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-print-checks.png",
+    "path": "/box-designer",
+    "state": "Print-ready checks listing warnings (low-res logo, artwork near fold, small text)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-presentation-mode.png",
+    "path": "/box-designer",
+    "state": "Presentation mode: chrome-free full screen, branded RSC on the turntable, large spec overlay",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-spec-sheet-pdf.png",
+    "path": "/box-designer",
+    "state": "Spec sheet / proof PDF preview: three views, dimensions, board, finish, quantity, dieline thumbnail, approval block",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-shot-studio.png",
+    "path": "/box-designer",
+    "state": "Product shots panel with background presets (studio, wood, concrete, brand colour) and angle presets",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-embed-snippet.png",
+    "path": "/box-designer",
+    "state": "Embed snippet dialog with the copy-paste code and copy button",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-share-link.png",
+    "path": "/box-designer",
+    "state": "Export panel Save & share section with copy-link and spec sheet download",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-compare-quote-prefill.png",
+    "path": "/compare-quote",
+    "state": "Compare-quote form prefilled from a design (size, ply, quantity)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mailer-printed-inside.png",
+    "path": "/box-designer/mailer-box",
+    "state": "Kraft mailer, logo on lid, brand-colour inside with inside-lid message, lid half open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-pizza-box.png",
+    "path": "/box-designer/pizza-box",
+    "state": "Pizza preset with logo on the lid, lid open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-bakery-tray.png",
+    "path": "/box-designer",
+    "state": "Tray style (Bakery tray template) in white board, viewed from above at an angle",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-apparel-mailer.png",
+    "path": "/box-designer",
+    "state": "Apparel mailer template applied, wide shallow mailer with lid open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-shoe-box.png",
+    "path": "/box-designer/shoe-box",
+    "state": "Shoe box (telescope) preset with dark lid, fold slider mid-way so the lid is lifted",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-gift-box-lid.png",
+    "path": "/box-designer/gift-box",
+    "state": "Gift box (telescope) in a red board colour with logo on lid, lid lifting off the base",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-brand-colours.png",
+    "path": "/box-designer",
+    "state": "Brand colour picker open with a hex value entered and recent colours, print-confirmed-on-proof note visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-pallet-view.png",
+    "path": "/box-designer/shipping-carton",
+    "state": "Stacked / pallet scene of identical 5-ply cartons",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-strength-guidance.png",
+    "path": "/box-designer/shipping-carton",
+    "state": "Strength guidance for a 7-ply carton showing 'Good for up to ~X kg per box, stack N high'",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-guided-wizard.png",
+    "path": "/box-designer",
+    "state": "Find my box wizard on the result step with suggested style, size and ply explained",
+    "viewport": "mobile"
+  },
+  {
+    "file": "designer-size-units.png",
+    "path": "/box-designer",
+    "state": "Edit Box panel open: size inputs with the unit switch set to mm, fit checker section visible below; plain kraft RSC 300 x 200 x 150 mm",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-fold-slider.png",
+    "path": "/box-designer/mailer-box",
+    "state": "Kraft mailer with a logo on the lid, assembly slider about halfway between Flat and Sealed so the lid and side walls are mid-fold",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-artwork-panel.png",
+    "path": "/box-designer",
+    "state": "Customize panel open on the front face of a kraft RSC: logo image placed, one text line, print-check list showing one small-text warning",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-telescope-lid.png",
+    "path": "/box-designer",
+    "state": "Telescope lid and base style, lid depth set, fold slider mid-way so the lid is lifted above the base; plain kraft, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mailer-fold.png",
+    "path": "/box-designer/mailer-box",
+    "state": "Kraft mailer (FEFCO 0427) part-folded from flat, lid tuck clearly visible, no artwork",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-units-inch.png",
+    "path": "/box-designer",
+    "state": "Size panel with the unit switch set to inches showing the same RSC as designer-size-units.png (about 11.81 x 7.87 x 5.91 in)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-artwork-logo.png",
+    "path": "/box-designer",
+    "state": "Kraft RSC, front face selected, logo placed upper left with a tagline text below it, box rotated to three-quarter view, no warnings",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-finish-gloss.png",
+    "path": "/box-designer",
+    "state": "White-board RSC with a full-colour logo, finish set to gloss (capture a second copy in matte and place side by side)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-dieline-export.png",
+    "path": "/box-designer",
+    "state": "Export the dieline SVG of a 3-ply RSC 300 x 200 x 150 mm, open the downloaded file in a browser tab and capture it (cut solid, crease dashed, panel labels and footer visible)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-fold-flat.png",
+    "path": "/box-designer",
+    "state": "Actions panel open with the Dieline (SVG) and Dieline (PDF) buttons visible; assembly slider at Flat so the 3D box shows as the blank",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-turntable-video.png",
+    "path": "/box-designer",
+    "state": "Turntable / fold video recorder open, 360 spin selected, recording in progress, branded RSC on the studio background",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-strength-panel.png",
+    "path": "/box-designer/shipping-carton",
+    "state": "Strength guidance for a 5-ply (B+C) RSC 400 x 300 x 300 mm with 15 kg entered: verdict about 15 kg per box, stack 6 high, limited by height",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mobile-overview.png",
+    "path": "/box-designer",
+    "state": "Phone view of the designer with a branded kraft mailer and the bottom controls visible (used in 3d-box-designer-tool-free)",
+    "viewport": "mobile"
+  }
+]

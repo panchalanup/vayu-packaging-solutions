@@ -9,12 +9,13 @@ import { fileURLToPath } from 'node:url';
 import { productScenes } from './scenes-products.mjs';
 import { siteScenes } from './scenes-site.mjs';
 import { blogScenes } from './scenes-blog.mjs';
+import { blogUseCaseScenes } from './scenes-blog-usecases.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const outDir = path.join(root, 'src/assets/illustrations');
 fs.mkdirSync(outDir, { recursive: true });
 
-const scenes = { ...productScenes, ...siteScenes, ...blogScenes };
+const scenes = { ...productScenes, ...siteScenes, ...blogScenes, ...blogUseCaseScenes };
 const filter = process.argv[2];
 let n = 0;
 for (const [name, make] of Object.entries(scenes)) {

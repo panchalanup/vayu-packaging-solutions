@@ -79,6 +79,25 @@ works on a phone; it should feel playful (instant feedback, smooth animation, sa
     (#8). Deploy steps documented for the owner (VERIFY-LATER).
 11. **Sustainability panel** (#27): recyclable, board saved vs next standard size, no unverifiable claims.
 
+**Status (B done):** logic in `src/lib/boxDesigner/{units,blankSize,pricing,strength,fit,delivery,sustainability,funnel,leadPreview}.ts`
+(tests: `__tests__/sales.test.ts`); UI in `EstimatePanel` ("Price & order" tab), `FitChecker` (Edit tab), `UnitToggle` /
+`UnitDimensionField`, `LeadForm`, `TrustStrip`; lead schema `src/lib/designerLeadSchema.ts`; admin
+`/admin/enquiries`. Board area uses `blankSize.ts`, an adapter to switch to A's style registry in one line.
+Rates and facts to confirm: `grep -rn "VERIFY-LATER\[DSG" src api GOOGLE_APPS_SCRIPT_ADMIN_CRM.js`.
+C: fire `designer_template_used` / `designer_wizard_done` with `useDesignerTracker()` from `funnel.ts`.
+
+**Owner steps (Apps Script follow-up + designer enquiries):**
+1. Open the admin CRM Google Sheet > Extensions > Apps Script, replace the code with `GOOGLE_APPS_SCRIPT_ADMIN_CRM.js`.
+   Check `OWNER_EMAIL`, `WHATSAPP_NUMBER` and change `SHARED_TOKEN` from the placeholder.
+2. Deploy > Manage deployments > edit the existing web app > Version: New version > Deploy (the URL stays the same).
+   Approve the new Gmail (MailApp) permission when asked.
+3. In the editor, run `installDesignerFollowUpTrigger` once (daily 10:00 follow-up for enquiries still "new" after
+   48 h). Optionally run `sendDesignerFollowUps` once to test.
+4. In Vercel > Settings > Environment variables set `CRM_WEBHOOK_URL` (the web-app URL) and `CRM_TOKEN` (the new
+   token), keep `LEAD_WEBHOOK_URL`, then redeploy. Put the same token in `src/config/adminSheets.ts`. (VERIFY-LATER[DSG-19])
+5. Send a test from the designer ("Price & order" > Send my design to Vayu): expect the lead-sheet row, a
+   "DesignerEnquiries" row, the owner email with preview, and the enquiry under Admin > Designer enquiries.
+
 ### C. Experience, presentation and growth (owner of new components `Onboarding`, `GuidedWizard`, `TemplateGallery`, `PresentationMode`, `ShotStudio`, `SpecSheet`, `PrintCheck`, `BrandKit`, `MyDesigns`, `StudioEnvironment.tsx`, `Canvas3D.tsx` backgrounds, `src/pages/BoxDesignerLanding.tsx`, `src/pages/BoxDesignerEmbed.tsx`)
 1. **Onboarding** (#18): 3-step coach marks on first visit (rotate, click a face, get a quote), dismissible,
    remembered; empty-state hints in the artwork panel; micro-animations.

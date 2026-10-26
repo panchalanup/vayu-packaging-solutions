@@ -6,7 +6,8 @@
 import { SEO_CONFIG } from '../config';
 import { BlogPost } from '@/constants/blogs';
 
-export const getArticleSchema = (post: BlogPost) => ({
+/** `ogImage`: the article's exported /blog-images/*-og.png (scripts/illustrations/export-seo.mjs), if it has one */
+export const getArticleSchema = (post: BlogPost, ogImage?: string) => ({
   '@context': 'https://schema.org',
   '@type': 'Article',
   '@id': `${SEO_CONFIG.siteUrl}/blogs/${post.slug}#article`,
@@ -14,8 +15,8 @@ export const getArticleSchema = (post: BlogPost) => ({
   description: post.description,
   image: {
     '@type': 'ImageObject',
-    // /blog-images/* files do not exist (plan B5), so point at the default share image
-    url: `${SEO_CONFIG.siteUrl}${SEO_CONFIG.defaultImage}`,
+    // Only exported OG rasters are trusted; anything else falls back to the default share image
+    url: `${SEO_CONFIG.siteUrl}${ogImage && /^\/blog-images\/[a-z0-9-]+-og\.png$/.test(ogImage) ? ogImage : SEO_CONFIG.defaultImage}`,
     width: 1200,
     height: 630,
   },

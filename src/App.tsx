@@ -28,6 +28,8 @@ const Blogs = lazy(() => import("./pages/Blogs"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const CompareQuote = lazy(() => import("./pages/CompareQuote"));
 const BoxDesigner = lazy(() => import("./pages/BoxDesigner"));
+const BoxDesignerLanding = lazy(() => import("./pages/BoxDesignerLanding"));
+const BoxDesignerEmbed = lazy(() => import("./pages/BoxDesignerEmbed"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLayout = lazy(() => import("@/components/admin/AdminLayout"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
@@ -40,6 +42,7 @@ const AdminQuotationView = lazy(() => import("./pages/admin/AdminQuotationView")
 const AdminInvoices = lazy(() => import("./pages/admin/AdminInvoices"));
 const AdminInvoiceForm = lazy(() => import("./pages/admin/AdminInvoiceForm"));
 const AdminInvoiceView = lazy(() => import("./pages/admin/AdminInvoiceView"));
+const AdminDesignerEnquiries = lazy(() => import("./pages/admin/AdminDesignerEnquiries"));
 
 const RouteFallback = () => (
   <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-label="Loading">
@@ -106,6 +109,8 @@ const AnimatedRoutes = () => {
           <Route path="/image-credits" element={<ImageCredits />} />
           <Route path="/compare-quote" element={<CompareQuote />} />
           <Route path="/box-designer" element={<BoxDesigner />} />
+          <Route path="/box-designer/:style" element={<BoxDesignerLanding />} />
+          <Route path="/embed/box-designer" element={<BoxDesignerEmbed />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:slug" element={<BlogPost />} />
           <Route path="/contact" element={<Contact />} />
@@ -125,6 +130,7 @@ const AnimatedRoutes = () => {
                 <Route path="invoices/new" element={<AdminInvoiceForm />} />
                 <Route path="invoices/:id/view" element={<AdminInvoiceView />} />
                 <Route path="invoices/:id/edit" element={<AdminInvoiceForm />} />
+                <Route path="enquiries" element={<AdminDesignerEnquiries />} />
               </Route>
           </Route>
           <Route path="*" element={<NotFound />} />

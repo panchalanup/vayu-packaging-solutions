@@ -6,7 +6,7 @@
  */
 
 import { z } from 'zod';
-import type { BoxDesign } from '@/types/boxDesigner';
+import { BOX_FACES, type BoxDesign, type BoxFace } from '@/types/boxDesigner';
 import { DEFAULT_BOX_COLOR, DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, DIMENSION_LIMITS, PLY_OPTIONS } from './constants';
 
 /** v2 added unit, quantity, finish, insideColorHex, lidDepth, name and more styles; v1 files still load */
@@ -18,7 +18,7 @@ export const MAX_SHARE_CHARS = 8000;
 /** Default order quantity for estimates. VERIFY-LATER[DSG-01]: confirm typical MOQ with the owner */
 export const DEFAULT_QUANTITY = 500;
 
-const face = z.enum(['front', 'back', 'left', 'right', 'top-front', 'top-back', 'top-left', 'top-right', 'bottom']);
+const face = z.enum(BOX_FACES as [BoxFace, ...BoxFace[]]);
 const unit = z.number().finite().min(0).max(1);
 const point = z.object({ x: unit, y: unit });
 const dim = z.number().finite().min(DIMENSION_LIMITS.min).max(DIMENSION_LIMITS.max);
@@ -51,7 +51,7 @@ const designSchema = z.object({
   flutes: z.array(z.enum(['A', 'B', 'C', 'E', 'F'])).min(1).max(3),
   colorHex: z.string().regex(/^#[0-9a-f]{6}$/i),
   showIcons: z.boolean(),
-  faceImages: z.array(imageSchema).max(9).default([]),
+  faceImages: z.array(imageSchema).max(BOX_FACES.length).default([]),
   textElements: z.array(textSchema).max(60).default([]),
   unit: z.enum(['mm', 'cm', 'in']).default('cm'),
   quantity: z.number().int().min(1).max(1_000_000).default(DEFAULT_QUANTITY),

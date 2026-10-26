@@ -178,6 +178,24 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
         <p className="text-xs text-muted-foreground">Tip: you can also click a face on the 3D box.</p>
       </Card>
 
+      {/* Empty state: nothing selected yet */}
+      {!face && (
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-border px-4 py-6 text-center">
+          <span className="flex h-11 w-11 animate-[pulse_2.4s_ease-in-out_infinite] items-center justify-center rounded-full bg-primary/10 text-primary motion-reduce:animate-none">
+            <ImagePlus className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <p className="text-sm font-semibold">Put your brand on the box</p>
+          <p className="max-w-[26ch] text-xs text-muted-foreground">
+            Pick a surface above, or tap the box itself. Then drop in your logo (PNG, SVG or JPG) or add text.
+          </p>
+          {faces.includes('front') && (
+            <Button size="sm" variant="outline" className="mt-1" onClick={() => onSelectFace('front')}>
+              Start with the front
+            </Button>
+          )}
+        </div>
+      )}
+
       {face && size && (
         <Card className="p-4 space-y-3">
           <div className="flex items-center justify-between">

@@ -58,6 +58,24 @@ import blogBurst from '@/assets/illustrations/blog-burst-ect.svg';
 import blogMeasure from '@/assets/illustrations/blog-measure.svg';
 import blogKraft from '@/assets/illustrations/blog-kraft.svg';
 import blogTool from '@/assets/illustrations/blog-3d-tool.svg';
+// Designer Guides blog illustrations (scripts/illustrations/scenes-blog.mjs, blog-dg-*)
+import blogDgHowTo from '@/assets/illustrations/blog-dg-how-to.svg';
+import blogDgStyles from '@/assets/illustrations/blog-dg-styles.svg';
+import blogDgFit from '@/assets/illustrations/blog-dg-fit.svg';
+import blogDgPrice from '@/assets/illustrations/blog-dg-price.svg';
+import blogDgArtwork from '@/assets/illustrations/blog-dg-artwork.svg';
+import blogDgDieline from '@/assets/illustrations/blog-dg-dieline.svg';
+import blogDgShots from '@/assets/illustrations/blog-dg-shots.svg';
+import blogDgStack from '@/assets/illustrations/blog-dg-stack.svg';
+// Use Cases blog illustrations (scripts/illustrations/scenes-blog-usecases.mjs)
+import blogUcManufacturers from '@/assets/illustrations/blog-uc-manufacturers.svg';
+import blogUcWholesalers from '@/assets/illustrations/blog-uc-wholesalers.svg';
+import blogUcMailer from '@/assets/illustrations/blog-uc-mailer.svg';
+import blogUcFood from '@/assets/illustrations/blog-uc-food.svg';
+import blogUcApparel from '@/assets/illustrations/blog-uc-apparel.svg';
+import blogUcGift from '@/assets/illustrations/blog-uc-gift.svg';
+import blogUcExport from '@/assets/illustrations/blog-uc-export.svg';
+import blogUcMistakes from '@/assets/illustrations/blog-uc-mistakes.svg';
 
 /** Every illustration is authored at 4:3 (1200×900); blog art at 16:9 (1600×900). */
 const SIZE_43 = { width: 1200, height: 900 } as const;
@@ -162,6 +180,22 @@ export const BLOG_IMAGES = {
   'BLOG-06-thumbnail': blogMeasure, // box-measurements-guide
   'BLOG-07-thumbnail': blogKraft, // kraft-paper-grades
   'BLOG-08-thumbnail': blogTool, // 3d-box-designer-tool-free
+  'BLOG-DG-01-thumbnail': blogDgHowTo, // how-to-use-3d-box-designer
+  'BLOG-DG-02-thumbnail': blogDgStyles, // box-styles-in-3d
+  'BLOG-DG-03-thumbnail': blogDgFit, // find-right-box-size
+  'BLOG-DG-04-thumbnail': blogDgPrice, // box-price-estimate-guide
+  'BLOG-DG-05-thumbnail': blogDgArtwork, // logo-artwork-on-boxes
+  'BLOG-DG-06-thumbnail': blogDgDieline, // dielines-explained
+  'BLOG-DG-07-thumbnail': blogDgShots, // packaging-product-shots-360-video
+  'BLOG-DG-08-thumbnail': blogDgStack, // box-stacking-strength-guide
+  'BLOG-UC-01-thumbnail': blogUcManufacturers, // box-manufacturers-3d-presentations
+  'BLOG-UC-02-thumbnail': blogUcWholesalers, // wholesalers-spec-price-share-boxes
+  'BLOG-UC-03-thumbnail': blogUcMailer, // ecommerce-mailer-box-unboxing
+  'BLOG-UC-04-thumbnail': blogUcFood, // pizza-bakery-box-design
+  'BLOG-UC-05-thumbnail': blogUcApparel, // apparel-footwear-mailer-shoe-boxes
+  'BLOG-UC-06-thumbnail': blogUcGift, // festive-gift-hamper-boxes
+  'BLOG-UC-07-thumbnail': blogUcExport, // export-cartons-5-ply-7-ply
+  'BLOG-UC-08-thumbnail': blogUcMistakes, // packaging-mistakes-small-business
   alt: 'Vayu Packaging Solutions: corrugated boxes and packaging',
 } as const;
 

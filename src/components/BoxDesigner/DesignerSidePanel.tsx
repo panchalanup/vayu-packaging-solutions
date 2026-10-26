@@ -4,11 +4,14 @@
  * panel and on mobile inside the bottom sheet, so both get the same features.
  */
 
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DesignerTab } from './IconSidebar';
 import BoxSpecPanel from './BoxSpecPanel';
 import ArtworkEditor from './ArtworkEditor';
 import ExportPanel from './ExportPanel';
+import EstimatePanel from './EstimatePanel';
+import FitChecker from './FitChecker';
 import type { BoxDesign, BoxFace } from '@/types/boxDesigner';
 
 type Update = (patch: Partial<BoxDesign> | ((d: BoxDesign) => Partial<BoxDesign>), key?: string) => void;
@@ -29,11 +32,15 @@ interface DesignerSidePanelProps {
   onFoldReset: () => void;
   /** Mobile sheet supplies its own scroll container */
   embedded?: boolean;
+  /** Extra sections from Workstream C (quick start, print check, brand kit, showcase, my designs) */
+  slots?: Partial<Record<'editTop' | 'customizeTop' | 'customizeBottom' | 'studio' | 'exportBottom', ReactNode>>;
 }
 
 const TITLES: Record<DesignerTab, { title: string; subtitle: string }> = {
   edit: { title: 'Edit Box', subtitle: 'Style, size, board strength and colour' },
   customize: { title: 'Customize', subtitle: 'Place logos and text on any surface' },
+  studio: { title: 'Showcase', subtitle: 'Present, photograph and share your box' },
+  price: { title: 'Price & order', subtitle: 'Indicative price, strength and delivery' },
   export: { title: 'Actions', subtitle: 'Quote, download, save and share' },
 };
 
@@ -55,7 +62,11 @@ export default function DesignerSidePanel(props: DesignerSidePanelProps) {
             <p className="text-sm text-muted-foreground">{TITLES[activeTab].subtitle}</p>
           </div>
 
+          {activeTab === 'edit' && props.slots?.editTop}
           {activeTab === 'edit' && <BoxSpecPanel design={design} update={update} onFoldReset={props.onFoldReset} />}
+          {activeTab === 'edit' && <FitChecker design={design} update={update} />}
+          {activeTab === 'price' && <EstimatePanel design={design} update={update} capture={props.capture} quoteHref={props.quoteHref} />}
+          {activeTab === 'customize' && props.slots?.customizeTop}
           {activeTab === 'customize' && (
             <ArtworkEditor
               design={design}
@@ -65,6 +76,8 @@ export default function DesignerSidePanel(props: DesignerSidePanelProps) {
               faceSizes={props.faceSizes}
             />
           )}
+          {activeTab === 'customize' && props.slots?.customizeBottom}
+          {activeTab === 'studio' && props.slots?.studio}
           {activeTab === 'export' && (
             <ExportPanel
               design={design}
@@ -76,6 +89,7 @@ export default function DesignerSidePanel(props: DesignerSidePanelProps) {
               onShare={props.onShare}
             />
           )}
+          {activeTab === 'export' && props.slots?.exportBottom}
         </motion.div>
       </AnimatePresence>
     </div>

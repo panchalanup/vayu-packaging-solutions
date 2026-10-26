@@ -10,6 +10,8 @@ interface CanvasErrorBoundaryProps {
   children: ReactNode;
   /** Rendered when a descendant throws. Call `reset` to try again. */
   fallback: (args: { error: Error; reset: () => void }) => ReactNode;
+  /** Privacy-safe reporting hook (the caller sends the error class name only) */
+  onError?: (error: Error) => void;
 }
 
 interface CanvasErrorBoundaryState {
@@ -27,8 +29,9 @@ export default class CanvasErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    // SECURITY: log locally only; the error text and component stack are never sent to a remote service.
+    // SECURITY: the error text and component stack are logged locally only; onError reports the error name at most.
     console.error('[BoxDesigner] 3D view failed:', error, info.componentStack);
+    this.props.onError?.(error);
   }
 
   reset = (): void => {

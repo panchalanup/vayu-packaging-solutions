@@ -15,4 +15,5 @@ export const ADMIN_ROUTES = {
   quotationsNew: "/admin/quotations/new",
   invoices: "/admin/invoices",
   invoicesNew: "/admin/invoices/new",
+  enquiries: "/admin/enquiries",
 } as const;

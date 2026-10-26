@@ -35,7 +35,7 @@ const optionalDim = z
 const optionalText = (max: number) => z.string().trim().max(max).optional().or(z.literal(''));
 
 // Indian mobile: optional +91 / 0 prefix, then 10 digits starting 6-9
-const PHONE_RE = /^(?:\+?91|0)?[6-9]\d{9}$/;
+export const PHONE_RE = /^(?:\+?91|0)?[6-9]\d{9}$/;
 const GSTIN_RE = /^\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
 
 export const stepWhatSchema = z.object({

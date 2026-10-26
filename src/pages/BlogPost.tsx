@@ -162,8 +162,9 @@ const BlogPost = () => {
         type="article"
         publishedTime={post.date}
         author={post.author}
+        image={seoData?.ogImage}
       />
-      <StructuredData type="Article" data={getArticleSchema(post)} />
+      <StructuredData type="Article" data={getArticleSchema(post, seoData?.ogImage)} />
       <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(getBlogBreadcrumbs(post.title, post.slug))} />
 
       <ReadingProgress />

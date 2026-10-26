@@ -8,7 +8,7 @@
  */
 
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Pencil, Palette, Share2, ChevronLeft, ChevronRight, ArrowDown } from 'lucide-react';
+import { Pencil, Palette, Share2, ChevronLeft, ChevronRight, ArrowDown, IndianRupee, MonitorPlay } from 'lucide-react';
 import { toast } from 'sonner';
 import SiteFooter from '@/components/site/SiteFooter';
 import { Section } from '@/components/site/Section';
@@ -38,12 +38,16 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@/compone
 import type { BoxDesign, BoxFace } from '@/types/boxDesigner';
 import { isWebGLAvailable } from '@/lib/boxDesigner/webglSupport';
 import { getInitialDesignOrigin, useDesignStore } from '@/lib/boxDesigner/designStore';
-import { getBoardSpec, getBoardThicknessCm } from '@/lib/boxDesigner/boardSpecs';
-import { computeRscLayout, getFaceSizes } from '@/lib/boxDesigner/rig/rscLayout';
+import { faceSizesForDesign } from '@/lib/boxDesigner/styles/designLayout';
+import { getStyle } from '@/lib/boxDesigner/styles/registry';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEventTracker } from '@/hooks/useAnalytics';
 import { quoteHref } from '@/lib/quotePrefill';
 import { prefersReducedMotion } from '@/lib/motion/tokens';
+import TrustStrip from '@/components/BoxDesigner/TrustStrip';
+import { useDesignerFunnel } from '@/lib/boxDesigner/funnel';
+import { formatDimensions } from '@/lib/boxDesigner/units';
+import { useDesignerExtras } from '@/components/BoxDesigner/useDesignerExtras';
 
 // The whole three.js stack loads on demand so it stays out of every other route's bundle
 const BoxDesigner3D = lazy(() => import('@/components/BoxDesigner/BoxDesigner3D'));
@@ -53,6 +57,8 @@ type ControlMode = 'rotate' | 'pan';
 const MOBILE_TABS: { id: DesignerTab; label: string; icon: typeof Pencil }[] = [
   { id: 'edit', label: 'Edit', icon: Pencil },
   { id: 'customize', label: 'Artwork', icon: Palette },
+  { id: 'studio', label: 'Showcase', icon: MonitorPlay },
+  { id: 'price', label: 'Price', icon: IndianRupee },
   { id: 'export', label: 'Quote & share', icon: Share2 },
 ];
 
@@ -62,6 +68,8 @@ export default function BoxDesigner() {
   const toolContainerRef = useRef<HTMLDivElement | null>(null);
   const webglSupported = useMemo(() => isWebGLAvailable(), []);
   const { design, update, undo, redo, replace, reset, canUndo, canRedo } = useDesignStore();
+  // Funnel analytics: style changes and added artwork (style/ply/face only)
+  useDesignerFunnel(design);
 
   // UI state
   const [activeTab, setActiveTab] = useState<DesignerTab>('edit');
@@ -83,13 +91,21 @@ export default function BoxDesigner() {
   const capture = useCallback(() => captureRef.current(), []);
 
   // Real surface sizes for the artwork editor (same layout as the 3D model)
-  const faceSizes = useMemo(() => {
-    const board = getBoardSpec(design.ply, design.flutes);
-    const layout = computeRscLayout(design.dimensions, getBoardThicknessCm(board, design.dimensions), {
-      topFlaps: design.template !== 'hsc',
-    });
-    return getFaceSizes(layout);
-  }, [design.ply, design.flutes, design.dimensions, design.template]);
+  // Style registry: printable surfaces of the chosen style, in display order
+  const faceSizes = useMemo(
+    () =>
+      faceSizesForDesign({
+        template: design.template,
+        dimensions: design.dimensions,
+        ply: design.ply,
+        flutes: design.flutes,
+        lidDepth: design.lidDepth,
+      }),
+    [design.ply, design.flutes, design.dimensions, design.template, design.lidDepth]
+  );
+  // Cut-away view (front wall hidden) and the style's named fold stops
+  const [cutaway, setCutaway] = useState(false);
+  const foldStops = getStyle(design.template).foldStops;
 
   // A selected top flap disappears when switching to an open-top (HSC) box
   useEffect(() => {
@@ -142,6 +158,8 @@ export default function BoxDesigner() {
         setAutoRotate((v) => !v);
       } else if (!mod && e.key.toLowerCase() === 'w') {
         setControlMode((m) => (m === 'rotate' ? 'pan' : 'rotate'));
+      } else if (!mod && e.key.toLowerCase() === 'c') {
+        setCutaway((v) => !v);
       } else if (e.key === 'Escape') {
         setSelectedFace(null);
       }
@@ -166,8 +184,8 @@ export default function BoxDesigner() {
   const quoteLink = useMemo(() => {
     const { length, width, height } = design.dimensions;
     const mm = (cm: number) => Math.round(cm * 10);
-    return quoteHref({ l: mm(length), w: mm(width), h: mm(height), product: design.ply, src: 'designer.quote' });
-  }, [design.dimensions, design.ply]);
+    return quoteHref({ l: mm(length), w: mm(width), h: mm(height), product: design.ply, qty: design.quantity, src: 'designer.quote' });
+  }, [design.dimensions, design.ply, design.quantity]);
 
   const handleQuote = useCallback(() => {
     trackEvent('designer_request_quote', { style: design.template, ply: design.ply });
@@ -181,10 +199,9 @@ export default function BoxDesigner() {
   );
 
   const designName = useMemo(() => {
-    const { length, width, height } = design.dimensions;
     const style = BOX_TEMPLATES.find((t) => t.id === design.template)?.shortName ?? design.template.toUpperCase();
-    return `${style} · ${length} × ${width} × ${height} cm · ${design.ply}`;
-  }, [design.dimensions, design.template, design.ply]);
+    return `${style} · ${formatDimensions(design.dimensions, design.unit)} · ${design.ply}`;
+  }, [design.dimensions, design.template, design.ply, design.unit]);
 
   const scrollToTool = useCallback(() => {
     toolContainerRef.current?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
@@ -203,6 +220,26 @@ export default function BoxDesigner() {
     setIsLeftPanelCollapsed(false);
   };
 
+  // Workstream C: onboarding, wizard, templates, brand kit, my designs, showcase, presentation mode
+  const firstVisit = useMemo(() => getInitialDesignOrigin() === 'default', []);
+  const extras = useDesignerExtras({
+    design,
+    update,
+    replace,
+    selectedFace,
+    setSelectedFace,
+    autoRotate,
+    setAutoRotate,
+    foldPercentage,
+    setFoldPercentage,
+    faceSizes,
+    toolContainerRef,
+    setActiveTab: handleTabChange,
+    firstVisit,
+    webglSupported,
+  });
+  const presenting = extras.presenting;
+
   const panel = (embedded: boolean) => (
     <DesignerSidePanel
       activeTab={activeTab}
@@ -219,6 +256,7 @@ export default function BoxDesigner() {
       onShare={handleShare}
       onFoldReset={() => setFoldPercentage(100)}
       embedded={embedded}
+      slots={extras.slots}
     />
   );
 
@@ -280,28 +318,28 @@ export default function BoxDesigner() {
             ref={toolContainerRef}
             tabIndex={-1}
             aria-label="3D box designer"
-            className="grid w-full scroll-mt-14 outline-none"
+            className={`grid w-full scroll-mt-14 outline-none ${presenting ? 'fixed inset-0 z-[60]' : ''}`}
             style={{
-              height: 'calc(100dvh - 3.5rem)',
-              gridTemplateColumns: isMobile ? '1fr' : isLeftPanelCollapsed ? '72px minmax(0, 1fr)' : '72px 340px minmax(0, 1fr)',
-              gridTemplateRows: isMobile ? 'auto minmax(0, 1fr) auto' : 'minmax(0, 1fr) 44px',
+              height: presenting ? '100dvh' : 'calc(100dvh - 3.5rem)',
+              gridTemplateColumns: presenting || isMobile ? '1fr' : isLeftPanelCollapsed ? '72px minmax(0, 1fr)' : '72px 340px minmax(0, 1fr)',
+              gridTemplateRows: presenting ? 'minmax(0, 1fr)' : isMobile ? 'auto minmax(0, 1fr) auto' : 'minmax(0, 1fr) 44px',
               background: 'var(--mac-bg)',
               overflow: 'hidden',
             }}
           >
-            {isMobile && (
+            {isMobile && !presenting && (
               <div className="col-span-full">
                 <MobileInfoBanner />
               </div>
             )}
 
-            {!isMobile && (
+            {!isMobile && !presenting && (
               <div className="row-start-1">
-                <IconSidebar activeTab={activeTab} onTabChange={handleTabChange} />
+                <IconSidebar activeTab={activeTab} onTabChange={handleTabChange} onHelp={extras.replayTour} />
               </div>
             )}
 
-            {!isMobile && !isLeftPanelCollapsed && (
+            {!isMobile && !presenting && !isLeftPanelCollapsed && (
               <div className="row-start-1 relative min-h-0">
                 {panel(false)}
                 <button
@@ -314,7 +352,7 @@ export default function BoxDesigner() {
               </div>
             )}
 
-            {!isMobile && isLeftPanelCollapsed && (
+            {!isMobile && !presenting && isLeftPanelCollapsed && (
               <button
                 onClick={() => setIsLeftPanelCollapsed(false)}
                 className="absolute left-[72px] top-4 w-6 h-12 bg-card border border-border rounded-r-lg shadow-sm hover:bg-foreground/5 flex items-center justify-center z-10"
@@ -325,9 +363,10 @@ export default function BoxDesigner() {
             )}
 
             {/* Canvas */}
-            <div className={isMobile ? 'relative min-w-0 min-h-0' : 'row-start-1 relative p-4 min-w-0 min-h-0'}>
-              <div className={`w-full h-full relative ${isMobile ? '' : 'rounded-lg'} overflow-hidden shadow-xl`}>
-                {webglSupported && (
+            <div className={isMobile || presenting ? 'relative min-w-0 min-h-0' : 'row-start-1 relative p-4 min-w-0 min-h-0'}>
+              <div ref={extras.canvasRef} className={`w-full h-full relative ${isMobile || presenting ? '' : 'rounded-lg'} overflow-hidden shadow-xl`}>
+                {extras.canvasOverlay}
+                {webglSupported && !presenting && (
                   <div className="absolute top-3 right-3 md:top-4 md:right-4 z-20">
                     <FloatingCanvasToolbar
                       controlMode={controlMode}
@@ -337,11 +376,13 @@ export default function BoxDesigner() {
                       onAutoRotateToggle={() => setAutoRotate((v) => !v)}
                       onFitView={() => setFitSignal((n) => n + 1)}
                       onFullscreenToggle={handleFullscreenToggle}
+                      cutaway={cutaway}
+                      onCutawayToggle={() => setCutaway((v) => !v)}
                     />
                   </div>
                 )}
 
-                {selectedFace && (
+                {selectedFace && !presenting && (
                   <div className="absolute top-3 left-3 md:top-4 md:left-4 z-20">
                     <button
                       onClick={() => setSelectedFace(null)}
@@ -356,6 +397,7 @@ export default function BoxDesigner() {
 
                 {webglSupported ? (
                   <CanvasErrorBoundary
+                    onError={extras.report3dError}
                     fallback={({ reset: retry }) => (
                       <WebGLFallback reason="error" dimensions={design.dimensions} onRetry={retry} quoteHref={quoteLink} onQuote={handleQuote} />
                     )}
@@ -370,6 +412,7 @@ export default function BoxDesigner() {
                       <BoxDesigner3D
                         design={design}
                         foldTarget={foldPercentage / 100}
+                        cutaway={cutaway}
                         selectedFace={selectedFace}
                         controlMode={controlMode}
                         autoRotate={autoRotate}
@@ -377,6 +420,8 @@ export default function BoxDesigner() {
                         onFaceSelect={handleFaceSelect}
                         onBackgroundClick={handleBackgroundClick}
                         onCaptureReady={handleCaptureReady}
+                        studio={extras.studioProps}
+                        onRigReady={extras.onRigReady}
                       />
                     </Suspense>
                   </CanvasErrorBoundary>
@@ -384,18 +429,22 @@ export default function BoxDesigner() {
                   <WebGLFallback reason="unsupported" dimensions={design.dimensions} quoteHref={quoteLink} onQuote={handleQuote} />
                 )}
 
+                {!presenting && (
                 <BottomFloatingControls
                   dimensions={design.dimensions}
                   foldPercentage={foldPercentage}
                   onDimensionsChange={(dimensions) => update({ dimensions }, 'dock-dimensions')}
                   onFoldChange={setFoldPercentage}
+                  unit={design.unit}
+                  foldStops={foldStops}
                 />
+                )}
               </div>
             </div>
 
             {/* Mobile: bottom tab bar opening a sheet with the full panels */}
-            {isMobile && (
-              <nav className="grid grid-cols-3 border-t border-border bg-card" aria-label="Designer sections" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            {isMobile && !presenting && (
+              <nav className="grid grid-cols-5 border-t border-border bg-card" aria-label="Designer sections" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
                 {MOBILE_TABS.map(({ id, label, icon: Icon }) => (
                   <button
                     key={id}
@@ -412,7 +461,7 @@ export default function BoxDesigner() {
               </nav>
             )}
 
-            {!isMobile && (
+            {!isMobile && !presenting && (
               <div className="col-span-full">
                 <BottomStatusBar
                   dimensions={design.dimensions}
@@ -433,12 +482,12 @@ export default function BoxDesigner() {
             <DrawerContent className="max-h-[80dvh]">
               <DrawerTitle className="sr-only">Box designer options</DrawerTitle>
               <DrawerDescription className="sr-only">Edit the box, add artwork, or get a quote and share</DrawerDescription>
-              <div className="flex gap-2 px-4 pt-2">
+              <div className="flex gap-2 overflow-x-auto px-4 pt-2">
                 {MOBILE_TABS.map(({ id, label }) => (
                   <button
                     key={id}
                     onClick={() => setActiveTab(id)}
-                    className={`flex-1 text-xs py-1.5 rounded-full border ${activeTab === id ? 'bg-primary text-primary-foreground border-primary' : 'border-border'}`}
+                    className={`shrink-0 whitespace-nowrap px-3 text-xs py-1.5 rounded-full border ${activeTab === id ? 'bg-primary text-primary-foreground border-primary' : 'border-border'}`}
                   >
                     {label}
                   </button>
@@ -452,6 +501,14 @@ export default function BoxDesigner() {
             </DrawerContent>
           </Drawer>
         )}
+
+        {extras.sheets}
+
+        <Section name="designer-trust" className="border-b border-border py-8" aria-label="Why order from Vayu">
+          <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
+            <TrustStrip />
+          </div>
+        </Section>
 
         <Section name="designer-faq" className="section-y" aria-labelledby="designer-faq-heading">
           <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">

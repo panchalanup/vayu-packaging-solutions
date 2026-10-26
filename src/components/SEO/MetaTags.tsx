@@ -34,7 +34,9 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
   const KNOWN_OG_IMAGES = ['/og-image.jpg'];
   // /blog-images/*-og.png are exported from the blog illustrations (scripts/illustrations/export-seo.mjs)
   const isBlogOg = /^\/blog-images\/[a-z0-9-]+-og\.png$/.test(image);
-  const resolvedImage = image.startsWith('http') || KNOWN_OG_IMAGES.includes(image) || isBlogOg ? image : SEO_CONFIG.defaultImage;
+  // /og/box-designer-*.png are the designer landing share cards (scripts/illustrations/export-designer-og.mjs)
+  const isDesignerOg = /^\/og\/box-designer-[a-z0-9-]+\.png$/.test(image);
+  const resolvedImage = image.startsWith('http') || KNOWN_OG_IMAGES.includes(image) || isBlogOg || isDesignerOg ? image : SEO_CONFIG.defaultImage;
   const imageUrl = resolvedImage.startsWith('http')
     ? resolvedImage
     : `${SEO_CONFIG.siteUrl}${resolvedImage}`;

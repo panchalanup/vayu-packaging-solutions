@@ -12,10 +12,12 @@ import { Cta } from '@/components/site/Cta';
 import { Separator } from '@/components/ui/separator';
 import type { BoxDesign } from '@/types/boxDesigner';
 import { BOX_TEMPLATES, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
-import { getBoardSpec, getBoardThicknessCm } from '@/lib/boxDesigner/boardSpecs';
-import { computeRscLayout } from '@/lib/boxDesigner/rig/rscLayout';
-import { buildDieline, dielineToPdf, dielineToSvg } from '@/lib/boxDesigner/dieline';
+import { getBoardSpec } from '@/lib/boxDesigner/boardSpecs';
+import { dielineToPdf, dielineToSvg } from '@/lib/boxDesigner/dieline';
+import { dielineForDesign } from '@/lib/boxDesigner/styles/designLayout';
 import { MAX_IMPORT_BYTES, parseDesign, serializeDesign } from '@/lib/boxDesigner/designCodec';
+import { DESIGNER_EVENTS, designProps, useDesignerTracker } from '@/lib/boxDesigner/funnel';
+import { formatDimensions } from '@/lib/boxDesigner/units';
 import { describeColour, downloadBlob, getDesignFilename, getShareUrl, shareViaEmail, shareViaWhatsApp } from '@/lib/boxDesigner/shareUtils';
 
 interface ExportPanelProps {
@@ -50,17 +52,8 @@ export default function ExportPanel({ design, capture, onImport, onReset, quoteH
     }
   };
 
-  const dieline = () => {
-    const layout = computeRscLayout(design.dimensions, getBoardThicknessCm(board, design.dimensions), {
-      topFlaps: design.template !== 'hsc',
-    });
-    const { length, width, height } = design.dimensions;
-    return buildDieline(layout, {
-      title: `${template.name} (FEFCO ${template.fefco}) - inside ${length} x ${width} x ${height} cm`,
-      board: `${ply.name} ${ply.wall}, ${board.flutes.join('')} flute, ~${board.caliperMm} mm`,
-      topFlaps: design.template !== 'hsc',
-    });
-  };
+  // Every style has a 1:1 dieline from the style registry (same layout as the 3D model)
+  const dieline = () => dielineForDesign(design);
 
   const copyLink = async () => {
     onShare('link');
@@ -92,6 +85,8 @@ export default function ExportPanel({ design, capture, onImport, onReset, quoteH
   };
 
   const busy = (label: string) => working === label;
+  const track = useDesignerTracker();
+  const trackExport = (format: string) => track(DESIGNER_EVENTS.export, { ...designProps(design), format });
 
   return (
     <div className="space-y-4">
@@ -129,6 +124,7 @@ export default function ExportPanel({ design, capture, onImport, onReset, quoteH
               if (!blob) throw new Error('capture failed');
               downloadBlob(blob, getDesignFilename(design, 'png'));
               toast.success('High-resolution image downloaded');
+              trackExport('png');
             })
           }
         >
@@ -137,11 +133,12 @@ export default function ExportPanel({ design, capture, onImport, onReset, quoteH
         <Button
           variant="outline"
           className="w-full justify-start"
-          disabled={!!working || design.template === 'mailer'}
+          disabled={!!working}
           onClick={() =>
             run('Dieline export', () => {
               downloadBlob(new Blob([dielineToSvg(dieline())], { type: 'image/svg+xml' }), getDesignFilename(design, 'dieline.svg'));
               toast.success('Dieline (SVG, 1:1 mm) downloaded');
+              trackExport('dieline-svg');
             })
           }
         >
@@ -150,11 +147,12 @@ export default function ExportPanel({ design, capture, onImport, onReset, quoteH
         <Button
           variant="outline"
           className="w-full justify-start"
-          disabled={!!working || design.template === 'mailer'}
+          disabled={!!working}
           onClick={() =>
             run('Dieline PDF', async () => {
               downloadBlob(await dielineToPdf(dieline()), getDesignFilename(design, 'dieline.pdf'));
               toast.success('Dieline (PDF, 1:1 mm) downloaded');
+              trackExport('dieline-pdf');
             })
           }
         >
@@ -172,12 +170,13 @@ export default function ExportPanel({ design, capture, onImport, onReset, quoteH
           <Button
             variant="outline"
             size="sm"
-            onClick={() =>
+            onClick={() => {
               downloadBlob(
                 new Blob([serializeDesign(design, { includeImages: true })], { type: 'application/json' }),
                 getDesignFilename(design, 'json')
-              )
-            }
+              );
+              trackExport('json');
+            }}
           >
             <Save className="w-4 h-4 mr-1" /> Save file
           </Button>
@@ -201,7 +200,7 @@ export default function ExportPanel({ design, capture, onImport, onReset, quoteH
 
       <Card className="p-4 bg-paper-100 border-border text-xs text-ink-900 space-y-1">
         <div className="font-semibold mb-1">Design summary</div>
-        <div className="flex justify-between"><span>Inside size</span><span>{design.dimensions.length} x {design.dimensions.width} x {design.dimensions.height} cm</span></div>
+        <div className="flex justify-between"><span>Inside size</span><span>{formatDimensions(design.dimensions, design.unit)}</span></div>
         <div className="flex justify-between"><span>Style</span><span>{template.shortName} · FEFCO {template.fefco}</span></div>
         <div className="flex justify-between"><span>Board</span><span>{ply.name} {board.flutes.join('')} · ~{board.caliperMm} mm</span></div>
         <div className="flex justify-between"><span>Colour</span><span>{describeColour(design.colorHex)}</span></div>
