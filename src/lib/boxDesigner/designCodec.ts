@@ -9,11 +9,14 @@ import { z } from 'zod';
 import type { BoxDesign } from '@/types/boxDesigner';
 import { DEFAULT_BOX_COLOR, DEFAULT_DIMENSIONS, DEFAULT_PLY, DEFAULT_TEMPLATE, DIMENSION_LIMITS, PLY_OPTIONS } from './constants';
 
-export const DESIGN_SCHEMA_VERSION = 1;
+/** v2 added unit, quantity, finish, insideColorHex, lidDepth, name and more styles; v1 files still load */
+export const DESIGN_SCHEMA_VERSION = 2;
 /** Imported JSON files (with embedded images) */
 export const MAX_IMPORT_BYTES = 25 * 1024 * 1024;
 /** Share links carry no images and must stay URL-friendly */
 export const MAX_SHARE_CHARS = 8000;
+/** Default order quantity for estimates. VERIFY-LATER[DSG-01]: confirm typical MOQ with the owner */
+export const DEFAULT_QUANTITY = 500;
 
 const face = z.enum(['front', 'back', 'left', 'right', 'top-front', 'top-back', 'top-left', 'top-right', 'bottom']);
 const unit = z.number().finite().min(0).max(1);
@@ -41,8 +44,8 @@ const textSchema = z.object({
 });
 
 const designSchema = z.object({
-  v: z.literal(DESIGN_SCHEMA_VERSION),
-  template: z.enum(['rsc', 'hsc', 'mailer']),
+  v: z.union([z.literal(1), z.literal(DESIGN_SCHEMA_VERSION)]),
+  template: z.enum(['rsc', 'hsc', 'fol', 'sleeve', 'telescope', 'mailer', 'pizza', 'tray']),
   dimensions: z.object({ length: dim, width: dim, height: dim }),
   ply: z.enum(['3-ply', '5-ply', '7-ply']),
   flutes: z.array(z.enum(['A', 'B', 'C', 'E', 'F'])).min(1).max(3),
@@ -50,6 +53,12 @@ const designSchema = z.object({
   showIcons: z.boolean(),
   faceImages: z.array(imageSchema).max(9).default([]),
   textElements: z.array(textSchema).max(60).default([]),
+  unit: z.enum(['mm', 'cm', 'in']).default('cm'),
+  quantity: z.number().int().min(1).max(1_000_000).default(DEFAULT_QUANTITY),
+  finish: z.enum(['matte', 'gloss']).default('matte'),
+  insideColorHex: z.string().regex(/^#[0-9a-f]{6}$/i).nullable().default(null),
+  lidDepth: dim.nullable().default(null),
+  name: z.string().max(80).default(''),
 });
 
 export const DEFAULT_DESIGN: BoxDesign = {
@@ -61,6 +70,12 @@ export const DEFAULT_DESIGN: BoxDesign = {
   showIcons: true,
   faceImages: [],
   textElements: [],
+  unit: 'cm',
+  quantity: DEFAULT_QUANTITY,
+  finish: 'matte',
+  insideColorHex: null,
+  lidDepth: null,
+  name: '',
 };
 
 export function serializeDesign(design: BoxDesign, options: { includeImages: boolean }): string {

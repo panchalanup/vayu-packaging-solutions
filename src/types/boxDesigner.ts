@@ -2,7 +2,17 @@
  * Type definitions for 3D Box Designer
  */
 
-export type BoxTemplate = 'rsc' | 'hsc' | 'mailer';
+/**
+ * Box styles. RSC-family styles share the hinge-chain rig; mailer/pizza/tray use the die-cut rig;
+ * telescope is a base plus a lid. See docs/3D-Model-page/BOX_DESIGNER_IMPLEMENTATION_PLAN.md
+ */
+export type BoxTemplate = 'rsc' | 'hsc' | 'fol' | 'sleeve' | 'telescope' | 'mailer' | 'pizza' | 'tray';
+
+/** Display unit only: the design always stores centimetres */
+export type LengthUnit = 'mm' | 'cm' | 'in';
+
+/** Print finish preview */
+export type PrintFinish = 'matte' | 'gloss';
 
 export type PlyType = '3-ply' | '5-ply' | '7-ply';
 
@@ -59,6 +69,17 @@ export interface BoxDesign {
   showIcons: boolean;
   faceImages: FaceImage[];
   textElements: TextElement[];
+  /** Display unit for dimensions (storage stays cm) */
+  unit: LengthUnit;
+  /** Order quantity used for the estimate and the enquiry */
+  quantity: number;
+  finish: PrintFinish;
+  /** Inside liner colour; null = same as the outside board */
+  insideColorHex: string | null;
+  /** Telescope lid depth (cm); null = automatic (about a third of the height) */
+  lidDepth: number | null;
+  /** Optional design name chosen by the user */
+  name: string;
 }
 
 export interface ExportOptions {
