@@ -389,7 +389,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
             <Label className="text-xs">
               Size: {selectedText.size} pt (~{Math.round(selectedText.size * PT_TO_CM * 10) / 10} cm tall)
             </Label>
-            <Slider min={8} max={300} step={1} value={[selectedText.size]} onValueChange={([v]) => updateText(selectedText.id, { size: v }, 'text-size')} />
+            <Slider min={6} max={300} step={1} value={[selectedText.size]} onValueChange={([v]) => updateText(selectedText.id, { size: v }, 'text-size')} />
           </div>
           <div className="space-y-2">
             <Label className="text-xs">Rotation: {selectedText.rotation}°</Label>

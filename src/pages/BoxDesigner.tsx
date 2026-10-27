@@ -59,7 +59,7 @@ const MOBILE_TABS: { id: DesignerTab; label: string; icon: typeof Pencil }[] = [
   { id: 'customize', label: 'Artwork', icon: Palette },
   { id: 'studio', label: 'Showcase', icon: MonitorPlay },
   { id: 'price', label: 'Price', icon: IndianRupee },
-  { id: 'export', label: 'Quote & share', icon: Share2 },
+  { id: 'export', label: 'Share', icon: Share2 },
 ];
 
 export default function BoxDesigner() {
@@ -482,7 +482,7 @@ export default function BoxDesigner() {
             <DrawerContent className="max-h-[80dvh]">
               <DrawerTitle className="sr-only">Box designer options</DrawerTitle>
               <DrawerDescription className="sr-only">Edit the box, add artwork, or get a quote and share</DrawerDescription>
-              <div className="flex gap-2 overflow-x-auto px-4 pt-2">
+              <div className="flex shrink-0 gap-2 overflow-x-auto px-4 pt-2">
                 {MOBILE_TABS.map(({ id, label }) => (
                   <button
                     key={id}
@@ -493,7 +493,7 @@ export default function BoxDesigner() {
                   </button>
                 ))}
               </div>
-              <div className="flex gap-2 px-4 pt-2">
+              <div className="flex shrink-0 gap-2 px-4 pt-2">
                 <button disabled={!canUndo} onClick={undo} className="text-xs text-primary disabled:text-muted-foreground/60">Undo</button>
                 <button disabled={!canRedo} onClick={redo} className="text-xs text-primary disabled:text-muted-foreground/60">Redo</button>
               </div>

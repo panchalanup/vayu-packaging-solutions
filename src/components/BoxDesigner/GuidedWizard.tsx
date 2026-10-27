@@ -176,7 +176,7 @@ export default function GuidedWizard({ open, onOpenChange, current, onApply }: G
       default:
         return (
           <div className="grid gap-4 sm:grid-cols-[180px_1fr]">
-            <div className="flex aspect-square items-center justify-center rounded-xl bg-paper-100 p-4">
+            <div className="mx-auto flex aspect-square w-32 items-center justify-center rounded-xl bg-paper-100 p-3 sm:w-auto sm:p-4">
               <BoxThumbnail style={rec.template} dimensions={rec.dimensions} colorHex={current.colorHex} className="h-full w-full" />
             </div>
             <div className="space-y-3">

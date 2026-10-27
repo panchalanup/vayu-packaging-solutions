@@ -190,7 +190,7 @@ export default function EstimatePanel({ design, update, capture, quoteHref }: Es
             <Send className="mr-2 h-4 w-4" /> Send my design to Vayu
           </Button>
           <div className="grid grid-cols-2 gap-2">
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline" size="sm" className="px-2 text-xs">
               <Link to={finderHrefFromDesign(design)}>
                 Compare options <ArrowRight className="ml-1 h-3.5 w-3.5" />
               </Link>

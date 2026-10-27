@@ -25,6 +25,7 @@ import { computeDieCutLayout, dieNodes, dieTopology, flatBounds } from '../rig/d
 import { dieCutPoseFromProgress } from '../rig/dieCutPose';
 import { createCartonRig } from '../rig/createRig';
 import type { CartonRig } from '../rig/panelRig';
+import { dimensionsAfterStyleSwitch } from '../styles/switchStyle';
 import { DEFAULT_DESIGN, parseDesign, serializeDesign } from '../designCodec';
 import { getBoardSpec } from '../boardSpecs';
 import type { BoxDesign, BoxFace, BoxTemplate } from '@/types/boxDesigner';
@@ -336,5 +337,21 @@ describe('rigs (scene graph)', () => {
     const snapshot = rig.createSnapshot();
     expect(snapshot).not.toBe(rig.object3d);
     rig.dispose();
+  });
+});
+
+describe('size rule when switching style', () => {
+  it('applies the new style default when the size is still the previous default or the app default', () => {
+    expect(dimensionsAfterStyleSwitch('rsc', 'pizza', { length: 30, width: 20, height: 15 })).toEqual(getStyle('pizza').defaultDims);
+    expect(dimensionsAfterStyleSwitch('fol', 'mailer', getStyle('fol').defaultDims)).toEqual(getStyle('mailer').defaultDims);
+    // app default carried over from a style with a different default
+    expect(dimensionsAfterStyleSwitch('telescope', 'tray', { length: 30, width: 20, height: 15 })).toEqual(getStyle('tray').defaultDims);
+  });
+
+  it('keeps a size the user chose, and returns a copy of the registry default', () => {
+    const custom = { length: 31, width: 20, height: 15 };
+    expect(dimensionsAfterStyleSwitch('rsc', 'pizza', custom)).toBe(custom);
+    const result = dimensionsAfterStyleSwitch('rsc', 'pizza', { length: 30, width: 20, height: 15 });
+    expect(result).not.toBe(getStyle('pizza').defaultDims);
   });
 });

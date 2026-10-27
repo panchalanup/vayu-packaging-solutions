@@ -17,6 +17,7 @@ import { formatDimensions, formatLength } from '@/lib/boxDesigner/units';
 import { BOX_COLOR_OPTIONS, DIMENSION_LIMITS, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
 import { getBoardSpec } from '@/lib/boxDesigner/boardSpecs';
 import { STYLES, getStyle, type StyleDefinition } from '@/lib/boxDesigner/styles/registry';
+import { dimensionsAfterStyleSwitch } from '@/lib/boxDesigner/styles/switchStyle';
 import { layoutForDesign } from '@/lib/boxDesigner/styles/designLayout';
 import { resolveLidDepth } from '@/lib/boxDesigner/rig/telescopeLayout';
 import type { BoxDesign, BoxDimensions, PrintFinish } from '@/types/boxDesigner';
@@ -78,7 +79,9 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
                 key={s.id}
                 role="radio"
                 aria-checked={active}
-                onClick={() => update({ template: s.id }, 'style')}
+                onClick={() =>
+                  update((d) => ({ template: s.id, dimensions: dimensionsAfterStyleSwitch(d.template, s.id, d.dimensions) }), 'style')
+                }
                 title={s.description}
                 className={`p-2.5 rounded-lg border-2 text-left transition-all ${
                   active ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'

@@ -62,7 +62,8 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     insideColorHex: null,
     showIcons: true,
     art: { id: 'leaf', face: 'front', position: { x: 0.5, y: 0.4 }, scale: 0.45 },
-    texts: [text('front', 'YOUR BRAND', 60, '#17231C', 0.78)],
+    // kept left of centre and higher so it clears the handling marks at the bottom right
+    texts: [text('front', 'YOUR BRAND', 52, '#17231C', 0.74, 'Inter', 0.42)],
   },
   {
     id: 'apparel-mailer',

@@ -6,6 +6,7 @@
 import { Undo2, Redo2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BoxDimensions, PlyType, BoxTemplate } from '@/types/boxDesigner';
+import { getStyle } from '@/lib/boxDesigner/styles/registry';
 
 interface BottomStatusBarProps {
   dimensions: BoxDimensions;
@@ -50,7 +51,7 @@ export default function BottomStatusBar({
         
         <div className="flex items-center gap-1.5">
           <span className="font-medium text-paper-50">Style:</span>
-          <span className="capitalize">{template}</span>
+          <span>{getStyle(template).shortName}</span>
         </div>
       </div>
 
