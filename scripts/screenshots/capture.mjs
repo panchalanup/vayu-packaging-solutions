@@ -65,6 +65,8 @@ const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="30
 </svg>`;
 const svgDataUrl = (svg) => `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
 const LOGO_URL = svgDataUrl(LOGO_SVG);
+// light wordmark for dark boards
+const LOGO_LIGHT_URL = svgDataUrl(LOGO_SVG.replace('#1B2A22', '#F4F2EC').replace('letter-spacing="7" fill="#1F7A3A"', 'letter-spacing="7" fill="#8FD3A0"'));
 
 // ---------------------------------------------------------------------------------------------------------------
 // Design seeds (same shape as src/lib/boxDesigner/designCodec.ts, v2)
@@ -845,6 +847,7 @@ const HANDLERS = {
     await d.p.click({ sel: 'button', text: 'Embed on your website' });
     // the snippet uses the page origin; show the production one, as a visitor on the live site would see
     await d.p.eval(`document.querySelectorAll('pre').forEach((pre) => { pre.textContent = pre.textContent.replaceAll(location.origin, 'https://vayupackaging.vercel.app'); })`);
+    await sleep(900); // accordion animation
     // scroll the panel to its end so the whole snippet and the copy button are in view
     await d.p.call(`() => { const b = [...document.querySelectorAll('button')].find((x) => x.textContent.includes('Embed on your website')); for (let a = b.parentElement; a; a = a.parentElement) { if (a.scrollHeight > a.clientHeight + 1 && /(auto|scroll)/.test(getComputedStyle(a).overflowY)) { a.scrollTop = a.scrollHeight; break; } } }`);
     await sleep(500);
@@ -877,7 +880,9 @@ const HANDLERS = {
     await d.patch(`d.colorHex = '#C9A87C'; d.insideColorHex = '#1F7A3A'; d.name = 'Sunleaf mailer';
       d.faceImages = [{ face: 'lid', imageUrl: ${JSON.stringify(LOGO_URL)}, position: { x: 0.5, y: 0.5 }, scale: 0.6, rotation: 0 }];`);
     await d.stopSpin();
-    await d.fold('Open lid');
+    await d.angle('Back 3/4');
+    await d.tab('edit');
+    await d.fold(60);
   },
 
   async 'designer-pizza-box.png'(d) {
@@ -886,6 +891,7 @@ const HANDLERS = {
     await d.stopSpin();
     await d.fold('Open lid');
     await d.angle('Back 3/4');
+    await d.tab('edit');
   },
 
   async 'designer-bakery-tray.png'(d) {
@@ -910,18 +916,22 @@ const HANDLERS = {
   async 'designer-shoe-box.png'(d) {
     await d.viaLanding('shoe-box', { shot: true });
     await d.patch(`d.colorHex = '#2B2B2D'; d.insideColorHex = '#F4F2EC';
-      d.faceImages = [{ face: 'lid', imageUrl: ${JSON.stringify(LOGO_URL)}, position: { x: 0.5, y: 0.5 }, scale: 0.6, rotation: 0 }];`);
+      d.faceImages = [{ face: 'lid', imageUrl: ${JSON.stringify(LOGO_LIGHT_URL)}, position: { x: 0.5, y: 0.5 }, scale: 0.6, rotation: 0 }];`);
     await d.stopSpin();
-    await d.fold(85);
+    await d.fold(76);
+    await d.p.click({ sel: 'button', label: 'Fit view', after: 400 });
+    await d.p.settle(2000);
   },
 
   async 'designer-gift-box-lid.png'(d) {
     await d.viaLanding('gift-box', { shot: true });
     await d.tab('edit');
     await d.p.click({ sel: 'button[role="radio"]', label: 'Brick Red' });
-    await d.patch(`d.faceImages = [{ face: 'lid', imageUrl: ${JSON.stringify(LOGO_URL)}, position: { x: 0.5, y: 0.5 }, scale: 0.55, rotation: 0 }];`);
+    await d.patch(`d.faceImages = [{ face: 'lid', imageUrl: ${JSON.stringify(LOGO_LIGHT_URL)}, position: { x: 0.5, y: 0.5 }, scale: 0.55, rotation: 0 }];`);
     await d.stopSpin();
-    await d.fold(85);
+    await d.fold(76);
+    await d.p.click({ sel: 'button', label: 'Fit view', after: 400 });
+    await d.p.settle(2000);
   },
 
   async 'designer-brand-colours.png'(d) {
@@ -989,6 +999,7 @@ const HANDLERS = {
       d.faceImages = [{ face: 'lid', imageUrl: ${JSON.stringify(LOGO_URL)}, position: { x: 0.5, y: 0.5 }, scale: 0.6, rotation: 0 }];`);
     await d.stopSpin();
     await d.angle('Back 3/4');
+    await d.tab('edit');
     await d.fold(50, { keepOpen: true });
   },
 
@@ -1018,9 +1029,9 @@ const HANDLERS = {
     await d.p.key('Home', 'Home', 36);
     await d.p.settle(1500);
     ctx.note = 'uploaded SVG logo through the file input';
-    await d.p.call(`() => { const t = [...document.querySelectorAll('button')].find((b) => b.textContent.includes('Print check:')); t && t.scrollIntoView({ block: 'start' }); }`);
     await d.p.rect({ sel: 'button', text: 'Print check:', block: 'start' });
     await d.p.click({ sel: 'button', text: 'Print check:' });
+    await d.scrollToTool();
     await sleep(500);
   },
 
@@ -1033,7 +1044,9 @@ const HANDLERS = {
     await d.p.key('ArrowRight', 'ArrowRight', 39);
     await d.p.key('ArrowRight', 'ArrowRight', 39);
     await d.stopSpin();
-    await d.fold(85);
+    await d.fold(76);
+    await d.p.click({ sel: 'button', label: 'Fit view', after: 400 });
+    await d.p.settle(2000);
   },
 
   async 'designer-mailer-fold.png'(d) {
@@ -1065,18 +1078,20 @@ const HANDLERS = {
   },
 
   async 'designer-finish-gloss.png'(d, ctx) {
-    const base = design({ colorHex: '#F5F5F0', faceImages: [image('front', 0.5, 0.42, 0.62)], textElements: [text('t1', 'front', 'Single-estate green tea', 30, 0.5, 0.82)] });
+    const base = design({ showIcons: false, colorHex: '#F5F5F0', faceImages: [image('front', 0.5, 0.42, 0.62)], textElements: [text('t1', 'front', 'Single-estate green tea', 30, 0.5, 0.82)] });
     const clips = [];
     for (const finish of ['matte', 'gloss']) {
       await d.open({ seed: { ...base, finish } });
       await d.stopSpin();
+      // crop shows only the box: hide the floating toolbar and the dock
+      await d.p.eval(`(() => { const s = document.createElement('style'); s.textContent = '#designer-tool .absolute.z-20, #designer-tool .absolute.z-30 { display: none !important; }'; document.head.appendChild(s); })()`);
       await d.p.settle(1500);
       const rect = await d.p.eval(`(() => { const r = document.querySelector('#designer-tool canvas').getBoundingClientRect(); return { x: r.x + scrollX, y: r.y + scrollY, width: r.width, height: r.height }; })()`);
       const res = await d.p.send('Page.captureScreenshot', { format: 'png', clip: { ...rect, scale: 1 } }, 45_000);
       clips.push({ data: res.data, w: rect.width, h: rect.height });
     }
     // Compose side by side in the page (canvas), labelled
-    const w = 760;
+    const w = 520;
     const composed = await d.p.eval(`(async () => {
       const clips = ${JSON.stringify(clips.map((c) => ({ data: c.data, w: c.w, h: c.h })))};
       const w = ${w};
@@ -1142,7 +1157,7 @@ const HANDLERS = {
       return;
     }
     await d.p.click({ sel: 'button', text: '360° spin' });
-    await d.p.click({ sel: 'button', text: 'Record video', after: 900 });
+    await d.p.click({ sel: 'button', text: 'Record video', after: 250 });
     await d.p.rect({ sel: 'button', text: 'Video (spin or fold)', block: 'start' });
     ctx.note = 'captured while recording';
   },
