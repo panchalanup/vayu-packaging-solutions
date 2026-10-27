@@ -18,6 +18,7 @@ import { encodeShareHash } from '@/lib/boxDesigner/designCodec';
 import { parseEmbedParams } from '@/lib/boxDesigner/embed';
 import { BOX_COLOR_OPTIONS, DIMENSION_LIMITS } from '@/lib/boxDesigner/constants';
 import { getStyle } from '@/lib/boxDesigner/styles';
+import { dimensionsAfterStyleSwitch, optionsAfterStyleSwitch } from '@/lib/boxDesigner/styles/switchStyle';
 import { modelledStyles, styleName } from '@/lib/boxDesigner/styleAvailability';
 import { isWebGLAvailable } from '@/lib/boxDesigner/webglSupport';
 import { quoteHref } from '@/lib/quotePrefill';
@@ -59,7 +60,13 @@ export default function BoxDesignerEmbed() {
             role="radio"
             aria-checked={design.template === s}
             onClick={() => {
-              set({ template: s, lidDepth: null });
+              setDesign((d) => ({
+                ...d,
+                template: s,
+                lidDepth: null,
+                dimensions: dimensionsAfterStyleSwitch(d.template, s, d.dimensions),
+                options: optionsAfterStyleSwitch(d.template, s, d.options),
+              }));
               setFold(100);
             }}
             className={`shrink-0 rounded-full border px-3 py-1 text-xs font-medium ${design.template === s ? 'border-primary bg-primary text-primary-foreground' : 'border-border hover:border-foreground/40'}`}

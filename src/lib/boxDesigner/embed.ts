@@ -9,6 +9,7 @@ import { DEFAULT_DESIGN } from './designCodec';
 import { DIMENSION_LIMITS } from './constants';
 import { getStyle } from './styles';
 import { modelledStyles } from './styleAvailability';
+import { optionsAfterStyleSwitch } from './styles/switchStyle';
 
 const dim = z.coerce.number().finite().min(DIMENSION_LIMITS.min).max(DIMENSION_LIMITS.max);
 
@@ -27,6 +28,8 @@ export function parseEmbedParams(search: string): BoxDesign {
   return {
     ...DEFAULT_DESIGN,
     template: style,
+    // A carry box starts with its hand holes, a cake box with its window, as in the full designer
+    options: optionsAfterStyleSwitch(DEFAULT_DESIGN.template, style, DEFAULT_DESIGN.options),
     dimensions: { length: read('l', defaults.length), width: read('w', defaults.width), height: read('h', defaults.height) },
     // The site's own designer settles board; the embed keeps a sensible default
     ply: dieCut ? '3-ply' : DEFAULT_DESIGN.ply,

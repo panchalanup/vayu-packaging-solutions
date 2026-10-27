@@ -37,7 +37,7 @@ import {
   PALLET,
 } from '../studio';
 import { parseEmbedParams } from '../embed';
-import { availableLandings, DESIGNER_LANDINGS, findLanding, landingDesignerHref } from '@/content/designerLandings';
+import { ALL_LANDINGS, availableLandings, DESIGNER_LANDINGS, findLanding, landingDesignerHref } from '@/content/designerLandings';
 import { STYLES } from '../styles';
 
 const design = (patch: Partial<BoxDesign> = {}): BoxDesign => ({ ...DEFAULT_DESIGN, ...patch });
@@ -343,7 +343,7 @@ describe('embed params', () => {
 describe('landing pages', () => {
   it('every landing points at a template of the same style', () => {
     for (const l of DESIGNER_LANDINGS) expect(findTemplate(l.templateId)?.style, l.slug).toBe(l.style);
-    expect(availableLandings().length).toBe(DESIGNER_LANDINGS.length);
+    expect(availableLandings().length).toBe(ALL_LANDINGS.length);
   });
 
   it('includes the slugs the blogs link to', () => {

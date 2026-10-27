@@ -13,6 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import type { BoxDesign, BoxDimensions } from '@/types/boxDesigner';
 import DesignerSheet from './DesignerSheet';
 import BoxThumbnail from './BoxThumbnail';
+import { useStickerMarks } from './useStickerMarks';
 import UnitDimensionField from './UnitDimensionField';
 import {
   FRAGILITY_OPTIONS,
@@ -27,6 +28,7 @@ import { styleName } from '@/lib/boxDesigner/styleAvailability';
 import { formatDimensions } from '@/lib/boxDesigner/units';
 import { DUR, EASE } from '@/lib/motion/tokens';
 import { DESIGNER_EVENTS, useDesignerTracker } from '@/lib/boxDesigner/funnel';
+import { useStickerLibrary } from '@/lib/boxDesigner/stickers/useStickerLibrary';
 
 interface GuidedWizardProps {
   open: boolean;
@@ -74,6 +76,9 @@ export default function GuidedWizard({ open, onOpenChange, current, onApply }: G
     [answers, knowSize, size]
   );
   const rec = useMemo(() => recommendBox(final), [final]);
+  // the sample cutout shows on the result drawing; the library manifests load only when that step is reached
+  useStickerLibrary(open && step === STEPS.length - 1);
+  const marks = useStickerMarks(rec.stickers);
 
   const close = (next: boolean) => {
     onOpenChange(next);
@@ -177,7 +182,7 @@ export default function GuidedWizard({ open, onOpenChange, current, onApply }: G
         return (
           <div className="grid gap-4 sm:grid-cols-[180px_1fr]">
             <div className="mx-auto flex aspect-square w-32 items-center justify-center rounded-xl bg-paper-100 p-3 sm:w-auto sm:p-4">
-              <BoxThumbnail style={rec.template} dimensions={rec.dimensions} colorHex={current.colorHex} className="h-full w-full" />
+              <BoxThumbnail style={rec.template} dimensions={rec.dimensions} colorHex={current.colorHex} marks={marks} className="h-full w-full" />
             </div>
             <div className="space-y-3">
               <div>

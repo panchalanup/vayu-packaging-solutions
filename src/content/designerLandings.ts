@@ -8,10 +8,15 @@
 import type { BoxDimensions, BoxTemplate } from '@/types/boxDesigner';
 import { findTemplate } from '@/lib/boxDesigner/templates';
 import { hasStyleModel } from '@/lib/boxDesigner/styleAvailability';
+import { presetQuery, type LandingPreset } from '@/lib/boxDesigner/landingPreset';
+import { PHASE2_LANDINGS } from './designerLandingsPhase2';
 
 export interface DesignerLanding {
   slug: string;
-  templateId: string;
+  /** Template the designer opens from; styles without a template use `preset` instead */
+  templateId?: string;
+  /** Starting design (style, size, board, colour, cut-outs) when there is no template */
+  preset?: LandingPreset;
   style: BoxTemplate;
   /** Name used in links and breadcrumbs */
   name: string;
@@ -22,8 +27,12 @@ export interface DesignerLanding {
   intro: string;
   bestFor: string[];
   sizes: { label: string; dims: BoxDimensions }[];
+  /** Three plain benefits (general packaging facts only: no stats, customers or certificates) */
+  benefits?: string[];
   tips: string[];
   faqs: { question: string; answer: string }[];
+  /** Slugs of related landing pages */
+  related?: string[];
 }
 
 export const DESIGNER_LANDINGS: DesignerLanding[] = [
@@ -202,17 +211,20 @@ export const DESIGNER_LANDINGS: DesignerLanding[] = [
   },
 ];
 
+export const ALL_LANDINGS: DesignerLanding[] = [...DESIGNER_LANDINGS, ...PHASE2_LANDINGS];
+
 export function availableLandings(): DesignerLanding[] {
-  return DESIGNER_LANDINGS.filter((l) => hasStyleModel(l.style) && !!findTemplate(l.templateId));
+  return ALL_LANDINGS.filter((l) => hasStyleModel(l.style) && (l.templateId ? !!findTemplate(l.templateId) : !!l.preset));
 }
 
 export function findLanding(slug: string | undefined): DesignerLanding | undefined {
   return slug ? availableLandings().find((l) => l.slug === slug) : undefined;
 }
 
-/** Designer link that opens the landing's template (optionally at a size, cm) */
+/** Designer link that opens the landing's template or preset (optionally at a size, cm) */
 export function landingDesignerHref(landing: DesignerLanding, dims?: BoxDimensions): string {
-  const q = new URLSearchParams({ template: landing.templateId });
+  if (!landing.templateId && landing.preset) return `/box-designer?${presetQuery(landing.preset, dims).toString()}`;
+  const q = new URLSearchParams({ template: landing.templateId ?? '' });
   if (dims) {
     q.set('l', String(dims.length));
     q.set('w', String(dims.width));

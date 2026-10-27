@@ -16,8 +16,8 @@ import UnitDimensionField from './UnitDimensionField';
 import { formatDimensions, formatLength } from '@/lib/boxDesigner/units';
 import { BOX_COLOR_OPTIONS, DIMENSION_LIMITS, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
 import { getBoardSpec } from '@/lib/boxDesigner/boardSpecs';
-import { STYLES, getStyle, type StyleDefinition } from '@/lib/boxDesigner/styles/registry';
-import { dimensionsAfterStyleSwitch, optionsAfterStyleSwitch } from '@/lib/boxDesigner/styles/switchStyle';
+import { getStyle, type StyleDefinition } from '@/lib/boxDesigner/styles/registry';
+import StylePicker from './StylePicker';
 import { layoutForDesign } from '@/lib/boxDesigner/styles/designLayout';
 import { resolveLidDepth } from '@/lib/boxDesigner/rig/telescopeLayout';
 import { DEFAULT_FRONT_RATIO } from '@/lib/boxDesigner/rig/dieCutLayout';
@@ -43,14 +43,6 @@ const FINISHES: { id: PrintFinish; name: string; hint: string }[] = [
   { id: 'matte', name: 'Matte', hint: 'Natural, uncoated look' },
   { id: 'gloss', name: 'Gloss', hint: 'Varnished or laminated shine' },
 ];
-
-function StyleIcon({ style }: { style: StyleDefinition }) {
-  return (
-    <svg viewBox="0 0 24 24" className="w-8 h-8 mx-auto text-ink-900" fill="none" stroke="currentColor" strokeWidth={1.4} strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
-      <path d={style.iconPath} />
-    </svg>
-  );
-}
 
 const OPENING_TOGGLES = [
   { key: 'handHoles', cap: 'hand', label: 'Hand holes', hint: 'A hand slot in each short wall' },
@@ -122,39 +114,7 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
         <h3 className="font-semibold flex items-center gap-2">
           <Box className="w-4 h-4 text-primary" /> Box style
         </h3>
-        <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Box style">
-          {STYLES.map((s) => {
-            const active = design.template === s.id;
-            return (
-              <button
-                key={s.id}
-                role="radio"
-                aria-checked={active}
-                onClick={() =>
-                  update(
-                    (d) => ({
-                      template: s.id,
-                      dimensions: dimensionsAfterStyleSwitch(d.template, s.id, d.dimensions),
-                      options: optionsAfterStyleSwitch(d.template, s.id, d.options),
-                    }),
-                    'style'
-                  )
-                }
-                title={s.description}
-                className={`p-2.5 rounded-lg border-2 text-left transition-all ${
-                  active ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-                }`}
-              >
-                <StyleIcon style={s} />
-                <div className="mt-1 flex items-baseline justify-between gap-1">
-                  <span className="text-xs font-semibold">{s.shortName}</span>
-                  {s.fefco && <span className="text-[10px] text-muted-foreground">FEFCO {s.fefco}</span>}
-                </div>
-                <div className="text-[11px] leading-snug text-muted-foreground">{s.bestFor}</div>
-              </button>
-            );
-          })}
-        </div>
+        <StylePicker design={design} update={update} />
         <p className="text-xs text-muted-foreground">{style.description}</p>
         <OpeningToggles design={design} style={style} update={update} />
         {style.id === 'shelf-tray' && (

@@ -24,11 +24,17 @@ export default function BoxDesignerLanding() {
   const { style: slug } = useParams();
   const landing = findLanding(slug);
   if (!landing) return <Navigate to="/box-designer" replace />;
+  const style0 = getStyle(landing.style);
 
-  const template = findTemplate(landing.templateId)!;
-  const style = getStyle(landing.style);
+  // Template landings show the template's colour and sample art; preset landings use the preset
+  const template = findTemplate(landing.templateId);
+  const baseDims = template?.dimensions ?? landing.preset?.dims ?? style0.defaultDims;
+  const baseColour = template?.colorHex ?? landing.preset?.colorHex ?? '#C9A87C';
+  const style = style0;
   const url = `${SEO_CONFIG.siteUrl}/box-designer/${landing.slug}`;
-  const others = availableLandings().filter((l) => l.slug !== landing.slug);
+  const all = availableLandings();
+  const related = (landing.related ?? []).map((r) => all.find((l) => l.slug === r)).filter((l): l is NonNullable<typeof l> => !!l);
+  const others = all.filter((l) => l.slug !== landing.slug && !related.includes(l));
   const designerHref = landingDesignerHref(landing);
 
   return (
@@ -86,9 +92,9 @@ export default function BoxDesignerLanding() {
           <div className="relative mx-auto aspect-square w-full max-w-md rounded-3xl bg-paper-100 p-10 shadow-inner">
             <BoxThumbnail
               style={landing.style}
-              dimensions={template.dimensions}
-              colorHex={template.colorHex}
-              artUrl={template.art ? templateArtUrl(template.art.id) : null}
+              dimensions={baseDims}
+              colorHex={baseColour}
+              artUrl={template?.art ? templateArtUrl(template.art.id) : null}
               className="h-full w-full drop-shadow-xl"
               title={`${landing.name} illustration`}
             />
@@ -128,6 +134,23 @@ export default function BoxDesignerLanding() {
         </div>
       </Section>
 
+      {/* Benefits */}
+      {landing.benefits && landing.benefits.length > 0 && (
+        <Section name="designer-landing-benefits" className="border-t border-border section-y">
+          <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
+            <h2 className="font-display text-h3">Why choose a {landing.name.toLowerCase()}</h2>
+            <ul className="mt-5 grid gap-4 md:grid-cols-3">
+              {landing.benefits.map((b, i) => (
+                <li key={b} className="rounded-xl border border-border bg-card p-5">
+                  <span className="label-mono flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">{i + 1}</span>
+                  <p className="mt-3">{b}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Section>
+      )}
+
       {/* Typical sizes */}
       <Section name="designer-landing-sizes" className="border-y border-border bg-paper-100 section-y">
         <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
@@ -140,7 +163,7 @@ export default function BoxDesignerLanding() {
                   to={landingDesignerHref(landing, s.dims)}
                   className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all duration-quick hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md motion-reduce:hover:translate-y-0"
                 >
-                  <BoxThumbnail style={landing.style} dimensions={s.dims} colorHex={template.colorHex} className="h-16 w-16 shrink-0" />
+                  <BoxThumbnail style={landing.style} dimensions={s.dims} colorHex={baseColour} className="h-16 w-16 shrink-0" />
                   <span className="min-w-0 flex-1">
                     <span className="block font-semibold">{s.label}</span>
                     <span className="block text-sm tabular text-muted-foreground">
@@ -168,8 +191,23 @@ export default function BoxDesignerLanding() {
             ))}
           </Accordion>
 
-          {others.length > 0 && (
+          {related.length > 0 && (
             <div className="mt-14">
+              <h2 className="font-display text-h3">Related boxes</h2>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {related.map((o) => (
+                  <li key={o.slug}>
+                    <Link to={`/box-designer/${o.slug}`} className="inline-flex rounded-full border border-primary/40 bg-primary/5 px-4 py-2 text-sm hover:border-primary">
+                      {o.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {others.length > 0 && (
+            <div className="mt-10">
               <h2 className="font-display text-h3">Other boxes you can design</h2>
               <ul className="mt-4 flex flex-wrap gap-2">
                 {others.map((o) => (

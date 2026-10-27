@@ -22,8 +22,11 @@ import MyDesigns from './MyDesigns';
 import StudioPanel from './StudioPanel';
 import PresentationMode from './PresentationMode';
 import { DEFAULT_STUDIO, QualityPref, StudioSettings, loadQualityPref, saveQualityPref } from '@/lib/boxDesigner/studio';
-import { designFromTemplate, findTemplate } from '@/lib/boxDesigner/templates';
+import { designFromTemplate, findTemplate, type DesignTemplate } from '@/lib/boxDesigner/templates';
+import { wizardStickers } from '@/lib/boxDesigner/wizard';
 import { hasStyleModel } from '@/lib/boxDesigner/styleAvailability';
+import { designFromPresetParams } from '@/lib/boxDesigner/landingPreset';
+import { getStyle } from '@/lib/boxDesigner/styles/registry';
 import { DIMENSION_LIMITS } from '@/lib/boxDesigner/constants';
 import { loadBrandKit } from '@/lib/boxDesigner/brandKit';
 import { removeKey } from '@/lib/boxDesigner/localStore';
@@ -108,9 +111,15 @@ export function useDesignerExtras(input: ExtrasInput) {
       trackFunnel(DESIGNER_EVENTS.templateUsed, { template: template.id, style: template.style, ply: template.ply, source: 'link' });
       toast.success(`${template.name} template loaded`, { description: 'Change anything you like. Ctrl+Z undoes.' });
     }
+    // Style landing pages without a template carry a preset (?style=&l=&w=&h=&ply=&fl=&opt=&col=)
+    const preset = template ? null : designFromPresetParams(params, design);
+    if (preset) {
+      replace({ ...preset, name: preset.name || getStyle(preset.template).shortName });
+      toast.success(`${getStyle(preset.template).name} loaded`, { description: 'Change anything you like. Ctrl+Z undoes.' });
+    }
     if (params.get('wizard') === '1') setWizardOpen(true);
-    if (params.has('template') || params.has('wizard')) {
-      ['template', 'wizard', 'l', 'w', 'h'].forEach((key) => params.delete(key));
+    if (params.has('template') || params.has('wizard') || preset) {
+      ['template', 'wizard', 'l', 'w', 'h', 'style', 'ply', 'fl', 'opt', 'col', 'wr'].forEach((key) => params.delete(key));
       const query = params.toString();
       window.history.replaceState(window.history.state, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`);
     }
@@ -230,8 +239,27 @@ export function useDesignerExtras(input: ExtrasInput) {
     [setSelectedFace, setActiveTab]
   );
 
+  /** Load a template: replace the design (undoable), fold the box up again and say so */
+  const applyTemplate = (next: ReturnType<typeof designFromTemplate>, template: DesignTemplate) => {
+    replace(next);
+    setGalleryOpen(false);
+    setFoldPercentage(100);
+    setSelectedFace(null);
+    toast.success(`${template.name} template loaded`, { description: 'Replace the sample text and cutouts in the Artwork tab. Ctrl+Z undoes.' });
+  };
+
   const slots: Partial<Record<'editTop' | 'customizeTop' | 'customizeBottom' | 'studio' | 'exportBottom', ReactNode>> = {
-    editTop: <QuickStart onWizard={() => setWizardOpen(true)} onTemplates={() => setGalleryOpen(true)} />,
+    editTop: (
+      <QuickStart
+        onWizard={() => setWizardOpen(true)}
+        onTemplates={() => setGalleryOpen(true)}
+        style={design.template}
+        onTemplate={(template) => {
+          trackFunnel(DESIGNER_EVENTS.templateUsed, { template: template.id, style: template.style, ply: template.ply, source: 'quick' });
+          applyTemplate(designFromTemplate(template, { unit: design.unit, quantity: design.quantity }), template);
+        }}
+      />
+    ),
     customizeTop: <PrintCheck design={design} faceSizes={faceSizes} onSelectFace={selectFace} />,
     customizeBottom: <BrandKit design={design} update={update} selectedFace={selectedFace} faces={faces} onSelectFace={selectFace} />,
     studio: (
@@ -257,7 +285,19 @@ export function useDesignerExtras(input: ExtrasInput) {
         onOpenChange={setWizardOpen}
         current={design}
         onApply={(rec) => {
-          update({ template: rec.template, dimensions: rec.dimensions, ply: rec.ply, flutes: rec.flutes, lidDepth: null });
+          // the recommendation also sets the cut-outs and adds a sample cutout; cutouts the user already placed stay
+          // wherever the new style still has that surface
+          const faces = getStyle(rec.template).faces;
+          const kept = design.stickers.filter((s) => faces.includes(s.face));
+          update({
+            template: rec.template,
+            dimensions: rec.dimensions,
+            ply: rec.ply,
+            flutes: rec.flutes,
+            lidDepth: null,
+            options: { ...design.options, ...rec.options },
+            stickers: design.stickers.length ? kept : wizardStickers(rec),
+          });
           setFoldPercentage(100);
           toast.success('Box updated from your answers', { description: 'Press Ctrl+Z to undo.' });
         }}
@@ -266,13 +306,7 @@ export function useDesignerExtras(input: ExtrasInput) {
         open={galleryOpen}
         onOpenChange={setGalleryOpen}
         current={design}
-        onApply={(next, template) => {
-          replace(next);
-          setGalleryOpen(false);
-          setFoldPercentage(100);
-          setSelectedFace(null);
-          toast.success(`${template.name} template loaded`, { description: 'Replace the sample logo in the Artwork tab. Ctrl+Z undoes.' });
-        }}
+        onApply={applyTemplate}
       />
     </>
   );
