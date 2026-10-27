@@ -10,15 +10,21 @@ import type { BoxDesign } from '@/types/boxDesigner';
 import { getBoardSpec, getBoardThicknessCm } from '../boardSpecs';
 import { PLY_OPTIONS } from '../constants';
 import type { FaceSizes } from '../rig/rscLayout';
+import { resolveOpeningSpec } from '../rig/openings';
 import type { Dieline } from '../dieline';
 import { buildLayoutDieline, getLayoutFaceSizes, getStyle, type CartonLayout } from './registry';
 
-export type DesignLayoutInput = Pick<BoxDesign, 'template' | 'dimensions' | 'ply' | 'flutes' | 'lidDepth'>;
+export type DesignLayoutInput = Pick<BoxDesign, 'template' | 'dimensions' | 'ply' | 'flutes' | 'lidDepth'> & {
+  /** Cut-out options (schema v3); older callers may leave them out */
+  options?: Partial<BoxDesign['options']>;
+};
 
 export function layoutForDesign(design: DesignLayoutInput): CartonLayout {
   const board = getBoardSpec(design.ply, design.flutes);
   const thickness = getBoardThicknessCm(board, design.dimensions);
-  return getStyle(design.template).computeLayout(design.dimensions, thickness, { lidDepth: design.lidDepth });
+  const style = getStyle(design.template);
+  const openings = resolveOpeningSpec(style.openings, design.options, style.openingDefaults, style.forcedOpenings);
+  return style.computeLayout(design.dimensions, thickness, { lidDepth: design.lidDepth, openings, frontCut: design.options?.frontCut });
 }
 
 /** Printable surfaces of a layout, ordered as the style lists them */

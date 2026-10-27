@@ -8,6 +8,9 @@
 
 import type { BoxDesign, PlyType } from '@/types/boxDesigner';
 import { getBoardSpec, getBoardThicknessCm } from './boardSpecs';
+import { openingArea, type OpeningKind } from './rig/openings';
+import { layoutForDesign, type DesignLayoutInput } from './styles/designLayout';
+import { getLayoutFaceSizes, getLayoutOpenings } from './styles/registry';
 
 export const MCKEE_K = 5.87;
 // VERIFY-LATER[DSG-12]: typical edge crush (kN/m = N/mm) for our usual paper combinations per ply
@@ -20,6 +23,49 @@ export const CONTENT_LIMIT_KG: Record<PlyType, number> = { '3-ply': 8, '5-ply': 
 export const MAX_STACK_HEIGHT_CM = 200;
 const G = 9.81;
 const PLIES: PlyType[] = ['3-ply', '5-ply', '7-ply'];
+
+// VERIFY-LATER[DSG-72]: produce-packaging literature reports that vent and hand holes cut stacking (compression)
+// strength by roughly 10-40% depending on size, position and count, and that cooling gains flatten past about 7-8%
+// vent area. Used as a warning range only, never as a number in the estimate.
+export const OPENING_LOSS_RANGE_PCT = [10, 40] as const;
+export const VENT_AREA_USEFUL_PCT = 8;
+
+/** Kinds of cut-out the design actually has (hand holes, vents, windows) */
+export function openingKinds(design: DesignLayoutInput): Set<OpeningKind> {
+  const kinds = new Set<OpeningKind>();
+  for (const list of Object.values(getLayoutOpenings(layoutForDesign(design)))) for (const o of list ?? []) kinds.add(o.kind);
+  return kinds;
+}
+
+/** Plain-words warnings about holes, vents and windows (empty when the design has none) */
+export function openingWarnings(design: DesignLayoutInput): string[] {
+  const layout = layoutForDesign(design);
+  const openings = getLayoutOpenings(layout);
+  const sizes = getLayoutFaceSizes(layout);
+  const notes: string[] = [];
+  let ventCm2 = 0;
+  let wallCm2 = 0;
+  let loadBearing = false;
+  for (const [face, list] of Object.entries(openings)) {
+    if (!list?.length) continue;
+    const size = sizes[face as keyof typeof sizes];
+    const vents = list.filter((o) => o.kind === 'vent');
+    ventCm2 += openingArea(vents);
+    if (size) wallCm2 += size.widthCm * size.heightCm;
+    if (list.some((o) => o.kind !== 'window')) loadBearing = true;
+  }
+  if (loadBearing) {
+    const [lo, hi] = OPENING_LOSS_RANGE_PCT;
+    notes.push(
+      `Hand holes and vents reduce stacking strength, often by about ${lo}-${hi}% depending on size and position. Treat the stack figure as a guide and test a sample before a full order.`
+    );
+  }
+  const ventPct = wallCm2 > 0 ? (ventCm2 / wallCm2) * 100 : 0;
+  if (ventPct > VENT_AREA_USEFUL_PCT) {
+    notes.push(`Vents cover about ${Math.round(ventPct)}% of those walls; cooling gains level off past roughly ${VENT_AREA_USEFUL_PCT}%, so fewer slots keep more strength.`);
+  }
+  return notes;
+}
 
 export type StrengthRating = 'overloaded' | 'light' | 'good' | 'strong';
 
@@ -38,6 +84,8 @@ export interface StrengthResult {
   detail: string;
   /** A stronger board when this one is not enough */
   suggestPly?: PlyType;
+  /** Warnings about hand holes, vents and windows (see openingWarnings) */
+  warnings: string[];
 }
 
 /** Lightest board that carries the weight (fragile goods get 25% headroom) */
@@ -54,7 +102,7 @@ export function boxCompressionN(ply: PlyType, caliperMm: number, perimeterMm: nu
 const nextPly = (ply: PlyType): PlyType | undefined => PLIES[PLIES.indexOf(ply) + 1];
 
 export function assessStrength(
-  design: Pick<BoxDesign, 'dimensions' | 'ply' | 'flutes' | 'template'>,
+  design: Pick<BoxDesign, 'dimensions' | 'ply' | 'flutes' | 'template'> & { lidDepth?: number | null; options?: Partial<BoxDesign['options']> },
   contentKg?: number
 ): StrengthResult {
   const board = getBoardSpec(design.ply, design.flutes);
@@ -108,6 +156,7 @@ export function assessStrength(
     headline,
     detail,
     suggestPly: suggest,
+    warnings: openingWarnings({ ...design, lidDepth: design.lidDepth ?? null }),
   };
 }
 

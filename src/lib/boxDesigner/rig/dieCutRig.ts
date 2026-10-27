@@ -95,6 +95,7 @@ export class DieCutRig extends PanelRig {
       }
       this.setPanelFace(node.panel, spec.face, spec.printTurns);
       this.writePanel(node.panel, spec.rect, spec.edges, t, spec.ao);
+      this.setPanelOpenings(node.panel, spec.face ? layout.openings?.[spec.face] : undefined);
     }
     this.applyHighlight();
     this.applyPose();
@@ -108,7 +109,7 @@ export class DieCutRig extends PanelRig {
   private applyPose() {
     const layout = this.layout;
     if (!layout) return;
-    const pose = dieCutPoseFromProgress(this.progress * layout.timelineEnd);
+    const pose = dieCutPoseFromProgress(this.progress * layout.timelineEnd, layout.schedule);
     this.flip.rotation.x = pose.flip;
     this.nodes.forEach((node) => {
       if (!node.fold || !node.slide || !node.foldKey) return;

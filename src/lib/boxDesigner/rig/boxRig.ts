@@ -27,7 +27,7 @@
 import * as THREE from 'three';
 import type { BoardSpec } from '../boardSpecs';
 import { poseFromProgress, type RigPose } from './foldPose';
-import type { FlapStage, RscLayout, SlabEdges } from './rscLayout';
+import type { FlapLayout, FlapStage, RscLayout, SlabEdges } from './rscLayout';
 import { WALL_ORDER } from './rscLayout';
 import { PanelRig, type Panel } from './panelRig';
 
@@ -49,7 +49,15 @@ interface WallNode {
   top: Panel;
   bottomPivot: THREE.Group;
   bottom: Panel;
+  /** Tuck tabs hinged on the far edge of a lid flap (only present for tuck-end closures) */
+  topTuckPivot: THREE.Group;
+  topTuck: Panel;
+  bottomTuckPivot: THREE.Group;
+  bottomTuck: Panel;
 }
+
+const TUCK_EDGES: SlabEdges = { left: 'cut', right: 'cut', bottom: 'mitre', top: 'cut' };
+const TUCK_EDGES_BOTTOM: SlabEdges = { left: 'cut', right: 'cut', bottom: 'cut', top: 'mitre' };
 
 const angleFor = (pose: RigPose, end: 'top' | 'bottom', stage: FlapStage) => {
   if (end === 'top') return stage === 'minor' ? pose.topMinor : stage === 'major' ? pose.topMajor : pose.topOuter;
@@ -89,7 +97,16 @@ export class BoxRig extends PanelRig {
       const bottom = this.createPanel(true);
       bottomPivot.add(bottom.mesh);
 
-      this.walls.push({ hinge, wall, topPivot, top, bottomPivot, bottom });
+      const topTuckPivot = new THREE.Group();
+      topPivot.add(topTuckPivot);
+      const topTuck = this.createPanel(false);
+      topTuckPivot.add(topTuck.mesh);
+      const bottomTuckPivot = new THREE.Group();
+      bottomPivot.add(bottomTuckPivot);
+      const bottomTuck = this.createPanel(false);
+      bottomTuckPivot.add(bottomTuck.mesh);
+
+      this.walls.push({ hinge, wall, topPivot, top, bottomPivot, bottom, topTuckPivot, topTuck, bottomTuckPivot, bottomTuck });
       parent = hinge;
     });
 
@@ -119,32 +136,40 @@ export class BoxRig extends PanelRig {
           }
         : OPEN_ENDS;
       this.writePanel(node.wall, { x0: 0, x1: wall.span, y0: wall.y0, y1: wall.y1 }, wallEdges, t, AO_WALL);
+      this.setPanelOpenings(node.wall, layout.openings[wall.face]);
 
+      // a wall without a flap at an end (tuck-end opposite wall, short walls of a lock bottom) has depth 0
       const top = wall.topFlap;
-      node.topPivot.visible = layout.topFlaps;
-      this.setPanelPresent(node.top, layout.topFlaps);
+      const hasTop = layout.topFlaps && top.depth > 0;
+      node.topPivot.visible = hasTop;
+      this.setPanelPresent(node.top, hasTop);
       node.topPivot.position.set(0, wall.y1, 0);
-      this.setPanelFace(node.top, top.face, top.printTurns);
+      this.setPanelFace(node.top, hasTop ? top.face : null, top.printTurns);
+      this.setPanelOpenings(node.top, top.face ? layout.openings[top.face] : undefined);
       this.writePanel(
         node.top,
-        { x0: top.x0, x1: top.x0 + top.width, y0: 0, y1: top.depth },
-        TOP_FLAP_EDGES,
+        { x0: top.x0, x1: top.x0 + top.width, y0: 0, y1: Math.max(top.depth, 0.01) },
+        top.tuck ? { ...TOP_FLAP_EDGES, top: 'mitre' } : TOP_FLAP_EDGES,
         t,
         AO_TOP_FLAP
       );
+      this.writeTuck(node.topTuckPivot, node.topTuck, hasTop ? top : null, 1, t);
 
       const bottom = wall.bottomFlap;
-      node.bottomPivot.visible = layout.bottomFlaps;
-      this.setPanelPresent(node.bottom, layout.bottomFlaps);
+      const hasBottom = layout.bottomFlaps && bottom.depth > 0;
+      node.bottomPivot.visible = hasBottom;
+      this.setPanelPresent(node.bottom, hasBottom);
       node.bottomPivot.position.set(0, wall.y0, 0);
-      this.setPanelFace(node.bottom, bottom.face, bottom.printTurns);
+      this.setPanelFace(node.bottom, hasBottom ? bottom.face : null, bottom.printTurns);
+      this.setPanelOpenings(node.bottom, bottom.face ? layout.openings[bottom.face] : undefined);
       this.writePanel(
         node.bottom,
-        { x0: bottom.x0, x1: bottom.x0 + bottom.width, y0: -bottom.depth, y1: 0 },
-        BOTTOM_FLAP_EDGES,
+        { x0: bottom.x0, x1: bottom.x0 + bottom.width, y0: -Math.max(bottom.depth, 0.01), y1: 0 },
+        bottom.tuck ? { ...BOTTOM_FLAP_EDGES, bottom: 'mitre' } : BOTTOM_FLAP_EDGES,
         t,
         AO_BOTTOM_FLAP
       );
+      this.writeTuck(node.bottomTuckPivot, node.bottomTuck, hasBottom ? bottom : null, -1, t);
     });
 
     const tab = layout.tab;
@@ -152,6 +177,17 @@ export class BoxRig extends PanelRig {
 
     this.applyHighlight();
     this.applyPose();
+  }
+
+  /** Tuck tab on the far edge of a lid flap: hinged at the flap's score-far edge, hidden when the flap has none */
+  private writeTuck(pivot: THREE.Group, panel: Panel, flap: FlapLayout | null, dir: 1 | -1, t: number) {
+    const tuck = flap?.tuck ?? null;
+    pivot.visible = !!tuck;
+    this.setPanelPresent(panel, !!tuck);
+    if (!flap || !tuck) return;
+    pivot.position.set(0, dir * flap.depth, 0);
+    const rect = dir === 1 ? { x0: tuck.x0, x1: tuck.x0 + tuck.width, y0: 0, y1: tuck.depth } : { x0: tuck.x0, x1: tuck.x0 + tuck.width, y0: -tuck.depth, y1: 0 };
+    this.writePanel(panel, rect, dir === 1 ? TUCK_EDGES : TUCK_EDGES_BOTTOM, t);
   }
 
   /** Fold progress 0 (flat blank) .. 1 (assembled) */
@@ -166,6 +202,8 @@ export class BoxRig extends PanelRig {
     const pose = poseFromProgress(this.progress * layout.timelineEnd, {
       overlapTop: layout.overlapTop,
       overlapBottom: layout.overlapBottom,
+      tuckTop: layout.closures.top === 'tuck',
+      tuckBottom: layout.closures.bottom === 'tuck',
     });
     const t = layout.thickness;
 
@@ -177,6 +215,8 @@ export class BoxRig extends PanelRig {
       const wall = layout.walls[i];
       node.topPivot.rotation.x = -angleFor(pose, 'top', wall.topFlap.stage);
       node.bottomPivot.rotation.x = angleFor(pose, 'bottom', wall.bottomFlap.stage);
+      node.topTuckPivot.rotation.x = -pose.topTuck;
+      node.bottomTuckPivot.rotation.x = pose.bottomTuck;
     });
 
     // The tab hinges on the front wall's outer corner while flat and tucks one board-thickness inside the

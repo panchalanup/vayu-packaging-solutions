@@ -48,9 +48,9 @@ export function buildSpecSheetData(design: BoxDesign, now: Date = new Date()): S
   const outside = layoutForDesign(design).outside;
   const strength = assessStrength(design);
   const artwork =
-    design.faceImages.length || design.textElements.length
-      ? `${design.faceImages.length} image(s), ${design.textElements.length} text item(s) on ${
-          new Set([...design.faceImages.map((i) => i.face), ...design.textElements.map((x) => x.face)]).size
+    design.faceImages.length || design.textElements.length || design.stickers.length
+      ? `${design.faceImages.length} image(s), ${design.textElements.length} text item(s)${design.stickers.length ? `, ${design.stickers.length} cutout(s)` : ''} on ${
+          new Set([...design.faceImages.map((i) => i.face), ...design.textElements.map((x) => x.face), ...design.stickers.map((s) => s.face)]).size
         } surface(s)`
       : 'Plain (no print)';
 

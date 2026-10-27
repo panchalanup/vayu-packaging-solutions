@@ -19,6 +19,7 @@ export function parseEmbedParams(search: string): BoxDesign {
   const styleParsed = z.enum(styles as [BoxTemplate, ...BoxTemplate[]]).safeParse(params.get('style'));
   const style = styleParsed.success ? styleParsed.data : DEFAULT_DESIGN.template;
   const defaults = getStyle(style).defaultDims;
+  const dieCut = ['diecut', 'slide'].includes(getStyle(style).rigKind);
   const read = (key: string, fallback: number) => {
     const r = dim.safeParse(params.get(key) ?? undefined);
     return r.success ? Math.round(r.data * 10) / 10 : fallback;
@@ -28,8 +29,8 @@ export function parseEmbedParams(search: string): BoxDesign {
     template: style,
     dimensions: { length: read('l', defaults.length), width: read('w', defaults.width), height: read('h', defaults.height) },
     // The site's own designer settles board; the embed keeps a sensible default
-    ply: style === 'mailer' || style === 'pizza' || style === 'tray' ? '3-ply' : DEFAULT_DESIGN.ply,
-    flutes: style === 'mailer' || style === 'pizza' || style === 'tray' ? ['E'] : DEFAULT_DESIGN.flutes,
+    ply: dieCut ? '3-ply' : DEFAULT_DESIGN.ply,
+    flutes: dieCut ? ['E'] : DEFAULT_DESIGN.flutes,
   };
 }
 

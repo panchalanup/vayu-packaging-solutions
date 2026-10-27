@@ -7,8 +7,9 @@
  * Pure: image pixel sizes are measured by the caller and passed in.
  */
 
-import type { BoxDesign, BoxFace } from '@/types/boxDesigner';
+import type { BoxDesign, BoxFace, StickerPlacement } from '@/types/boxDesigner';
 import { PT_TO_CM } from './textures/printLayer';
+import { stickerBoxPx } from './stickers/placement';
 
 export type PrintIssueSeverity = 'error' | 'warning';
 
@@ -16,7 +17,7 @@ export interface PrintIssue {
   id: string;
   severity: PrintIssueSeverity;
   face: BoxFace;
-  target: { kind: 'image' } | { kind: 'text'; id: string };
+  target: { kind: 'image' } | { kind: 'text'; id: string } | { kind: 'sticker'; id: string };
   title: string;
   detail: string;
 }
@@ -116,12 +117,58 @@ export function contrastRatio(a: string, b: string): number {
   return (hi + 0.05) / (lo + 0.05);
 }
 
+/** Printed box of a (non-pattern) sticker on its surface, in cm; aspect = width / height of the artwork (1 if unknown) */
+export function stickerPrintBox(surface: { widthCm: number; heightCm: number }, s: StickerPlacement, aspect = 1): Rect {
+  const box = stickerBoxPx(surface.widthCm, surface.heightCm, s.scale, aspect);
+  const { w, h } = rotatedExtent(box.w, box.h, s.rotation);
+  const cx = s.position.x * surface.widthCm;
+  const cy = s.position.y * surface.heightCm;
+  return { x0: cx - w / 2, y0: cy - h / 2, x1: cx + w / 2, y1: cy + h / 2 };
+}
+
+export type StickerAspects = Record<string, number>;
+
 export function runPrintChecks(
-  design: Pick<BoxDesign, 'faceImages' | 'textElements' | 'colorHex'>,
+  design: Pick<BoxDesign, 'faceImages' | 'textElements' | 'colorHex'> & { stickers?: StickerPlacement[] },
   faceSizes: FaceSizes,
-  imagePixels: ImagePixelSizes = {}
+  imagePixels: ImagePixelSizes = {},
+  /** width / height per sticker id, when known (defaults to square) */
+  stickerAspects: StickerAspects = {}
 ): PrintIssue[] {
   const issues: PrintIssue[] = [];
+
+  // Cutouts: a single sticker should sit inside its surface, away from folds. Patterns repeat across the whole
+  // surface on purpose, so only their tint contrast is checked.
+  for (const s of design.stickers ?? []) {
+    const size = faceSizes[s.face];
+    if (!size) continue;
+    if (!s.pattern) {
+      const where = edgeCheck(stickerPrintBox(size, s, stickerAspects[s.stickerId] ?? 1), size);
+      if (where !== 'ok') {
+        issues.push({
+          id: `stk-edge-${s.id}`,
+          severity: where === 'over' ? 'error' : 'warning',
+          face: s.face,
+          target: { kind: 'sticker', id: s.id },
+          title: where === 'over' ? 'Cutout crosses the edge or a fold' : 'Cutout is close to a fold',
+          detail:
+            where === 'over'
+              ? 'Part of it will be cut off or crack on the crease. Move it in or make it smaller.'
+              : `Keep cutouts at least ${SAFE_MARGIN_CM * 10} mm from folds and edges so the crease does not crack the print.`,
+        });
+      }
+    }
+    if (s.tint && s.opacity >= 0.5 && contrastRatio(s.tint, design.colorHex) < 1.5) {
+      issues.push({
+        id: `stk-contrast-${s.id}`,
+        severity: 'warning',
+        face: s.face,
+        target: { kind: 'sticker', id: s.id },
+        title: 'Cutout is hard to see on this board',
+        detail: 'Its colour is very close to the box colour. Pick a darker or lighter colour.',
+      });
+    }
+  }
 
   for (const image of design.faceImages) {
     const size = faceSizes[image.face];

@@ -68,3 +68,65 @@ export type ImageCreditId = keyof typeof IMAGE_CREDITS;
 /** Original artwork made for this site (build script: scripts/illustrations). Listed on /image-credits for transparency. */
 export const OWN_ARTWORK_NOTE =
   'The product, industry, process and blog diagrams are original vector illustrations made for Vayu Packaging Solutions. They show typical products and ideas, not our own facility, team or customers.';
+
+/**
+ * Open-licence artwork SETS used inside the box designer cutout (sticker) library. Licences were read from the
+ * upstream repositories / package files on 2026-10-27. Only a curated subset of each set ships (see
+ * scripts/stickers). MIT and ISC need the copyright and permission notice kept with the artwork, so the full text
+ * is shown on /image-credits. No AI-generated artwork is used anywhere in the library.
+ */
+export interface ArtworkSetCredit {
+  id: string;
+  name: string;
+  author: string;
+  sourceUrl: string;
+  license: string;
+  licenseUrl: string;
+  /** Copyright line and permission text, reproduced as the licence requires */
+  licenseText: string;
+  changes: string;
+  usedOn: string;
+}
+
+export const ARTWORK_SET_CREDITS: readonly ArtworkSetCredit[] = [
+  {
+    id: 'fluent-emoji-flat',
+    name: 'Fluent Emoji (Flat style)',
+    author: 'Microsoft Corporation',
+    sourceUrl: 'https://github.com/microsoft/fluentui-emoji',
+    license: 'MIT',
+    licenseUrl: 'https://github.com/microsoft/fluentui-emoji/blob/main/LICENSE',
+    licenseText: `MIT License
+
+Copyright (c) Microsoft Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.`,
+    changes: 'A curated subset was selected, the SVG markup was cleaned and minified, and the artwork is otherwise unmodified. Obtained via the @iconify-json/fluent-emoji-flat package.',
+    usedOn: 'Box designer: Cutouts (fruits, food, drinks, clothing, accessories, beauty, electronics, gifts, home, plants, animals)',
+  },
+  {
+    id: 'lucide',
+    name: 'Lucide icons',
+    author: 'Lucide Contributors (portions Cole Bemis, Feather)',
+    sourceUrl: 'https://lucide.dev',
+    license: 'ISC',
+    licenseUrl: 'https://github.com/lucide-icons/lucide/blob/main/LICENSE',
+    licenseText: `ISC License
+
+Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2022 as part of Feather (MIT). All other copyright (c) for Lucide are held by Lucide Contributors 2022.
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.`,
+    changes: 'Rendered to static one-colour SVG files with a fixed stroke colour; otherwise unmodified.',
+    usedOn: 'Box designer: Cutouts (contact icons, arrows and symbols, line icons for shipping)',
+  },
+];
+
+/** Original cutout artwork made for this site. */
+export const CUTOUT_OWN_ARTWORK_NOTE =
+  'The badges, labels, shapes, frames, seamless patterns, handling marks and a few fruit and leaf drawings in the cutout library are original vector artwork made for Vayu Packaging Solutions (scripts/stickers). Badge wording is generic; none of it is a certification or quality mark.';

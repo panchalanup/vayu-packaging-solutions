@@ -7,6 +7,7 @@ import type { CartonLayout } from '../styles/registry';
 import { BoxRig } from './boxRig';
 import { DieCutRig } from './dieCutRig';
 import type { CartonRig } from './panelRig';
+import { SlideRig } from './slideRig';
 import { TelescopeRig } from './telescopeRig';
 
 export function createCartonRig(layout: CartonLayout): CartonRig {
@@ -17,6 +18,8 @@ export function createCartonRig(layout: CartonLayout): CartonRig {
       return new TelescopeRig();
     case 'diecut':
       return new DieCutRig(layout);
+    case 'slide':
+      return new SlideRig(layout);
   }
 }
 

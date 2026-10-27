@@ -15,6 +15,7 @@
  */
 
 import type { BoxDimensions, BoxFace } from '@/types/boxDesigner';
+import { wallOpeningsFor, type OpeningMap, type OpeningSpec } from './openings';
 
 export type EdgeKind = 'cut' | 'mitre';
 
@@ -35,17 +36,30 @@ export type FlapStage = 'minor' | 'major' | 'outer';
 /** Quarter turns (0-3) of the artwork on a surface so it reads upright where the surface ends up */
 export type PrintTurns = 0 | 1 | 2 | 3;
 
+/** Tab folded in from the far edge of a tuck-end lid flap (hangs down inside the opposite wall when closed) */
+export interface TuckLayout {
+  /** Offset along the wall from the wall's start (cm) */
+  x0: number;
+  width: number;
+  depth: number;
+}
+
+/** How one end of a slotted carton closes */
+export type EndClosure = 'flaps' | 'tuck' | 'lock';
+
 export interface FlapLayout {
   /** Offset of the flap from the wall's start, along the wall (cm) */
   x0: number;
   /** Flap width along the score line (cm) */
   width: number;
-  /** Flap depth away from the score line (cm) */
+  /** Flap depth away from the score line (cm). 0 = this wall has no flap at that end (edge is cut, not scored). */
   depth: number;
   /** Printable face id, or null for flaps the user cannot decorate */
   face: BoxFace | null;
   stage: FlapStage;
   printTurns: PrintTurns;
+  /** Tuck tab beyond the far edge (tuck-end lid flap only) */
+  tuck: TuckLayout | null;
 }
 
 export interface WallLayout {
@@ -83,6 +97,10 @@ export interface RscLayout {
   /** Deepest flap at each end, 0 when the end has no flaps (cm) */
   topDepth: number;
   bottomDepth: number;
+  /** Closure of each end: plain flaps, tuck-end (lid + dust flaps + tuck tab) or crash-lock bottom */
+  closures: { top: EndClosure; bottom: EndClosure };
+  /** Cut-outs (hand holes, vents, windows) per printable face; see rig/openings.ts */
+  openings: OpeningMap;
   walls: [WallLayout, WallLayout, WallLayout, WallLayout];
   tab: { width: number; height: number; y0: number };
   blank: { length: number; height: number };
@@ -106,6 +124,18 @@ export interface RscLayoutOptions {
   /** Printable face of the outermost bottom flap (telescope lid top), with its print rotation */
   bottomOuterFace?: BoxFace;
   bottomOuterTurns?: PrintTurns;
+  /**
+   * End closures. 'tuck': the lid flap sits on the long wall (back, or left when the box is longer across),
+   * the two short walls carry dust flaps, the opposite wall has none. 'lock' (bottom only): crash-lock, two long
+   * flaps that overlap, no flaps on the short walls. Both ignore overlapTop / overlapBottom for the geometry.
+   */
+  topClosure?: 'flaps' | 'tuck';
+  bottomClosure?: EndClosure;
+  /** Face name of the lid / bottom panel of a tuck or lock end (default 'lid' / 'bottom') */
+  lidFace?: BoxFace;
+  bottomFace?: BoxFace;
+  /** Hand holes, vents and window to cut (the style has already checked what it supports) */
+  openings?: OpeningSpec;
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -125,9 +155,12 @@ export function computeRscLayout(dims: BoxDimensions, thicknessCm: number, optio
   const rawT = Number.isFinite(thicknessCm) ? thicknessCm : 0.4;
   const t = options.exactThickness ? clamp(rawT, 0.05, 2) : clamp(rawT, 0.05, smallest * 0.1);
 
-  const layers = (present: boolean, overlap: boolean) => (present ? (overlap ? 3 : 2) : 0);
-  const nb = layers(bottomFlaps, overlapBottom);
-  const nt = layers(topFlaps, overlapTop);
+  const topClosure: EndClosure = topFlaps ? options.topClosure ?? 'flaps' : 'flaps';
+  const bottomClosure: EndClosure = bottomFlaps ? options.bottomClosure ?? 'flaps' : 'flaps';
+  const layers = (present: boolean, overlap: boolean, closure: EndClosure) =>
+    present ? (closure !== 'flaps' ? 2 : overlap ? 3 : 2) : 0;
+  const nb = layers(bottomFlaps, overlapBottom, bottomClosure);
+  const nt = layers(topFlaps, overlapTop, topClosure);
 
   const Lo = L + 2 * t;
   const Wo = W + 2 * t;
@@ -158,6 +191,67 @@ export function computeRscLayout(dims: BoxDimensions, thicknessCm: number, optio
   const wallTurns = options.wallTurns ?? 0;
   const outermostBottom: FlapStage = overlapBottom ? 'outer' : 'major';
 
+  // Tuck / lock geometry: the lid (or outer lock flap) sits on the long wall in the overlap position
+  const lidIndex = outerIndex;
+  const oppIndex = (lidIndex + 2) % 4;
+  const tuckDepth = clamp(across * 0.2, 1.5, Math.min(3.2, across * 0.4));
+  const lidReach = Math.max(0.5, across - t - 0.1);
+  const dustDepth = Math.max(0.5, Math.min(along * 0.18, 3.2, along / 2 - gap / 2 - 0.05));
+  const lockDepth = Math.max(0.5, Math.min(across * 0.58, lidReach));
+  const tuckClear = 2.5 * t + 0.2;
+  const turnsOf = (index: number): PrintTurns => (index === 2 ? 2 : 1);
+
+  interface EndGeometry {
+    stage: FlapStage;
+    inset: number;
+    flap: Omit<FlapLayout, 'stage'>;
+  }
+  /** Flap geometry of a wall end for the tuck and lock closures */
+  const closureEnd = (end: 'top' | 'bottom', closure: EndClosure, index: number, span: number): EndGeometry => {
+    const full = span - 2 * t - 0.04;
+    const none: Omit<FlapLayout, 'stage'> = { x0: 0, width: Math.max(0.1, span - slot), depth: 0, face: null, printTurns: 0, tuck: null };
+    if (closure === 'tuck') {
+      if (index === lidIndex) {
+        const width = Math.max(0.1, span - slot);
+        return {
+          stage: 'major',
+          inset: 0,
+          flap: {
+            x0: (span - width) / 2,
+            width,
+            depth: lidReach,
+            face: end === 'top' ? options.lidFace ?? 'lid' : options.bottomFace ?? 'bottom',
+            printTurns: turnsOf(index),
+            tuck: { x0: t + 0.15, width: Math.max(0.5, span - 2 * t - 0.3), depth: tuckDepth },
+          },
+        };
+      }
+      if (index === oppIndex) return { stage: 'minor', inset: t, flap: none };
+      // dust flap: keeps clear of the lid wall at one end and of the tuck slot at the other
+      const tuckAtStart = (index + 3) % 4 === oppIndex;
+      const x0 = tuckAtStart ? tuckClear : t + 0.02;
+      const x1 = tuckAtStart ? span - t - 0.02 : span - tuckClear;
+      return { stage: 'minor', inset: t, flap: { ...none, x0, width: Math.max(0.1, x1 - x0), depth: dustDepth } };
+    }
+    // lock: long walls carry two overlapping flaps, the short walls none
+    if (index === lidIndex || index === oppIndex) {
+      const outer = index === lidIndex;
+      return {
+        stage: outer ? 'outer' : 'major',
+        inset: outer ? 0 : t,
+        flap: {
+          x0: t + 0.02,
+          width: Math.max(0.1, full),
+          depth: lockDepth,
+          face: outer ? options.bottomFace ?? 'bottom' : null,
+          printTurns: outer ? turnsOf(index) : 0,
+          tuck: null,
+        },
+      };
+    }
+    return { stage: 'minor', inset: 0, flap: none };
+  };
+
   const wall = (index: number, id: WallId, span: number, major: boolean): WallLayout => {
     // Minor flaps must fit between the inner faces of the major walls
     const minorWidth = Math.max(0.1, span - 2 * t - 0.04);
@@ -168,30 +262,38 @@ export function computeRscLayout(dims: BoxDimensions, thicknessCm: number, optio
     const depthFor = (overlap: boolean) => (overlap ? (major ? overlapMajor : overlapMinor) : flapDepth);
     // only one bottom flap carries the lid face (with meeting flaps, the later wall of the pair)
     const carriesLid = bottomFlaps && !!options.bottomOuterFace && bottomStage === outermostBottom && index === outerIndex;
+    const topEnd = topClosure !== 'flaps' ? closureEnd('top', topClosure, index, span) : null;
+    const bottomEnd = bottomClosure !== 'flaps' ? closureEnd('bottom', bottomClosure, index, span) : null;
     return {
       id,
       face: faces[index],
       printTurns: wallTurns,
       span,
-      y0: bottomFlaps ? inset(bottomStage, overlapBottom) : 0,
-      y1: topFlaps ? Ho - inset(topStage, overlapTop) : Ho,
+      y0: bottomFlaps ? (bottomEnd ? bottomEnd.inset : inset(bottomStage, overlapBottom)) : 0,
+      y1: topFlaps ? Ho - (topEnd ? topEnd.inset : inset(topStage, overlapTop)) : Ho,
       major,
-      topFlap: {
-        x0: flapX0,
-        width: flapWidth,
-        depth: depthFor(overlapTop),
-        face: topFlaps ? (`top-${id}` as BoxFace) : null,
-        stage: topStage,
-        printTurns: 0,
-      },
-      bottomFlap: {
-        x0: flapX0,
-        width: flapWidth,
-        depth: depthFor(overlapBottom),
-        face: carriesLid ? options.bottomOuterFace! : null,
-        stage: bottomStage,
-        printTurns: carriesLid ? options.bottomOuterTurns ?? 0 : 0,
-      },
+      topFlap: topEnd
+        ? { ...topEnd.flap, stage: topEnd.stage }
+        : {
+            x0: flapX0,
+            width: flapWidth,
+            depth: depthFor(overlapTop),
+            face: topFlaps ? (`top-${id}` as BoxFace) : null,
+            stage: topStage,
+            printTurns: 0,
+            tuck: null,
+          },
+      bottomFlap: bottomEnd
+        ? { ...bottomEnd.flap, stage: bottomEnd.stage }
+        : {
+            x0: flapX0,
+            width: flapWidth,
+            depth: depthFor(overlapBottom),
+            face: carriesLid ? options.bottomOuterFace! : null,
+            stage: bottomStage,
+            printTurns: carriesLid ? options.bottomOuterTurns ?? 0 : 0,
+            tuck: null,
+          },
     };
   };
 
@@ -207,11 +309,11 @@ export function computeRscLayout(dims: BoxDimensions, thicknessCm: number, optio
   const tabHeight = Math.max(0.5, H - 0.6);
   const tab = { width: tabWidth, height: tabHeight, y0: nb * t + (H - tabHeight) / 2 };
 
-  const maxDepth = (key: 'topFlap' | 'bottomFlap') => Math.max(...walls.map((w) => w[key].depth));
+  const maxDepth = (key: 'topFlap' | 'bottomFlap') => Math.max(...walls.map((w) => w[key].depth + (w[key].tuck?.depth ?? 0)));
   const topDepth = topFlaps ? maxDepth('topFlap') : 0;
   const bottomDepth = bottomFlaps ? maxDepth('bottomFlap') : 0;
 
-  return {
+  const layout: RscLayout = {
     kind: 'rsc',
     inside: { length: L, width: W, height: H },
     outside: { length: Lo, width: Wo, height: Ho },
@@ -225,11 +327,25 @@ export function computeRscLayout(dims: BoxDimensions, thicknessCm: number, optio
     flapDepth,
     topDepth,
     bottomDepth,
+    closures: { top: topClosure, bottom: bottomClosure },
+    openings: {},
     walls,
     tab,
     blank: { length: 2 * (Lo + Wo) + tabWidth, height: Ho + topDepth + bottomDepth },
     timelineEnd: topFlaps ? 1 : bottomFlaps ? 0.72 : 0.5,
   };
+  if (options.openings) layout.openings = openingsForWalls(layout, options.openings);
+  return layout;
+}
+
+/** Hand holes / vents / window for the walls of a slotted carton (short walls = the minor pair) */
+export function openingsForWalls(layout: RscLayout, spec: OpeningSpec): OpeningMap {
+  const map: OpeningMap = {};
+  for (const wall of layout.walls) {
+    const list = wallOpeningsFor({ face: wall.face, short: !wall.major, front: wall.id === 'front' }, wall.span, wall.y1 - wall.y0, spec);
+    if (list.length) map[wall.face] = list;
+  }
+  return map;
 }
 
 /** Smoothstep helper (0..1) */

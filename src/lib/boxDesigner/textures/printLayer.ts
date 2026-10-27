@@ -8,7 +8,11 @@
  */
 
 import { createShippingIcon, ShippingIconType } from '../shippingIcons';
-import type { BoxFace, FaceImage, TextElement } from '@/types/boxDesigner';
+import type { BoxFace, FaceImage, StickerPlacement, TextElement } from '@/types/boxDesigner';
+import { loadSticker } from '../stickers/registry';
+import { getStickerBitmap } from '../stickers/image';
+import { patternTiles } from '../stickers/pattern';
+import { stickerBoxPx } from '../stickers/placement';
 
 export const PT_TO_CM = 2.54 / 72;
 
@@ -20,6 +24,8 @@ export interface PrintSurface {
 
 export interface PrintOptions {
   shippingIcons?: boolean;
+  /** Stickers on this surface, in layer order (patterns are drawn under the image, the rest above it) */
+  stickers?: StickerPlacement[];
 }
 
 /** Pixels per cm for a surface: sharp enough up close, capped at 2048 px on the long side */
@@ -126,6 +132,37 @@ function drawShippingIcons(ctx: CanvasRenderingContext2D, width: number, height:
   }
 }
 
+/** Draw stickers in array order. Pattern stickers repeat their tile across the whole surface. */
+export async function drawStickers(ctx: CanvasRenderingContext2D, width: number, height: number, stickers: StickerPlacement[]) {
+  for (const sticker of stickers) {
+    const def = await loadSticker(sticker.stickerId);
+    if (!def) continue; // unknown id (library changed): skip quietly
+    const longest = Math.max(2, sticker.scale * Math.min(width, height));
+    const bitmap = await getStickerBitmap(def.src, sticker.tint, longest);
+    if (!bitmap) continue;
+    const { w, h } = stickerBoxPx(width, height, sticker.scale, bitmap.aspect);
+    const radians = ((sticker.rotation || 0) * Math.PI) / 180;
+    ctx.save();
+    ctx.globalAlpha = Math.min(1, Math.max(0.05, sticker.opacity));
+    const drawAt = (x: number, y: number, extraRotation: number) => {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(radians + extraRotation);
+      if (sticker.flip) ctx.scale(-1, 1);
+      ctx.drawImage(bitmap.canvas, -w / 2, -h / 2, w, h);
+      ctx.restore();
+    };
+    if (sticker.pattern) {
+      const { tiles } = patternTiles(width, height, Math.max(w, h), sticker.pattern, sticker.position);
+      const gridAngle = ((sticker.pattern.angle || 0) * Math.PI) / 180;
+      for (const tile of tiles) drawAt(tile.x, tile.y, gridAngle);
+    } else {
+      drawAt(sticker.position.x * width, sticker.position.y * height, 0);
+    }
+    ctx.restore();
+  }
+}
+
 /**
  * Draw one surface. Returns null when there is nothing to print.
  */
@@ -136,7 +173,8 @@ export async function renderPrintCanvas(
   options: PrintOptions = {}
 ): Promise<HTMLCanvasElement | null> {
   const hasText = texts.some((t) => t.text.trim().length > 0);
-  if (!image && !hasText && !options.shippingIcons) return null;
+  const stickers = options.stickers ?? [];
+  if (!image && !hasText && !options.shippingIcons && stickers.length === 0) return null;
 
   const pxPerCm = getPrintResolution(surface.widthCm, surface.heightCm);
   const width = Math.max(2, Math.round(surface.widthCm * pxPerCm));
@@ -148,6 +186,9 @@ export async function renderPrintCanvas(
   ctx.clearRect(0, 0, width, height);
 
   if (options.shippingIcons) drawShippingIcons(ctx, width, height, pxPerCm);
+
+  // patterns are backgrounds: under the logo; single stickers sit above it; text is always on top
+  await drawStickers(ctx, width, height, stickers.filter((s) => s.pattern));
 
   if (image) {
     const bitmap = await loadImage(image.imageUrl);
@@ -164,6 +205,8 @@ export async function renderPrintCanvas(
       ctx.restore();
     }
   }
+
+  await drawStickers(ctx, width, height, stickers.filter((s) => !s.pattern));
 
   for (const element of texts) {
     if (!element.text.trim()) continue;
@@ -220,5 +263,6 @@ export function printContentKey(
     image ? [hashString(image.imageUrl), image.position, image.scale, image.rotation] : null,
     texts.map((t) => [t.id, t.text, t.font, t.size, t.color, t.position, t.rotation, t.align]),
     !!options.shippingIcons,
+    (options.stickers ?? []).map((s) => [s.id, s.stickerId, s.position, s.scale, s.rotation, s.flip, s.opacity, s.tint, s.pattern]),
   ]);
 }

@@ -31,6 +31,7 @@ export function formatShareMessage(design: BoxDesign, shareUrl?: string): string
   ];
   if (design.faceImages.length) lines.push(`Artwork: ${design.faceImages.length} image(s)`);
   if (design.textElements.length) lines.push(`Text: ${design.textElements.length} element(s)`);
+  if (design.stickers?.length) lines.push(`Cutouts: ${design.stickers.length}`);
   if (shareUrl) lines.push('', `Open the design: ${shareUrl}`);
   lines.push('', `Designed with the ${COMPANY_INFO.name} 3D Box Designer.`);
   return lines.join('\n');

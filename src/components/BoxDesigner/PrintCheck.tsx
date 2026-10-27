@@ -9,6 +9,7 @@ import { AlertTriangle, CheckCircle2, ChevronDown, XCircle } from 'lucide-react'
 import type { BoxDesign, BoxFace } from '@/types/boxDesigner';
 import { FACE_LABELS } from '@/lib/boxDesigner/constants';
 import { FaceSizes, ImagePixelSizes, runPrintChecks } from '@/lib/boxDesigner/printChecks';
+import { useStickerAspects } from '@/lib/boxDesigner/stickers/useStickerAspects';
 
 interface PrintCheckProps {
   design: BoxDesign;
@@ -55,9 +56,10 @@ function useImagePixels(images: BoxDesign['faceImages']): ImagePixelSizes {
 
 export default function PrintCheck({ design, faceSizes, onSelectFace }: PrintCheckProps) {
   const pixels = useImagePixels(design.faceImages);
-  const issues = useMemo(() => runPrintChecks(design, faceSizes, pixels), [design, faceSizes, pixels]);
+  const stickerAspects = useStickerAspects(design.stickers);
+  const issues = useMemo(() => runPrintChecks(design, faceSizes, pixels, stickerAspects), [design, faceSizes, pixels, stickerAspects]);
   const [open, setOpen] = useState(false);
-  const hasArtwork = design.faceImages.length > 0 || design.textElements.some((t) => t.text.trim());
+  const hasArtwork = design.faceImages.length > 0 || design.stickers.length > 0 || design.textElements.some((t) => t.text.trim());
   if (!hasArtwork) return null;
 
   const errors = issues.filter((i) => i.severity === 'error').length;

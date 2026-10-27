@@ -8,6 +8,31 @@
  *
  * CartonRig is the public interface BoxScene (and other agents' scenes) talk to. TelescopeRig composes two
  * BoxRigs behind the same interface.
+ *
+ * OPENINGS API (hand holes, vents, windows; read by die-cut / telescope rigs and layouts)
+ *  Data (rig/openings.ts, pure, no three.js):
+ *    PanelOpening { kind: 'hand' | 'vent' | 'window', cx, cy, width, height, count? }  all in cm
+ *      cx, cy  = offset of the opening's centre from the CENTRE of the panel rect, +x along the panel's local x,
+ *                +y up (away from the hinge on a flap). Not affected by print rotation.
+ *      vent    = a row of `count` rounded slots filling width x height.
+ *    OpeningMap = Partial<Record<BoxFace, PanelOpening[]>>  (openings per printable face)
+ *  Layouts: RscLayout.openings is an OpeningMap (default {}). A layout of another kind may carry the same optional
+ *    field `openings?: OpeningMap`; getLayoutOpenings(layout) in styles/registry.ts reads it for any kind.
+ *    Generators: handHoleFor / ventRowFor / windowFor / wallOpeningsFor, and resolveOpeningSpec(caps, options, defaults).
+ *  Style: StyleDefinition.openings = { hand?, vents?, window? } says what the style offers; design options
+ *    (options.handHoles / vents / window / windowRatio) switch them on; StyleLayoutOptions.openings carries the
+ *    resolved OpeningSpec into computeLayout (layoutForDesign does this, via resolveOpeningSpec).
+ *    Also optional: StyleDefinition.forcedOpenings (always on, part of the style) and openingDefaults (what an
+ *    undefined option means); switchStyle.optionsAfterStyleSwitch applies the defaults when the user changes style.
+ *    Cost and strength: pricing.ts adds a die / film cost and strength.ts openingWarnings() reads layout openings.
+ *  Rig:  this.setPanelOpenings(panel, list)  on any Panel (printable or not). Call it from update(), any order
+ *    relative to writePanel. Decals are rebuilt only when the list changes (openingsKey), and follow the panel rect.
+ *    Look: holes and vents = dark cavity (shaded darker at the top, light board edge rim); windows = dark cavity
+ *    under a pale, translucent, slightly glossy film. They sit on top of the artwork decal, are never pick-able and
+ *    hide with the panel (cut-away). Seen from inside an open box they are not drawn (decals are one-sided).
+ *  Dieline: buildDieline / buildTelescopeDieline draw every opening as real CUT lines (rounded outlines from
+ *    openingOutlines()). For the die-cut builder call appendOpeningCuts(lines, openings, centreXmm, centreYmm,
+ *    mapPoint?) exported from dieline.ts: the optional mapPoint turns panel-local mm into sheet mm (rotation / flip).
  */
 
 import * as THREE from 'three';
@@ -15,6 +40,7 @@ import type { BoxFace, PrintFinish } from '@/types/boxDesigner';
 import type { BoardSpec } from '../boardSpecs';
 import { createSlabGeometry, writeSlab } from './panelGeometry';
 import type { PrintTurns, SlabEdges } from './rscLayout';
+import { openingOutlines, openingsKey, type PanelOpening } from './openings';
 import {
   EDGE_TILE_CM,
   GRAIN_TILE_CM,
@@ -91,6 +117,10 @@ export interface Panel {
   /** Hidden when the cut-away view is on */
   cutawayGroup: boolean;
   decal?: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshPhysicalMaterial>;
+  /** Cut-out decals (see setPanelOpenings); the group is a child of the mesh, centred on the panel rect */
+  openings: PanelOpening[];
+  openingKey: string;
+  openingGroup?: THREE.Group;
   /** Selection/hover: a light brand-blue wash plus a frame around the panel */
   highlightFill?: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
   highlightFrame?: THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>;
@@ -148,6 +178,77 @@ const overlayMaterial = (color: THREE.ColorRepresentation, opacity: number) =>
     polygonOffsetUnits: -4,
   });
 
+function cutoutMaterial(params: { color?: string; vertexColors?: boolean; opacity: number }) {
+  return new THREE.MeshBasicMaterial({
+    ...params,
+    transparent: true,
+    depthWrite: false,
+    toneMapped: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -3,
+    polygonOffsetUnits: -3,
+  });
+}
+
+const CAVITY_TOP = new THREE.Color('#0B0805');
+const CAVITY_BOTTOM = new THREE.Color('#3A2E22');
+const WINDOW_TOP = new THREE.Color('#2A241D');
+const WINDOW_BOTTOM = new THREE.Color('#6B5E4E');
+/** Offsets in front of the outer liner (cm), above the print decal */
+const CAVITY_OFFSET = 0.02;
+const RIM_OFFSET = 0.022;
+const FILM_OFFSET = 0.026;
+/** Width of the lit board edge around a cut (cm) */
+const RIM_WIDTH = 0.12;
+
+type Outline = readonly [number, number][];
+
+const toShape = (outline: Outline) => new THREE.Shape(outline.map(([x, y]) => new THREE.Vector2(x, y)));
+
+/** Flat shape; with colours, a vertical gradient (top -> bottom) is written as vertex colours */
+function shapeGeometry(outline: Outline, top?: THREE.Color, bottom?: THREE.Color): THREE.BufferGeometry {
+  const geometry = new THREE.ShapeGeometry(toShape(outline));
+  const position = geometry.getAttribute('position') as THREE.BufferAttribute;
+  let y0 = Infinity;
+  let y1 = -Infinity;
+  for (const [, y] of outline) {
+    y0 = Math.min(y0, y);
+    y1 = Math.max(y1, y);
+  }
+  const span = Math.max(1e-6, y1 - y0);
+  const colors = new Float32Array(position.count * 3);
+  const c = new THREE.Color(1, 1, 1);
+  for (let i = 0; i < position.count; i++) {
+    if (top && bottom) c.copy(bottom).lerp(top, (position.getY(i) - y0) / span);
+    colors[i * 3] = c.r;
+    colors[i * 3 + 1] = c.g;
+    colors[i * 3 + 2] = c.b;
+  }
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  return geometry;
+}
+
+/** A thin ring just outside a convex outline: the exposed, lit board edge of the cut */
+function rimGeometry(outline: Outline, width: number): THREE.BufferGeometry {
+  let cx = 0;
+  let cy = 0;
+  for (const [x, y] of outline) {
+    cx += x;
+    cy += y;
+  }
+  cx /= outline.length;
+  cy /= outline.length;
+  const grown = outline.map(([x, y]) => {
+    const dx = x - cx;
+    const dy = y - cy;
+    const len = Math.hypot(dx, dy) || 1;
+    return [x + (dx / len) * width, y + (dy / len) * width] as [number, number];
+  });
+  const shape = toShape(grown);
+  shape.holes.push(new THREE.Path(outline.map(([x, y]) => new THREE.Vector2(x, y))));
+  return new THREE.ShapeGeometry(shape);
+}
+
 /** The chosen colour covers the whole board, inside included (slightly deeper, as unprinted liner reads) */
 export function innerColourFor(hex: string): THREE.Color {
   return new THREE.Color(hex).offsetHSL(0, -0.03, -0.03);
@@ -171,6 +272,23 @@ export abstract class PanelRig implements CartonRig {
   private readonly frameSelected = overlayMaterial(HIGHLIGHT, 1);
   private readonly frameHover = overlayMaterial(HIGHLIGHT_HOVER, 0.85);
   private readonly blob: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
+  private readonly cavityMaterial = cutoutMaterial({ vertexColors: true, opacity: 1 });
+  private readonly windowCavityMaterial = cutoutMaterial({ vertexColors: true, opacity: 0.9 });
+  private readonly rimMaterial = cutoutMaterial({ color: '#E3CFAE', opacity: 0.7 });
+  private readonly filmMaterial = new THREE.MeshPhysicalMaterial({
+    color: '#EAF3F7',
+    transparent: true,
+    opacity: 0.3,
+    roughness: 0.06,
+    metalness: 0,
+    clearcoat: 1,
+    clearcoatRoughness: 0.04,
+    envMapIntensity: 1.2,
+    depthWrite: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -3.5,
+    polygonOffsetUnits: -3.5,
+  });
 
   protected board: BoardSpec | null = null;
   protected colour = '#C9A87C';
@@ -252,6 +370,8 @@ export abstract class PanelRig implements CartonRig {
       present: true,
       cut: false,
       cutawayGroup,
+      openings: [],
+      openingKey: '',
     };
 
     if (printable) {
@@ -310,6 +430,61 @@ export abstract class PanelRig implements CartonRig {
     if (panel.decal) panel.decal.userData.face = next;
   }
 
+  /**
+   * Show (or clear) cut-out decals on a panel: positions are panel-local cm from the rect centre (see header).
+   * Cheap to call every update: nothing is rebuilt unless the list changed.
+   */
+  protected setPanelOpenings(panel: Panel, list: readonly PanelOpening[] | undefined): void {
+    const key = openingsKey(list);
+    if (key === panel.openingKey) return;
+    panel.openingKey = key;
+    panel.openings = list ? [...list] : [];
+    this.clearOpeningMeshes(panel);
+    if (panel.openings.length === 0) return;
+
+    if (!panel.openingGroup) {
+      const created = new THREE.Group();
+      created.name = 'openings';
+      panel.mesh.add(created);
+      panel.openingGroup = created;
+    }
+    const group = panel.openingGroup;
+    const add = (geometry: THREE.BufferGeometry, material: THREE.Material, z: number) => {
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.z = z;
+      mesh.renderOrder = 2;
+      mesh.raycast = noRaycast;
+      group.add(mesh);
+    };
+    for (const opening of panel.openings) {
+      const isWindow = opening.kind === 'window';
+      for (const outline of openingOutlines(opening)) {
+        add(
+          shapeGeometry(outline, isWindow ? WINDOW_TOP : CAVITY_TOP, isWindow ? WINDOW_BOTTOM : CAVITY_BOTTOM),
+          isWindow ? this.windowCavityMaterial : this.cavityMaterial,
+          CAVITY_OFFSET
+        );
+        add(rimGeometry(outline, RIM_WIDTH), this.rimMaterial, RIM_OFFSET);
+        if (isWindow) add(shapeGeometry(outline), this.filmMaterial, FILM_OFFSET);
+      }
+    }
+    this.placeOpenings(panel);
+  }
+
+  private clearOpeningMeshes(panel: Panel) {
+    const group = panel.openingGroup;
+    if (!group) return;
+    for (const child of [...group.children]) {
+      group.remove(child);
+      (child as THREE.Mesh).geometry.dispose();
+    }
+  }
+
+  /** Keep the opening group centred on the panel rect (the rect changes on every resize) */
+  private placeOpenings(panel: Panel) {
+    panel.openingGroup?.position.set((panel.rect.x0 + panel.rect.x1) / 2, (panel.rect.y0 + panel.rect.y1) / 2, 0);
+  }
+
   /** Mark a panel as part of the current carton or not (unused panels are hidden and never picked) */
   protected setPanelPresent(panel: Panel, present: boolean): void {
     panel.present = present;
@@ -335,6 +510,7 @@ export abstract class PanelRig implements CartonRig {
       ao,
     });
     panel.rect = rect;
+    this.placeOpenings(panel);
 
     const width = rect.x1 - rect.x0;
     const height = rect.y1 - rect.y0;
@@ -563,6 +739,7 @@ export abstract class PanelRig implements CartonRig {
 
   dispose(): void {
     for (const panel of this.panels) {
+      this.clearOpeningMeshes(panel);
       panel.geometry.dispose();
       panel.outer.dispose();
       if (panel.decal) {
@@ -581,6 +758,10 @@ export abstract class PanelRig implements CartonRig {
     this.frameHover.dispose();
     this.blob.geometry.dispose();
     this.blob.material.dispose();
+    this.cavityMaterial.dispose();
+    this.windowCavityMaterial.dispose();
+    this.rimMaterial.dispose();
+    this.filmMaterial.dispose();
     // Shared procedural textures (grain, normal, edges, contact) are cached for the page lifetime on purpose.
   }
 }

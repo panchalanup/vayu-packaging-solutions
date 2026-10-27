@@ -8,6 +8,7 @@
 
 import type { BoxDesign, BoxTemplate, PlyType } from '@/types/boxDesigner';
 import { getBlankSizeCm } from './blankSize';
+import { openingKinds } from './strength';
 
 /** Order quantity slabs shown as chips */
 export const QUANTITY_TIERS = [100, 500, 1000, 5000] as const;
@@ -34,7 +35,11 @@ export const TIER_FACTOR: Record<QuantityTier, number> = { 100: 1.3, 500: 1, 100
 /** ± spread shown around the midpoint so nobody reads it as a firm price */
 export const ESTIMATE_SPREAD = 0.15;
 /** Die-cut styles need a cutting die */
-export const DIE_CUT_STYLES: readonly BoxTemplate[] = ['mailer', 'pizza', 'tray'];
+export const DIE_CUT_STYLES: readonly BoxTemplate[] = ['mailer', 'pizza', 'tray', 'window-mailer', 'cake-box', 'clamshell', 'shelf-tray', 'slide-box', 'book-box'];
+// VERIFY-LATER[DSG-74]: one-time cutting die for hand holes / vents / windows on slotted styles (die-cut styles already carry a die)
+export const OPENING_DIE_COST = 2500;
+// VERIFY-LATER[DSG-74]: window film and its gluing per box
+export const WINDOW_FILM_PER_BOX = 1.5;
 /** Board colours that are the natural paper (no flood print) */
 const NATURAL_BOARD = ['#c9a87c', '#d9b77e', '#8b6f47'];
 const WHITE_BOARD = ['#f5f5f0', '#ffffff'];
@@ -52,11 +57,17 @@ export function boardSurfaceOf(colorHex: string): BoardSurface {
  * Print colours implied by the design: any image counts as full colour (4, CMYK);
  * otherwise one per distinct text colour; a coloured (non-kraft, non-white) board adds a flood colour. Max 4.
  */
-export function countPrintColours(design: Pick<BoxDesign, 'faceImages' | 'textElements' | 'colorHex'>): number {
+export function countPrintColours(design: Pick<BoxDesign, 'faceImages' | 'textElements' | 'colorHex'> & { stickers?: BoxDesign['stickers'] }): number {
   const flood = boardSurfaceOf(design.colorHex) === 'flood' ? 1 : 0;
   if (design.faceImages.length > 0) return 4;
-  const textColours = new Set(design.textElements.filter((t) => t.text.trim()).map((t) => t.color.toLowerCase())).size;
-  return Math.min(4, textColours + flood);
+  const stickers = design.stickers ?? [];
+  // an untinted cutout keeps its own colours (full colour print); tinted ones add one ink per distinct tint
+  if (stickers.some((s) => s.tint === null)) return 4;
+  const inks = new Set([
+    ...design.textElements.filter((t) => t.text.trim()).map((t) => t.color.toLowerCase()),
+    ...stickers.map((s) => (s.tint ?? '').toLowerCase()),
+  ]).size;
+  return Math.min(4, inks + flood);
 }
 
 /** The slab a quantity falls into (below 100 uses the 100 slab) */
@@ -69,7 +80,7 @@ export function tierFor(quantity: number): QuantityTier {
 export type EstimateInput = Pick<
   BoxDesign,
   'template' | 'dimensions' | 'ply' | 'flutes' | 'lidDepth' | 'finish' | 'colorHex' | 'faceImages' | 'textElements'
-> & { quantity: number };
+> & { quantity: number; stickers?: BoxDesign['stickers']; options?: Partial<BoxDesign['options']> };
 
 export interface Estimate {
   quantity: number;
@@ -101,8 +112,10 @@ export function estimatePrice(input: EstimateInput): Estimate {
   const board = sheet * boardRate;
   const print = sheet * colours * PRINT_RATE_PER_COLOUR_M2;
   const finish = input.finish === 'gloss' ? sheet * GLOSS_RATE_PER_M2 : 0;
-  const conversion = CONVERSION_PER_BOX;
-  const setup = colours * PLATE_COST_PER_COLOUR + (DIE_CUT_STYLES.includes(input.template) ? DIE_COST : 0);
+  const cutOuts = openingKinds(input);
+  const dieCut = DIE_CUT_STYLES.includes(input.template);
+  const conversion = CONVERSION_PER_BOX + (cutOuts.has('window') ? WINDOW_FILM_PER_BOX : 0);
+  const setup = colours * PLATE_COST_PER_COLOUR + (dieCut ? DIE_COST : cutOuts.size > 0 ? OPENING_DIE_COST : 0);
   const setupPerBox = setup / quantity;
 
   const perBox = (board + print + finish + conversion) * TIER_FACTOR[tier] + setupPerBox;

@@ -18,6 +18,7 @@ import { dielineForDesign } from '@/lib/boxDesigner/styles/designLayout';
 import { MAX_IMPORT_BYTES, parseDesign, serializeDesign } from '@/lib/boxDesigner/designCodec';
 import { DESIGNER_EVENTS, designProps, useDesignerTracker } from '@/lib/boxDesigner/funnel';
 import { formatDimensions } from '@/lib/boxDesigner/units';
+import { encodeShareHashDetailed } from '@/lib/boxDesigner/designCodec';
 import { describeColour, downloadBlob, getDesignFilename, getShareUrl, shareViaEmail, shareViaWhatsApp } from '@/lib/boxDesigner/shareUtils';
 
 interface ExportPanelProps {
@@ -58,10 +59,16 @@ export default function ExportPanel({ design, capture, onImport, onReset, quoteH
   const copyLink = async () => {
     onShare('link');
     const url = getShareUrl(design);
+    const trimmed = encodeShareHashDetailed(design);
     try {
       await navigator.clipboard.writeText(url);
       toast.success('Share link copied', {
-        description: design.faceImages.length ? 'Images stay on this device; the link includes size, board, colour and text.' : undefined,
+        description:
+          trimmed.droppedStickers || trimmed.droppedTexts
+            ? 'This design is big, so some cutouts or text were left out of the link. Save it as a file to keep everything.'
+            : design.faceImages.length
+              ? 'Images stay on this device; the link includes size, board, colour, text and cutouts.'
+              : undefined,
       });
     } catch {
       window.prompt('Copy this link', url);
@@ -204,7 +211,7 @@ export default function ExportPanel({ design, capture, onImport, onReset, quoteH
         <div className="flex justify-between"><span>Style</span><span>{template.shortName} · FEFCO {template.fefco}</span></div>
         <div className="flex justify-between"><span>Board</span><span>{ply.name} {board.flutes.join('')} · ~{board.caliperMm} mm</span></div>
         <div className="flex justify-between"><span>Colour</span><span>{describeColour(design.colorHex)}</span></div>
-        <div className="flex justify-between"><span>Artwork</span><span>{design.faceImages.length} image(s), {design.textElements.length} text(s)</span></div>
+        <div className="flex justify-between"><span>Artwork</span><span>{design.faceImages.length} image(s), {design.textElements.length} text(s), {design.stickers.length} cutout(s)</span></div>
       </Card>
     </div>
   );

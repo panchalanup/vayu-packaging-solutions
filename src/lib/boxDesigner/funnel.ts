@@ -17,6 +17,9 @@ export const DESIGNER_EVENTS = {
   export: 'designer_export',
   templateUsed: 'designer_template_used',
   wizardDone: 'designer_wizard_done',
+  stickerAdded: 'designer_sticker_added',
+  stickerPattern: 'designer_sticker_pattern',
+  surpriseMe: 'designer_surprise_me',
 } as const;
 
 export type DesignerEvent = (typeof DESIGNER_EVENTS)[keyof typeof DESIGNER_EVENTS];

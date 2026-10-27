@@ -220,6 +220,11 @@ export default function EstimatePanel({ design, update, capture, quoteHref }: Es
           {strength.headline}
         </p>
         <p className="text-xs text-muted-foreground">{strength.detail}</p>
+        {strength.warnings.map((note) => (
+          <p key={note} className="rounded-md border border-amber-300/60 bg-amber-50 px-2 py-1.5 text-xs text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+            {note}
+          </p>
+        ))}
         <label className="flex items-center gap-2 text-xs text-muted-foreground">
           <Weight className="h-3.5 w-3.5" aria-hidden="true" /> Each box weighs
           <input

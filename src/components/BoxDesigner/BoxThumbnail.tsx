@@ -37,8 +37,8 @@ export default function BoxThumbnail({ style, dimensions, colorHex, artUrl, clas
   const P = (x: number, y: number, z: number): [number, number] => [(x - y) * COS, (x + y) * 0.5 - z];
   const pts = (arr: [number, number, number][]) => arr.map((v) => P(...v).map((n) => n.toFixed(1)).join(',')).join(' ');
 
-  const openTop = style === 'hsc' || style === 'tray' || style === 'sleeve';
-  const lidLine = style === 'telescope' ? H * 0.62 : style === 'mailer' || style === 'pizza' ? H * 0.82 : null;
+  const openTop = style === 'hsc' || style === 'tray' || style === 'sleeve' || style === 'shelf-tray' || style === 'produce-tray';
+  const lidLine = style === 'telescope' ? H * 0.62 : ['mailer', 'pizza', 'window-mailer', 'cake-box', 'clamshell', 'book-box', 'slide-box'].includes(style) ? H * 0.82 : null;
 
   // Bounds for the viewBox
   const xs = [P(0, W, 0)[0], P(L, 0, 0)[0]];

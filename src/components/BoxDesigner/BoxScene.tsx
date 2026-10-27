@@ -16,7 +16,7 @@ import { getRigKey, type CartonLayout } from '@/lib/boxDesigner/styles/registry'
 import type { BoardSpec } from '@/lib/boxDesigner/boardSpecs';
 import { setSurfaceTextureAnisotropy } from '@/lib/boxDesigner/textures/surfaceTextures';
 import { printContentKey, renderPrintCanvas } from '@/lib/boxDesigner/textures/printLayer';
-import type { BoxFace, FaceImage, PrintFinish, TextElement } from '@/types/boxDesigner';
+import type { BoxFace, FaceImage, PrintFinish, StickerPlacement, TextElement } from '@/types/boxDesigner';
 
 interface BoxSceneProps {
   layout: CartonLayout;
@@ -31,6 +31,8 @@ interface BoxSceneProps {
   foldTarget: number;
   faceImages: FaceImage[];
   textElements: TextElement[];
+  /** Cutouts (stickers) on any surface */
+  stickers?: StickerPlacement[];
   showIcons: boolean;
   selectedFace: BoxFace | null;
   onFaceSelect: (face: BoxFace | null) => void;
@@ -39,6 +41,8 @@ interface BoxSceneProps {
   /** The live carton rig (null on unmount), for scenes that need it (snapshots, bounds) */
   onRigReady?: (rig: CartonRig | null) => void;
 }
+
+const NO_STICKERS: StickerPlacement[] = [];
 
 /** Wait for edits to settle before redrawing artwork (dimension drags, typing) */
 const PRINT_DEBOUNCE_MS = 120;
@@ -58,6 +62,7 @@ export default function BoxScene({
   foldTarget,
   faceImages,
   textElements,
+  stickers = NO_STICKERS,
   showIcons,
   selectedFace,
   onFaceSelect,
@@ -173,7 +178,10 @@ export default function BoxScene({
       for (const surface of rig.getPrintSurfaces()) {
         const image = faceImages.find((img) => img.face === surface.face);
         const texts = textElements.filter((text) => text.face === surface.face);
-        const options = { shippingIcons: showIcons && surface.face === 'front' };
+        const options = {
+          shippingIcons: showIcons && surface.face === 'front',
+          stickers: stickers.filter((s) => s.face === surface.face),
+        };
         const key = printContentKey(surface, image, texts, options);
         if (rig.getPrintKey(surface.face) === key) continue;
 
@@ -193,7 +201,7 @@ export default function BoxScene({
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [rig, layout, faceImages, textElements, showIcons, gl, invalidate]);
+  }, [rig, layout, faceImages, textElements, stickers, showIcons, gl, invalidate]);
 
   // Clean export: no grid, no selection, 2x resolution, rendered and read back in the same task
   // (so the canvas needs no preserveDrawingBuffer)

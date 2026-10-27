@@ -8,7 +8,29 @@
 import { z } from 'zod';
 import { PHONE_RE } from './quoteSchema';
 
-export const DESIGNER_STYLES = ['rsc', 'hsc', 'fol', 'sleeve', 'telescope', 'mailer', 'pizza', 'tray'] as const;
+// Mirrors BOX_TEMPLATE_IDS in src/types/boxDesigner.ts (no "@/" imports here); a test checks the two stay equal
+export const DESIGNER_STYLES = [
+  'rsc',
+  'hsc',
+  'fol',
+  'sleeve',
+  'telescope',
+  'mailer',
+  'pizza',
+  'tray',
+  'carry',
+  'produce',
+  'produce-tray',
+  'tuck-end',
+  'crash-lock',
+  'one-two-three',
+  'window-mailer',
+  'cake-box',
+  'clamshell',
+  'shelf-tray',
+  'slide-box',
+  'book-box',
+] as const;
 /** A Sheets cell holds 50,000 characters; the preview must leave room for the rest of the record */
 export const MAX_PREVIEW_CHARS = 30_000;
 export const MAX_SHARE_URL_CHARS = 9_000;
@@ -116,6 +138,18 @@ const STYLE_NAMES: Record<(typeof DESIGNER_STYLES)[number], string> = {
   mailer: 'Mailer (FEFCO 0427)',
   pizza: 'Pizza box',
   tray: 'Tray',
+  carry: 'Carry box with hand holes',
+  produce: 'Ventilated produce carton',
+  'produce-tray': 'Open produce tray (HSC)',
+  'tuck-end': 'Tuck-end carton',
+  'crash-lock': 'Crash-lock bottom box',
+  'one-two-three': '1-2-3 bottom box',
+  'window-mailer': 'Window mailer',
+  'cake-box': 'Window cake box',
+  clamshell: 'Takeaway clamshell',
+  'shelf-tray': 'Shelf display tray',
+  'slide-box': 'Slide box (tray and sleeve)',
+  'book-box': 'Book-style flip-lid box',
 };
 
 export const styleName = (style: DesignerSpec['style']) => STYLE_NAMES[style] ?? style;

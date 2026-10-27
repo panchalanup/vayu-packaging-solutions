@@ -5,6 +5,7 @@
  */
 
 import { CITIES, transitBand, type City } from '@/content/locations';
+import { getStyle } from './styles';
 
 export type Range = [number, number];
 
@@ -81,9 +82,9 @@ export function matchDestination(query: string): DeliveryMatch {
 
 export type JobType = keyof typeof PRODUCTION_DAYS;
 
-export function jobTypeOf(design: { template: string; faceImages: unknown[]; textElements: unknown[] }): JobType {
-  if (['mailer', 'pizza', 'tray'].includes(design.template)) return 'dieCut';
-  return design.faceImages.length > 0 || design.textElements.length > 0 ? 'printed' : 'plain';
+export function jobTypeOf(design: { template: string; faceImages: unknown[]; textElements: unknown[]; stickers?: unknown[] }): JobType {
+  if (['diecut', 'slide'].includes(getStyle(design.template).rigKind)) return 'dieCut';
+  return design.faceImages.length > 0 || design.textElements.length > 0 || (design.stickers?.length ?? 0) > 0 ? 'printed' : 'plain';
 }
 
 export interface DeliveryEstimate {

@@ -8,7 +8,8 @@ import { memo, useMemo } from 'react';
 import Canvas3D, { type CanvasStudioProps } from './Canvas3D';
 import BoxScene from './BoxScene';
 import { getBoardSpec, getBoardThicknessCm } from '@/lib/boxDesigner/boardSpecs';
-import { getLayoutViewExtents, getStyle } from '@/lib/boxDesigner/styles/registry';
+import { getLayoutViewExtents } from '@/lib/boxDesigner/styles/registry';
+import { layoutForDesign } from '@/lib/boxDesigner/styles/designLayout';
 import type { CartonRig } from '@/lib/boxDesigner/rig/panelRig';
 import type { BoxDesign, BoxFace } from '@/types/boxDesigner';
 
@@ -51,9 +52,9 @@ function BoxDesigner3D({
   const { lidDepth } = design;
   // Every style comes from the registry: the same layout drives the model, the artwork sizes and the dieline
   const layout = useMemo(
-    () => getStyle(template).computeLayout(dimensions, thickness, { lidDepth }),
+    () => layoutForDesign(design),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- depend on the numbers, not the object identity
-    [dimensions.length, dimensions.width, dimensions.height, thickness, template, lidDepth]
+    [dimensions.length, dimensions.width, dimensions.height, thickness, template, lidDepth, design.options.handHoles, design.options.vents, design.options.window, design.options.windowRatio, design.options.frontCut]
   );
   const extents = useMemo(() => getLayoutViewExtents(layout, foldTarget), [layout, foldTarget]);
 
@@ -78,6 +79,7 @@ function BoxDesigner3D({
         foldTarget={foldTarget}
         faceImages={design.faceImages}
         textElements={design.textElements}
+        stickers={design.stickers}
         showIcons={design.showIcons}
         selectedFace={selectedFace}
         onFaceSelect={onFaceSelect}

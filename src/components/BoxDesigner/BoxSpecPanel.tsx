@@ -17,9 +17,10 @@ import { formatDimensions, formatLength } from '@/lib/boxDesigner/units';
 import { BOX_COLOR_OPTIONS, DIMENSION_LIMITS, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
 import { getBoardSpec } from '@/lib/boxDesigner/boardSpecs';
 import { STYLES, getStyle, type StyleDefinition } from '@/lib/boxDesigner/styles/registry';
-import { dimensionsAfterStyleSwitch } from '@/lib/boxDesigner/styles/switchStyle';
+import { dimensionsAfterStyleSwitch, optionsAfterStyleSwitch } from '@/lib/boxDesigner/styles/switchStyle';
 import { layoutForDesign } from '@/lib/boxDesigner/styles/designLayout';
 import { resolveLidDepth } from '@/lib/boxDesigner/rig/telescopeLayout';
+import { DEFAULT_FRONT_RATIO } from '@/lib/boxDesigner/rig/dieCutLayout';
 import type { BoxDesign, BoxDimensions, PrintFinish } from '@/types/boxDesigner';
 
 type Update = (patch: Partial<BoxDesign> | ((d: BoxDesign) => Partial<BoxDesign>), key?: string) => void;
@@ -51,6 +52,55 @@ function StyleIcon({ style }: { style: StyleDefinition }) {
   );
 }
 
+const OPENING_TOGGLES = [
+  { key: 'handHoles', cap: 'hand', label: 'Hand holes', hint: 'A hand slot in each short wall' },
+  { key: 'vents', cap: 'vents', label: 'Vent slots', hint: 'Airflow and cooling for produce' },
+  { key: 'window', cap: 'window', label: 'Window', hint: 'A clear film window on the front' },
+] as const;
+
+/** Hand holes, vents and window: only the cut-outs this style offers (forced ones are part of the style) */
+function OpeningToggles({ design, style, update }: { design: BoxDesign; style: StyleDefinition; update: Update }) {
+  const offered = OPENING_TOGGLES.filter((t) => style.openings?.[t.cap] && !style.forcedOpenings?.[t.cap]);
+  if (offered.length === 0 && !(style.openings?.window && style.forcedOpenings?.window)) return null;
+  return (
+    <div className="space-y-2 border-t pt-3">
+      <p className="text-xs font-medium">Cut-outs</p>
+      {offered.map((t) => (
+        <div key={t.key} className="flex items-center justify-between gap-3">
+          <Label htmlFor={`opening-${t.key}`} className="text-xs">
+            {t.label}
+            <span className="block text-[11px] font-normal text-muted-foreground">{t.hint}</span>
+          </Label>
+          <Switch
+            id={`opening-${t.key}`}
+            checked={design.options[t.key]}
+            onCheckedChange={(on) => update((d) => ({ options: { ...d.options, [t.key]: on } }), `opening-${t.key}`)}
+          />
+        </div>
+      ))}
+      {style.openings?.window && (design.options.window || style.forcedOpenings?.window) && (
+        <div className="space-y-1">
+          <label htmlFor="window-ratio" className="flex justify-between text-xs text-muted-foreground">
+            <span>Window size</span>
+            <span className="font-medium text-ink-900">{Math.round(design.options.windowRatio * 100)}%</span>
+          </label>
+          <input
+            id="window-ratio"
+            type="range"
+            min={20}
+            max={85}
+            step={5}
+            value={Math.round(design.options.windowRatio * 100)}
+            onChange={(e) => update((d) => ({ options: { ...d.options, windowRatio: Number(e.target.value) / 100 } }), 'window-ratio')}
+            className="w-full accent-primary"
+          />
+        </div>
+      )}
+      <p className="text-[11px] text-muted-foreground">Shown on the model. The dieline has the true cut lines. Holes and vents lower stacking strength.</p>
+    </div>
+  );
+}
+
 export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPanelProps) {
   const { dimensions } = design;
   const board = getBoardSpec(design.ply, design.flutes);
@@ -59,9 +109,10 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
   const outside = useMemo(
     () => layoutForDesign(design).outside,
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the layout depends on these fields only
-    [design.template, design.dimensions, design.ply, design.flutes, design.lidDepth]
+    [design.template, design.dimensions, design.ply, design.flutes, design.lidDepth, design.options]
   );
   const lidDepth = resolveLidDepth(dimensions.height, design.lidDepth);
+  const frontShare = Math.round((design.options.frontCut > 0 ? 1 - design.options.frontCut : DEFAULT_FRONT_RATIO) * 100);
   const setDims = (patch: Partial<BoxDimensions>) => update((d) => ({ dimensions: { ...d.dimensions, ...patch } }));
 
   return (
@@ -80,7 +131,14 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
                 role="radio"
                 aria-checked={active}
                 onClick={() =>
-                  update((d) => ({ template: s.id, dimensions: dimensionsAfterStyleSwitch(d.template, s.id, d.dimensions) }), 'style')
+                  update(
+                    (d) => ({
+                      template: s.id,
+                      dimensions: dimensionsAfterStyleSwitch(d.template, s.id, d.dimensions),
+                      options: optionsAfterStyleSwitch(d.template, s.id, d.options),
+                    }),
+                    'style'
+                  )
                 }
                 title={s.description}
                 className={`p-2.5 rounded-lg border-2 text-left transition-all ${
@@ -98,6 +156,26 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
           })}
         </div>
         <p className="text-xs text-muted-foreground">{style.description}</p>
+        <OpeningToggles design={design} style={style} update={update} />
+        {style.id === 'shelf-tray' && (
+          <div className="space-y-1">
+            <label htmlFor="front-height" className="flex justify-between text-xs text-muted-foreground">
+              <span>Front wall height</span>
+              <span className="font-medium text-ink-900">{frontShare}% of the sides</span>
+            </label>
+            <input
+              id="front-height"
+              type="range"
+              min={15}
+              max={100}
+              step={5}
+              value={frontShare}
+              onChange={(e) => update((d) => ({ options: { ...d.options, frontCut: Math.min(0.9, 1 - Number(e.target.value) / 100) } }), 'front-cut')}
+              className="w-full accent-primary"
+            />
+            <p className="text-[11px] text-muted-foreground">Lower = easier to reach the products; higher = holds more.</p>
+          </div>
+        )}
         {style.id === 'telescope' && (
           <div className="space-y-1">
             <label htmlFor="lid-depth" className="flex justify-between text-xs text-muted-foreground">

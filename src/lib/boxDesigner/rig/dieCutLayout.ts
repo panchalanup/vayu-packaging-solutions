@@ -18,9 +18,16 @@
  */
 
 import type { BoxDimensions, BoxFace } from '@/types/boxDesigner';
+import { windowFor, type OpeningMap, type OpeningSpec } from './openings';
 import type { PrintTurns, SlabEdges } from './rscLayout';
 
-export type DieCutVariant = 'mailer' | 'pizza' | 'tray';
+/**
+ * Phase 2 variants of the same hinge tree: clamshell and book (single-wall base, lid on the back wall), shelf tray
+ * (tray with a cut-down front) and sleeve (the slide-box cover: bottom, front, top and a glue flap, open ends).
+ */
+export type DieCutVariant = 'mailer' | 'pizza' | 'tray' | 'clamshell' | 'shelf' | 'book' | 'sleeve';
+/** Which fold choreography the carton uses (see dieCutPose) */
+export type DieSchedule = 'full' | 'single' | 'sleeve';
 export type HingeSide = 'top' | 'bottom' | 'left' | 'right';
 export type DieFold =
   | 'front'
@@ -35,7 +42,8 @@ export type DieFold =
   | 'backInner'
   | 'lid'
   | 'lidFlaps'
-  | 'tuck';
+  | 'tuck'
+  | 'tongue';
 
 export interface DieRect {
   x0: number;
@@ -86,7 +94,22 @@ export interface DieCutLayout {
   blank: { length: number; height: number };
   /** Part of the die-cut fold timeline this carton uses (tray ends before the lid) */
   timelineEnd: number;
+  schedule: DieSchedule;
+  /** Cut-outs per printable face (window on the lid): decals in 3D, real cut lines in the dieline */
+  openings?: OpeningMap;
 }
+
+export interface DieCutOptions {
+  /** Shelf tray: front wall height as a share of the side walls (0.15 .. 1) */
+  frontRatio?: number;
+  /** Resolved openings; only the window is used (on the lid) */
+  openings?: OpeningSpec;
+}
+
+/** Fold-slider stop where the lid is open, for the single-wall schedule (full schedule: DIE_CUT_OPEN_STOP) */
+export const DIE_CUT_SINGLE_OPEN_STOP = 0.58;
+/** Shelf tray: front wall height share when the design does not choose one */
+export const DEFAULT_FRONT_RATIO = 0.45;
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const safeDim = (value: number) => (Number.isFinite(value) && value > 0 ? Math.max(1, value) : 1);
@@ -98,19 +121,30 @@ const NO_AO: DieAo = { left: false, right: false, bottom: false, top: false };
 export const DIE_CUT_OPEN_STOP = 0.68;
 const TRAY_END = 0.66;
 
-export function computeDieCutLayout(dims: BoxDimensions, thicknessCm: number, variant: DieCutVariant): DieCutLayout {
+export function computeDieCutLayout(
+  dims: BoxDimensions,
+  thicknessCm: number,
+  variant: DieCutVariant,
+  options: DieCutOptions = {}
+): DieCutLayout {
+  if (variant === 'sleeve') return computeSleeveLayout(dims, thicknessCm);
   const L = safeDim(dims.length);
   const W = safeDim(dims.width);
   const H = safeDim(dims.height);
   const smallest = Math.min(L, W, H);
   const t = clamp(Number.isFinite(thicknessCm) ? thicknessCm : 0.4, 0.05, smallest * 0.1);
-  const hasLid = variant !== 'tray';
+  // clamshell and book box: single-wall base (ears glued inside the side walls), lid hinged on the back wall
+  const single = variant === 'clamshell' || variant === 'book';
+  const hasLid = variant === 'mailer' || variant === 'pizza' || single;
 
-  const X = L / 2 + 3 * t; // outer face of the side walls
-  const Z = W / 2 + 2 * t; // outer face of the front / back walls
+  const X = L / 2 + (single ? 1 : 3) * t; // outer face of the side walls
+  const Z = W / 2 + (single ? 1 : 2) * t; // outer face of the front / back walls
   const Hs = H + t; // side and front walls: base (t) + inside height
   const Hb = hasLid ? Hs + t : Hs; // back wall carries the lid
   const c = 0.05; // clearance so tucked panels never touch the floor
+  // shelf tray: the front wall is cut down to a share of the side walls
+  const wantedFront = options.frontRatio != null && Number.isFinite(options.frontRatio) ? options.frontRatio : DEFAULT_FRONT_RATIO;
+  const Hf = variant === 'shelf' ? clamp(Hs * clamp(wantedFront, 0.15, 1), Math.min(Hs, 3 * t + 1), Hs) : Hs;
 
   const node = (
     id: string,
@@ -133,24 +167,26 @@ export function computeDieCutLayout(dims: BoxDimensions, thicknessCm: number, va
 
   const earDepth = Math.max(0.5, Z - 2 * t - 0.2);
   const earLow = t + c;
-  const earHigh = Math.max(earLow + 0.2, Hs - t - c);
   /** Ears on both ends of an end wall (front/back), folding back along the side walls */
-  const ears = (prefix: string, halfSpan: number, cutaway: boolean) => [
-    node(`${prefix}-ear-l`, { x0: earLow, x1: earHigh, y0: 0, y1: earDepth }, edges({ bottom: 'mitre' }), {
-      x: -halfSpan,
-      y: 0,
-      side: 'left',
-      inset: 0,
-      fold: 'ears',
-    }, [], { cutaway }),
-    node(`${prefix}-ear-r`, { x0: -earHigh, x1: -earLow, y0: 0, y1: earDepth }, edges({ bottom: 'mitre' }), {
-      x: halfSpan,
-      y: 0,
-      side: 'right',
-      inset: 0,
-      fold: 'ears',
-    }, [], { cutaway }),
-  ];
+  const ears = (prefix: string, halfSpan: number, cutaway: boolean, wallHeight: number) => {
+    const earHigh = Math.max(earLow + 0.2, wallHeight - t - c);
+    return [
+      node(`${prefix}-ear-l`, { x0: earLow, x1: earHigh, y0: 0, y1: earDepth }, edges({ bottom: 'mitre' }), {
+        x: -halfSpan,
+        y: 0,
+        side: 'left',
+        inset: 0,
+        fold: 'ears',
+      }, [], { cutaway }),
+      node(`${prefix}-ear-r`, { x0: -earHigh, x1: -earLow, y0: 0, y1: earDepth }, edges({ bottom: 'mitre' }), {
+        x: halfSpan,
+        y: 0,
+        side: 'right',
+        inset: 0,
+        fold: 'ears',
+      }, [], { cutaway }),
+    ];
+  };
 
   /** Roll-over strip + inner panel on top of a wall (2t strip for end walls, 3t for side walls) */
   const rollOver = (
@@ -184,47 +220,79 @@ export function computeDieCutLayout(dims: BoxDimensions, thicknessCm: number, va
 
   const front = node(
     'front',
-    { x0: -endHalf, x1: endHalf, y0: 0, y1: Hs },
+    { x0: -endHalf, x1: endHalf, y0: 0, y1: Hf },
     edges({ bottom: 'mitre', top: 'mitre', left: 'mitre', right: 'mitre' }),
     { x: 0, y: Z, side: 'top', inset: 0, fold: 'front' },
-    [...ears('front', endHalf, true), rollOver('front', Hs, innerHalf, 2 * t, ['frontRoll', 'frontInner'], true)],
+    [
+      ...ears('front', endHalf, true, Hf),
+      ...(single ? [] : [rollOver('front', Hf, innerHalf, 2 * t, ['frontRoll', 'frontInner'], true)]),
+    ],
     { face: 'front', cutaway: true, ao: { left: false, right: false, bottom: true, top: false } }
   );
 
-  const lidDepth = 2 * Z;
+  const book = variant === 'book';
+  const lidHalf = single ? X : endHalf; // a single-wall lid also covers the side wall tops
+  const lidDepth = 2 * Z + (book ? t : 0); // the book lip hangs outside the front wall
   const tuckDepth = Math.max(0.5, Math.min(Hs - 2 * t - c, 0.75 * Hs));
   const dustDepth = Math.max(0.5, Math.min(Hs - 2 * t - c, 0.7 * Hs));
   const dustLow = t + 0.1;
   const dustHigh = Math.max(dustLow + 0.2, lidDepth - 3 * t - 0.1);
-  const lidInset = endHalf - L / 2; // = 2t: dust flaps fold down inside the inner side walls
+  // dust flaps fold down inside the inner side walls (mailer) or inside the glued ears (clamshell)
+  const lidInset = lidHalf - (single ? L / 2 - t : L / 2);
+  // book lip: hangs over the front wall, its tongue goes through the wall (the tuck closure)
+  const lipDepth = Math.min(Math.max(Hs * 0.5, 2 * t + 1.5), Math.max(2 * t + 1.5, Hs - 3 * t));
+  const tongueDepth = 2 * t + 1.2;
+  const tongueHalf = Math.min(4, Math.max(1, L * 0.15));
+
+  const lidChildren: DieNode[] = book
+    ? [
+        node(
+          'lip',
+          { x0: -lidHalf, x1: lidHalf, y0: 0, y1: lipDepth },
+          edges({ bottom: 'mitre', top: 'mitre' }),
+          { x: 0, y: lidDepth, side: 'top', inset: 0, fold: 'tuck' },
+          [
+            node('tongue', { x0: -tongueHalf, x1: tongueHalf, y0: 0, y1: tongueDepth }, edges({ bottom: 'mitre' }), {
+              x: 0,
+              y: lipDepth,
+              side: 'top',
+              inset: 0,
+              fold: 'tongue',
+            }),
+          ],
+          // the lip reads upright from the front after the same half turn as the lid
+          { face: 'lid-front', printTurns: 2 }
+        ),
+      ]
+    : [
+        node(
+          'tuck',
+          { x0: -(L / 2 - t - 0.1), x1: L / 2 - t - 0.1, y0: 0, y1: tuckDepth },
+          CUT,
+          { x: 0, y: lidDepth, side: 'top', inset: Z - W / 2, fold: 'tuck' }
+        ),
+        node('dust-l', { x0: dustLow, x1: dustHigh, y0: 0, y1: dustDepth }, CUT, {
+          x: -lidHalf,
+          y: 0,
+          side: 'left',
+          inset: lidInset,
+          fold: 'lidFlaps',
+        }),
+        node('dust-r', { x0: -dustHigh, x1: -dustLow, y0: 0, y1: dustDepth }, CUT, {
+          x: lidHalf,
+          y: 0,
+          side: 'right',
+          inset: lidInset,
+          fold: 'lidFlaps',
+        }),
+      ];
 
   const lid = node(
     'lid',
-    { x0: -endHalf, x1: endHalf, y0: 0, y1: lidDepth },
-    edges({ bottom: 'mitre' }),
+    { x0: -lidHalf, x1: lidHalf, y0: 0, y1: lidDepth },
+    edges(book ? { bottom: 'mitre', top: 'mitre' } : { bottom: 'mitre' }),
     { x: 0, y: Hb, side: 'top', inset: 0, fold: 'lid' },
-    [
-      node(
-        'tuck',
-        { x0: -(L / 2 - t - 0.1), x1: L / 2 - t - 0.1, y0: 0, y1: tuckDepth },
-        CUT,
-        { x: 0, y: lidDepth, side: 'top', inset: 2 * t, fold: 'tuck' }
-      ),
-      node('dust-l', { x0: dustLow, x1: dustHigh, y0: 0, y1: dustDepth }, CUT, {
-        x: -endHalf,
-        y: 0,
-        side: 'left',
-        inset: lidInset,
-        fold: 'lidFlaps',
-      }),
-      node('dust-r', { x0: -dustHigh, x1: -dustLow, y0: 0, y1: dustDepth }, CUT, {
-        x: endHalf,
-        y: 0,
-        side: 'right',
-        inset: lidInset,
-        fold: 'lidFlaps',
-      }),
-    ],
+    lidChildren,
     // the lid's +y points to the front when closed: half a turn reads upright from the front
     { face: 'lid', printTurns: 2, ao: NO_AO }
   );
@@ -235,8 +303,8 @@ export function computeDieCutLayout(dims: BoxDimensions, thicknessCm: number, va
     edges({ bottom: 'mitre', top: 'mitre', left: 'mitre', right: 'mitre' }),
     { x: 0, y: -Z, side: 'bottom', inset: 0, fold: 'back' },
     [
-      ...ears('back', endHalf, false),
-      hasLid ? lid : rollOver('back', Hs, innerHalf, 2 * t, ['backRoll', 'backInner'], false),
+      ...ears('back', endHalf, false, Hs),
+      ...(hasLid ? [lid] : [rollOver('back', Hs, innerHalf, 2 * t, ['backRoll', 'backInner'], false)]),
     ],
     { face: 'back', ao: { left: false, right: false, bottom: true, top: false } }
   );
@@ -248,7 +316,7 @@ export function computeDieCutLayout(dims: BoxDimensions, thicknessCm: number, va
       { x0: -Z, x1: Z, y0: 0, y1: Hs },
       edges({ bottom: 'mitre', top: 'mitre' }),
       { x: id === 'left' ? -X : X, y: 0, side: id, inset: 0, fold: 'sides' },
-      [rollOver(id, Hs, sideHalf, 3 * t, ['sideRoll', 'sideInner'], false)],
+      single ? [] : [rollOver(id, Hs, sideHalf, 3 * t, ['sideRoll', 'sideInner'], false)],
       { face: id, ao: { left: false, right: false, bottom: true, top: false } }
     );
 
@@ -261,17 +329,109 @@ export function computeDieCutLayout(dims: BoxDimensions, thicknessCm: number, va
     { ao: { left: true, right: true, bottom: true, top: true } }
   );
 
+  const win = hasLid && options.openings?.window ? windowFor(2 * lidHalf, lidDepth, options.openings.windowRatio) : null;
   const flat = flatBounds(root);
   return {
     kind: 'diecut',
     variant,
     hasLid,
     inside: { length: L, width: W, height: H },
-    outside: { length: 2 * X, width: 2 * Z, height: Hb },
+    outside: { length: 2 * X, width: 2 * Z + (book ? t : 0), height: Hb },
     thickness: t,
     root,
     blank: { length: flat.x1 - flat.x0, height: flat.y1 - flat.y0 },
     timelineEnd: hasLid ? 1 : TRAY_END,
+    schedule: single ? 'single' : 'full',
+    ...(win ? { openings: { lid: [win] } } : {}),
+  };
+}
+
+/**
+ * Slide-box sleeve: a tube open at both ends that the tray slides out of. `inside` is the clear opening:
+ * length = along the slide direction, width x height = the cross section.
+ *
+ * Blank (one strip): bottom panel in the middle, the front wall up one side with the top panel hinged on it, and the
+ * back wall on the other side; a glue flap on the top panel's far edge folds down inside the back wall.
+ */
+export function computeSleeveLayout(inside: BoxDimensions, thicknessCm: number): DieCutLayout {
+  const Li = safeDim(inside.length);
+  const Wi = safeDim(inside.width);
+  const Hi = safeDim(inside.height);
+  const t = clamp(Number.isFinite(thicknessCm) ? thicknessCm : 0.4, 0.05, Math.min(Li, Wi, Hi) * 0.1);
+  const Xs = Li / 2;
+  const Zs = Wi / 2 + t;
+  const Hw = Hi + 2 * t; // bottom + inside + top
+  const flapDepth = clamp(Hi * 0.5, 0.8, 2);
+  const wallAo: DieAo = { left: false, right: false, bottom: true, top: false };
+
+  const node = (
+    id: string,
+    rect: DieRect,
+    edgeKinds: SlabEdges,
+    hinge: DieHinge | null,
+    children: DieNode[] = [],
+    extra: Partial<Pick<DieNode, 'face' | 'cutaway' | 'ao'>> = {}
+  ): DieNode => ({
+    id,
+    face: extra.face ?? null,
+    printTurns: 0,
+    rect,
+    edges: edgeKinds,
+    ao: extra.ao ?? NO_AO,
+    cutaway: extra.cutaway ?? false,
+    hinge,
+    children,
+  });
+
+  const glue = node('glue', { x0: -(Xs - 0.6), x1: Xs - 0.6, y0: 0, y1: flapDepth }, CUT, {
+    x: 0,
+    y: 2 * Zs,
+    side: 'top',
+    inset: t, // hangs against the inside of the back wall
+    fold: 'lidFlaps',
+  });
+  const top = node(
+    'lid',
+    { x0: -Xs, x1: Xs, y0: 0, y1: 2 * Zs },
+    edges({ bottom: 'mitre' }),
+    { x: 0, y: Hw, side: 'top', inset: 0, fold: 'lid' },
+    [glue],
+    { face: 'lid' }
+  );
+  const front = node(
+    'front',
+    { x0: -Xs, x1: Xs, y0: 0, y1: Hw },
+    edges({ bottom: 'mitre', top: 'mitre' }),
+    { x: 0, y: Zs, side: 'top', inset: 0, fold: 'front' },
+    [top],
+    { face: 'lid-front', cutaway: true, ao: wallAo }
+  );
+  // one board thick lower, so the top panel rests on it
+  const back = node(
+    'back',
+    { x0: -Xs, x1: Xs, y0: 0, y1: Hw - t },
+    edges({ bottom: 'mitre' }),
+    { x: 0, y: -Zs, side: 'bottom', inset: 0, fold: 'back' },
+    [],
+    { face: 'lid-back', ao: wallAo }
+  );
+  const root = node('base', { x0: -Xs, x1: Xs, y0: -Zs, y1: Zs }, edges({ bottom: 'mitre', top: 'mitre' }), null, [front, back], {
+    face: 'bottom',
+    ao: { left: false, right: false, bottom: true, top: true },
+  });
+
+  const flat = flatBounds(root);
+  return {
+    kind: 'diecut',
+    variant: 'sleeve',
+    hasLid: false,
+    inside: { length: Li, width: Wi, height: Hi },
+    outside: { length: 2 * Xs, width: 2 * Zs, height: Hw },
+    thickness: t,
+    root,
+    blank: { length: flat.x1 - flat.x0, height: flat.y1 - flat.y0 },
+    timelineEnd: 1,
+    schedule: 'sleeve',
   };
 }
 

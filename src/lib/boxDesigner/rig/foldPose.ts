@@ -27,12 +27,18 @@ export interface RigPose {
   /** Second major flap of a full-overlap end (FEFCO 0203); equals the major angle otherwise */
   topOuter: number;
   bottomOuter: number;
+  /** Tuck tab beyond a lid flap: 0 = in line with the flap, PI/2 = folded down inside the opposite wall */
+  topTuck: number;
+  bottomTuck: number;
 }
 
 export interface PoseOptions {
   /** Full-overlap ends close in three steps: minor, inner major, outer major */
   overlapTop?: boolean;
   overlapBottom?: boolean;
+  /** Tuck-end closures: dust flaps (minor), lid (major), then the tuck tab */
+  tuckTop?: boolean;
+  tuckBottom?: boolean;
 }
 
 export const FOLD_STOPS = { flat: 0, openTop: 0.72, sealed: 1 } as const;
@@ -55,7 +61,13 @@ export function poseFromProgress(progress: number, options: PoseOptions = {}): R
   let topMinor: number;
   let topMajor: number;
   let topOuter: number;
-  if (options.overlapTop) {
+  let topTuck = 0;
+  if (options.tuckTop) {
+    topMinor = close(0.72, 0.83);
+    topMajor = close(0.81, 0.93);
+    topOuter = topMajor;
+    topTuck = HALF_PI * segment(u, 0.91, 1);
+  } else if (options.overlapTop) {
     topMinor = close(0.72, 0.81);
     topMajor = close(0.8, 0.9);
     topOuter = close(0.89, 1);
@@ -64,9 +76,11 @@ export function poseFromProgress(progress: number, options: PoseOptions = {}): R
     topMajor = close(0.84, 1);
     topOuter = topMajor;
   }
-  const bottomMinor = HALF_PI * (options.overlapBottom ? segment(u, 0.5, 0.58) : segment(u, 0.5, 0.61));
-  const bottomMajor = HALF_PI * (options.overlapBottom ? segment(u, 0.57, 0.65) : segment(u, 0.6, 0.72));
+  const staged = options.overlapBottom || options.tuckBottom;
+  const bottomMinor = HALF_PI * (staged ? segment(u, 0.5, 0.58) : segment(u, 0.5, 0.61));
+  const bottomMajor = HALF_PI * (staged ? segment(u, 0.57, 0.65) : segment(u, 0.6, 0.72));
   const bottomOuter = options.overlapBottom ? HALF_PI * segment(u, 0.64, 0.72) : bottomMajor;
+  const bottomTuck = options.tuckBottom ? HALF_PI * segment(u, 0.64, 0.72) : 0;
 
   return {
     tilt: -HALF_PI * (1 - segment(u, 0.3, 0.5)),
@@ -83,5 +97,7 @@ export function poseFromProgress(progress: number, options: PoseOptions = {}): R
     topMinor,
     topMajor,
     topOuter,
+    topTuck,
+    bottomTuck,
   };
 }

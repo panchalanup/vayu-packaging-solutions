@@ -12,11 +12,23 @@
 import type { BoxDimensions, BoxFace, BoxTemplate } from '@/types/boxDesigner';
 import { computeRscLayout, getFaceSizes, getViewExtents, smooth, type FaceSizes, type RscLayout, type ViewExtents } from '../rig/rscLayout';
 import { computeTelescopeLayout, getTelescopeViewExtents, TELESCOPE_LID_OFF, type TelescopeLayout } from '../rig/telescopeLayout';
-import { computeDieCutLayout, DIE_CUT_OPEN_STOP, getDieCutFaceSizes, type DieCutLayout } from '../rig/dieCutLayout';
-import { buildDieCutDieline, buildDieline, buildTelescopeDieline, type Dieline, type DielineMeta } from '../dieline';
+import {
+  computeDieCutLayout,
+  DIE_CUT_OPEN_STOP,
+  getDieCutFaceSizes,
+  type DieCutLayout,
+} from '../rig/dieCutLayout';
+import { getSlideViewExtents, type SlideLayout } from '../rig/slideLayout';
+import { DIE_CUT_PHASE2_STYLES } from './phase2DieCut';
+import type { OpeningCaps, OpeningMap, OpeningSpec } from '../rig/openings';
+import { mergeOpenings, resolveOpeningSpec } from '../rig/openings';
+import { buildDieCutDieline, buildDieline, buildSlideDieline, buildTelescopeDieline, type Dieline, type DielineMeta } from '../dieline';
 
-export type CartonLayout = RscLayout | TelescopeLayout | DieCutLayout;
-export type RigKind = 'slotted' | 'telescope' | 'diecut';
+export type CartonLayout = RscLayout | TelescopeLayout | DieCutLayout | SlideLayout;
+export type RigKind = 'slotted' | 'telescope' | 'diecut' | 'slide';
+
+/** Picker groups, in display order */
+export type StyleGroup = 'Shipping' | 'Retail & gifts' | 'Food & bakery' | 'Fruit & produce' | 'Display';
 
 export interface FoldStop {
   label: string;
@@ -27,6 +39,10 @@ export interface FoldStop {
 export interface StyleLayoutOptions {
   /** Telescope lid depth (cm); null = automatic */
   lidDepth?: number | null;
+  /** Resolved cut-outs (hand holes, vents, window); a style only uses what it offers */
+  openings?: OpeningSpec;
+  /** Shelf tray: how much of the front wall is cut away (design option `frontCut`, 0..0.9; 0 = style default) */
+  frontCut?: number;
 }
 
 export interface StyleDefinition {
@@ -41,6 +57,14 @@ export interface StyleDefinition {
   /** 24x24 line icon (SVG path data, stroke only) */
   iconPath: string;
   rigKind: RigKind;
+  /** Picker group */
+  group?: StyleGroup;
+  /** Cut-outs the style can offer (the design options switch them on) */
+  openings?: OpeningCaps;
+  /** Cut-outs that are always part of the style (window mailer, cake box): the UI hides their toggle */
+  forcedOpenings?: OpeningCaps;
+  /** What an option left undefined means for this style (a carry box has hand holes unless switched off) */
+  openingDefaults?: Partial<OpeningSpec>;
   defaultDims: BoxDimensions;
   /** Named points of the fold slider */
   foldStops: FoldStop[];
@@ -66,6 +90,14 @@ const LID_STOPS: FoldStop[] = [
   { label: 'Open lid', value: Math.round(DIE_CUT_OPEN_STOP * 100) },
   { label: 'Closed', value: 100 },
 ];
+
+/** Cut-outs a slotted style actually draws: the design options, limited to what the style offers */
+const openingsOf = (id: BoxTemplate, options?: StyleLayoutOptions): OpeningSpec => {
+  const style = getStyle(id);
+  return resolveOpeningSpec(style.openings, options?.openings, style.openingDefaults, style.forcedOpenings);
+};
+
+const TUCK_FACES: BoxFace[] = ['lid', ...WALLS, 'bottom'];
 
 // VERIFY-LATER[DSG-41]: confirm the FEFCO codes for telescope (0320) and pizza / tray (0427 family) with the owner
 export const STYLES: readonly StyleDefinition[] = [
@@ -185,6 +217,124 @@ export const STYLES: readonly StyleDefinition[] = [
     faces: WALLS,
     computeLayout: (dims, t) => computeDieCutLayout(dims, t, 'tray'),
   },
+
+  // ---- Phase 2, slotted family (workstream G1) ------------------------------------------------------------------
+  // VERIFY-LATER[DSG-70]: FEFCO codes for the carry, ventilated produce, tuck-end, crash-lock and 1-2-3 styles are left
+  // empty (sources disagree); the open produce tray is an HSC (0200). Confirm with the owner before showing codes.
+  {
+    id: 'carry',
+    name: 'Carry box with hand holes',
+    shortName: 'Carry box',
+    fefco: '',
+    group: 'Shipping',
+    description: 'A sealed slotted carton with a hand hole in each short wall, so it can be lifted and carried.',
+    bestFor: 'Gifts and hampers to carry, sweets, appliances, moving and storage',
+    iconPath: 'M3 8l9-4 9 4v9l-9 4-9-4z M3 8l9 4 9-4 M12 12v9 M5.5 12.8l4 1.6',
+    rigKind: 'slotted',
+    openings: { hand: true },
+    openingDefaults: { handHoles: true },
+    defaultDims: { length: 40, width: 30, height: 25 },
+    foldStops: SEALED_STOPS,
+    faces: [...WALLS, ...TOPS],
+    computeLayout: (dims, t, options) => computeRscLayout(dims, t, { openings: openingsOf('carry', options) }),
+  },
+  {
+    id: 'produce',
+    name: 'Ventilated produce carton',
+    shortName: 'Produce carton',
+    fefco: '',
+    group: 'Fruit & produce',
+    description: 'A sealed slotted carton with vent slots and hand holes for airflow, cooling and carrying.',
+    bestFor: 'Mangoes, apples, grapes, vegetables and other fresh produce',
+    iconPath: 'M3 8l9-4 9 4v9l-9 4-9-4z M3 8l9 4 9-4 M12 12v9 M5.5 11.5v3.5 M7.5 12.5v3.5 M9.5 13.5v3.5',
+    rigKind: 'slotted',
+    openings: { hand: true, vents: true },
+    openingDefaults: { vents: true, handHoles: true },
+    defaultDims: { length: 40, width: 30, height: 20 },
+    foldStops: SEALED_STOPS,
+    faces: [...WALLS, ...TOPS],
+    computeLayout: (dims, t, options) => computeRscLayout(dims, t, { openings: openingsOf('produce', options) }),
+  },
+  {
+    id: 'produce-tray',
+    name: 'Open produce tray (HSC)',
+    shortName: 'Produce tray',
+    fefco: '0200',
+    group: 'Fruit & produce',
+    description: 'A low open tray with vent slots: stackable, easy to fill and see into.',
+    bestFor: 'Berries, tomatoes, small fruit, market and shelf display',
+    iconPath: 'M3 11l9 4 9-4 M3 11v5l9 4 9-4v-5 M12 15v5 M3 11l9-4 9 4 M6 13.5v2 M8.5 14.5v2 M11 15.5v2',
+    rigKind: 'slotted',
+    openings: { hand: true, vents: true },
+    openingDefaults: { vents: true },
+    defaultDims: { length: 40, width: 30, height: 12 },
+    foldStops: ASSEMBLED_STOPS,
+    faces: WALLS,
+    computeLayout: (dims, t, options) => computeRscLayout(dims, t, { topFlaps: false, openings: openingsOf('produce-tray', options) }),
+  },
+  {
+    id: 'tuck-end',
+    name: 'Tuck-end carton',
+    shortName: 'Tuck-end',
+    fefco: '',
+    group: 'Retail & gifts',
+    description: 'A folding carton: a tube with a lid flap and tuck tab at each end. Opens and closes without tape.',
+    bestFor: 'Cosmetics, soap, small retail packs, cards and light gifts',
+    iconPath: 'M7 8l5-3 5 3v10l-5 3-5-3z M7 8l5 3 5-3 M12 11v10 M9 6.5l5-2.5 1.5 2',
+    rigKind: 'slotted',
+    openings: { window: true },
+    defaultDims: { length: 12, width: 8, height: 14 },
+    foldStops: SEALED_STOPS,
+    faces: TUCK_FACES,
+    computeLayout: (dims, t, options) =>
+      computeRscLayout(dims, t, { topClosure: 'tuck', bottomClosure: 'tuck', openings: openingsOf('tuck-end', options) }),
+  },
+  {
+    id: 'crash-lock',
+    name: 'Crash-lock bottom box',
+    shortName: 'Crash-lock',
+    fefco: '',
+    group: 'Retail & gifts',
+    description: 'The bottom locks itself when the box is opened out (pre-glued), with a tuck top. Strong for heavy items.',
+    bestFor: 'Bottles, jars, heavier retail packs and quick-to-set-up packing lines',
+    iconPath: 'M5 5h14v10l-7 5-7-5z M5 15l7 1 7-1 M12 16v4 M5 15l7 5 M19 15l-7 5',
+    rigKind: 'slotted',
+    openings: { window: true },
+    // VERIFY-LATER[DSG-71]: the 3D crash-lock bottom is two overlapping long flaps; confirm the crease pattern with the die maker
+    defaultDims: { length: 20, width: 15, height: 25 },
+    foldStops: SEALED_STOPS,
+    faces: TUCK_FACES,
+    computeLayout: (dims, t, options) =>
+      computeRscLayout(dims, t, {
+        topClosure: 'tuck',
+        bottomClosure: 'lock',
+        overlapBottom: true,
+        openings: openingsOf('crash-lock', options),
+      }),
+  },
+  {
+    id: 'one-two-three',
+    name: '1-2-3 bottom box',
+    shortName: '1-2-3 bottom',
+    fefco: '',
+    group: 'Retail & gifts',
+    description: 'Three bottom flaps fold in order 1, 2, 3 and lock, with a tuck top. Lighter than crash-lock, quick to set up by hand.',
+    bestFor: 'Light to medium retail packs, food and gift items packed by hand (crash-lock suits heavier goods)',
+    iconPath: 'M4 8h16v11H4z M4 13h16 M9 8v11 M14 8v11',
+    rigKind: 'slotted',
+    openings: { window: true },
+    defaultDims: { length: 20, width: 15, height: 20 },
+    foldStops: SEALED_STOPS,
+    faces: TUCK_FACES,
+    computeLayout: (dims, t, options) =>
+      computeRscLayout(dims, t, {
+        topClosure: 'tuck',
+        overlapBottom: true,
+        bottomOuterFace: 'bottom',
+        openings: openingsOf('one-two-three', options),
+      }),
+  },
+  ...DIE_CUT_PHASE2_STYLES,
 ];
 
 const BY_ID = new Map(STYLES.map((s) => [s.id, s]));
@@ -196,6 +346,25 @@ export function getStyle(id: BoxTemplate | string): StyleDefinition {
 
 export const STYLE_IDS: readonly BoxTemplate[] = STYLES.map((s) => s.id);
 
+export const STYLE_GROUPS: readonly StyleGroup[] = ['Shipping', 'Retail & gifts', 'Food & bakery', 'Fruit & produce', 'Display'];
+
+/** Picker group of the styles built before groups existed */
+const BASE_GROUPS: Partial<Record<BoxTemplate, StyleGroup>> = {
+  rsc: 'Shipping',
+  hsc: 'Shipping',
+  fol: 'Shipping',
+  sleeve: 'Shipping',
+  mailer: 'Shipping',
+  telescope: 'Retail & gifts',
+  pizza: 'Food & bakery',
+  tray: 'Display',
+};
+
+/** Picker group of a style (its own `group`, else the base table, else Shipping) */
+export function getStyleGroup(style: Pick<StyleDefinition, 'id' | 'group'>): StyleGroup {
+  return style.group ?? BASE_GROUPS[style.id] ?? 'Shipping';
+}
+
 /** Real size (cm) of every printable surface, as the artwork is laid out */
 export function getLayoutFaceSizes(layout: CartonLayout): FaceSizes {
   switch (layout.kind) {
@@ -205,6 +374,8 @@ export function getLayoutFaceSizes(layout: CartonLayout): FaceSizes {
       return { ...getFaceSizes(layout.lid), ...getFaceSizes(layout.base) };
     case 'diecut':
       return getDieCutFaceSizes(layout);
+    case 'slide':
+      return { ...getDieCutFaceSizes(layout.sleeve), ...getDieCutFaceSizes(layout.tray) };
   }
 }
 
@@ -213,7 +384,8 @@ function getDieCutViewExtents(layout: DieCutLayout, foldProgress: number): ViewE
   const u = p * layout.timelineEnd;
   const { outside, blank, thickness, hasLid } = layout;
   const flatRadius = 0.5 * Math.hypot(blank.length, blank.height) * 0.9;
-  const lidOpen = hasLid ? smooth(0.14, 0.3, u) * (1 - smooth(0.76, 1, u)) : 0;
+  const single = layout.schedule === 'single';
+  const lidOpen = hasLid ? smooth(single ? 0.2 : 0.14, 0.3, u) * (1 - smooth(single ? 0.72 : 0.76, 1, u)) : 0;
   const height = outside.height + lidOpen * outside.width * 0.94;
   const depth = outside.width + lidOpen * outside.width * 0.34;
   const standing = smooth(0.1, 0.45, u);
@@ -234,6 +406,8 @@ export function getLayoutViewExtents(layout: CartonLayout, foldProgress: number)
       return getTelescopeViewExtents(layout, foldProgress);
     case 'diecut':
       return getDieCutViewExtents(layout, foldProgress);
+    case 'slide':
+      return getSlideViewExtents(layout, foldProgress);
   }
 }
 
@@ -246,6 +420,8 @@ export function buildLayoutDieline(layout: CartonLayout, meta: DielineMeta): Die
       return buildTelescopeDieline(layout, meta);
     case 'diecut':
       return buildDieCutDieline(layout, meta);
+    case 'slide':
+      return buildSlideDieline(layout, meta);
   }
 }
 
@@ -260,8 +436,21 @@ export function getRigKey(layout: CartonLayout): string {
     case 'telescope':
       return 'telescope';
     case 'diecut':
-      return layout.hasLid ? 'diecut-lid' : 'diecut-tray';
+      // phase 2 variants with another hinge tree need their own rig
+      return (layout.hasLid ? 'diecut-lid' : 'diecut-tray') + (['clamshell', 'book', 'sleeve'].includes(layout.variant) ? `-${layout.variant}` : '');
+    case 'slide':
+      return 'slide';
   }
+}
+
+/**
+ * Cut-outs of a layout of any kind, merged per face: slotted layouts carry `openings`, telescope merges lid and
+ * base, die-cut / other layouts may carry an optional `openings` field of the same shape.
+ */
+export function getLayoutOpenings(layout: CartonLayout): OpeningMap {
+  if (layout.kind === 'telescope') return mergeOpenings(layout.base.openings, layout.lid.openings);
+  const own = (layout as { openings?: OpeningMap }).openings;
+  return own ?? {};
 }
 
 /** Outside dimensions (cm) of the assembled carton */

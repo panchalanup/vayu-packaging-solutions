@@ -4,12 +4,12 @@
  * ranges and are only ever used as form defaults, never as HTML or URLs.
  */
 
-import type { BoxDesign, PlyType, BoxTemplate } from '@/types/boxDesigner';
+import { BOX_TEMPLATE_IDS, type BoxDesign, type PlyType, type BoxTemplate } from '@/types/boxDesigner';
 import { DEFAULT_DESIGN, encodeShareHash } from '@/lib/boxDesigner/designCodec';
 import { DIMENSION_LIMITS, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
 
 const PLIES: readonly PlyType[] = ['3-ply', '5-ply', '7-ply'];
-const STYLES: readonly BoxTemplate[] = ['rsc', 'hsc', 'fol', 'sleeve', 'telescope', 'mailer', 'pizza', 'tray'];
+const STYLES: readonly BoxTemplate[] = BOX_TEMPLATE_IDS;
 
 export interface FinderPrefill {
   length_mm?: number;

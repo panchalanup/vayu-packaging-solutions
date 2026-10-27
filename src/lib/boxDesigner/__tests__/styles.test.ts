@@ -38,7 +38,7 @@ const finite = (n: number) => Number.isFinite(n);
 
 describe('style registry', () => {
   it('has all eight styles with names, best-for text, icons and fold stops', () => {
-    expect(STYLES.map((s) => s.id)).toEqual(['rsc', 'hsc', 'fol', 'sleeve', 'telescope', 'mailer', 'pizza', 'tray']);
+    expect(STYLES.map((s) => s.id).slice(0, 8)).toEqual(['rsc', 'hsc', 'fol', 'sleeve', 'telescope', 'mailer', 'pizza', 'tray']);
     for (const s of STYLES) {
       expect(s.bestFor.length).toBeGreaterThan(5);
       expect(s.iconPath).toMatch(/^M/);
@@ -72,7 +72,7 @@ describe('style registry', () => {
 
   it('picks one rig per kind (mailer and pizza share a topology)', () => {
     const keys = STYLES.map((s) => getRigKey(s.computeLayout(DIMS, T)));
-    expect(keys).toEqual(['slotted', 'slotted', 'slotted', 'slotted', 'telescope', 'diecut-lid', 'diecut-lid', 'diecut-tray']);
+    expect(keys.slice(0, 8)).toEqual(['slotted', 'slotted', 'slotted', 'slotted', 'telescope', 'diecut-lid', 'diecut-lid', 'diecut-tray']);
     expect(dieTopology(computeDieCutLayout(DIMS, T, 'mailer'))).toBe(dieTopology(computeDieCutLayout({ length: 40, width: 40, height: 5 }, 0.3, 'pizza')));
   });
 });
@@ -186,7 +186,7 @@ describe('dielines', () => {
       expect(d.lines.some((l) => l.kind === 'score')).toBe(true);
       expect(d.lines.every((l) => [l.x1, l.y1, l.x2, l.y2].every(finite))).toBe(true);
       expect(d.width).toBeGreaterThan(0);
-      expect(d.pieces.length).toBe(s.id === 'telescope' ? 2 : 1);
+      expect(d.pieces.length).toBe(s.id === 'telescope' || s.id === 'slide-box' ? 2 : 1);
     }
   });
 
