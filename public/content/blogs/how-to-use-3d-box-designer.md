@@ -1,16 +1,17 @@
 ---
-title: "How to Use the 3D Box Designer: A Complete Step-by-Step Guide"
+title: "How to Use the 3D Box Designer: Step-by-Step Guide"
 slug: "how-to-use-3d-box-designer"
-description: "A walk-through of the free 3D Box Designer: pick a style, set the size in mm, cm or inches, choose the board, add your logo, check the indicative price and send the design for a quote."
+description: "Step-by-step guide to the free 3D Box Designer: pick a style, set the size, add your logo, check strength and price, then send the design for a quote."
 category: "Designer Guides"
 date: "2026-10-26"
-readingTime: "10 min read"
+updated: "2026-10-27"
+readingTime: "11 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-01-thumbnail"
 socialImage: "BLOG-DG-01-social"
 ---
 
-# How to Use the 3D Box Designer: A Complete Step-by-Step Guide
+# How to Use the 3D Box Designer: Step-by-Step Guide
 
 Ordering a custom corrugated box usually means describing it in words: "about this big, brown, our logo on the front, strong enough for 5 kg". Words leave a lot of room for guessing, and guesses are what turn into wrong-sized or wrongly printed boxes.
 
@@ -19,8 +20,6 @@ The free **3D Box Designer** replaces the guessing with a box you can see. You s
 This guide walks through the whole tool, step by step, in the order most people use it. Keep it open in one tab and the designer in another.
 
 [Open the 3D Box Designer](/box-designer)
-
-<!-- VERIFY-LATER[BLOG-20]: panel names and button labels in this guide follow the designer as planned (docs/3D-Model-page/BOX_DESIGNER_IMPLEMENTATION_PLAN.md); check them against the shipped tool and the screenshots before publishing. -->
 
 ---
 
@@ -31,10 +30,12 @@ The same tool serves three quite different jobs:
 | You are... | You want to... | Start with |
 |---|---|---|
 | **A brand or shop owner** buying boxes for the first time | Find the right style and size, see your logo on it, know roughly what it costs | "Find my box" (guided mode) or a template |
-| **A wholesaler or trader** quoting for your own buyers | Get a clean spec fast, compare quantities, share options | The size and board panel, the estimate, a share link |
+| **A wholesaler or trader** quoting for your own buyers | Get a clean spec fast, compare quantities, share options | The **Edit Box** tab, the estimate, a share link |
 | **A box manufacturer** meeting a customer | Show the box on a laptop or tablet, then send a proof | Presentation mode, the spec sheet and the dieline |
 
 If you only have a minute, do steps 1, 2 and 5 below. You will have a box of the right shape and size with your logo on it. Everything else is optional and stays tucked away until you open it.
+
+**How the screen is organised.** The designer has five tabs. **Edit Box** holds style, size, board and cut-outs. **Customize** is for your logo, text, cutouts and brand colours. **Showcase** makes product shots, videos and the spec sheet. **Price & order** shows strength guidance, the estimate and delivery time, and sends your design to us. **Actions** downloads the dieline and image and saves or shares the design.
 
 ---
 
@@ -44,7 +45,7 @@ When the designer opens you see a plain kraft carton in the middle of the screen
 
 There are three ways to begin:
 
-1. **Pick a style.** The style picker shows a card for each of the **20 box styles** with a short "best for" line, sorted into five groups (Shipping, Retail and gifts, Food and bakery, Fruit and produce, Display). It starts with the regular slotted carton (RSC), half slotted (HSC), full overlap, sleeve, telescope lid and base, mailer, pizza box and tray, and adds carry boxes, ventilated fruit cartons, tuck-end and bottle boxes, window mailers, cake boxes, clamshells, display trays, slide boxes and book-style boxes. You can also tap "what are you packing?" or search. If you are not sure which one you need, read [which of 20 box styles should you choose](/blogs/which-box-style-should-you-choose), or the original guide to the [8 box styles in 3D](/blogs/box-styles-in-3d).
+1. **Pick a style.** The style picker shows a card for each of the **20 box styles** with a short "best for" line, sorted into five groups (Shipping, Retail and gifts, Food and bakery, Fruit and produce, Display). It starts with the regular slotted carton (RSC), half slotted (HSC), full overlap, sleeve, telescope lid and base, mailer, pizza box and tray, and adds carry boxes, ventilated produce cartons, tuck-end cartons, crash-lock bottom boxes, window mailers, cake boxes, takeaway clamshells, display trays, slide boxes and book-style boxes. You can also tap "what are you packing?" or search. If you are not sure which one you need, read [which of 20 box styles should you choose](/blogs/which-box-style-should-you-choose), or [the 8 core styles explained](/blogs/box-styles-in-3d).
 2. **Use a template.** There are **74 templates** in 13 categories: fruit and produce cartons, cake and sweet boxes, T-shirt and saree boxes, soap and perfume cartons, gift boxes, an e-commerce shipper, an export carton and more. Each comes with a sensible size, board, cut-outs such as vents or a window, and sample artwork that you then replace with your own. See the [template tour](/blogs/box-design-templates-tour).
 3. **Answer "Find my box".** Guided mode asks four plain questions: what you are packing, how heavy it is, how fragile it is, and how it travels (courier, local delivery, retail shelf, pallet or export). It then recommends a style, an inside size, a ply and a flute, with a one-line reason for each. One tap applies the whole recommendation.
 
@@ -57,7 +58,7 @@ There are three ways to begin:
 
 ## Step 2: Set the size (in mm, cm or inches)
 
-Open the size controls and enter **length, width and height**. These are the **inside** dimensions, the space your product actually gets. The tool adds the board thickness for you, so you never have to work out the outside size by hand.
+In the **Edit Box** tab, open the size controls and enter **length, width and height**. These are the **inside** dimensions, the space your product actually gets. The tool adds the board thickness for you, so you never have to work out the outside size by hand.
 
 - **Units:** switch between millimetres, centimetres and inches at any time. The box does not change, only the numbers you see. Factories in India mostly quote in mm or inches; e-commerce sellers often think in cm. Use whatever you measured in.
 - **Sliders or typing:** drag the sliders for a quick feel, or type exact values. Steps follow the unit you chose (5 mm, 0.5 cm or a quarter inch).
@@ -99,9 +100,9 @@ This is where 3D earns its keep. Spend a minute here before you add artwork.
 
 ## Step 5: Add your logo and text
 
-Click any face of the box (or choose it from the surface list) and add:
+In the **Customize** tab, click any face of the box (or choose it from the surface list) and add:
 
-- **An image:** your logo or artwork as PNG, JPG or SVG. Drag it to position it, then scale and rotate it.
+- **An image:** your logo or artwork as PNG, JPG, WebP or SVG. Drag it to position it, then scale and rotate it.
 - **Text:** a tagline, "Handle with care", a website or a batch line, with font, size, alignment and colour.
 - **Cutouts:** 512 ready-made stickers (fruit, bakery, clothing, gifts, shipping marks, badges and patterns). Add one with a tap, resize it, tint it to your brand colour or repeat it as a pattern. See the [cutouts guide](/blogs/how-to-add-cutouts-box-design).
 - **Brand colours:** type your exact hex or RGB values, and reuse recent colours across faces. Save your logo and colours as a **brand kit** so the next design starts branded.
@@ -113,7 +114,7 @@ As you work, **print checks** flag the problems printers reject artwork for: an 
 
 ---
 
-## Step 6: Check strength, price and delivery
+## Step 6: Check strength, price and delivery (Price & order tab)
 
 Three panels turn a nice picture into a buying decision:
 
@@ -128,7 +129,7 @@ All three are labelled indicative because real figures depend on paper grades, c
 
 ---
 
-## Step 7: Save, share and export
+## Step 7: Save, share and export (Showcase and Actions tabs)
 
 When the box looks right, you have several ways to keep or pass it on:
 
@@ -163,9 +164,6 @@ You are not obliged to order from us because you used the designer. It is free t
 ### Is the 3D Box Designer really free?
 Yes. There is no sign-up, no trial period and no locked features. We built it because customers who can see their box order with more confidence.
 
-### Do I need to install anything?
-No. It runs in a modern browser (Chrome, Edge, Safari or Firefox) on a computer, tablet or phone. If your device cannot show 3D, the tool tells you and still lets you send a spec.
-
 ### Are the dimensions inside or outside?
 Inside. You enter the space the product needs; the tool adds the board thickness to show the outside size.
 
@@ -190,7 +188,5 @@ The fastest route to a box that fits: open the designer, answer "Find my box", p
 - [Which of 20 box styles should you choose?](/blogs/which-box-style-should-you-choose)
 - [How to add cutouts to your box design](/blogs/how-to-add-cutouts-box-design)
 - [Start from a template: 74 ready box designs](/blogs/box-design-templates-tour)
-- [8 box styles in 3D: which one fits your product](/blogs/box-styles-in-3d)
 - [How to find the right box size for your product](/blogs/find-right-box-size)
 - [Instant box price estimates: what drives cost per box](/blogs/box-price-estimate-guide)
-- [For box manufacturers: show customers their box in 3D](/blogs/box-manufacturers-3d-presentations)

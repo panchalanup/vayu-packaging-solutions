@@ -28,7 +28,7 @@ export interface BoxDesignerSchemaData {
 export function getBoxDesignerSchema(data?: Partial<BoxDesignerSchemaData>) {
   const defaultData: BoxDesignerSchemaData = {
     name: '3D Box Designer - Custom Packaging Design Tool',
-    url: 'https://vayupackaging.vercel.app/box-designer',
+    url: `${SEO_CONFIG.siteUrl}/box-designer`,
     description: 'Free online 3D box designer tool for creating custom corrugated packaging. Design boxes with real-time visualization, dimension editing, material selection, and instant export. No signup required.',
     applicationCategory: 'DesignApplication',
     operatingSystem: 'Any (Web-based)',
@@ -63,7 +63,6 @@ export function getBoxDesignerSchema(data?: Partial<BoxDesignerSchemaData>) {
     applicationCategory: defaultData.applicationCategory,
     operatingSystem: defaultData.operatingSystem,
     description: defaultData.description,
-    screenshot: 'https://vayupackaging.vercel.app/screenshots/box-designer-preview.jpg',
     offers: {
       '@type': 'Offer',
       price: defaultData.offers.price,

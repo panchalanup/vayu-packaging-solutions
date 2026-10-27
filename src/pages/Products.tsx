@@ -28,7 +28,7 @@ import {
   type IndustrySlug,
 } from '@/content/products';
 import type { MadeOrSourced } from '@/components/site/Blocks';
-import { INDUSTRY_SLUGS } from '@/lib/quoteSchema';
+import { INDUSTRY_SLUGS } from '@/lib/quoteOptions';
 import { FACTS } from '@/content/facts';
 import { quoteHref } from '@/lib/quotePrefill';
 import { whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';

@@ -1,16 +1,17 @@
 ---
-title: "Clothing, Saree and Footwear Boxes: Mailers, Tuck-End, Slide and Shoe Boxes in 3D"
+title: "Saree, Clothing and Footwear Boxes: Styles and Sizes"
 slug: "clothing-saree-footwear-boxes"
-description: "Choose and design boxes for clothing, sarees and footwear: window mailers, tuck-end boxes, saree boxes, shoe and sandal boxes and slide boxes, with sizes, board and branding tips."
+description: "Pick boxes for clothing, sarees and footwear: window mailers, tuck-end, slide and shoe boxes, with sizing and branding tips. Try them in 3D, then quote."
 category: "Use Cases"
 date: "2026-10-27"
-readingTime: "9 min read"
+updated: "2026-10-27"
+readingTime: "10 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-12-thumbnail"
 socialImage: "BLOG-UC-12-social"
 ---
 
-# Clothing, Saree and Footwear Boxes: Mailers, Tuck-End, Slide and Shoe Boxes in 3D
+# Saree, Clothing and Footwear Boxes: Styles and Sizes
 
 A saree is a long, soft, expensive thing that must reach a customer unwrinkled. A pair of sandals is a light, awkward shape that must not get crushed on a shelf. A kid's frock must look lovely when the box opens. Clothing and footwear are soft, varied products, and one generic carton rarely suits them.
 
@@ -157,15 +158,11 @@ See [logo and artwork on boxes](/blogs/logo-artwork-on-boxes) for how to get art
 
 ## Where to go next
 
+- The basics: [garment mailers and shoe boxes](/blogs/apparel-footwear-mailer-shoe-boxes).
 - Which style fits: [which of 20 box styles should you choose](/blogs/which-box-style-should-you-choose).
-- Brand it: [how to add cutouts to your box design](/blogs/how-to-add-cutouts-box-design).
-- Start from a ready design: [a tour of the 74 box templates](/blogs/box-design-templates-tour).
-- The basics: [apparel and footwear mailers and shoe boxes](/blogs/apparel-footwear-mailer-shoe-boxes).
 - E-commerce unboxing: [mailer boxes and unboxing](/blogs/ecommerce-mailer-box-unboxing).
 - Gifting: [festive gift and hamper boxes](/blogs/festive-gift-hamper-boxes).
-- Sizing: [find the right box size](/blogs/find-right-box-size).
-- Styles: [8 box styles in 3D](/blogs/box-styles-in-3d).
-- Catalogue images: [product shots and 360 video](/blogs/packaging-product-shots-360-video).
+- Brand it: [how to add cutouts to your box design](/blogs/how-to-add-cutouts-box-design).
 
 ---
 
@@ -190,10 +187,6 @@ The designer models them in thin corrugated board. They are also commonly made f
 ### Can I use one box for several shoe sizes?
 
 Many brands do, using two or three sizes across the range. Size from your largest pair in each group.
-
-### Can I show the design to my customer on a phone?
-
-Yes. Send a share link; it opens in any browser, and the customer can rotate the box.
 
 ---
 

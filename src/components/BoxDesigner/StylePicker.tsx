@@ -44,8 +44,8 @@ function StyleCard({ style, active, compact, onChoose }: { style: StyleDefinitio
       type="button"
       aria-pressed={active}
       onClick={() => onChoose(style)}
-      className={`relative flex w-full gap-3 rounded-lg border-2 p-2.5 text-left transition-colors duration-quick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-        compact ? 'w-44 shrink-0 flex-col items-start' : 'items-start'
+      className={`relative flex gap-3 rounded-lg border-2 p-2.5 text-left transition-colors duration-quick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+        compact ? 'w-44 shrink-0 flex-col items-start' : 'w-full items-start'
       } ${active ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}
     >
       <span aria-hidden="true" className={`flex shrink-0 items-center justify-center rounded-md bg-paper-100 ${compact ? 'h-14 w-full' : 'h-16 w-16'}`}>

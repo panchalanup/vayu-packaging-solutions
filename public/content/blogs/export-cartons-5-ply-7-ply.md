@@ -1,16 +1,17 @@
 ---
-title: "Export Cartons: Designing 5-Ply and 7-Ply Boxes for Heavy and Long-Distance Shipping"
+title: "Export Cartons: Choosing 5-Ply or 7-Ply for Long Journeys"
 slug: "export-cartons-5-ply-7-ply"
-description: "How to plan export and heavy-duty cartons: choosing 5-ply or 7-ply, sizing for pallets and containers, strength and stacking, marking, and designing it all in 3D first."
+description: "Choose 5-ply or 7-ply for export cartons: stack height, humidity, pallet fit and marking. Check strength and the pallet view in 3D before you order."
 category: "Use Cases"
 date: "2026-10-26"
-readingTime: "10 min read"
+updated: "2026-10-27"
+readingTime: "7 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-07-thumbnail"
 socialImage: "BLOG-UC-07-social"
 ---
 
-# Export Cartons: Designing 5-Ply and 7-Ply Boxes for Heavy and Long-Distance Shipping
+# Export Cartons: Choosing 5-Ply or 7-Ply for Long Journeys
 
 A carton that is fine for a local delivery can fail badly on an export journey. Between your factory and the buyer's warehouse, it may be stacked under other cartons for weeks, handled many times, carried through humid ports and moved by forklifts that do not care what is inside.
 
@@ -76,7 +77,7 @@ Pallet and container sizes vary by country, buyer and forwarder, so confirm the 
 
 ### 4. Choose 5-ply or 7-ply and read the strength guidance
 
-Set the ply and look at the **strength guidance**. It estimates, from the board's caliper and the box size, roughly how much load the carton can carry and how high it can be stacked, with a safety margin, in plain language. Compare 5-ply and 7-ply for your size.
+Set the ply and look at the **strength guidance** in the **Price & order** tab. It estimates, from the board's caliper and the box size, roughly how much load the carton can carry and how high it can be stacked, with a safety margin, in plain language. Compare 5-ply and 7-ply for your size.
 
 ![The strength guidance panel showing an indicative load and stacking verdict](/blog-images/designer/designer-strength-guidance.png)
 *Strength guidance: an indicative estimate of load and stack height. For critical shipments, confirm with physical testing.*
@@ -139,30 +140,13 @@ Cartons rarely travel alone. A stable pallet load protects them as much as the b
 
 ---
 
-## Features you will use
-
-| Feature | Why it helps for export |
-|---|---|
-| Shipping carton (RSC) preset and FOL style | Start from proven export styles |
-| mm, cm and inch units | Match your buyer's specification |
-| Fit checker | Size from the packed product |
-| Strength guidance | Indicative load and stacking verdict |
-| Stacked / pallet view | See how cartons build into a pallet |
-| Artwork editor | Logo, shipping marks and handling symbols |
-| Dieline export | 1:1 cut-and-crease drawing |
-| Spec sheet PDF | One page your buyer, forwarder and supplier can share |
-
----
-
 ## Where to go next
 
-- How the designer works: [step-by-step designer guide](/blogs/how-to-use-3d-box-designer).
-- Load and stacking in depth: [box stacking strength guide](/blogs/box-stacking-strength-guide).
+- Load and stacking in depth: [will my box stack?](/blogs/box-stacking-strength-guide).
+- Board strength explained: [burst strength vs ECT](/blogs/burst-strength-ect-guide) and [single, double and triple wall](/blogs/corrugated-wall-differences).
 - Cut-and-crease drawings: [dielines explained](/blogs/dielines-explained).
 - Sizing from the packed product: [the fit checker guide](/blogs/find-right-box-size).
-- Board strength explained: [GSM and strength](/blogs/gsm-calculation-strength) and [burst strength vs ECT](/blogs/burst-strength-ect-guide).
-- Heavy-duty range: see our [5-ply](/products/5-ply) and [7-ply](/products/7-ply) boxes.
-- Kraft paper grades: [virgin vs recycled kraft](/blogs/kraft-paper-grades).
+- Heavy-duty range: our [5-ply](/products/5-ply) and [7-ply](/products/7-ply) boxes.
 
 ---
 
@@ -179,10 +163,6 @@ In an RSC, the outer flaps meet in the middle. In a full overlap (FOL) carton, t
 ### How accurate is the strength estimate?
 
 It is an indicative estimate from board caliper and box size, with a safety margin. Real strength depends on humidity, storage time, handling and the product. For critical shipments, ask for test reports or test a sample.
-
-### Can I add shipping marks in the designer?
-
-Yes. Use the artwork editor to add text, logos and handling symbols to any face.
 
 ### What pallet size should I design for?
 

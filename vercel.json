@@ -81,7 +81,7 @@
         },
         {
           "key": "Cache-Control",
-          "value": "private, max-age=0"
+          "value": "public, max-age=0, must-revalidate"
         },
         {
           "key": "X-Content-Type-Options",
@@ -90,6 +90,19 @@
         {
           "key": "Access-Control-Allow-Origin",
           "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
         }
       ]
     },
@@ -107,10 +120,37 @@
       ]
     }
   ],
+  "redirects": [
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/blog", "destination": "/blogs", "permanent": true },
+    { "source": "/blog/:slug", "destination": "/blogs/:slug", "permanent": true },
+    { "source": "/designer", "destination": "/box-designer", "permanent": true },
+    { "source": "/3d-box-designer", "destination": "/box-designer", "permanent": true },
+    { "source": "/packaging-finder", "destination": "/compare-quote", "permanent": true },
+    { "source": "/about-us", "destination": "/about", "permanent": true },
+    { "source": "/contact-us", "destination": "/contact", "permanent": true }
+  ],
   "rewrites": [
+    { "source": "/about", "destination": "/about/index.html" },
+    { "source": "/services", "destination": "/services/index.html" },
+    { "source": "/products", "destination": "/products/index.html" },
+    { "source": "/products/:slug", "destination": "/products/:slug/index.html" },
+    { "source": "/industries/:slug", "destination": "/industries/:slug/index.html" },
+    { "source": "/blogs", "destination": "/blogs/index.html" },
+    { "source": "/blogs/:slug", "destination": "/blogs/:slug/index.html" },
+    { "source": "/box-designer", "destination": "/box-designer/index.html" },
+    { "source": "/box-designer/:style", "destination": "/box-designer/:style/index.html" },
+    { "source": "/tools", "destination": "/tools/index.html" },
+    { "source": "/tools/:slug", "destination": "/tools/:slug/index.html" },
+    { "source": "/compare-quote", "destination": "/compare-quote/index.html" },
+    { "source": "/locations", "destination": "/locations/index.html" },
+    { "source": "/contact", "destination": "/contact/index.html" },
+    { "source": "/quote", "destination": "/quote/index.html" },
+    { "source": "/privacy", "destination": "/privacy/index.html" },
+    { "source": "/image-credits", "destination": "/image-credits/index.html" },
     {
-      "source": "/((?!api/|brochures|.*\\.pdf|.*\\.jpg|.*\\.png|.*\\.svg|.*\\.ico|.*\\.xml|robots\\.txt|sitemap\\.xml).*)",
-      "destination": "/index.html"
+      "source": "/((?!api/|assets/|fonts/|content/|blog-images/|og/|images/|favicon/|brochures/|ToolData/|.*\\.(?:pdf|jpg|jpeg|png|svg|ico|xml|txt|md|js|css|json|map|woff2?|webp|webmanifest|mp4|csv)$).*)",
+      "destination": "/app-shell.html"
     }
   ]
 }

@@ -5,8 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/seo/build-files.mjs && vite build && node scripts/seo/postbuild.mjs",
     "build:dev": "vite build --mode development",
+    "seo:files": "node scripts/seo/build-files.mjs",
+    "seo:images": "node scripts/seo/image-sizes.mjs",
+    "seo:prerender": "node scripts/seo/postbuild.mjs",
+    "seo:report": "node scripts/seo/report.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",

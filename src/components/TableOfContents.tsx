@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronDown, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { slugifyHeading } from '@/lib/blogMarkdown';
 
 interface TOCItem {
   id: string;
@@ -16,13 +17,8 @@ interface TableOfContentsProps {
   className?: string;
 }
 
-const slugify = (text: string) =>
-  text
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .slice(0, 60) || 'section';
+// Same algorithm the prerendered article uses (src/lib/blogMarkdown.ts), so anchors match before and after hydration
+const slugify = slugifyHeading;
 
 const reduceMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 

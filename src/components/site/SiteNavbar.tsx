@@ -6,7 +6,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Box, ChevronDown, Menu, Phone, Sparkles, X } from 'lucide-react';
+import { Box, Calculator, ChevronDown, Menu, Phone, Sparkles, X } from 'lucide-react';
 import { LOGO_IMAGES } from '@/constants/images';
 import { CONTACT_INFO, TOOLS_MENU } from '@/constants';
 import {
@@ -120,7 +120,7 @@ export default function Navbar() {
       isActive ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'
     );
 
-  const toolsActive = TOOLS_MENU.some((tool) => tool.path === pathname);
+  const toolsActive = TOOLS_MENU.some((tool) => tool.path === pathname || (tool.path === '/tools' && pathname.startsWith('/tools/')));
 
   return (
     <SectionNameProvider value="nav">
@@ -184,7 +184,7 @@ export default function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" sideOffset={8} onMouseEnter={openTools} onMouseLeave={closeTools} className="w-72 rounded-lg p-1">
                 {TOOLS_MENU.map((tool) => {
-                  const Icon = tool.icon === 'Box' ? Box : Sparkles;
+                  const Icon = tool.icon === 'Box' ? Box : tool.icon === 'Calculator' ? Calculator : Sparkles;
                   const label = tool.path === '/compare-quote' ? 'Packaging Finder' : tool.name;
                   return (
                     <DropdownMenuItem key={tool.path} asChild className="cursor-pointer rounded-md p-3 text-ink-900 focus:bg-paper-200 focus:text-ink-900 data-[highlighted]:bg-paper-200 data-[highlighted]:text-ink-900">

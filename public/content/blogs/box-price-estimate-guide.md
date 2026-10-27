@@ -1,16 +1,17 @@
 ---
-title: "Instant Box Price Estimates: What Drives Cost Per Box and How to Lower It"
+title: "What Drives Cost per Box (and How to Lower It)"
 slug: "box-price-estimate-guide"
-description: "How the 3D Box Designer's indicative estimate works: board area, ply, print colours, finish, set-up costs and quantity tiers. Plus practical ways to bring the price per box down."
+description: "What drives the price per box: board area, ply, print colours, finish, set-up and quantity. Use the instant estimate and ten tips to lower your cost."
 category: "Designer Guides"
 date: "2026-10-26"
-readingTime: "9 min read"
+updated: "2026-10-27"
+readingTime: "7 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-04-thumbnail"
 socialImage: "BLOG-DG-04-social"
 ---
 
-# Instant Box Price Estimates: What Drives Cost Per Box and How to Lower It
+# What Drives Cost per Box (and How to Lower It)
 
 "How much will it cost?" is usually the first question about a custom box, and the hardest to answer without a spec. The price of a corrugated box is not one number from a list. It is built up from the board, the print, the finish, the set-up and the quantity, and changing any one of them moves the total.
 
@@ -32,7 +33,7 @@ Use it to:
 - check a budget before you spend time on artwork,
 - walk into a buying conversation knowing roughly where the price should land.
 
-When you are ready, **Send my design to Vayu** turns the estimate into a firm quote. The amounts are **ex-GST and ex-delivery**.
+When you are ready, press **Send my design to Vayu** in the **Price & order** tab and we reply with a firm quote. The amounts are **ex-GST and ex-delivery**.
 
 ![The estimate panel showing a per-box price range, an order total and quantity chips for 100, 500, 1,000 and 5,000](/blog-images/designer/designer-estimate-tiers.png)
 *The estimate panel. Tap a quantity chip to see how the price per box changes.*
@@ -81,7 +82,7 @@ Larger runs spread set-up and machine time over more boxes, so the price per box
 
 ## Reading the estimate panel
 
-The panel shows:
+The estimate sits in the **Price & order** tab. The panel shows:
 
 - **Price per box** as a range, with the midpoint highlighted,
 - **Order total** at the chosen quantity,
@@ -103,15 +104,15 @@ You will see exactly which decisions matter for **your** box.
 ## Ten ways to lower the price per box
 
 1. **Right-size the box.** Every centimetre you take off length and width saves board on the walls and the flaps. Use the [fit checker](/blogs/find-right-box-size) instead of rounding up generously.
-2. **Pick the leanest style that works.** For heavier goods and short runs, an RSC usually beats a mailer on cost. Use a mailer where the unboxing is worth it. See [8 box styles in 3D](/blogs/box-styles-in-3d).
+2. **Pick the leanest style that works.** For heavier goods and short runs, an RSC usually beats a mailer on cost. Use a mailer where the unboxing is worth it. See [which box style should you choose](/blogs/which-box-style-should-you-choose).
 3. **Do not over-specify the board.** If the strength guidance says 3-ply is comfortable for your weight and stacking, 5-ply is money spent on nothing. See [will my box stack?](/blogs/box-stacking-strength-guide)
 4. **Use fewer print colours.** A one or two-colour logo on kraft looks deliberate and premium, and avoids the cost of full colour.
 5. **Print less of the box.** One printed face can do the job of four. Or print a **sleeve** and keep the boxes plain.
 6. **Stay with kraft.** Natural kraft avoids the white liner premium and a flood colour.
 7. **Choose matte unless gloss sells.** Gloss adds cost per square metre.
-8. **Order in the next slab up** if you will use the boxes within a reasonable time: the jump from 500 to 1,000 often lowers the price per box noticeably.
+8. **Order in the next slab up** if you will use the boxes within a reasonable time: the quantity chips show how far the price per box falls from one slab to the next.
 9. **Standardise sizes across products.** One box for three similar products means larger runs and one set of plates.
-10. **Reuse plates and dies.** Keep the same artwork and size on reorders, so set-up costs are not paid again.
+10. **Reuse plates and dies.** Keep the same artwork and size on reorders, and ask us whether stored plates and dies can be reused for your job, so set-up costs are not paid again.
 
 ---
 

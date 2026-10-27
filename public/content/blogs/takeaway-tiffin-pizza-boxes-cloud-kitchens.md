@@ -1,16 +1,17 @@
 ---
-title: "Takeaway, Tiffin and Pizza Boxes for Cloud Kitchens: Choosing Between Clamshells, Pizza Boxes and Carry Boxes"
+title: "Takeaway Boxes for Cloud Kitchens: Clamshell, Pizza, Carry"
 slug: "takeaway-tiffin-pizza-boxes-cloud-kitchens"
-description: "How cloud kitchens and restaurants can choose takeaway clamshells, pizza boxes, tray-and-sleeve combos and carry boxes, size them to the menu and delivery bag, and design them in 3D."
+description: "Choose takeaway clamshells, pizza boxes and carry boxes for a cloud kitchen: size to the menu and delivery bag, and preview in 3D before you order."
 category: "Use Cases"
 date: "2026-10-27"
-readingTime: "9 min read"
+updated: "2026-10-27"
+readingTime: "8 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-14-thumbnail"
 socialImage: "BLOG-UC-14-social"
 ---
 
-# Takeaway, Tiffin and Pizza Boxes for Cloud Kitchens: Choosing Between Clamshells, Pizza Boxes and Carry Boxes
+# Takeaway Boxes for Cloud Kitchens: Clamshell, Pizza, Carry
 
 A cloud kitchen has no dining room, no waiter and no table. The box is the restaurant. It is the first impression, the plate, the heat shield and the brand, all for a customer who may never see your kitchen. It also has to survive a scooter ride, an insulated bag and a lift.
 
@@ -70,7 +71,7 @@ Cloud kitchens often choose a box before measuring the food. Do it the other way
 | Roll | 18 x 10 x 6 | Rolls and wraps |
 | Burger | 15 x 15 x 8 (landing page preset) | Burgers, sandwiches |
 | Meal box | 24 x 18 x 6 | A single meal |
-| Pizza box template | 31 x 31 x 5 | A 12-inch pizza |
+| Pizza box template | 31 x 31 x 5 | A snug fit for a 12-inch pizza |
 
 <!-- VERIFY-LATER[BLOG-88]: these presets are the designer's starting points (designerLandingsPhase2.ts, templates.ts), not recommended sizes for any menu. Confirm with Vayu what sizes the owner stocks or typically produces, and ask kitchens for their bag dimensions. The Burger takeaway template is 14 x 14 x 8 cm. -->
 
@@ -95,7 +96,7 @@ Cloud kitchens often choose a box before measuring the food. Do it the other way
 
 A pizza box is a shallow, wide die-cut box, so the right size is the one that matches your pizza.
 
-1. Open the [pizza box designer](/box-designer/pizza-box), or the **Pizza box** template (31 x 31 x 5 cm, kraft, white inside, for a 12-inch pizza).
+1. Open the [pizza box designer](/box-designer/pizza-box), or the **Pizza box** template (31 x 31 x 5 cm, kraft, white inside; a snug fit for a 12-inch pizza, so add a little if your pizzas run wide).
 2. Enter the inside length and width to suit the pizza with a small margin. Keep the height low: a tall box lets slices slide and traps steam.
 3. Put your brand on the lid. Large lids work well: logo, a short tagline and a phone number or QR.
 4. Check the fold: the lid opens and closes like a mailer.
@@ -104,7 +105,7 @@ A pizza box is a shallow, wide die-cut box, so the right size is the one that ma
 ![The pizza box template with the lid lifted, showing a kraft box with a white inside and a pizza graphic](/blog-images/designer/designer-pizza-box-lid.png)
 *The pizza box template: lid artwork, white inside.*
 
-More pizza box detail, including sizing and flutes, is in our [pizza and bakery box guide](/blogs/pizza-bakery-box-design).
+More pizza box detail, including sizing and flutes, is in our [pizza box guide](/blogs/pizza-bakery-box-design).
 
 ---
 
@@ -142,29 +143,13 @@ See [logo and artwork on boxes](/blogs/logo-artwork-on-boxes) for how to get pri
 
 ---
 
-## Features you will use
-
-| Feature | Use for cloud kitchens |
-|---|---|
-| Takeaway clamshell, pizza box, slide box, carry box | The right shape for each menu item |
-| Optional window | Show desserts and salads |
-| Food cutouts and Match brand colour | Branded lids without a designer |
-| Fold slider | See how the lid and tuck close |
-| Unit switch and fit checker | Size from the food and the bag |
-| Dieline, spec sheet, share link | Clear spec for the supplier and team |
-
----
-
 ## Where to go next
 
-- Which style fits: [which of 20 box styles should you choose](/blogs/which-box-style-should-you-choose).
-- Windows and hand holes: [vents, hand holes and windows in box design](/blogs/vents-hand-holes-windows-box-design).
-- Pizza and bakery: [pizza and bakery box design](/blogs/pizza-bakery-box-design).
+- Pizza sizes and board: [pizza box sizes, board and design](/blogs/pizza-bakery-box-design).
 - Cakes and sweets: [cake, sweet and bakery boxes](/blogs/cake-sweet-bakery-boxes).
-- E-commerce delivery: [mailer boxes and unboxing](/blogs/ecommerce-mailer-box-unboxing).
-- Sizing: [find the right box size](/blogs/find-right-box-size).
+- Windows and hand holes: [vents, hand holes and windows in box design](/blogs/vents-hand-holes-windows-box-design).
+- Which style fits: [which of 20 box styles should you choose](/blogs/which-box-style-should-you-choose).
 - Prices: [what drives cost per box](/blogs/box-price-estimate-guide).
-- Strength: [will my box stack?](/blogs/box-stacking-strength-guide).
 
 ---
 
@@ -176,7 +161,7 @@ A takeaway clamshell: a hinged lid and a front tuck, no tape or glue. Size from 
 
 ### What size pizza box do I need?
 
-One that matches your pizza with a small margin. The template is 31 x 31 x 5 cm for a 12-inch pizza; set the size for each menu size.
+One that matches your pizza with a small margin. The pizza preset is 31 x 31 x 5 cm, a snug fit for a 12-inch pizza; set the size for each menu size and test one box.
 
 ### Can hot or oily food go straight into a corrugated box?
 
@@ -189,10 +174,6 @@ The designer does not model reusable steel or plastic tiffin carriers. It can de
 ### Can I add a window to a takeaway box?
 
 Yes, on the clamshell. Switch the window on in Cut-outs and size it. The film is a separate material from the board.
-
-### Can I order a small quantity to test?
-
-Ask the quote team about minimum quantities. Many kitchens order a small sample first.
 
 ---
 

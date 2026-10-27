@@ -76,14 +76,8 @@ export const getLocalBusinessSchema = () => ({
     })),
   ],
   
-  // Reviews/Ratings
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: SEO_CONFIG.aggregateRating.ratingValue,
-    reviewCount: SEO_CONFIG.aggregateRating.reviewCount,
-    bestRating: SEO_CONFIG.aggregateRating.bestRating,
-    worstRating: SEO_CONFIG.aggregateRating.worstRating,
-  },
+  // VERIFY-LATER[SEO-RATING]: aggregateRating removed. The 4.8 / 150 figures in SEO_CONFIG are not backed by real, visible
+  // reviews, and self-serving ratings in structured data risk a Google manual action. Add it back only with genuine reviews shown on the page.
   
   // Services Offered
   makesOffer: SEO_CONFIG.productsOffered.map(product => ({

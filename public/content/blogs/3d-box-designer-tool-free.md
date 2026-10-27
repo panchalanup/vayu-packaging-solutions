@@ -1,16 +1,17 @@
 ---
-title: "Stop Wasting Money on Wrong-Sized Boxes: Design Perfect Packaging in 3D Before You Order"
+title: "Free 3D Box Designer: See Your Box Before You Order"
 slug: "3d-box-designer-tool-free"
-description: "Tired of ordering boxes that don't fit? Design and visualize your perfect corrugated packaging in 3D for FREE. No more guesswork, no more costly mistakes. Try our interactive tool now."
+description: "Free 3D box designer: build a corrugated box in your browser, check size, strength and an indicative price, then send it for a quote. No sign-up needed."
 category: "Designer Guides"
 date: "2025-03-15"
-readingTime: "8 min read"
+updated: "2026-10-27"
+readingTime: "7 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-08-thumbnail"
 socialImage: "BLOG-08-social"
 ---
 
-# Stop Wasting Money on Wrong-Sized Boxes: Design Perfect Packaging in 3D Before You Order
+# Free 3D Box Designer: See Your Box Before You Order
 
 A box that is 2 cm too short is not 2 cm of a problem. It is a whole run of boxes you cannot use, a reorder at short notice, and a launch that waits for packaging.
 
@@ -20,14 +21,12 @@ That is the problem the free **3D Box Designer** solves. You build the box on sc
 
 [Open the 3D Box Designer](/box-designer)
 
-<!-- VERIFY-LATER[BLOG-30]: this overview was rewritten to match the designer as planned in docs/3D-Model-page/BOX_DESIGNER_IMPLEMENTATION_PLAN.md (the earlier version contained illustrative customer stories and figures that could not be verified). Check feature names against the shipped tool. -->
-
 ---
 
 ## Why packaging orders go wrong
 
 ### "Is that inside or outside?"
-Corrugated board has thickness: roughly 3-4 mm for 3-ply and 6-7 mm for 5-ply. A box ordered by its outside size comes out smaller inside than you expect. Quote inside dimensions and the box maker adds the allowance; mix them up and the product does not fit. Our [box measurement guide](/blogs/box-measurements-guide) explains this in detail.
+Corrugated board has thickness: roughly 3 mm for 3-ply and 6-7 mm for 5-ply. A box ordered by its outside size comes out smaller inside than you expect. Quote inside dimensions and the box maker adds the allowance; mix them up and the product does not fit. Our [box measurement guide](/blogs/box-measurements-guide) explains this in detail.
 
 ### "Which way is length?"
 300 × 200 × 150 and 300 × 150 × 200 are completely different boxes. One opens wide and shallow, the other narrow and deep.
@@ -52,8 +51,8 @@ The designer runs in your browser on a computer, tablet or phone. There is nothi
 ![The 3D Box Designer on a phone, showing a branded kraft mailer with the controls along the bottom](/blog-images/designer/designer-mobile-overview.png)
 *The designer works on a phone as well as a computer.*
 
-### Eight box styles, in real 3D
-Regular slotted carton (RSC), half slotted (HSC), full overlap, sleeve, telescope lid and base, mailer, pizza box and tray. Each one folds on screen from a flat blank to a sealed box, so you see how it opens and where every flap goes. Not sure which to choose? Read [8 box styles in 3D](/blogs/box-styles-in-3d), or let **Find my box** recommend one from a few questions about your product.
+### 20 box styles, in real 3D
+Shipping cartons (RSC, HSC, full overlap, sleeve, carry box), mailers and window mailers, telescope, slide and book-style boxes, tuck-end and bottle boxes, pizza, cake and takeaway boxes, ventilated produce cartons and display trays. Each one folds on screen from a flat blank to a finished box, so you see how it opens and where every flap goes. Not sure which to choose? Read [which box style should you choose](/blogs/which-box-style-should-you-choose), or let **Find my box** recommend one from a few questions about your product.
 
 ### The right size, in your units
 Enter **inside** dimensions in **mm, cm or inches**; the tool adds the board thickness and shows the outside size. The **fit checker** works out the inside size from your product's size, the padding you want and whether it is fragile. See [how to find the right box size](/blogs/find-right-box-size).
@@ -62,7 +61,7 @@ Enter **inside** dimensions in **mm, cm or inches**; the tool adds the board thi
 Choose 3, 5 or 7-ply and the flute, natural kraft, white or a printed colour, a different inside colour, and a matte or gloss finish. The board edge on the model gets visibly thicker as you add plies.
 
 ### Your logo, checked for print
-Upload your logo (SVG, PNG, JPG or WebP), add text, set exact brand colours, and place them on any face, including inside surfaces such as a mailer lid. **Print checks** flag low-resolution images, artwork too close to a fold or over an edge, and text that is too small or hard to read. See [print-ready logo tips](/blogs/logo-artwork-on-boxes).
+Upload your logo (SVG, PNG, JPG or WebP), add text and any of **512 ready-made cutouts**, set exact brand colours, and place them on any face, including inside surfaces such as a mailer lid. **Print checks** flag low-resolution images, artwork too close to a fold or over an edge, and text that is too small or hard to read. See [print-ready logo tips](/blogs/logo-artwork-on-boxes).
 
 ### Strength in plain words
 Enter the weight of one packed box and the designer tells you whether the board is comfortable and roughly how high you can stack, for example *"Good for up to ~15 kg per box, stack 6 high"*, and suggests a stronger ply if needed. See [will my box stack?](/blogs/box-stacking-strength-guide)
@@ -87,7 +86,7 @@ Enter a city or pincode for an indicative number of days, combining production t
 
 ## From idea to quote in a few minutes
 
-1. **Start.** Pick a style, a template (e-commerce shipper, apparel mailer, pizza box, gift box, shoe box, export carton and more), or answer **Find my box**.
+1. **Start.** Pick a style, one of **74 templates** (e-commerce shipper, apparel mailer, mango carton, cake box, gift box, export carton and more), or answer **Find my box**. The designer has five tabs: Edit Box, Customize, Showcase, Price & order and Actions.
 2. **Size it.** Enter your inside size or use the fit checker.
 3. **Pick the board.** Ply, flute, colour and finish.
 4. **Brand it.** Add your logo and text; fold the box; clear the print checks.
@@ -119,9 +118,6 @@ We make corrugated boxes. Customers who can see exactly what they are buying ord
 
 ## Common questions
 
-### Do I need to download any software?
-No. It runs in a modern browser: Chrome, Edge, Safari or Firefox.
-
 ### Does it work on my phone?
 Yes. The designer works on phones and tablets as well as computers. On a small screen, **Find my box** sets most things in a few taps.
 
@@ -149,6 +145,6 @@ No account, no card, no commitment. Pick a style, set the size, add your logo, a
 
 **Related reading:**
 - [How to use the 3D Box Designer: a complete step-by-step guide](/blogs/how-to-use-3d-box-designer)
-- [Understanding different types of corrugated boxes](/blogs/types-of-corrugated-boxes)
-- [How to measure corrugated boxes correctly](/blogs/box-measurements-guide)
-- [Single wall vs double wall vs triple wall](/blogs/corrugated-wall-differences)
+- [Which of 20 box styles should you choose?](/blogs/which-box-style-should-you-choose)
+- [Right box size for your product: the fit checker](/blogs/find-right-box-size)
+- [Start from a template: 74 ready box designs](/blogs/box-design-templates-tour)

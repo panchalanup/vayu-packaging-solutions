@@ -1,16 +1,17 @@
 ---
-title: "Dielines Explained: Download One From the Designer and Hand It to Any Printer"
+title: "Box Dielines Explained: Read One and Download Yours"
 slug: "dielines-explained"
-description: "What a box dieline is, how to read cut and crease lines, panel sizes and the glue flap, and how to download a 1:1 mm SVG or PDF dieline from the free 3D Box Designer for your designer or printer."
+description: "Box dielines explained: how to read cut and crease lines and download a 1:1 mm SVG or PDF dieline from the free 3D Box Designer for your printer."
 category: "Designer Guides"
 date: "2026-10-26"
-readingTime: "9 min read"
+updated: "2026-10-27"
+readingTime: "7 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-06-thumbnail"
 socialImage: "BLOG-DG-06-social"
 ---
 
-# Dielines Explained: Download One From the Designer and Hand It to Any Printer
+# Box Dielines Explained: Read One and Download Yours
 
 If you have ever asked a graphic designer to "make the artwork for our box", the first thing they asked for was probably a **dieline**. Without one they are guessing where the panels, folds and flaps are, and guesses become logos cut in half at a fold.
 
@@ -54,7 +55,7 @@ When you download a dieline from the 3D Box Designer, you get one drawing at **1
 
 For a regular slotted carton (RSC) the blank reads left to right as: **glue flap, panel, panel, panel, panel**, alternating long and short sides, with **flaps** above and below each panel. A half slotted carton (HSC) has flaps on one edge only. Die-cut styles such as mailers have more complex shapes, with a lid, tuck, dust flaps and double walls, but the same colour key.
 
-<!-- VERIFY-LATER[BLOG-27]: line colours, labels and footer text describe src/lib/boxDesigner/dieline.ts today (RSC/HSC); Workstream A is extending dielines to every style. Re-check the description and the screenshot once all eight styles export, and confirm whether placed artwork is included in the file. -->
+<!-- VERIFY-LATER[BLOG-27]: dielines are generated for every style (slotted, telescope, slide and die-cut layouts; see src/lib/boxDesigner/dieline.ts). Check the line colours (black solid cut, red dashed crease), labels and footer text against a downloaded file, and confirm with the print room that placed artwork (images, text and cutouts) is not part of the dieline file. -->
 
 ### Why the panels are not exactly your inside size
 You will notice the panel widths are **a little larger** than the inside dimensions you entered. That is deliberate. The board has thickness, and when the box folds, each wall wraps around the board of its neighbours. The designer adds the right allowance for the ply and flute you picked, so the **inside** of the folded box comes out at the size you asked for. The [fit and sizing guide](/blogs/find-right-box-size) explains inside vs outside dimensions.
@@ -68,7 +69,7 @@ This is also why you should never draw a dieline by hand from the inside size: f
 1. Open the [3D Box Designer](/box-designer).
 2. Set the **style**, **inside size** and **board** (ply and flute). The allowance depends on all three, so set them first.
 3. Optional: fold the box with the **assembly slider**. Dragging it all the way to **flat** shows the 3D box as the blank, the same shape as the dieline.
-4. Open **Export** and choose **Dieline (SVG)** or **Dieline (PDF)**.
+4. Open the **Actions** tab and choose **Dieline (SVG, 1:1)** or **Dieline (PDF, 1:1)**.
 5. The file downloads, named after your design.
 
 ![The designer's export panel with the dieline SVG and PDF buttons, and the box folded flat above it](/blog-images/designer/designer-fold-flat.png)
@@ -93,7 +94,6 @@ Key points for your designer:
 - **Keep the dieline on its own layer.** Printers need to separate the structure from the artwork.
 - **Respect the safe area.** Nothing important within a few millimetres of a crease or cut. The designer's [print checks](/blogs/logo-artwork-on-boxes) flag this too.
 - **Add bleed** where colour runs to the edge, so a tiny shift in cutting does not leave a white sliver.
-- **Mind the direction of each panel.** On an RSC, the top flaps are upside down relative to the walls in some layouts; check against the 3D model.
 - **Use the 3D model as the reference.** Send a share link with the dieline. Your designer can rotate and fold the box instead of imagining it.
 
 ---
@@ -135,9 +135,6 @@ If you make boxes and use the designer with your customers:
 
 ## Frequently asked questions
 
-### What is the difference between a dieline and a template?
-A template is any starting design. A dieline is the precise flat layout of one specific box, with cut and crease lines at full size.
-
 ### What scale is the dieline?
 1:1 in millimetres. Print at 100% and measure a panel to check.
 
@@ -148,7 +145,7 @@ Illustrator, Inkscape, Affinity, CorelDRAW and Figma open SVG files directly. To
 The dieline is the structure: cut and crease lines with labels. Your designer places final artwork on it. Use the designer's images, share link and spec sheet to show where your logo goes.
 
 ### Do I need a dieline if I order from Vayu?
-No. When you send your design from the tool, we generate the production drawing from it. The dieline is there for your own designer, other printers, or your records.
+No. When you send your design from the tool, we work from the spec and share link you send. The dieline is there for your own designer, other printers, or your records.
 
 ### Is the dieline free to use with other printers?
 Yes. It is your design; use it wherever you like.

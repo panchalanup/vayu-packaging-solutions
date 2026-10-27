@@ -1,16 +1,17 @@
 ---
-title: "For Wholesalers and Traders: Spec, Price and Share Corrugated Boxes in Minutes"
+title: "Box Specs for Traders: Spec, Price and Share in Minutes"
 slug: "wholesalers-spec-price-share-boxes"
-description: "A practical workflow for packaging traders: turn a vague buyer request into a clear box spec, see indicative prices across quantity tiers, and share a link or spec sheet in minutes."
+description: "A workflow for packaging traders: turn a vague buyer request into a clear box spec, see indicative prices by quantity and share a link in minutes."
 category: "Use Cases"
 date: "2026-10-26"
-readingTime: "9 min read"
+updated: "2026-10-27"
+readingTime: "7 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-02-thumbnail"
 socialImage: "BLOG-UC-02-social"
 ---
 
-# For Wholesalers and Traders: Spec, Price and Share Corrugated Boxes in Minutes
+# Box Specs for Traders: Spec, Price and Share in Minutes
 
 As a packaging trader, you sit in the middle of two conversations. Your buyer wants a price *now*, usually based on a photo, a rough size and the words "same as last time but stronger". Your manufacturer wants a clean specification before they will commit to anything. Every hour spent translating between the two is an hour you are not selling.
 
@@ -62,7 +63,6 @@ Switch between **mm, cm and inches** to match the buyer, then type the inside le
 ### 3. Pick board and check strength
 
 Choose 3, 5 or 7-ply. The strength guidance gives a plain-language, indicative verdict such as roughly how much weight each box can carry and how high it can stack. It is an estimate based on board caliper and box size, not a lab test, but it is enough to spot a buyer who is about to put 20 kg into a box that will not take it.
-
 
 ### 4. See the indicative price across quantity tiers
 
@@ -130,13 +130,11 @@ The spec sheet covers most of this automatically. Add delivery details in your m
 
 ## Where to go next
 
-- How the designer works end to end: our [step-by-step designer guide](/blogs/how-to-use-3d-box-designer).
-- Answering "will it hold?": [box stacking strength guide](/blogs/box-stacking-strength-guide).
+- How the designer works end to end: the [step-by-step designer guide](/blogs/how-to-use-3d-box-designer).
 - Reading the estimate: [what drives cost per box and how to lower it](/blogs/box-price-estimate-guide).
 - Sizing from a product: [the fit checker guide](/blogs/find-right-box-size).
-- Understanding the board you are selling: [single, double and triple wall](/blogs/corrugated-wall-differences) and [flute types](/blogs/flute-types-guide).
-- Strength conversations: [burst strength vs ECT](/blogs/burst-strength-ect-guide).
-- Getting sizes right: [how to measure corrugated boxes](/blogs/box-measurements-guide).
+- Answering "will it hold?": [will my box stack?](/blogs/box-stacking-strength-guide).
+- Explaining the board you sell: [single, double and triple wall](/blogs/corrugated-wall-differences).
 
 ---
 
@@ -154,21 +152,9 @@ No. They are indicative estimates based on board area, ply, print and quantity, 
 
 Millimetres, centimetres and inches. Switching units changes the numbers shown, not the box.
 
-### Does my buyer need an account to open a shared link?
-
-No. The link opens in any modern browser, including on a phone.
-
-### Can I send several designs at once?
-
-Save each one in My designs and share them as separate links, or download a spec sheet for each and send them together.
-
 ### What does the spec sheet include?
 
 Three views of the box, dimensions in your chosen unit, board, finish, quantity, a dieline thumbnail, the date and an approval block.
-
-### Is my buyer's logo uploaded anywhere?
-
-Artwork stays in your browser while you design. It is only sent if you choose to submit the design to Vayu through the enquiry form.
 
 ---
 

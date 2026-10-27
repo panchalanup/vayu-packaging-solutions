@@ -9,7 +9,7 @@ import { z } from 'zod';
 import type { BoxDesign, BoxDimensions, DesignOptions, FluteType, PlyType } from '@/types/boxDesigner';
 import { DIMENSION_LIMITS } from './constants';
 import { DESIGNER_STYLES } from '@/lib/designerLeadSchema';
-import { getStyle } from './styles/registry';
+import { getStyle, getStyleGroup } from './styles/registry';
 import { optionsAfterStyleSwitch } from './styles/switchStyle';
 
 type OptionKey = 'handHoles' | 'vents' | 'window';
@@ -71,7 +71,9 @@ export function designFromPresetParams(params: URLSearchParams, base: BoxDesign)
   for (const key of OPTION_KEYS) if (asked.has(key) && def.openings?.[CAP[key]]) options[key] = true;
   const wr = Number(params.get('wr'));
   if (Number.isFinite(wr) && wr >= 0.2 && wr <= 0.9) options.windowRatio = wr;
-  const next: BoxDesign = { ...base, template: style, dimensions, options };
+  // Handling marks (glass, this side up, keep dry) belong on shipping and produce cartons, not on a cake box or a gift box
+  const showIcons = ['Shipping', 'Fruit & produce'].includes(getStyleGroup(def));
+  const next: BoxDesign = { ...base, template: style, dimensions, options, showIcons };
   if (plyInfo && flutesOk) {
     next.ply = plyInfo.ply;
     next.flutes = fl.split('') as FluteType[];

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { MAX_STICKERS, type BoxDesign, type StickerPlacement } from '@/types/boxDesigner';
+import { BOX_TEMPLATE_IDS, MAX_STICKERS, type BoxDesign, type StickerPlacement } from '@/types/boxDesigner';
 import {
   DEFAULT_DESIGN,
   DESIGN_SCHEMA_VERSION,
@@ -210,6 +210,15 @@ describe('search and recommendations', () => {
     expect(rec).not.toContain('dots');
     // nothing matches: fall back to the library
     expect(pickRecommended([LIB[3]], 'tray', null, 3)).toHaveLength(1);
+  });
+  it('has its own recommended categories for every style (new styles must not fall back to shipping marks)', () => {
+    for (const id of BOX_TEMPLATE_IDS) {
+      const cats = recommendedCategories(id);
+      expect(cats.length).toBeGreaterThan(0);
+      if (id !== 'rsc' && id !== 'hsc' && id !== 'fol') expect(cats[0]).not.toBe('shipping-marks');
+    }
+    expect(recommendedCategories('produce')[0]).toBe('fruits-veg');
+    expect(recommendedCategories('cake-box')[0]).toBe('bakery-food');
   });
 });
 

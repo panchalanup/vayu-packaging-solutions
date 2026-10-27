@@ -38,7 +38,7 @@ export interface TwitterCardMetadata {
 }
 
 export interface StructuredDataProps {
-  type: 'Organization' | 'LocalBusiness' | 'Product' | 'Article' | 'BreadcrumbList' | 'FAQPage' | 'BlogPosting' | 'SoftwareApplication' | 'HowTo' | 'ItemList';
+  type: 'Organization' | 'LocalBusiness' | 'Product' | 'Article' | 'BreadcrumbList' | 'FAQPage' | 'BlogPosting' | 'SoftwareApplication' | 'HowTo' | 'ItemList' | 'WebSite' | 'Blog';
   data: any;
 }
 

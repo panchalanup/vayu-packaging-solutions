@@ -1,20 +1,21 @@
 ---
-title: "Cake, Sweet and Bakery Boxes: Window Cake Boxes, Mithai Boxes, Trays and Clamshells"
+title: "Cake, Sweet and Bakery Boxes: Window, Mithai and Trays"
 slug: "cake-sweet-bakery-boxes"
-description: "Plan window cake boxes, mithai boxes, cupcake and cookie boxes and bakery trays in 3D: sizes, board, windows, branding and careful food-contact notes for bakeries and sweet shops."
+description: "Choose window cake boxes, mithai boxes, cupcake boxes and bakery trays: sizes, windows and food-contact cautions. Preview yours in 3D, then ask for a quote."
 category: "Use Cases"
 date: "2026-10-27"
-readingTime: "9 min read"
+updated: "2026-10-27"
+readingTime: "8 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-13-thumbnail"
 socialImage: "BLOG-UC-13-social"
 ---
 
-# Cake, Sweet and Bakery Boxes: Window Cake Boxes, Mithai Boxes, Trays and Clamshells
+# Cake, Sweet and Bakery Boxes: Window, Mithai and Trays
 
 For a bakery or a sweet shop the box is the last thing your customer sees before the food, and often the first thing their guests see. A birthday cake arrives in a box. A Diwali sweet box goes from hand to hand through a family. A box of cookies is a small gift. The packaging has to protect something fragile, look good in a photo and hold up in a car boot.
 
-This guide helps home bakers, bakeries, mithai shops and dessert brands choose between the **window cake box**, the **telescope sweet box**, the **cupcake and cookie boxes** and the **bakery tray**, and shows how to design each in the free **3D Box Designer**. For pizza and savoury takeaway, see our [pizza and bakery box guide](/blogs/pizza-bakery-box-design) and the companion article on [takeaway, tiffin and pizza boxes](/blogs/takeaway-tiffin-pizza-boxes-cloud-kitchens).
+This guide helps home bakers, bakeries, mithai shops and dessert brands choose between the **window cake box**, the **telescope sweet box**, the **cupcake and cookie boxes** and the **bakery tray**, and shows how to design each in the free **3D Box Designer**. For pizza and savoury takeaway, see our [pizza box guide](/blogs/pizza-bakery-box-design) and the companion article on [takeaway, tiffin and pizza boxes](/blogs/takeaway-tiffin-pizza-boxes-cloud-kitchens).
 
 [Design a cake box](/box-designer/cake-box)
 
@@ -140,29 +141,13 @@ See [logo and artwork on boxes](/blogs/logo-artwork-on-boxes) for print-ready ar
 
 ---
 
-## Features you will use
-
-| Feature | Use for bakery and sweets |
-|---|---|
-| Window cake box with window size slider | Show the cake, control the lid strength |
-| Telescope sweet box with lid depth | A gift-like reveal |
-| Cupcake, cookie and tray templates | Fast starts for common products |
-| Inches, cm or mm | Match how your supplier and bakers think |
-| Bakery cutouts, badges, pattern fill, brand colour | Branding without a designer |
-| Dieline and share link | Clear spec for the supplier, quick approval from partners |
-
----
-
 ## Where to go next
 
 - Windows and other cut-outs: [vents, hand holes and windows in box design](/blogs/vents-hand-holes-windows-box-design).
-- Brand it: [how to add cutouts to your box design](/blogs/how-to-add-cutouts-box-design).
-- Pizza and savoury boxes: [pizza and bakery box design](/blogs/pizza-bakery-box-design).
-- Cloud kitchens: [takeaway, tiffin and pizza boxes](/blogs/takeaway-tiffin-pizza-boxes-cloud-kitchens).
+- Pizza and flat bakery items: [pizza box sizes, board and design](/blogs/pizza-bakery-box-design).
+- Cloud kitchens: [takeaway boxes](/blogs/takeaway-tiffin-pizza-boxes-cloud-kitchens).
 - Festive planning: [festive gift and hamper boxes](/blogs/festive-gift-hamper-boxes).
-- Unboxing and delivery: [mailer boxes and unboxing](/blogs/ecommerce-mailer-box-unboxing).
-- Dielines: [dielines explained](/blogs/dielines-explained).
-- Prices: [what drives cost per box](/blogs/box-price-estimate-guide).
+- Brand it: [how to add cutouts to your box design](/blogs/how-to-add-cutouts-box-design).
 
 ---
 
@@ -187,10 +172,6 @@ The window cake box has a hinged lid. For a separate lid, choose the telescope s
 ### Can I print inside the box?
 
 Yes, but for food, many bakers keep the food-contact surface plain. Ask us which options suit your product.
-
-### Can I order a small quantity to test?
-
-Ask the quote team about minimum quantities. Many bakers order a small sample first.
 
 ---
 

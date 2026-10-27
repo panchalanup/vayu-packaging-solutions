@@ -19,7 +19,7 @@ import { FACTS } from '@/content/facts';
 import { quoteHref } from '@/lib/quotePrefill';
 import { MetaTags, StructuredData, SEO_CONFIG } from '@/seo';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
-import { getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
+import { getBlogIndexSchema, getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 
 const norm = (value: string) => value.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}\s]/gu, ' ');
 
@@ -63,6 +63,7 @@ const Blogs = () => {
     <Layout>
       <MetaTags {...PAGE_METADATA.blogs} canonical={`${SEO_CONFIG.siteUrl}/blogs`} />
       <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.blogs)} />
+      <StructuredData type="Blog" data={getBlogIndexSchema(BLOG_POSTS)} />
 
       <PageTransition>
         <PageHero

@@ -20,10 +20,17 @@ export const GUJARAT_SERVICE_CITIES = [
   'Vapi',
 ] as const;
 
+/**
+ * Public site origin used for canonicals, sitemap, schema and social cards.
+ * Set VITE_SITE_URL (for example https://www.vayupackaging.in) in the Vercel project settings when a custom domain goes live;
+ * no code change is needed. VERIFY-LATER[SEO-DOMAIN]: the production domain is not decided yet, so the default is the Vercel URL.
+ */
+const SITE_URL = ((import.meta as { env?: Record<string, string | undefined> }).env?.VITE_SITE_URL || 'https://vayupackaging.vercel.app').replace(/\/+$/, '');
+
 export const SEO_CONFIG = {
   // Site Information
   siteName: 'Vayu Packaging Solutions',
-  siteUrl: 'https://vayupackaging.vercel.app',
+  siteUrl: SITE_URL,
   defaultTitle: 'Vayu Packaging Solutions - Packaging Materials Distributor India',
   titleTemplate: '%s | Vayu Packaging Solutions',
   defaultDescription: 'India\'s trusted distributor of packaging materials. Corrugated boxes (3-7 ply), BOPP tapes, stretch films, bubble wraps, strapping. Bulk supply, pan-India delivery.',

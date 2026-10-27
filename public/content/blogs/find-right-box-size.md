@@ -1,16 +1,17 @@
 ---
-title: "How to Find the Right Box Size for Your Product (Fit Checker Guide)"
+title: "Right Box Size for Your Product: Padding and Fit Checker"
 slug: "find-right-box-size"
-description: "Inside vs outside dimensions, how much padding to leave, mm vs cm vs inches, and how the 3D Box Designer's fit checker turns your product size into the right inside box size."
+description: "Work out the right box size for your product: padding, ease and inside size, using the fit checker in mm, cm or inches. Try it free in the 3D Box Designer."
 category: "Designer Guides"
 date: "2026-10-26"
-readingTime: "9 min read"
+updated: "2026-10-27"
+readingTime: "8 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-03-thumbnail"
 socialImage: "BLOG-DG-03-social"
 ---
 
-# How to Find the Right Box Size for Your Product (Fit Checker Guide)
+# Right Box Size for Your Product: Padding and Fit Checker
 
 The most expensive box is the one that does not fit. Too small and the product will not go in, or bulges the walls. Too big and you pay for board you do not need, for void fill to stop the product rattling, and often for a higher courier weight slab.
 
@@ -22,7 +23,7 @@ Getting the size right is not hard once you know three things: **which dimension
 
 ## Inside vs outside dimensions: the mistake behind most wrong boxes
 
-Corrugated board has thickness. A 3-ply board is roughly 3-4 mm thick, a 5-ply board roughly 6-7 mm, a 7-ply board around 10 mm. So every box has two sizes:
+Corrugated board has thickness. A 3-ply board is roughly 3 mm thick, a 5-ply board roughly 6-7 mm and a 7-ply board around 10 mm (indicative; it depends on the flutes). So every box has two sizes:
 
 - **Inside dimensions:** the space available for your product. This is what matters to you.
 - **Outside dimensions:** the space the box takes on a shelf, in a courier bag or on a pallet. This is what matters for shipping and storage.
@@ -86,7 +87,7 @@ As a starting point, the designer's fit checker uses about **1 cm of padding per
 
 ## Using the fit checker, step by step
 
-1. Open the [3D Box Designer](/box-designer) and open the **fit checker** in the size panel.
+1. Open the [3D Box Designer](/box-designer) and open the **fit checker** in the **Edit Box** tab.
 2. Enter the product's **own** length, width and height. Measure the product, not an old box.
 3. Set the **padding per side**, or tick **fragile** to use the fragile minimum.
 4. Optionally enter the **weight**. The checker will then also suggest a ply (3, 5 or 7) that is comfortable for that weight.
@@ -129,7 +130,7 @@ The designer's sustainability note also compares your made-to-measure box with t
 - **Forgetting the orientation.** Decide which way up the product goes before you measure height.
 - **Rounding down.** Always round up. A box 2 mm too big works; one 2 mm too small does not.
 - **Ignoring multiples.** If you pack 6 items, lay them out as they will go in (2 × 3? 3 × 2? stacked?) and measure the group.
-- **Choosing size before style.** A mailer and an RSC of the same inside size have different outside sizes and blanks. Pick the style first: see [8 box styles in 3D](/blogs/box-styles-in-3d).
+- **Choosing size before style.** A mailer and an RSC of the same inside size have different outside sizes and blanks. Pick the style first: see [which box style should you choose](/blogs/which-box-style-should-you-choose).
 
 ---
 

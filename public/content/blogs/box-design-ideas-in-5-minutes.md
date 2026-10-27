@@ -1,16 +1,17 @@
 ---
-title: "20 Box Design Ideas You Can Build in 5 Minutes (by Product Type)"
+title: "20 Box Design Ideas You Can Build in 5 Minutes"
 slug: "box-design-ideas-in-5-minutes"
-description: "Twenty ready-to-build box design ideas for fruit, bakery, clothing, beauty, gifts, electronics, retail and shipping. Each names the box style, board, size and cutouts to use in the free 3D Box Designer."
+description: "Twenty box design ideas for fruit, bakery, clothing, beauty, gifts and shipping, each with the style, board and size to build in the 3D Box Designer."
 category: "Use Cases"
 date: "2026-10-27"
-readingTime: "10 min read"
+updated: "2026-10-27"
+readingTime: "8 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-09-thumbnail"
 socialImage: "BLOG-UC-09-social"
 ---
 
-# 20 Box Design Ideas You Can Build in 5 Minutes (by Product Type)
+# 20 Box Design Ideas You Can Build in 5 Minutes
 
 "I know what I sell. I just cannot picture the box." If that is you, this page is a menu. Below are **20 box design ideas**, grouped by product. Each one names the **style**, the **board**, a **starting size** and the **cutouts** to use, so you can recreate it in the free 3D Box Designer in about five minutes and then make it yours.
 
@@ -27,7 +28,7 @@ Every idea matches a ready template in the designer, so for most you can open th
 1. **Open the designer** and choose the style named in the idea (or open the template with the same name).
 2. **Type your inside size.** The sizes below are starting points; use your product's real size or the [fit checker](/blogs/find-right-box-size).
 3. **Pick the board** named in the idea. 3-ply is a single wall; 5-ply B+C is a double wall for heavier loads. See [wall types explained](/blogs/corrugated-wall-differences).
-4. **Add the cutouts** from the Artwork tab (search the name), then tint them to your brand colour. The [cutouts guide](/blogs/how-to-add-cutouts-box-design) shows how.
+4. **Add the cutouts** from the **Customize** tab (search the name), then tint them to your brand colour. The [cutouts guide](/blogs/how-to-add-cutouts-box-design) shows how.
 5. **Replace the sample text** with your brand name and fold the box.
 6. **Check the estimate**, then share the link or send the design for a quote.
 
@@ -212,7 +213,7 @@ They are ready to **show and quote**, not to print. Replace the sample text and 
 Yes. The sizes are starting points. Enter your own inside size, or let the fit checker set it from your product.
 
 ### Do I need the exact cutouts listed?
-No. Search the Artwork tab for any similar cutout, or use your own logo. The ideas are prompts.
+No. Search the Customize tab for any similar cutout, or use your own logo. The ideas are prompts.
 
 ### Is it free?
 Yes. The designer has no sign-up and no locked features.

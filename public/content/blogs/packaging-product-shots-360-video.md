@@ -1,16 +1,17 @@
 ---
-title: "Packaging Product Shots and 360° Videos Without a Photoshoot"
+title: "Packaging Product Shots and 360° Videos, No Photoshoot"
 slug: "packaging-product-shots-360-video"
-description: "Make clean packaging images and short 360° spin or fold videos of your box straight from the free 3D Box Designer: backgrounds, angles, resolution, video tips, and where renders work best."
+description: "Make packaging product shots and 360° videos of your box without a photoshoot: backgrounds, angles and formats, from the free 3D Box Designer."
 category: "Designer Guides"
 date: "2026-10-26"
-readingTime: "8 min read"
+updated: "2026-10-27"
+readingTime: "7 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-07-thumbnail"
 socialImage: "BLOG-DG-07-social"
 ---
 
-# Packaging Product Shots and 360° Videos Without a Photoshoot
+# Packaging Product Shots and 360° Videos, No Photoshoot
 
 You need pictures of your packaging long before you have the boxes. The launch post, the pitch deck, the product page "what's in the box" image, the investor update, the slide for your distributor: all of them want a good-looking box **now**, while the real one is still a quote.
 
@@ -33,16 +34,16 @@ This guide shows how to make them, how to make them look good, and where a rende
 | **Size reference** | Your box beside a familiar object (an A4 sheet, a 1 litre bottle) | Showing real size on product pages and in chats |
 | **3D model and AR** | A GLB file, and an AR view on iPhone and iPad | Viewing the box on a real table at real size |
 
-<!-- VERIFY-LATER[BLOG-28]: output options (backgrounds, 2x/4x PNG, WebM/MP4, 6-10 s clips, GLB/USDZ, size references) follow plan items C4-C7 and C12; check names, lengths and formats against the shipped shot studio before publishing. -->
+<!-- VERIFY-LATER[BLOG-28]: output options (backgrounds, 2x and 4x PNG, MP4 or WebM clips of about 8 seconds, GLB and USDZ, size references) were checked against the code. AR Quick Look (USDZ) still needs a test on a current iPhone or iPad (designer note DSG-64) before the AR claims are promoted. -->
 
 ---
 
 ## Step by step: a product shot in two minutes
 
 1. **Finish the design first.** Style, size, board, artwork. Clear the [print checks](/blogs/logo-artwork-on-boxes) so the picture shows a box that can actually be printed.
-2. **Open the shot studio** from the export area.
+2. **Open the Showcase tab.**
 3. **Pick a background.** Options include a clean **studio** backdrop, **warm wood**, **concrete**, or your **brand colour**.
-4. **Pick an angle.** Use a preset (three-quarter front, front, top-down, lid open) or rotate the box yourself.
+4. **Pick an angle.** Use a preset (3/4 hero, front, side, top or back 3/4) or rotate the box yourself.
 5. **Set the fold.** A closed box is classic; a half-open mailer shows the inside print and invites the viewer in.
 6. **Choose the resolution:** **2x** for web and social, **4x** for print and large screens.
 7. **Optional watermark,** if you are sending drafts to a client.
@@ -57,13 +58,13 @@ This guide shows how to make them, how to make them look good, and where a rende
 
 1. Set up the box and background as for a still shot.
 2. Choose **360° spin** or **fold**.
-3. Press **record**. The designer plays the animation and records it to a short clip, typically 6-10 seconds, which loops cleanly for social media.
+3. Press **record**. The designer plays the animation and records it to a short clip of about 8 seconds, ready for reels and status updates.
 4. Download the video. It is saved as **MP4** where your browser supports it, otherwise as **WebM**, which plays in browsers and most apps. Convert it with any free converter if a platform rejects it.
 
 **Tip:** a fold video of a **mailer** or **telescope gift box** is one of the most effective ways to explain a box without words. The viewer sees the lid open and the inside print appear.
 
 ![A 360 degree turntable recording of a branded box on a studio background, with the record button active](/blog-images/designer/designer-turntable-video.png)
-*Recording a 360° turntable. The clip loops cleanly for reels and stories.*
+*Recording a 360° turntable: about 8 seconds, ready for reels and stories.*
 
 ---
 
@@ -75,7 +76,7 @@ The 3D model does the hard work, but a few choices separate an ordinary image fr
 - **Three-quarter view** (two sides and the top) is the most informative and the most "product-like".
 - **Front-on** works for flat graphic layouts, in grids and on catalogue pages.
 - **Top-down** suits pizza boxes, trays and anything with a printed lid.
-- **Lid half open** shows inside printing and makes the box feel tactile.
+- **Lid half open** (set with the fold slider) shows inside printing and makes the box feel tactile.
 
 ### Backgrounds
 - **Studio white or light grey** for marketplaces, catalogues and anything that will be cut out.
@@ -137,9 +138,6 @@ When you post a render publicly, a simple caption such as "packaging design prev
 ---
 
 ## Frequently asked questions
-
-### Do I need any 3D or design software?
-No. Everything happens in the browser, in the same tool where you designed the box.
 
 ### Can I use the images commercially?
 Yes. Images of your own design are yours to use in your marketing.

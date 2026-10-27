@@ -1,16 +1,17 @@
 ---
-title: "Adding Your Logo and Artwork to a Box: Print-Ready Tips"
+title: "Logo and Artwork on Boxes: Print-Ready Tips"
 slug: "logo-artwork-on-boxes"
-description: "Put your logo on a corrugated box the right way: file formats, resolution, safe areas away from folds, text size, brand colours and finishes, with the 3D Box Designer's print checks to catch mistakes."
+description: "Put your logo on a corrugated box the right way: file types, resolution, safe areas, text size and colours on kraft. Check your artwork in the 3D designer."
 category: "Designer Guides"
 date: "2026-10-26"
-readingTime: "9 min read"
+updated: "2026-10-27"
+readingTime: "8 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-05-thumbnail"
 socialImage: "BLOG-DG-05-social"
 ---
 
-# Adding Your Logo and Artwork to a Box: Print-Ready Tips
+# Logo and Artwork on Boxes: Print-Ready Tips
 
 A printed box does a lot of quiet work. It tells the courier which way is up, tells the warehouse what is inside, and tells your customer, before they open anything, that the product came from a brand that cares. It also costs very little extra once the run is large enough.
 
@@ -38,7 +39,7 @@ In the designer you place artwork on the face of a 3D box and then **fold it**. 
 ## Step by step: putting your logo on a box
 
 1. **Open the designer** and set your style and size first. Artwork is placed relative to the face, so a later size change can shift it.
-2. **Choose a surface.** Click a face on the 3D box, or pick one from the surface list (front, back, sides, top flaps, bottom, and inside surfaces for styles that have them).
+2. **Choose a surface.** In the **Customize** tab, click a face on the 3D box, or pick one from the surface list (front, back, sides, top flaps, bottom, and inside surfaces for styles that have them).
 3. **Add an image.** Upload your logo as **SVG, PNG, JPG or WebP** (up to 10 MB). Drag it into place, then scale and rotate it.
 4. **Add text.** Type a tagline, website, "Handle with care", or a product line. Pick the font, size, alignment and colour.
 5. **Set brand colours.** Enter exact **hex or RGB** values, and reuse recent colours so every face matches. Save them, with your logo, as a **brand kit** for the next design.
@@ -152,9 +153,6 @@ Ink on brown paper mixes with the paper colour. Colours look darker and warmer. 
 ### How many colours should I use?
 As few as do the job. One or two spot colours give the best price and a bold look. See [what drives cost per box](/blogs/box-price-estimate-guide).
 
-### Is my logo uploaded when I use the designer?
-No. Images stay in your browser while you design. They are only sent if you choose to send the design to us or share it.
-
 ### Can I put artwork on the inside of the box?
 Yes, on styles with inside surfaces such as the inside of a mailer lid. Inside printing is a popular unboxing touch.
 
@@ -170,4 +168,4 @@ Upload your logo, fold the box, and clear the print checks. You will know your a
 - [Dielines explained: download one and hand it to any printer](/blogs/dielines-explained)
 - [Packaging product shots and 360° videos without a photoshoot](/blogs/packaging-product-shots-360-video)
 - [How to use the 3D Box Designer](/blogs/how-to-use-3d-box-designer)
-- [Virgin vs recycled kraft paper](/blogs/kraft-paper-grades)
+- [How to add cutouts to your box design](/blogs/how-to-add-cutouts-box-design)

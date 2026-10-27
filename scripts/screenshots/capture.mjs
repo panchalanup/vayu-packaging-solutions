@@ -1440,11 +1440,21 @@ async function main() {
   }
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    console.error('capture failed:', error);
-    cleanupAll();
-    process.exit(1);
-  }
-);
+// qa.mjs imports the harness pieces below; run main() only when this file is the entry point
+export { Cdp, Page, Designer, withTimeout, sleep, log, fitBudget, ensureDevServer, launchEdge, keepAwake, cleanupAll, cleanups, killTree, consoleIssues, NOISE, design, image, text, LOGO_URL, LOGO_LIGHT_URL, LOGO_SVG, BASE, PORT, SCRATCH, OUT_DIR, STORAGE_KEY, MAX_BYTES, svgDataUrl };
+export const setStep = (name) => {
+  currentStep = name;
+};
+export const getEdgeStatus = () => ({ edgeChild });
+export const getStep = () => currentStep;
+
+if (path.resolve(process.argv[1] ?? '') === fileURLToPath(import.meta.url)) {
+  main().then(
+    () => process.exit(0),
+    (error) => {
+      console.error('capture failed:', error);
+      cleanupAll();
+      process.exit(1);
+    }
+  );
+}

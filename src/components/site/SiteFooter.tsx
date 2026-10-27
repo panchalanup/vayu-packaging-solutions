@@ -84,6 +84,21 @@ export default function SiteFooter() {
                   </Link>
                 </li>
                 <li>
+                  <Link to="/tools" className={link}>
+                    Free calculators
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/tools/volumetric-weight-calculator" className={link}>
+                    Volumetric weight
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/tools/cbm-calculator" className={link}>
+                    CBM calculator
+                  </Link>
+                </li>
+                <li>
                   <a
                     href={BROCHURE.href}
                     download="Vayu-Packaging-Solutions-Brochure.pdf"

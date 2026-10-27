@@ -1,16 +1,17 @@
 ---
-title: "Festive Gift and Hamper Boxes: Designing Lid-and-Base Boxes for Diwali, Weddings and Corporate Gifting"
+title: "Festive Gift and Hamper Boxes for Diwali and Weddings"
 slug: "festive-gift-hamper-boxes"
-description: "Plan and design telescope (lid-and-base) gift and hamper boxes for Diwali, weddings and corporate gifting in 3D: sizes, board, colours, branding and timelines."
+description: "Plan festive gift and hamper boxes for Diwali, weddings and corporate gifting: sizes, lid depth, colours and approvals. Preview in 3D and order early."
 category: "Use Cases"
 date: "2026-10-26"
-readingTime: "10 min read"
+updated: "2026-10-27"
+readingTime: "7 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-06-thumbnail"
 socialImage: "BLOG-UC-06-social"
 ---
 
-# Festive Gift and Hamper Boxes: Designing Lid-and-Base Boxes for Diwali, Weddings and Corporate Gifting
+# Festive Gift and Hamper Boxes for Diwali and Weddings
 
 In India, a gift is judged before it is opened. A box of sweets for Diwali, a wedding hamper for guests, or a corporate gift for clients all say something about the person giving it, and the box is the first thing anyone sees.
 
@@ -43,6 +44,8 @@ Designing in 3D helps with all of these: you settle the size and look early, sha
 - **Flexible depth.** A shallow lid is economical; a full-depth lid that covers the whole base feels luxurious and adds strength.
 - **Reusable.** Recipients often keep good gift boxes for storage, which keeps your brand or family name in the home.
 - **Easy to fill.** The open base takes trays, inserts, shred or tissue easily.
+
+Other gift styles are worth a look too. The [book-style flip-lid box](/box-designer/book-box), the [slide box](/box-designer/slide-box) and the [carry box with hand holes](/box-designer/carry-box) suit gift sets and hampers. [Which box style should you choose](/blogs/which-box-style-should-you-choose) compares them.
 
 ---
 
@@ -143,42 +146,17 @@ Check the indicative estimate across quantities, then send the design to us for 
 
 ---
 
-## Features you will use
-
-| Feature | Why it helps for gifting |
-|---|---|
-| Gift box (telescope) preset | Lid-and-base box in one click |
-| Lid depth | Shallow and economical, or full and premium |
-| Brand colours (hex/RGB) | Match a theme or brand colour |
-| Inside colour and inside-lid artwork | A message the recipient sees on opening |
-| Fold animation | Watch the lid lift off |
-| Presentation mode | Show variants to a family or client |
-| Spec sheet PDF | Approval and purchase paperwork |
-| Product shots | Images for catalogues, invitations or social posts |
-
----
-
 ## Where to go next
 
-- New to the tool? Read the [step-by-step designer guide](/blogs/how-to-use-3d-box-designer).
-- Catalogue images: [product shots and 360 video](/blogs/packaging-product-shots-360-video).
+- Sweets and bakery gifts: [cake, sweet and bakery boxes](/blogs/cake-sweet-bakery-boxes).
 - Lid and message artwork: [adding your logo and artwork](/blogs/logo-artwork-on-boxes).
 - Budgeting by quantity: [what drives cost per box](/blogs/box-price-estimate-guide).
-- Box styles explained: [types of corrugated boxes](/blogs/types-of-corrugated-boxes).
-- Sweets and bakery: [pizza and bakery box guide](/blogs/pizza-bakery-box-design).
-- Planning a hamper's size: [how to measure corrugated boxes](/blogs/box-measurements-guide).
+- Catalogue images: [product shots and 360° video](/blogs/packaging-product-shots-360-video).
+- New to the tool? Read the [step-by-step designer guide](/blogs/how-to-use-3d-box-designer).
 
 ---
 
 ## Frequently asked questions
-
-### What is a telescope box?
-
-A two-piece box: a base and a separate lid that fits over it. In the designer it is the telescope style, used for gift boxes and shoe boxes.
-
-### Can I choose how deep the lid is?
-
-Yes. Set the lid depth in the designer, from a shallow lid to one that covers the whole base.
 
 ### Can I match my wedding or brand colour?
 

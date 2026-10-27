@@ -13,7 +13,7 @@ import { Link, Navigate, useParams } from 'react-router-dom';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import { AlertTriangle, Calendar, Clock, RefreshCw, User } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, Calendar, Clock, RefreshCw, User } from 'lucide-react';
 import Layout from '@/components/Layout';
 import PageTransition from '@/components/PageTransition';
 import ShareButtons from '@/components/ShareButtons';
@@ -31,13 +31,16 @@ import { BLOG_IMAGES, BLOG_IMAGE_CREDITS } from '@/constants/images';
 import { ImageCredit } from '@/components/site/ImageCredit';
 import { pickBlogCta } from '@/content/blogCtas';
 import { FACTS } from '@/content/facts';
-import { classifyHref, isSafeImageSrc, looksLikeHtmlShell, splitAtMidHeading, stripFrontmatter, stripLeadingTitle } from '@/lib/blogMarkdown';
+import { blogImageSize } from '@/content/blogImageSizes';
+import { classifyHref, countWords, extractFaqs, isSafeImageSrc, looksLikeHtmlShell, readingMinutes, splitAtMidHeading, stripFrontmatter, stripLeadingTitle } from '@/lib/blogMarkdown';
+import { getAdjacentPosts, getDesignerCard, getRelatedByTags } from '@/lib/blogRelated';
+import { usePrerenderHold } from '@/lib/prerender';
 import { quoteHref } from '@/lib/quotePrefill';
 import { pageWhatsAppMessage, whatsappHref } from '@/lib/contactLinks';
 import '@/styles/blog.css';
 import { MetaTags, StructuredData, SEO_CONFIG } from '@/seo';
 import { BLOG_SEO_METADATA } from '@/seo/metadata/blogs';
-import { getArticleSchema, getBlogBreadcrumbs, getBreadcrumbSchema } from '@/seo/schema';
+import { getArticleSchema, getBlogBreadcrumbs, getBreadcrumbSchema, getFAQSchema } from '@/seo/schema';
 
 type Status = 'loading' | 'ready' | 'error';
 
@@ -53,8 +56,12 @@ const markdownComponents: Components = {
     </div>
   ),
   // Real images (the old renderer replaced every image with a placeholder). Only safe sources are rendered.
-  img: ({ node: _node, src, alt, title }) =>
-    isSafeImageSrc(src) ? <img src={src} alt={alt ?? ''} title={title} loading="lazy" decoding="async" /> : null,
+  // width/height come from the generated size table (npm run seo:images) so the layout does not shift while images load.
+  img: ({ node: _node, src, alt, title }) => {
+    if (!isSafeImageSrc(src)) return null;
+    const size = blogImageSize(src);
+    return <img src={src} alt={alt ?? ''} title={title} width={size?.width} height={size?.height} loading="lazy" decoding="async" />;
+  },
   a: ({ node: _node, href, children, ...props }) => {
     switch (classifyHref(href)) {
       case 'internal':
@@ -142,10 +149,21 @@ const BlogPost = () => {
   }, [post, attempt]);
 
   const parts = useMemo(() => splitAtMidHeading(content), [content]);
+  // FAQ pairs from the article's "Frequently asked questions" section, for FAQPage schema (src/lib/blogMarkdown.ts)
+  const faqs = useMemo(() => extractFaqs(content), [content]);
+  const minutes = useMemo(() => (content ? readingMinutes(content) : 0), [content]);
+  const words = useMemo(() => (content ? countWords(content) : 0), [content]);
+
+  // The prerendered HTML shell stays on screen until the article text has loaded (src/lib/prerender.ts)
+  usePrerenderHold(Boolean(post) && status === 'loading');
 
   if (!post) return <Navigate to="/blogs" replace />;
 
-  const relatedPosts = getRelatedBlogs(post.slug, 3);
+  const relatedPosts = getRelatedByTags(post.slug, 3);
+  const { previous, next } = getAdjacentPosts(post.slug);
+  const designer = getDesignerCard(post.slug);
+  const updated = post.updated ?? post.date;
+  const readingLabel = minutes ? `${minutes} min read` : post.readingTime;
   const featuredImage = BLOG_IMAGES[post.thumbnail as keyof typeof BLOG_IMAGES] || BLOG_IMAGES.defaultThumbnail;
   const featuredCredit = BLOG_IMAGE_CREDITS[post.thumbnail as keyof typeof BLOG_IMAGE_CREDITS];
   const seoData = BLOG_SEO_METADATA[post.slug];
@@ -161,11 +179,16 @@ const BlogPost = () => {
         canonical={url}
         type="article"
         publishedTime={post.date}
+        modifiedTime={updated}
         author={post.author}
         image={seoData?.ogImage}
       />
-      <StructuredData type="Article" data={getArticleSchema(post, seoData?.ogImage)} />
+      <StructuredData
+        type="Article"
+        data={getArticleSchema(post, seoData?.ogImage, { keywords: seoData?.keywords, wordCount: words || undefined, readingMinutes: minutes || undefined })}
+      />
       <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(getBlogBreadcrumbs(post.title, post.slug))} />
+      {faqs.length > 0 && <StructuredData type="FAQPage" data={getFAQSchema(faqs)} />}
 
       <ReadingProgress />
 
@@ -208,9 +231,15 @@ const BlogPost = () => {
                   <Calendar aria-hidden="true" className="h-4 w-4" />
                   <time dateTime={post.date}>{formatBlogDate(post.date, true)}</time>
                 </span>
+                {updated !== post.date && (
+                  <span className="flex items-center gap-2">
+                    <RefreshCw aria-hidden="true" className="h-4 w-4" />
+                    Updated <time dateTime={updated}>{formatBlogDate(updated, true)}</time>
+                  </span>
+                )}
                 <span className="flex items-center gap-2">
                   <Clock aria-hidden="true" className="h-4 w-4" />
-                  {post.readingTime}
+                  {readingLabel}
                 </span>
               </div>
 
@@ -227,6 +256,8 @@ const BlogPost = () => {
                 height={900}
                 className="blog-featured-image"
                 decoding="async"
+                // Largest element above the fold: fetch it first (lowercase attribute: React 18 does not know the camelCase prop)
+                {...({ fetchpriority: 'high' } as Record<string, string>)}
               />
               {featuredCredit && <ImageCredit credit={featuredCredit} variant="inline" className="mt-2 block" />}
             </div>
@@ -298,6 +329,22 @@ const BlogPost = () => {
                 </>
               )}
 
+              {/* Deep link into the designer, tracked with utm_* and src=blog.<slug> */}
+              {status === 'ready' && (
+                <aside
+                  aria-label="Try it in the 3D designer"
+                  data-theme="kraft"
+                  className="mt-10 rounded-[14px] border border-border bg-background p-6 text-foreground md:p-8"
+                >
+                  <p className="label-mono text-muted-foreground">Try it</p>
+                  <p className="mt-2 font-display text-h3 font-semibold">{designer.title}</p>
+                  <p className="mt-2 max-w-[56ch] text-muted-foreground">{designer.body}</p>
+                  <Cta id={`blog.${post.slug}.designer`} intent="designer" href={designer.href} meta={{ blog: post.slug }} className="mt-5" arrow>
+                    {designer.label}
+                  </Cta>
+                </aside>
+              )}
+
               {/* Author box */}
               <aside aria-label="About the author" className="mt-12 flex gap-4 rounded-[14px] border border-border bg-card p-5 md:p-6">
                 <span
@@ -329,6 +376,41 @@ const BlogPost = () => {
           </div>
         </Section>
 
+        {(previous || next) && (
+          <nav aria-label="More articles" className="border-t border-border">
+            <div className="mx-auto grid max-w-content gap-4 px-4 py-8 sm:grid-cols-2 md:px-6 lg:px-10">
+              {previous ? (
+                <Link
+                  to={`/blogs/${previous.slug}`}
+                  rel="prev"
+                  className="group flex items-start gap-3 rounded-[14px] border border-border p-4 hover:border-foreground/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <ArrowLeft aria-hidden="true" className="mt-1 h-4 w-4 shrink-0" />
+                  <span>
+                    <span className="label-mono block text-muted-foreground">Previous article</span>
+                    <span className="mt-1 block font-semibold">{previous.title}</span>
+                  </span>
+                </Link>
+              ) : (
+                <span />
+              )}
+              {next && (
+                <Link
+                  to={`/blogs/${next.slug}`}
+                  rel="next"
+                  className="group flex items-start justify-end gap-3 rounded-[14px] border border-border p-4 text-right hover:border-foreground/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <span>
+                    <span className="label-mono block text-muted-foreground">Next article</span>
+                    <span className="mt-1 block font-semibold">{next.title}</span>
+                  </span>
+                  <ArrowRight aria-hidden="true" className="mt-1 h-4 w-4 shrink-0" />
+                </Link>
+              )}
+            </div>
+          </nav>
+        )}
+
         {relatedPosts.length > 0 && (
           <Section name="blog-related" theme="kraft" aria-labelledby="related-heading" className="section-y">
             <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
@@ -336,7 +418,7 @@ const BlogPost = () => {
                 id="related-heading"
                 index="Keep reading"
                 title="Related articles"
-                lead={`More from ${post.category}.`}
+                lead="More on the same topics."
               />
               <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {relatedPosts.map((related) => (

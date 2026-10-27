@@ -8,6 +8,7 @@ import {
   getLocalBusinessSchema,
   getOrganizationSchema,
   getProductCatalogSchema,
+  getWebSiteSchema,
   PAGE_BREADCRUMBS,
 } from '@/seo/schema';
 import { useScrollTracking } from '@/hooks/useAnalytics';
@@ -26,6 +27,7 @@ export default function Home() {
     <Layout>
       <MetaTags {...PAGE_METADATA.home} />
       <StructuredData type="Organization" data={getOrganizationSchema()} />
+      <StructuredData type="WebSite" data={getWebSiteSchema()} />
       <StructuredData type="LocalBusiness" data={getLocalBusinessSchema()} />
       <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema(PAGE_BREADCRUMBS.home)} />
       <StructuredData type="ItemList" data={getProductCatalogSchema()} />

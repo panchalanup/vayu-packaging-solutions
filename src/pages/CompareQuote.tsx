@@ -20,7 +20,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { MetaTags, StructuredData } from '@/seo';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
-import { getSoftwareApplicationSchema, getToolFAQSchema, PACKAGING_TOOL_FAQS } from '@/seo/schema';
+import { getBreadcrumbSchema, getSoftwareApplicationSchema, getToolFAQSchema, PACKAGING_TOOL_FAQS } from '@/seo/schema';
 import { WEBSITE_URL } from '@/constants';
 import { Section } from '@/components/site/Section';
 import { Cta } from '@/components/site/Cta';
@@ -133,6 +133,7 @@ export default function CompareQuote() {
         canonical={`${WEBSITE_URL}/compare-quote`}
       />
       <StructuredData type="SoftwareApplication" data={getSoftwareApplicationSchema()} />
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Packaging Finder', url: '/compare-quote' }])} />
       {/* The FAQ below is visible on the page, so its FAQPage schema stays valid */}
       <StructuredData type="FAQPage" data={getToolFAQSchema()} />
 

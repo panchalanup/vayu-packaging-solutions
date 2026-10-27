@@ -120,11 +120,11 @@ export default function CutoutPanel({ design, update, face, faceSizes, templateC
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <Button size="sm" variant="outline" onClick={surprise} disabled={!ready}>
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" variant="outline" className="min-w-fit flex-1 px-2" onClick={surprise} disabled={!ready}>
           <Shuffle className="mr-1 h-4 w-4" /> Surprise me
         </Button>
-        <Button size="sm" variant="outline" onClick={() => setTintOpen((o) => !o)} disabled={design.stickers.length === 0} aria-expanded={tintOpen}>
+        <Button size="sm" variant="outline" className="min-w-fit flex-1 px-2" onClick={() => setTintOpen((o) => !o)} disabled={design.stickers.length === 0} aria-expanded={tintOpen}>
           <Palette className="mr-1 h-4 w-4" /> Match brand colour
         </Button>
       </div>

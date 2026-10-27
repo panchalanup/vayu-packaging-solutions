@@ -195,6 +195,15 @@ describe('landing pages', () => {
     }
   });
 
+  it('handling marks only come with shipping and produce presets', () => {
+    const cake = designFromPresetParams(new URLSearchParams('style=cake-box'), DEFAULT_DESIGN)!;
+    const rsc = designFromPresetParams(new URLSearchParams('style=rsc'), DEFAULT_DESIGN)!;
+    const produce = designFromPresetParams(new URLSearchParams('style=produce'), DEFAULT_DESIGN)!;
+    expect(cake.showIcons).toBe(false);
+    expect(rsc.showIcons).toBe(true);
+    expect(produce.showIcons).toBe(true);
+  });
+
   it('ignores bad preset values', () => {
     expect(designFromPresetParams(new URLSearchParams('style=nope'), DEFAULT_DESIGN)).toBeNull();
     expect(designFromPresetParams(new URLSearchParams(''), DEFAULT_DESIGN)).toBeNull();

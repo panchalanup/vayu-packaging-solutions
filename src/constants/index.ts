@@ -211,7 +211,8 @@ export const FORM_PLACEHOLDERS = {
 // ============================================
 // WEBSITE & SOCIAL LINKS
 // ============================================
-export const WEBSITE_URL = 'https://vayupackaging.vercel.app' as const;
+// Same origin as SEO_CONFIG.siteUrl (src/seo/config.ts): set VITE_SITE_URL when a custom domain goes live
+export const WEBSITE_URL: string = ((import.meta as { env?: Record<string, string | undefined> }).env?.VITE_SITE_URL || 'https://vayupackaging.vercel.app').replace(/\/+$/, '');
 
 export const SOCIAL_LINKS = {
   whatsapp: 'https://wa.me/918511658600',
@@ -252,5 +253,12 @@ export const TOOLS_MENU = [
     description: TOOL_INFO.boxDesigner.description,
     isNew: true,
     icon: 'Box',
+  },
+  {
+    name: 'Free Calculators',
+    path: '/tools',
+    description: 'Volumetric weight, CBM, box size, strength and cost',
+    isNew: true,
+    icon: 'Calculator',
   },
 ] as const;

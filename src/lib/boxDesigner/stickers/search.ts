@@ -51,6 +51,19 @@ const STYLE_CATEGORIES: Record<string, string[]> = {
   mailer: ['clothing', 'beauty-wellness', 'shapes-frames', 'badges-labels'],
   pizza: ['bakery-food', 'badges-labels', 'drinks'],
   tray: ['fruits-veg', 'bakery-food', 'badges-labels'],
+  // phase 2 styles
+  carry: ['gifts-festive', 'home-kitchen', 'fruits-veg', 'badges-labels'],
+  produce: ['fruits-veg', 'flowers-plants', 'badges-labels'],
+  'produce-tray': ['fruits-veg', 'flowers-plants', 'badges-labels'],
+  'tuck-end': ['beauty-wellness', 'electronics', 'shapes-frames', 'badges-labels'],
+  'crash-lock': ['bakery-food', 'drinks', 'beauty-wellness', 'badges-labels'],
+  'one-two-three': ['bakery-food', 'drinks', 'beauty-wellness', 'badges-labels'],
+  'window-mailer': ['clothing', 'animals-kids', 'shapes-frames', 'badges-labels'],
+  'cake-box': ['bakery-food', 'drinks', 'gifts-festive', 'badges-labels'],
+  clamshell: ['bakery-food', 'drinks', 'badges-labels'],
+  'shelf-tray': ['bakery-food', 'beauty-wellness', 'shapes-frames', 'badges-labels'],
+  'slide-box': ['gifts-festive', 'beauty-wellness', 'shapes-frames', 'badges-labels'],
+  'book-box': ['gifts-festive', 'clothing', 'shapes-frames', 'badges-labels'],
 };
 
 /** Template category (any wording used by the template gallery) to sticker categories, by keyword */

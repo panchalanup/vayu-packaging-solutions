@@ -1,16 +1,17 @@
 ---
-title: "Will My Box Stack? Box Strength Made Simple"
+title: "Will My Box Stack? BCT, ECT and Stack Height Explained"
 slug: "box-stacking-strength-guide"
-description: "BCT and ECT in plain words: how strong a corrugated box is, how high you can safely stack it, why humidity and time matter, and how the 3D Box Designer's strength guidance helps you pick the right ply."
+description: "Will my box stack? BCT, ECT and the McKee formula in plain words, plus how to raise stack height. Check your box strength in the 3D Box Designer."
 category: "Designer Guides"
 date: "2026-10-26"
-readingTime: "9 min read"
+updated: "2026-10-27"
+readingTime: "8 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-08-thumbnail"
 socialImage: "BLOG-DG-08-social"
 ---
 
-# Will My Box Stack? Box Strength Made Simple
+# Will My Box Stack? BCT, ECT and Stack Height Explained
 
 A box rarely fails because something hits it. It fails slowly, at the bottom of a stack: in a godown, on a pallet, in the back of a truck, under the weight of the boxes above it. The walls bow, the corners give way, and the whole stack leans.
 
@@ -76,7 +77,7 @@ So the industry divides BCT by a **safety factor** to get the load a box can car
 
 ## How the designer's strength guidance works
 
-Open the **strength** panel in the designer and enter the **weight of one packed box**. The designer:
+Open the **Price & order** tab in the designer and enter the **weight of one packed box**. The designer:
 
 1. Takes the **board** you chose (ply and flute) and its thickness,
 2. Takes the **outside perimeter** of your box from its size,
@@ -143,13 +144,10 @@ Then let the strength guidance confirm it for **your** size and weight. If you a
 ECT measures the strength of the **board**; BCT measures the strength of the whole **box**. BCT depends on ECT plus the box's size and the board's thickness.
 
 ### Is the strength figure in the designer guaranteed?
-No. It is an **indicative estimate** from a standard formula, using typical board values. Real strength depends on the exact papers, humidity and handling. If strength is critical, ask us for test reports on the specified board.
+No. It is an **indicative estimate** from a standard formula, using typical board values. Real strength depends on the exact papers, humidity and handling. If strength is critical, ask us what test data is available for the board you specify.
 
 ### Why is my stack limited by "height" and not by the board?
 Because the board could carry more, but a stack taller than about 2 m is impractical to build by hand and risky to handle. The verdict caps it there.
-
-### Does a 5-ply box always stack higher than 3-ply?
-For the same size, yes: thicker, stronger board gives a much higher crush strength. Whether you need it depends on the weight and how high you stack.
 
 ### Does burst strength matter for stacking?
 Not much. Burst strength matters for punctures and rough handling; compression (BCT) matters for stacking. Most buyers need a sensible level of both.

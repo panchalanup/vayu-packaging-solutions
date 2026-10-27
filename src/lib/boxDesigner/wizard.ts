@@ -291,7 +291,7 @@ export function recommendBox(
   reasons.push(
     answers.productSize
       ? `Inside size leaves ${paddingCm} cm around your product${a.fragility === 'fragile' ? ' for bubble wrap or foam' : ''}.`
-      : `Inside size is based on a typical ${PRODUCT_OPTIONS.find((p) => p.id === a.product)?.label.toLowerCase() ?? 'product'}; enter your product size for a snug fit.`
+      : `Inside size is based on a typical size for ${PRODUCT_OPTIONS.find((p) => p.id === a.product)?.label.toLowerCase() ?? 'product'}; enter your product size for a snug fit.`
   );
 
   const flutes = chooseFlutes(ply, template, a);

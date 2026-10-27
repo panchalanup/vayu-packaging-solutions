@@ -213,9 +213,9 @@ const SAND = '#E8D5B3';
  * Vented produce cartons have a slot row across the middle of the long walls, so the artwork sits above and below
  * it: two stickers in the top corners and the brand line in the strip underneath.
  */
-const vented = (left: string, right: string, label: string, ink: string): Pick<Spec, 'stickers' | 'texts'> => ({
+const vented = (left: string, right: string, label: string, ink: string, fill = 0.55): Pick<Spec, 'stickers' | 'texts'> => ({
   stickers: [s(left, 'front', 0.17, 0.16, 0.3), s(right, 'front', 0.83, 0.16, 0.3)],
-  texts: [T('front', label, ink, 0.88, { fill: 0.55 })],
+  texts: [T('front', label, ink, 0.88, { fill })],
 });
 
 // VERIFY-LATER[DSG-61]: check template sizes and boards against what customers actually order most
@@ -236,9 +236,9 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     finish: 'matte',
     insideColorHex: null,
     showIcons: true,
-    art: { id: 'leaf', face: 'front', position: { x: 0.5, y: 0.4 }, scale: 0.45 },
+    art: { id: 'leaf', face: 'front', position: { x: 0.36, y: 0.4 }, scale: 0.45 },
     // kept left of centre and higher so it clears the handling marks at the bottom right
-    texts: [text('front', 'YOUR BRAND', 52, '#17231C', 0.74, 'Inter', 0.42)],
+    texts: [text('front', 'YOUR BRAND', 52, '#17231C', 0.74, 'Inter', 0.36)],
     tags: ['courier', 'parcel', 'online store', 'rsc'],
   }),
   legacy({
@@ -499,7 +499,7 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     color: WHITE,
     finish: 'gloss',
     options: { window: true, windowRatio: 0.6 },
-    stickers: [s('cake-slice', 'front', 0.13, 0.5, 0.62)],
+    stickers: [s('cake-slice', 'front', 0.17, 0.5, 0.62)],
     texts: [T('front', 'Your Bakery', INK, 0.5, { x: 0.58, fill: 0.5, font: 'Georgia' })],
     tags: ['birthday cake', 'pastry', 'bakery', 'window'],
   }),
@@ -513,7 +513,7 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     board: '3E',
     color: PINK,
     options: { window: true, windowRatio: 0.65 },
-    stickers: [s('cupcake', 'front', 0.1, 0.5, 0.72), s('cupcake', 'front', 0.9, 0.5, 0.72, { flip: true })],
+    stickers: [s('cupcake', 'front', 0.13, 0.5, 0.6), s('cupcake', 'front', 0.87, 0.5, 0.6, { flip: true })],
     texts: [T('front', 'Your Cupcakes', INK, 0.5, { fill: 0.5, font: 'Georgia' })],
     tags: ['muffin', 'dessert', 'bakery'],
   }),
@@ -911,7 +911,7 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     size: [14, 8, 6],
     board: '3E',
     color: WHITE,
-    stickers: [s('plug', 'front', 0.14, 0.5, 0.7)],
+    stickers: [s('plug', 'front', 0.18, 0.5, 0.7)],
     texts: [T('front', 'Your Charger', INK, 0.5, { x: 0.58, fill: 0.55 })],
     tags: ['adapter', 'power', 'cable', 'battery'],
   }),
@@ -1094,7 +1094,7 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     board: '3E',
     color: YELLOW,
     options: { window: true, windowRatio: 0.6 },
-    stickers: [s('teddy-bear', 'front', 0.1, 0.5, 0.78), s('rocket', 'front', 0.9, 0.5, 0.78)],
+    stickers: [s('teddy-bear', 'front', 0.15, 0.5, 0.78), s('rocket', 'front', 0.85, 0.5, 0.78)],
     texts: [T('front', 'Your Toys', INK, 0.5, { fill: 0.4 })],
     tags: ['kids', 'game', 'play', 'doll', 'teddy'],
   }),
@@ -1193,7 +1193,7 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     board: '3E',
     color: PINK,
     options: { window: true, windowRatio: 0.55 },
-    stickers: [s('cat', 'front', 0.1, 0.5, 0.8), s('paw-prints', 'front', 0.9, 0.5, 0.6)],
+    stickers: [s('cat', 'front', 0.16, 0.5, 0.8), s('paw-prints', 'front', 0.88, 0.5, 0.6)],
     texts: [T('front', 'Cat Toys', INK, 0.5, { fill: 0.4 })],
     tags: ['pet', 'kitten', 'toy', 'accessories'],
   }),
@@ -1223,7 +1223,7 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     board: '3C',
     color: WHITE,
     options: { vents: true, handHoles: true },
-    ...vented('tulip', 'rose', 'Your Flowers', INK),
+    ...vented('tulip', 'rose', 'Your Flowers', INK, 0.36),
     tags: ['bouquet', 'florist', 'gulab', 'cut flowers'],
   }),
   define({
@@ -1268,8 +1268,9 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     board: '3E',
     color: RED,
     options: { frontCut: 0.55 },
-    stickers: [s('popcorn', 'front', 0.1, 0.84, 0.22)],
-    texts: [T('front', 'Grab a Snack', CREAM, 0.84, { x: 0.58, fill: 0.5 })],
+    // the cut-down front is a strip only 4-5 cm high: keep the artwork centred on it
+    stickers: [s('popcorn', 'front', 0.09, 0.5, 0.7)],
+    texts: [T('front', 'Grab a Snack', CREAM, 0.5, { x: 0.58, fill: 0.5 })],
     tags: ['counter', 'retail', 'chips', 'confectionery', 'pos', 'shelf'],
   }),
   define({
@@ -1282,8 +1283,8 @@ export const DESIGN_TEMPLATES: DesignTemplate[] = [
     board: '3E',
     color: PINK,
     options: { frontCut: 0.5 },
-    stickers: [s('lipstick', 'front', 0.1, 0.84, 0.22)],
-    texts: [T('front', 'Your Beauty', INK, 0.84, { x: 0.58, fill: 0.5, font: 'Georgia' })],
+    stickers: [s('lipstick', 'front', 0.09, 0.5, 0.7)],
+    texts: [T('front', 'Your Beauty', INK, 0.5, { x: 0.58, fill: 0.5, font: 'Georgia' })],
     tags: ['counter', 'retail', 'makeup', 'pos', 'shelf'],
   }),
   legacy({

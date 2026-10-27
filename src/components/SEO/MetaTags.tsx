@@ -6,6 +6,10 @@
 import { Helmet } from 'react-helmet-async';
 import { SEO_CONFIG, OG_DEFAULTS, TWITTER_DEFAULTS } from '@/seo/config';
 import { MetaTagsProps } from '@/types/seo';
+import { buildFullTitle, canonicalFor, resolveOgImageUrl } from '@/seo/meta';
+
+/** Allows large image previews and full snippets in search results */
+const ROBOTS_INDEX = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 
 export const MetaTags: React.FC<MetaTagsProps> = ({
   title,
@@ -20,31 +24,19 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
   noindex = false,
   nofollow = false,
 }) => {
-  // Build full title
-  const fullTitle = title.includes('|') 
-    ? title 
-    : `${title} | ${SEO_CONFIG.siteName}`;
-  
-  // Build canonical URL
-  const canonicalUrl = canonical || (typeof window !== 'undefined' ? window.location.href : SEO_CONFIG.siteUrl);
-  
-  // Build image URL. Page metadata names per-page OG files that were never created (/og-about.jpg, /blog-images/...),
-  // so only paths that really exist in /public are used; anything else falls back to the default image.
-  // VERIFY-LATER[SEO-01]: design per-page OG images (1200x630) and add them to KNOWN_OG_IMAGES.
-  const KNOWN_OG_IMAGES = ['/og-image.jpg'];
-  // /blog-images/*-og.png are exported from the blog illustrations (scripts/illustrations/export-seo.mjs)
-  const isBlogOg = /^\/blog-images\/[a-z0-9-]+-og\.png$/.test(image);
-  // /og/box-designer-*.png are the designer landing share cards (scripts/illustrations/export-designer-og.mjs)
-  const isDesignerOg = /^\/og\/box-designer-[a-z0-9-]+\.png$/.test(image);
-  const resolvedImage = image.startsWith('http') || KNOWN_OG_IMAGES.includes(image) || isBlogOg || isDesignerOg ? image : SEO_CONFIG.defaultImage;
-  const imageUrl = resolvedImage.startsWith('http')
-    ? resolvedImage
-    : `${SEO_CONFIG.siteUrl}${resolvedImage}`;
+  const fullTitle = buildFullTitle(title);
+
+  // Canonical: always absolute, never carries a query string or hash (?utm_*, ?template=, ?style= must not
+  // become the canonical URL). Falls back to the current path when a page does not pass one.
+  const canonicalUrl = canonicalFor(canonical || (typeof window !== 'undefined' ? window.location.pathname : '/'));
+
+  // Share image: only files that really exist are used (see src/seo/meta.ts), else the default image
+  const imageUrl = resolveOgImageUrl(image);
 
   // Robots directive
   const robotsContent = noindex || nofollow
     ? `${noindex ? 'noindex' : 'index'},${nofollow ? 'nofollow' : 'follow'}`
-    : 'index,follow';
+    : ROBOTS_INDEX;
 
   return (
     <Helmet>
@@ -101,9 +93,6 @@ export const MetaTags: React.FC<MetaTagsProps> = ({
       <meta name="author" content={author || SEO_CONFIG.organizationName} />
       <meta name="publisher" content={SEO_CONFIG.organizationName} />
       
-      {/* Mobile */}
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="theme-color" content="#0066CC" />
       
       {/* Verification (when available) */}
       {SEO_CONFIG.googleSiteVerification && (

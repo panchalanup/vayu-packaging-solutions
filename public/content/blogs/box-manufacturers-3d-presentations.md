@@ -1,16 +1,17 @@
 ---
-title: "For Box Manufacturers: Win More Orders by Showing Customers Their Box in 3D"
+title: "3D Box Presentations: Win More Orders as a Box Maker"
 slug: "box-manufacturers-3d-presentations"
-description: "Use a free 3D box designer as your sales showroom: present boxes full screen, send a proof PDF for sign-off, share product shots and put a designer on your own website."
+description: "Win more box orders by showing customers their box in 3D: presentation mode, proof PDFs, dielines and share links. A practical guide for box makers."
 category: "Use Cases"
 date: "2026-10-26"
+updated: "2026-10-27"
 readingTime: "9 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-01-thumbnail"
 socialImage: "BLOG-UC-01-social"
 ---
 
-# For Box Manufacturers: Win More Orders by Showing Customers Their Box in 3D
+# 3D Box Presentations: Win More Orders as a Box Maker
 
 If you make corrugated boxes, you already know the hardest part of a new order is often not the corrugator, the printer or the die. It is the conversation before any of that: getting a customer to agree on the box they actually want.
 
@@ -55,7 +56,7 @@ Here is a simple flow you can run in ten to fifteen minutes with a customer.
 
 ### 1. Start from the closest style
 
-Open the designer and pick the style that matches the brief: regular slotted carton (RSC), half slotted (HSC), full overlap (FOL), mailer, telescope (lid and base), sleeve, pizza or tray. The style picker shows each one as a card with a short "best for" note, which is a useful way to explain the options to a buyer who does not know the names.
+Open the designer and pick the style that matches the brief from the **20 styles**: slotted cartons, mailers, telescope and slide boxes, food and produce styles, display trays and more. The style picker shows each one as a card with a short "best for" note, which is a useful way to explain the options to a buyer who does not know the names.
 
 ![The style picker showing box styles as cards with a short best-for note](/blog-images/designer/designer-style-picker.png)
 *The style picker: each card names the style and what it suits, so the customer can choose by looking rather than by FEFCO code.*
@@ -115,7 +116,7 @@ A few honest notes:
 
 ## Product shots for proposals and social media
 
-A quotation PDF with a realistic image of the customer's box on the first page is more persuasive than one without. In the product-shot panel you can choose a background (plain studio, warm wood, concrete or the customer's brand colour), an angle preset and an export size, with an optional watermark.
+A quotation PDF with a realistic image of the customer's box on the first page is more persuasive than one without. In the **Showcase** tab you can choose a background (plain studio, warm wood, concrete or the customer's brand colour), an angle preset and an export size, with an optional watermark.
 
 Use these images in:
 
@@ -156,14 +157,11 @@ Before you embed, check what the widget shows and where enquiries from it go, so
 
 ## Where to go next
 
-- New to the tool? Start with our [step-by-step guide to the designer](/blogs/how-to-use-3d-box-designer).
+- New to the tool? Start with the [step-by-step designer guide](/blogs/how-to-use-3d-box-designer).
 - Sending drawings to your die maker: [dielines explained](/blogs/dielines-explained).
-- Images for proposals: [product shots and 360 video](/blogs/packaging-product-shots-360-video).
-- Walking a buyer through styles: [8 box styles in 3D](/blogs/box-styles-in-3d).
+- Images for proposals: [product shots and 360° video](/blogs/packaging-product-shots-360-video).
 - Explaining price: [what drives cost per box](/blogs/box-price-estimate-guide).
-- Explaining styles to a customer? See [types of corrugated boxes](/blogs/types-of-corrugated-boxes).
-- Talking load and stacking? Read [burst strength vs edge crush test](/blogs/burst-strength-ect-guide).
-- Sizing questions? See [how to measure corrugated boxes](/blogs/box-measurements-guide).
+- Walking a buyer through styles: [which box style should you choose](/blogs/which-box-style-should-you-choose).
 
 ---
 
@@ -171,7 +169,7 @@ Before you embed, check what the widget shows and where enquiries from it go, so
 
 ### Is the 3D Box Designer really free for box manufacturers?
 
-Yes. It runs in the browser, needs no sign-up and has no paid tier. You can use it to design and present boxes to your customers.
+Yes. It runs in the browser and needs no sign-up. You can use it to design and present boxes to your customers.
 
 ### Do my customers need to install anything to open a shared design?
 
@@ -185,17 +183,9 @@ The designer needs an internet connection to load. If the venue Wi-Fi is unrelia
 
 No. Prices in the designer are indicative and labelled so. Use them as a guide in conversation, then quote from your own costing.
 
-### Can I use the dieline directly for my die?
-
-Treat it as a starting drawing at 1:1 scale with cut and crease lines. Your die maker will adjust allowances for your board and machines.
-
 ### Where are my saved designs stored?
 
 In "My designs" in your own browser. Nothing is uploaded unless you share a link or send an enquiry. Clearing browser data removes them, so export a proof PDF of anything important.
-
-### Can my customer sign the proof digitally?
-
-The proof PDF has an approval block for a name, signature and date. They can print and sign it, or sign it with any PDF tool they already use.
 
 ---
 

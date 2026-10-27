@@ -26,7 +26,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'food-grade boxes',
       'corrugated box types',
     ],
-    metaDescription: 'Complete guide to corrugated box types: 3-ply, 5-ply, 7-ply, die-cut, printed & food-grade. Learn which box is perfect for your products with comparison table and real examples.',
+    metaDescription: 'Types of corrugated boxes explained: 3, 5 and 7-ply, box styles, printed and food-contact boxes. Find the right type for your product and get a quote.',
     breadcrumbs: ['Home', 'Blogs', 'Types of Corrugated Boxes'],
     relatedKeywords: [
       'corrugated packaging types',
@@ -49,7 +49,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       '5-ply vs 7-ply',
       'corrugated wall differences',
     ],
-    metaDescription: 'Understand single wall, double wall, and triple wall corrugated boxes. Learn the strength differences, applications, and how to choose the right wall construction for your packaging needs.',
+    metaDescription: 'Single wall vs double wall vs triple wall corrugated: layers, thickness, strength and uses. See which wall your box needs, then compare 3, 5 and 7-ply in 3D.',
     breadcrumbs: ['Home', 'Blogs', 'Corrugated Wall Differences'],
     relatedKeywords: [
       'corrugated board structure',
@@ -71,7 +71,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'corrugated flute sizes',
       'flute types comparison',
     ],
-    metaDescription: 'A, B, C, E, F flute guide for corrugated boxes. Learn which flute type offers best cushioning, printability, or stacking strength for your specific packaging requirements.',
+    metaDescription: 'Corrugated flute types compared: A, B, C, E and F flute by height, cushioning and print quality. Choose the right flute and test it in the free 3D designer.',
     breadcrumbs: ['Home', 'Blogs', 'Flute Types Guide'],
     relatedKeywords: [
       'flute profile corrugated',
@@ -93,7 +93,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'GSM calculation',
       'corrugated board GSM',
     ],
-    metaDescription: 'Understand GSM (Grams per Square Meter) in corrugated packaging. Learn how paper weight affects box strength, cost, and performance. Complete calculation guide with examples.',
+    metaDescription: 'GSM in corrugated boxes explained, with BF and board weight worked out. Learn to compare box quotes fairly, then send your spec for a clear quote.',
     breadcrumbs: ['Home', 'Blogs', 'GSM Calculation & Strength'],
     relatedKeywords: [
       'paper weight packaging',
@@ -115,7 +115,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'ECT rating boxes',
       'corrugated box testing',
     ],
-    metaDescription: 'Learn the difference between Burst Strength (BS) and Edge Crush Test (ECT) in corrugated boxes. Understand which test matters for your packaging and how to interpret values.',
+    metaDescription: 'Burst strength vs ECT: what each box test measures, the units, and which to ask for. Specify stacking and handling strength correctly and ask for a quote.',
     breadcrumbs: ['Home', 'Blogs', 'Burst Strength vs ECT Guide'],
     relatedKeywords: [
       'box strength testing',
@@ -137,7 +137,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'box sizing guide',
       'corrugated box dimensions',
     ],
-    metaDescription: 'Learn how to correctly measure corrugated boxes using L × B × H dimensions. Understand interior vs exterior measurements and avoid costly sizing mistakes with our complete guide.',
+    metaDescription: 'How to measure corrugated boxes: L × B × H order, inside vs outside size, mm and inches, volumetric weight. Get the size right, then design it in 3D.',
     breadcrumbs: ['Home', 'Blogs', 'Box Measurements Guide'],
     relatedKeywords: [
       'box dimension calculation',
@@ -159,7 +159,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'corrugated box materials',
       'sustainable packaging',
     ],
-    metaDescription: 'Learn the differences between virgin and recycled kraft paper in corrugated boxes. Understand performance, cost, sustainability, and which grade is right for your packaging needs.',
+    metaDescription: 'Virgin vs recycled kraft paper for corrugated boxes: strength, moisture, print, cost and food contact compared. Know what to specify and ask for a quote.',
     breadcrumbs: ['Home', 'Blogs', 'Kraft Paper Grades'],
     relatedKeywords: [
       'kraft paper comparison',
@@ -172,7 +172,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
   },
   
   '3d-box-designer-tool-free': {
-    focusKeyword: '3D box designer tool free',
+    focusKeyword: 'free 3D box designer',
     keywords: [
       '3D box designer',
       'free box design tool',
@@ -184,7 +184,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'visualize packaging before ordering',
       'interactive box designer',
     ],
-    metaDescription: 'Design custom corrugated boxes in 3D for FREE. Visualize dimensions, materials, and branding before ordering. No more guesswork or costly mistakes. Try our interactive tool now - no credit card required.',
+    metaDescription: 'Free 3D box designer: build a corrugated box in your browser, check size, strength and an indicative price, then send it for a quote. No sign-up needed.',
     breadcrumbs: ['Home', 'Blogs', '3D Box Designer Tool'],
     relatedKeywords: [
       'packaging visualization tool',
@@ -222,7 +222,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'box design approval',
       'embed box designer',
     ],
-    metaDescription: 'Box manufacturers: present customer boxes in 3D, send a signable proof PDF, export product shots and embed a free box designer on your site. No sign-up.',
+    metaDescription: 'Win more box orders by showing customers their box in 3D: presentation mode, proof PDFs, dielines and share links. A practical guide for box makers.',
     breadcrumbs: ['Home', 'Blogs', 'Box Manufacturers 3D Presentations'],
     relatedKeywords: [
       'packaging sales presentation',
@@ -247,7 +247,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'share box design link',
       'mm cm inch box size',
     ],
-    metaDescription: 'Packaging wholesalers and traders: build a clear corrugated box spec, compare indicative prices across quantity tiers and share a link or spec sheet in minutes.',
+    metaDescription: 'A workflow for packaging traders: turn a vague buyer request into a clear box spec, see indicative prices by quantity and share a link in minutes.',
     breadcrumbs: ['Home', 'Blogs', 'Wholesalers: Spec, Price and Share'],
     relatedKeywords: [
       'quantity price tiers',
@@ -273,7 +273,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'inside print mailer box',
       'custom shipping box for online store',
     ],
-    metaDescription: 'Design a branded corrugated mailer box in 3D: size it to your product, choose the board, print the inside and preview the unboxing before you order.',
+    metaDescription: 'Design a branded e-commerce mailer box: size it from your product, choose the board, print the inside and preview the unboxing in 3D before you order.',
     breadcrumbs: ['Home', 'Blogs', 'E-commerce Mailer Box Design'],
     relatedKeywords: [
       'subscription box design',
@@ -289,7 +289,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
     ogImage: '/blog-images/uc-mailer-og.png',
   },
   'pizza-bakery-box-design': {
-    focusKeyword: 'pizza box and bakery box design guide',
+    focusKeyword: 'pizza box sizes',
     keywords: [
       'pizza box sizes',
       'custom pizza boxes',
@@ -298,7 +298,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'printed pizza box',
       'food delivery boxes',
     ],
-    metaDescription: 'Pizza and bakery boxes: choose sizes, board and print for your menu, read careful notes on food contact, and design your boxes in 3D before you order.',
+    metaDescription: 'Pizza box sizes for 8, 10 and 12 inch pizzas, plus board, flute, grease and lid print tips. Preview your pizza box in 3D and send the design for a quote.',
     breadcrumbs: ['Home', 'Blogs', 'Pizza and Bakery Box Design'],
     relatedKeywords: [
       'cloud kitchen packaging',
@@ -324,7 +324,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'clothing packaging boxes',
       'telescope shoe box',
     ],
-    metaDescription: 'Clothing and footwear brands: design garment mailers and lid-and-base shoe boxes in 3D, sized to your products, with branding inside and out.',
+    metaDescription: 'Size, board and brand garment mailers and shoe boxes: fold-to-fit sizing, lid depth, stacking and unboxing ideas. Preview them in 3D, then request a quote.',
     breadcrumbs: ['Home', 'Blogs', 'Apparel Mailers and Shoe Boxes'],
     relatedKeywords: [
       'shoe box lid depth',
@@ -349,7 +349,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'lid and base box',
       'telescope gift box',
     ],
-    metaDescription: 'Design lid-and-base gift and hamper boxes for Diwali, weddings and corporate gifting in 3D: size, lid depth, colours and a message inside the lid.',
+    metaDescription: 'Plan festive gift and hamper boxes for Diwali, weddings and corporate gifting: sizes, lid depth, colours and approvals. Preview in 3D and order early.',
     breadcrumbs: ['Home', 'Blogs', 'Festive Gift and Hamper Boxes'],
     relatedKeywords: [
       'festive packaging',
@@ -375,7 +375,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'pallet carton sizing',
       'export packaging India',
     ],
-    metaDescription: 'Plan export and heavy-duty cartons: choose 5-ply or 7-ply, size for pallets, check indicative stacking strength and add shipping marks, all in 3D first.',
+    metaDescription: 'Choose 5-ply or 7-ply for export cartons: stack height, humidity, pallet fit and marking. Check strength and the pallet view in 3D before you order.',
     breadcrumbs: ['Home', 'Blogs', 'Export Cartons: 5-Ply and 7-Ply'],
     relatedKeywords: [
       'triple wall boxes',
@@ -401,7 +401,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'box printing mistakes',
       'small business packaging tips',
     ],
-    metaDescription: 'The ten most common packaging mistakes small businesses make, from wrong dimensions to over-built boxes, and how to avoid each one with a free 3D box designer.',
+    metaDescription: 'Ten packaging mistakes small businesses make, from wrong sizes to over-built boxes, and a fix for each. Catch them in the free 3D Box Designer first.',
     breadcrumbs: ['Home', 'Blogs', '10 Packaging Mistakes'],
     relatedKeywords: [
       'packaging checklist',
@@ -428,7 +428,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'box mockup tool free',
       'corrugated box designer',
     ],
-    metaDescription: 'Step-by-step guide to the free 3D Box Designer: pick a style, set the inside size in mm, cm or inches, choose the board, add your logo, check the indicative price and send it for a quote.',
+    metaDescription: 'Step-by-step guide to the free 3D Box Designer: pick a style, set the size, add your logo, check strength and price, then send the design for a quote.',
     breadcrumbs: ['Home', 'Blogs', 'How to Use the 3D Box Designer'],
     relatedKeywords: [
       'box design software online',
@@ -441,7 +441,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
   },
 
   'box-styles-in-3d': {
-    focusKeyword: 'corrugated box styles',
+    focusKeyword: 'RSC HSC FOL mailer box styles',
     keywords: [
       'box styles',
       'RSC box',
@@ -452,7 +452,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'pizza box style',
       'corrugated tray',
     ],
-    metaDescription: 'RSC, HSC, full overlap, sleeve, telescope, mailer, pizza box and tray explained in plain words, with what each style is best for and how to compare them in 3D on your own size.',
+    metaDescription: 'RSC, HSC, full overlap, sleeve, telescope, mailer, pizza box and tray: how the 8 core corrugated box styles work and which to try in the 3D Box Designer.',
     breadcrumbs: ['Home', 'Blogs', '8 Box Styles in 3D'],
     relatedKeywords: [
       'FEFCO box styles',
@@ -474,7 +474,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'packaging padding',
       'box dimensions mm cm inches',
     ],
-    metaDescription: 'Inside vs outside dimensions, how much padding to leave, and mm vs cm vs inches. See how the 3D Box Designer fit checker turns your product size into the right inside box size.',
+    metaDescription: 'Work out the right box size for your product: padding, ease and inside size, using the fit checker in mm, cm or inches. Try it free in the 3D Box Designer.',
     breadcrumbs: ['Home', 'Blogs', 'Find the Right Box Size'],
     relatedKeywords: [
       'right-size packaging',
@@ -496,7 +496,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'box quantity discount',
       'reduce packaging cost',
     ],
-    metaDescription: 'What drives the price of a corrugated box: board area, ply, print colours, finish, set-up and quantity. How the 3D Box Designer\'s indicative estimate works and ten ways to lower cost per box.',
+    metaDescription: 'What drives the price per box: board area, ply, print colours, finish, set-up and quantity. Use the instant estimate and ten tips to lower your cost.',
     breadcrumbs: ['Home', 'Blogs', 'Box Price Estimates'],
     relatedKeywords: [
       'flexo printing cost per colour',
@@ -518,7 +518,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'packaging safe area',
       'box print resolution',
     ],
-    metaDescription: 'Put your logo on a corrugated box the right way: file formats, resolution, safe areas away from folds, minimum text size, brand colours and finishes, checked by the 3D Box Designer.',
+    metaDescription: 'Put your logo on a corrugated box the right way: file types, resolution, safe areas, text size and colours on kraft. Check your artwork in the 3D designer.',
     breadcrumbs: ['Home', 'Blogs', 'Logo and Artwork on Boxes'],
     relatedKeywords: [
       'printed corrugated boxes',
@@ -540,7 +540,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'cut and crease lines',
       'RSC dieline',
     ],
-    metaDescription: 'What a box dieline is, how to read cut and crease lines, panel sizes and the glue flap, and how to download a 1:1 mm SVG or PDF dieline from the free 3D Box Designer.',
+    metaDescription: 'Box dielines explained: how to read cut and crease lines and download a 1:1 mm SVG or PDF dieline from the free 3D Box Designer for your printer.',
     breadcrumbs: ['Home', 'Blogs', 'Dielines Explained'],
     relatedKeywords: [
       'packaging dieline',
@@ -562,7 +562,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'packaging mockup free',
       'unboxing video mockup',
     ],
-    metaDescription: 'Make packaging images and short 360° spin or fold videos of your box from the free 3D Box Designer: backgrounds, angles, resolution, and when to use renders instead of photos.',
+    metaDescription: 'Make packaging product shots and 360° videos of your box without a photoshoot: backgrounds, angles and formats, from the free 3D Box Designer.',
     breadcrumbs: ['Home', 'Blogs', 'Product Shots and 360° Videos'],
     relatedKeywords: [
       '3D packaging mockup',
@@ -584,7 +584,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'carton stacking load',
       'which ply box',
     ],
-    metaDescription: 'BCT and ECT in plain words: how strong a corrugated box is, how high you can safely stack it, why humidity matters, and how the 3D Box Designer\'s strength guidance picks the ply.',
+    metaDescription: 'Will my box stack? BCT, ECT and the McKee formula in plain words, plus how to raise stack height. Check your box strength in the 3D Box Designer.',
     breadcrumbs: ['Home', 'Blogs', 'Box Stacking Strength'],
     relatedKeywords: [
       'box compression strength',
@@ -606,7 +606,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'packaging stickers online',
       '3D box designer cutouts',
     ],
-    metaDescription: 'How to add cutouts to a 3D box design: pick from 512 ready stickers, resize, rotate and tint them to your brand colour, repeat one as a pattern, try Surprise me, then check the fold before print.',
+    metaDescription: 'Add cutouts to a box design: pick from 512 stickers, resize, recolour to your brand and repeat as a pattern. Try it free in the 3D Box Designer.',
     breadcrumbs: ['Home', 'Blogs', 'Add Cutouts to Your Box Design'],
     relatedKeywords: [
       'custom box stickers',
@@ -629,7 +629,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'gift box template',
       'packaging templates online',
     ],
-    metaDescription: 'A tour of 74 ready box templates in the free 3D Box Designer for fruit, food, clothing, beauty, gifts, electronics and shipping: what each includes and what to change first.',
+    metaDescription: 'Browse 74 ready box design templates for fruit, food, fashion, gifts and shipping. Open one in a tap, change the size and brand, then ask for a quote.',
     breadcrumbs: ['Home', 'Blogs', 'Box Design Templates Tour'],
     relatedKeywords: [
       'packaging design templates',
@@ -653,7 +653,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'ventilated produce carton',
       'slide box',
     ],
-    metaDescription: 'Which of 20 box styles fits your product? A picker guide by product with the five style groups, what each style is best for, and a link to try each in 3D on your own size.',
+    metaDescription: 'Which box style fits your product? A pick-by-product table for all 20 styles in the 3D Box Designer, with what to watch for. Try your own size free.',
     breadcrumbs: ['Home', 'Blogs', 'Which Box Style Should You Choose'],
     relatedKeywords: [
       'box style guide',
@@ -676,7 +676,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'fruit box design',
       'mailer box ideas',
     ],
-    metaDescription: 'Twenty box design ideas by product type, each with the box style, board, size and cutouts to use, so you can build it in the free 3D Box Designer in about five minutes.',
+    metaDescription: 'Twenty box design ideas for fruit, bakery, clothing, beauty, gifts and shipping, each with the style, board and size to build in the 3D Box Designer.',
     breadcrumbs: ['Home', 'Blogs', '20 Box Design Ideas'],
     relatedKeywords: [
       'packaging ideas for small business',
@@ -698,7 +698,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'fruit carton ventilation',
       'cake box window',
     ],
-    metaDescription: 'When to add vents, hand holes and windows to a corrugated box, what they add to cost and how they reduce stacking strength, with a plain look at the published 10-40% range and how to test.',
+    metaDescription: 'Vents, hand holes and windows in corrugated boxes: when they are worth adding, what they cost and how they cut stacking strength. Test them in 3D.',
     breadcrumbs: ['Home', 'Blogs', 'Vents, Hand Holes and Windows'],
     relatedKeywords: [
       'ventilated corrugated box',
@@ -719,7 +719,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'open produce tray',
       'fruit packaging box India',
     ],
-    metaDescription: 'Plan ventilated fruit and vegetable cartons, open trays and hand holes: what vents do to box strength, how to size them, and how to preview the dieline in 3D.',
+    metaDescription: 'Plan ventilated fruit and vegetable boxes: vented cartons, open trays and hand holes, what they do to strength and how to size them. Design one in 3D.',
     breadcrumbs: ['Home', 'Blogs', 'Fruit and Vegetable Boxes'],
     relatedKeywords: [
       'produce packaging',
@@ -745,7 +745,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'mango carton design',
       'fruit packaging sizes',
     ],
-    metaDescription: 'Box ideas for packing mangoes, apples and grapes for local sale and export: starting sizes, board choice, vents, branding and a pallet check in the free 3D designer.',
+    metaDescription: 'Box ideas for mangoes, apples and grapes: starting sizes, board, vents, branding and a pallet check. Design a fruit box in 3D before you order.',
     breadcrumbs: ['Home', 'Blogs', 'Packing Mangoes, Apples and Grapes'],
     relatedKeywords: [
       'mango carton 5 kg',
@@ -771,7 +771,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'tuck end box clothing',
       'garment packaging box',
     ],
-    metaDescription: 'Choose and design window mailers, saree boxes, shoe and sandal boxes, tuck-end and slide boxes for clothing and footwear, with sizes, board and branding tips.',
+    metaDescription: 'Pick boxes for clothing, sarees and footwear: window mailers, tuck-end, slide and shoe boxes, with sizing and branding tips. Try them in 3D, then quote.',
     breadcrumbs: ['Home', 'Blogs', 'Clothing, Saree and Footwear Boxes'],
     relatedKeywords: [
       'apparel packaging India',
@@ -797,7 +797,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'bakery tray',
       'sweet box packaging India',
     ],
-    metaDescription: 'Plan window cake boxes, mithai boxes, cupcake and cookie boxes and bakery trays in 3D: sizes, windows, branding and careful food-contact notes.',
+    metaDescription: 'Choose window cake boxes, mithai boxes, cupcake boxes and bakery trays: sizes, windows and food-contact cautions. Preview yours in 3D, then ask for a quote.',
     breadcrumbs: ['Home', 'Blogs', 'Cake, Sweet and Bakery Boxes'],
     relatedKeywords: [
       'cake box with window',
@@ -814,7 +814,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
     ogImage: '/blog-images/uc-cake-og.png',
   },
   'takeaway-tiffin-pizza-boxes-cloud-kitchens': {
-    focusKeyword: 'takeaway and pizza boxes for cloud kitchens',
+    focusKeyword: 'takeaway boxes for cloud kitchens',
     keywords: [
       'takeaway box design',
       'burger clamshell box',
@@ -823,7 +823,7 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'tiffin delivery packaging',
       'food delivery boxes India',
     ],
-    metaDescription: 'Choose takeaway clamshells, pizza boxes, tray-and-sleeve combos and carry boxes for a cloud kitchen, size them to your menu and delivery bag, and design them in 3D.',
+    metaDescription: 'Choose takeaway clamshells, pizza boxes and carry boxes for a cloud kitchen: size to the menu and delivery bag, and preview in 3D before you order.',
     breadcrumbs: ['Home', 'Blogs', 'Takeaway, Tiffin and Pizza Boxes'],
     relatedKeywords: [
       'clamshell food box',
@@ -838,6 +838,296 @@ export const BLOG_SEO_METADATA: Record<string, BlogSEOMeta> = {
       'street-food brands',
     ],
     ogImage: '/blog-images/uc-takeaway-og.png',
+  },
+  'how-to-order-custom-printed-boxes-india': {
+    focusKeyword: 'how to order custom printed boxes',
+    keywords: [
+      'how to order custom printed boxes',
+      'custom printed boxes India',
+      'printed corrugated box with logo',
+      'custom box ordering steps',
+      'custom packaging order process',
+    ],
+    metaDescription: 'How to order custom printed boxes in India in 9 steps: size, style, board, artwork, quantity, quote, proof, payment and delivery. Design yours in 3D first.',
+    breadcrumbs: ['Home', 'Blogs', 'How to Order Custom Printed Boxes in India'],
+    relatedKeywords: [
+      'custom box with logo',
+      'box proof and dieline',
+      'custom box quote',
+      'printed carton boxes',
+      'how to order packaging boxes',
+    ],
+    targetAudience: [
+      'small business owners',
+      'D2C brands',
+      'e-commerce sellers',
+      'first-time box buyers',
+    ],
+    ogImage: '/blog-images/n2-order-og.png',
+  },
+  'minimum-order-quantity-custom-boxes': {
+    focusKeyword: 'custom box minimum order quantity',
+    keywords: [
+      'custom box MOQ India',
+      'minimum order quantity custom boxes',
+      'low MOQ boxes',
+      'printing plate cost boxes',
+      'small order custom boxes',
+    ],
+    metaDescription: 'Why custom boxes have a minimum order quantity, how setup cost shapes the price per box, and honest ways to order fewer boxes. Check your design in 3D.',
+    breadcrumbs: ['Home', 'Blogs', 'Minimum Order Quantity for Custom Boxes'],
+    relatedKeywords: [
+      'box MOQ meaning',
+      'low minimum order packaging',
+      'die cost custom box',
+      'plain vs printed boxes',
+      'box price by quantity',
+    ],
+    targetAudience: [
+      'small business owners',
+      'D2C brands',
+      'startups',
+      'packaging buyers',
+    ],
+    ogImage: '/blog-images/n2-moq-og.png',
+  },
+  'packing-for-amazon-flipkart-meesho': {
+    focusKeyword: 'packaging for amazon sellers india',
+    keywords: [
+      'packaging for Amazon sellers India',
+      'Flipkart packaging box',
+      'Meesho packaging material',
+      'seller packing checklist',
+      'packing guide for online sellers',
+    ],
+    metaDescription: 'A seller checklist for packing Amazon, Flipkart and Meesho orders: box size, board, tape and returns. Check each platform\x27s own rules, then size your box in 3D.',
+    breadcrumbs: ['Home', 'Blogs', 'Packing for Amazon, Flipkart and Meesho'],
+    relatedKeywords: [
+      'marketplace seller packaging',
+      'courier box size',
+      'volumetric weight for sellers',
+      'return packaging',
+      'e-commerce packing checklist',
+    ],
+    targetAudience: [
+      'marketplace sellers',
+      'e-commerce owners',
+      'resellers',
+      'home businesses',
+    ],
+    ogImage: '/blog-images/n2-marketplace-og.png',
+  },
+  'how-many-kg-can-corrugated-box-hold': {
+    focusKeyword: 'corrugated box weight capacity',
+    keywords: [
+      'corrugated box weight capacity',
+      'how many kg can a box hold',
+      '3 ply vs 5 ply weight',
+      'McKee formula box strength',
+      'box stacking load estimate',
+    ],
+    metaDescription: 'How many kg can a corrugated box hold? Contents and stacking limits for 3, 5 and 7-ply, with a McKee estimate and safety factor. A range, not a promise.',
+    breadcrumbs: ['Home', 'Blogs', 'How Many Kg Can a Corrugated Box Hold'],
+    relatedKeywords: [
+      'box compression strength',
+      'safe stacking load',
+      'safety factor for boxes',
+      'ply and load',
+      'how many boxes can I stack',
+    ],
+    targetAudience: [
+      'e-commerce owners',
+      'wholesalers',
+      'warehouse managers',
+      'packaging buyers',
+    ],
+    ogImage: '/blog-images/n2-capacity-og.png',
+  },
+  'reading-box-spec-ply-bf-gsm': {
+    focusKeyword: 'bf gsm meaning corrugated box',
+    keywords: [
+      'BF GSM meaning corrugated box',
+      '5 ply box specification',
+      'bursting factor',
+      'how to read a box quote',
+      'corrugated box spec explained',
+    ],
+    metaDescription: 'Decode a corrugated box spec line: what 5 ply, 18 BF and 120 GSM mean, what they leave out, and five questions to ask so quotes compare fairly.',
+    breadcrumbs: ['Home', 'Blogs', 'Reading a Box Spec: 5 Ply, 18 BF, 120 GSM'],
+    relatedKeywords: [
+      'what is BF in paper',
+      'GSM of kraft paper',
+      'compare box quotes',
+      'liner and fluting GSM',
+      'box specification sheet',
+    ],
+    targetAudience: [
+      'procurement managers',
+      'wholesalers',
+      'packaging buyers',
+      'small business owners',
+    ],
+    ogImage: '/blog-images/n2-spec-og.png',
+  },
+  'what-does-a-5-ply-box-cost': {
+    focusKeyword: '5 ply box price',
+    keywords: [
+      '5 ply box price',
+      'carton box price per piece',
+      'corrugated box cost example',
+      'box cost calculation',
+      'custom box price estimate',
+    ],
+    metaDescription: 'What does a 5 ply box cost? Worked examples from the 3D Box Designer estimator for three sizes and three quantities, plus the five levers that move price.',
+    breadcrumbs: ['Home', 'Blogs', 'What Does a 5 Ply Box Cost'],
+    relatedKeywords: [
+      'corrugated box price',
+      'how much does a custom box cost',
+      'box price by size',
+      'box cost by quantity',
+      'packaging cost per box',
+    ],
+    targetAudience: [
+      'small business owners',
+      'procurement managers',
+      'wholesalers',
+      'e-commerce owners',
+    ],
+    ogImage: '/blog-images/n2-cost-og.png',
+  },
+  'volumetric-weight-calculator-india': {
+    focusKeyword: 'volumetric weight calculator',
+    keywords: [
+      'volumetric weight calculator',
+      'volumetric weight formula',
+      'volumetric weight calculator India',
+      'chargeable weight',
+      'courier volumetric weight',
+      'dimensional weight',
+      '4000 vs 5000 divisor',
+    ],
+    metaDescription: 'Volumetric weight explained with a worked example: length x width x height in cm divided by 4000, 5000 or 6000, and how a smaller box lowers your courier bill.',
+    breadcrumbs: ['Home', 'Blogs', 'Volumetric Weight Calculator India'],
+    relatedKeywords: [
+      'volumetric vs actual weight',
+      'how to calculate volumetric weight',
+      'reduce courier charges',
+      'smaller box shipping cost',
+      'chargeable weight calculation',
+    ],
+    targetAudience: ['online sellers', 'small business owners', 'e-commerce owners', 'D2C brands'],
+    ogImage: '/blog-images/n1-volumetric-og.png',
+  },
+  'standard-corrugated-box-sizes-india': {
+    focusKeyword: 'standard corrugated box sizes India',
+    keywords: [
+      'standard corrugated box sizes',
+      'carton box sizes India',
+      'corrugated box size chart',
+      'box sizes in inches and cm',
+      'common carton sizes',
+      'RSC box sizes',
+    ],
+    metaDescription: 'Common corrugated box sizes in cm and inches, with volume in litres and typical uses. Open any size in 3D, or work out your own inside size in four steps.',
+    breadcrumbs: ['Home', 'Blogs', 'Standard Corrugated Box Sizes in India'],
+    relatedKeywords: [
+      'carton box dimensions',
+      'box size chart cm',
+      'inside vs outside size',
+      'box size by product',
+      'pallet carton sizes',
+    ],
+    targetAudience: ['e-commerce owners', 'procurement managers', 'small business owners', 'packaging buyers'],
+    ogImage: '/blog-images/n1-sizes-og.png',
+  },
+  'mailer-box-sizes-tshirt-kurti-saree-jewellery': {
+    focusKeyword: 'mailer box size for t shirt',
+    keywords: [
+      'mailer box size for t shirt',
+      'mailer box sizes',
+      'kurti packing box size',
+      'saree box size',
+      'jewellery box size',
+      'cosmetics mailer box',
+    ],
+    metaDescription: 'Mailer box sizes for T-shirts, kurtis, sarees, jewellery and skincare: a size table worked from folded sizes, with styles and an open-in-3D link for each row.',
+    breadcrumbs: ['Home', 'Blogs', 'Mailer Box Sizes'],
+    relatedKeywords: [
+      'garment mailer size',
+      'folded t-shirt size',
+      'tuck front mailer',
+      'window mailer box',
+      'clothing packaging box',
+    ],
+    targetAudience: ['fashion sellers', 'D2C brands', 'jewellery sellers', 'cosmetics brands'],
+    ogImage: '/blog-images/n1-mailer-sizes-og.png',
+  },
+  'cake-box-size-chart': {
+    focusKeyword: 'cake box size for 1 kg cake',
+    keywords: [
+      'cake box size chart',
+      'cake box size for 1 kg cake',
+      'cake box size for 500 gm',
+      'cake box dimensions',
+      'cake board size',
+      'window cake box',
+    ],
+    metaDescription: 'Cake box size chart by cake board: 6, 8, 10 and 12 inch boards, cupcake and pastry boxes, the clearance rule and a window cake box you can open in 3D.',
+    breadcrumbs: ['Home', 'Blogs', 'Cake Box Size Chart'],
+    relatedKeywords: [
+      '6 inch cake box size',
+      '8 inch cake box size',
+      'cupcake box size',
+      'cake box size in inches',
+      'bakery box sizes',
+    ],
+    targetAudience: ['home bakers', 'bakeries', 'cake shops', 'dessert brands'],
+    ogImage: '/blog-images/n1-cake-sizes-og.png',
+  },
+  'cbm-calculator-cartons-per-container': {
+    focusKeyword: 'cbm calculator',
+    keywords: [
+      'cbm calculator',
+      'how to calculate cbm',
+      'cartons in 20ft container',
+      'cartons in 40ft container',
+      'container loading calculator',
+      'cartons per pallet',
+    ],
+    metaDescription: 'How to calculate CBM and how many cartons fit a 20 ft, 40 ft or 40 ft high cube container and a pallet, with worked examples and the outside-size trap.',
+    breadcrumbs: ['Home', 'Blogs', 'CBM Calculator and Cartons per Container'],
+    relatedKeywords: [
+      'cbm formula',
+      'carton cbm',
+      '20ft container capacity',
+      '40ft high cube capacity',
+      'pallet loading',
+      'cbm vs volumetric weight',
+    ],
+    targetAudience: ['exporters', 'importers', 'wholesalers', 'logistics managers'],
+    ogImage: '/blog-images/n1-cbm-og.png',
+  },
+  'choose-corrugated-box-manufacturer-ahmedabad': {
+    focusKeyword: 'corrugated box manufacturer in ahmedabad',
+    keywords: [
+      'corrugated box manufacturer in Ahmedabad',
+      'carton box manufacturer Ahmedabad',
+      'box supplier Ahmedabad',
+      'how to choose a box manufacturer',
+      'corrugated box supplier Gujarat',
+      'custom box supplier',
+    ],
+    metaDescription: 'Twelve questions to ask a corrugated box manufacturer in Ahmedabad before you order, what good answers look like, and our own answers using only plain facts.',
+    breadcrumbs: ['Home', 'Blogs', 'Choose a Box Manufacturer in Ahmedabad'],
+    relatedKeywords: [
+      'box supplier near me',
+      'packaging supplier Ahmedabad',
+      'carton box supplier Gujarat',
+      'questions to ask a box manufacturer',
+      'compare box quotes',
+    ],
+    targetAudience: ['small business owners', 'procurement managers', 'wholesalers', 'e-commerce owners'],
+    ogImage: '/blog-images/n1-choose-og.png',
   },
 };
 

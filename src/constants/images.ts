@@ -81,6 +81,18 @@ import blogP2FruitPack from '@/assets/illustrations/blog-p2-fruit-pack.svg';
 import blogP2Fashion from '@/assets/illustrations/blog-p2-fashion.svg';
 import blogP2Cake from '@/assets/illustrations/blog-p2-cake.svg';
 import blogP2Takeaway from '@/assets/illustrations/blog-p2-takeaway.svg';
+import blogN1Volumetric from '@/assets/illustrations/blog-n1-volumetric.svg';
+import blogN1Sizes from '@/assets/illustrations/blog-n1-sizes.svg';
+import blogN1MailerSizes from '@/assets/illustrations/blog-n1-mailer-sizes.svg';
+import blogN1CakeSizes from '@/assets/illustrations/blog-n1-cake-sizes.svg';
+import blogN1Cbm from '@/assets/illustrations/blog-n1-cbm.svg';
+import blogN1Choose from '@/assets/illustrations/blog-n1-choose.svg';
+import blogN2Order from '@/assets/illustrations/blog-n2-order.svg';
+import blogN2Moq from '@/assets/illustrations/blog-n2-moq.svg';
+import blogN2Marketplace from '@/assets/illustrations/blog-n2-marketplace.svg';
+import blogN2Capacity from '@/assets/illustrations/blog-n2-capacity.svg';
+import blogN2Spec from '@/assets/illustrations/blog-n2-spec.svg';
+import blogN2Cost from '@/assets/illustrations/blog-n2-cost.svg';
 import blogDgCutouts from '@/assets/illustrations/blog-dg-cutouts.svg';
 import blogDgTemplates from '@/assets/illustrations/blog-dg-templates.svg';
 import blogDgPicker from '@/assets/illustrations/blog-dg-picker.svg';
@@ -216,6 +228,18 @@ export const BLOG_IMAGES = {
   'BLOG-UC-12-thumbnail': blogP2Fashion, // clothing-saree-footwear-boxes
   'BLOG-UC-13-thumbnail': blogP2Cake, // cake-sweet-bakery-boxes
   'BLOG-UC-14-thumbnail': blogP2Takeaway, // takeaway-tiffin-pizza-boxes-cloud-kitchens
+  'BLOG-N1-01-thumbnail': blogN1Volumetric, // volumetric-weight-calculator-india
+  'BLOG-N1-02-thumbnail': blogN1Sizes, // standard-corrugated-box-sizes-india
+  'BLOG-N1-03-thumbnail': blogN1MailerSizes, // mailer-box-sizes-tshirt-kurti-saree-jewellery
+  'BLOG-N1-04-thumbnail': blogN1CakeSizes, // cake-box-size-chart
+  'BLOG-N1-05-thumbnail': blogN1Cbm, // cbm-calculator-cartons-per-container
+  'BLOG-N1-06-thumbnail': blogN1Choose, // choose-corrugated-box-manufacturer-ahmedabad
+  'BLOG-N2-01-thumbnail': blogN2Order, // how-to-order-custom-printed-boxes-india
+  'BLOG-N2-02-thumbnail': blogN2Moq, // minimum-order-quantity-custom-boxes
+  'BLOG-N2-03-thumbnail': blogN2Marketplace, // packing-for-amazon-flipkart-meesho
+  'BLOG-N2-04-thumbnail': blogN2Capacity, // how-many-kg-can-corrugated-box-hold
+  'BLOG-N2-05-thumbnail': blogN2Spec, // reading-box-spec-ply-bf-gsm
+  'BLOG-N2-06-thumbnail': blogN2Cost, // what-does-a-5-ply-box-cost
   alt: 'Vayu Packaging Solutions: corrugated boxes and packaging',
 } as const;
 

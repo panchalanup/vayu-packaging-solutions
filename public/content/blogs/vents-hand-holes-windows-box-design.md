@@ -1,16 +1,17 @@
 ---
-title: "Vents, Hand Holes and Windows: When to Add Them, What They Cost and How They Affect Strength"
+title: "Vents, Hand Holes and Windows: Cost and Strength Impact"
 slug: "vents-hand-holes-windows-box-design"
-description: "An honest guide to cut-outs in corrugated boxes: when vents, hand holes and windows are worth adding, what they add to cost, how they reduce stacking strength, and how to design them in the free 3D Box Designer."
+description: "Vents, hand holes and windows in corrugated boxes: when they are worth adding, what they cost and how they cut stacking strength. Test them in 3D."
 category: "Designer Guides"
 date: "2026-10-27"
+updated: "2026-10-27"
 readingTime: "9 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-12-thumbnail"
 socialImage: "BLOG-DG-12-social"
 ---
 
-# Vents, Hand Holes and Windows: When to Add Them, What They Cost and How They Affect Strength
+# Vents, Hand Holes and Windows: Cost and Strength Impact
 
 Cut-outs are easy to love. A vented mango carton looks right. A hand hole makes a heavy box friendlier. A window on a cake box sells the cake before the lid opens. But every hole you cut in a corrugated box takes board away from the walls that carry the load, and it adds a step in production.
 
@@ -65,7 +66,7 @@ If you want a different combination, say a shipping carton with hand holes, star
 ## How to add them in the designer
 
 1. **Pick a style that offers the opening**, using the table above.
-2. **Open the size and board panel.** Below the board controls you will find a **Cut-outs** section with switches for **Hand holes**, **Vent slots** and **Window** (only the ones the style offers). A short hint under each says what it does.
+2. **Open the Edit Box tab.** Below the board controls you will find a **Cut-outs** section with switches for **Hand holes**, **Vent slots** and **Window** (only the ones the style offers). A short hint under each says what it does.
 3. **Switch it on** and watch the 3D model. For a window, a **Window size** slider sets how much of the panel it takes (about 20 to 85 percent).
 4. **Read the note under the switches.** It says the opening is shown on the model, the dieline has the true cut lines, and holes and vents lower stacking strength.
 5. **Look at the dieline** to see the true shape and position of each cut. That is what the die maker works from. See [dielines explained](/blogs/dielines-explained).
@@ -160,12 +161,6 @@ The designer offers what each style supports: windows on mailers, cake boxes and
 
 ### Does a window need plastic film?
 Usually, to keep out dust and handling. Some windows are left as an open cut-out. Ask your supplier about options that suit your product and your recycling goals.
-
-### Are the cut-outs in the 3D model exact?
-The model shows them so you can judge the look. The dieline has the true cut lines the die maker follows.
-
-### Will the estimate include the cost of the opening?
-It includes a small, indicative allowance. Your quote gives the real figure.
 
 ---
 

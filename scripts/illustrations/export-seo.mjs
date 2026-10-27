@@ -75,6 +75,20 @@ const BLOGS = {
   'uc-fashion-og': 'blog-p2-fashion',
   'uc-cake-og': 'blog-p2-cake',
   'uc-takeaway-og': 'blog-p2-takeaway',
+  // Buying and technical guides (scenes-blog-n2.mjs)
+  'n2-order-og': 'blog-n2-order',
+  'n2-moq-og': 'blog-n2-moq',
+  'n2-marketplace-og': 'blog-n2-marketplace',
+  'n2-capacity-og': 'blog-n2-capacity',
+  'n2-spec-og': 'blog-n2-spec',
+  'n2-cost-og': 'blog-n2-cost',
+  // Size charts, calculators and buying guide (scenes-blog-n1.mjs)
+  'n1-volumetric-og': 'blog-n1-volumetric',
+  'n1-sizes-og': 'blog-n1-sizes',
+  'n1-mailer-sizes-og': 'blog-n1-mailer-sizes',
+  'n1-cake-sizes-og': 'blog-n1-cake-sizes',
+  'n1-cbm-og': 'blog-n1-cbm',
+  'n1-choose-og': 'blog-n1-choose',
 };
 if (!only || only === 'blogs') for (const [name, svg] of Object.entries(BLOGS)) shot(cover(ill(svg), 1200, 630), path.join(root, `public/blog-images/${name}.png`), 1200, 630);
 

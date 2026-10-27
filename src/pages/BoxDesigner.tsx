@@ -10,6 +10,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pencil, Palette, Share2, ChevronLeft, ChevronRight, ArrowDown, IndianRupee, MonitorPlay } from 'lucide-react';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 import SiteFooter from '@/components/site/SiteFooter';
 import { Section } from '@/components/site/Section';
 import { FactStrip } from '@/components/site/Blocks';
@@ -523,6 +524,13 @@ export default function BoxDesigner() {
                 </AccordionItem>
               ))}
             </Accordion>
+            <p className="mt-8 text-sm text-muted-foreground">
+              Need numbers first? Try the free{' '}
+              <Link to="/tools/box-size-calculator" className="text-foreground underline underline-offset-2">box size calculator</Link>,{' '}
+              <Link to="/tools/volumetric-weight-calculator" className="text-foreground underline underline-offset-2">volumetric weight calculator</Link> or{' '}
+              <Link to="/tools/box-strength-calculator" className="text-foreground underline underline-offset-2">box strength calculator</Link>
+              {' '}(<Link to="/tools" className="text-foreground underline underline-offset-2">all free tools</Link>). Each one opens its result here in 3D.
+            </p>
           </div>
         </Section>
       </main>

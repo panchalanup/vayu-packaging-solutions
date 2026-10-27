@@ -1,20 +1,21 @@
 ---
-title: "8 Box Styles in 3D: Which One Fits Your Product?"
+title: "RSC, HSC, FOL, Mailer and More: The 8 Core Box Styles"
 slug: "box-styles-in-3d"
-description: "RSC, HSC, full overlap, sleeve, telescope lid and base, mailer, pizza box and tray: what each corrugated box style is, what it is good for, and how to try it in 3D before you order."
+description: "RSC, HSC, full overlap, sleeve, telescope, mailer, pizza box and tray: how the 8 core corrugated box styles work and which to try in the 3D Box Designer."
 category: "Designer Guides"
 date: "2026-10-26"
+updated: "2026-10-27"
 readingTime: "10 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-02-thumbnail"
 socialImage: "BLOG-DG-02-social"
 ---
 
-# 8 Box Styles in 3D: Which One Fits Your Product?
+# RSC, HSC, FOL, Mailer and More: The 8 Core Box Styles
 
 "Box style" sounds like a detail, but it decides a lot: how the box opens, how much board it uses, how fast it is to pack, how it looks when your customer opens it, and how much it costs. Two boxes with exactly the same inside size can differ in price and protection simply because of the style.
 
-The trouble is that style names (RSC, HSC, FOL, 0427) mean little until you see the box fold. So this guide explains the eight styles in the free **3D Box Designer** in plain words, with what each is best for, and shows you how to try each one on your own size in a few seconds.
+The trouble is that style names (RSC, HSC, FOL, 0427) mean little until you see the box fold. So this guide explains how the **eight core styles** in the free **3D Box Designer** are built, in plain words, with what each is best for, and shows you how to try each one on your own size in a few seconds. If you would rather pick by product, go straight to [which of 20 box styles should you choose](/blogs/which-box-style-should-you-choose).
 
 [Try the styles in 3D](/box-designer)
 
@@ -174,17 +175,11 @@ The regular slotted carton (RSC, FEFCO 0201). Most shipping cartons you see are 
 ### What is the difference between a mailer box and an RSC?
 An RSC is a tube with four flaps top and bottom, sealed with tape. A mailer is die-cut from one sheet with a hinged tuck-in lid and double side walls. Mailers look finished and need no tape; RSCs use less board and are usually cheaper for heavier goods.
 
-### Is a telescope box the same as a lid and base box?
-Yes. "Telescope" describes the lid sliding over the base like the sections of a telescope.
-
 ### Can every style be printed?
 Yes. In the designer you can add artwork to any printable face of every style. Die-cut styles also have inside surfaces such as the inside of a mailer lid.
 
 ### Which style uses the least board?
 For the same inside size, usually the RSC or HSC. Check the **dieline** and the **estimate** in the designer to compare your exact size.
-
-### My style is not listed. Can you make it?
-Very likely. The designer now covers 20 common styles, including crash-lock bottoms; ask us about inserts, partitions and other constructions.
 
 ---
 

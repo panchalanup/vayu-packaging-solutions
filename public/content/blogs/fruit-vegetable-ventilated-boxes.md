@@ -1,16 +1,17 @@
 ---
-title: "Fruit and Vegetable Boxes: Ventilated Cartons, Open Trays and Hand Holes Explained"
+title: "Ventilated Fruit and Vegetable Boxes: Trays and Hand Holes"
 slug: "fruit-vegetable-ventilated-boxes"
-description: "How to plan ventilated produce cartons, open trays and hand-hole carry boxes for fruit and vegetables: what vents do to strength, how to size them, and how to design one in 3D."
+description: "Plan ventilated fruit and vegetable boxes: vented cartons, open trays and hand holes, what they do to strength and how to size them. Design one in 3D."
 category: "Use Cases"
 date: "2026-10-27"
+updated: "2026-10-27"
 readingTime: "9 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-10-thumbnail"
 socialImage: "BLOG-UC-10-social"
 ---
 
-# Fruit and Vegetable Boxes: Ventilated Cartons, Open Trays and Hand Holes Explained
+# Ventilated Fruit and Vegetable Boxes: Trays and Hand Holes
 
 A plain sealed carton is a poor home for fresh produce. Fruit and vegetables are alive: after harvest they give off warmth and moisture, and a closed box traps both. That is why produce boxes have **vent slots** and **hand holes**. They let air move through the pack and let a picker, packer or porter lift a full box without it slipping.
 
@@ -56,27 +57,16 @@ The **Templates** gallery also has a **Fruit & produce** category: mango carton,
 
 ## What vents and hand holes do to strength
 
-A corrugated box carries a stacking load mostly through its **walls and corners**, like four columns. Cutting a slot in a column removes material exactly where the load travels. General packaging literature reports that vent and hand holes can reduce a carton's compression (stacking) strength by roughly **10% to 40%**, depending on the size, shape, position and number of openings.
+A corrugated box carries its stack through its **walls and corners**, like four columns. Every slot removes board exactly where the load travels. General packaging literature reports that vent and hand holes can reduce a carton's compression (stacking) strength by roughly **10% to 40%**, depending on the size, shape, position and number of openings. <!-- VERIFY-LATER[BLOG-70]: the 10-40% range is quoted from general produce-packaging literature (same source as DSG-72 in the designer strength module). It is a range, not a measurement of any Vayu carton. Replace with Vayu's own compression test results if available, and re-check the wording before publishing. --> Cooling gains are reported to level off at a modest share of wall area, often quoted at around 7-8%, so extra slots mostly cost strength. <!-- VERIFY-LATER[BLOG-71]: the 7-8% vent-area rule of thumb is from general literature (designer constant VENT_AREA_USEFUL_PCT, DSG-72). Confirm with a packaging engineer or cold-chain adviser before using it as advice for a specific crop. -->
 
-<!-- VERIFY-LATER[BLOG-70]: the 10-40% range is quoted from general produce-packaging literature (same source as DSG-72 in the designer strength module). It is a range, not a measurement of any Vayu carton. Replace with Vayu's own compression test results if available, and re-check the wording before publishing. -->
-
-General rules of thumb, not specific to any one box:
-
-- **Position matters.** Openings near the top or bottom edges or the vertical corners usually cost more strength than openings in the middle of a wall.
-- **Shape matters.** Openings with rounded corners tend to be kinder than sharp-cornered rectangles, because stress gathers at sharp corners.
-- **Several small beats one big.** Small openings spread out are usually better than one large one.
-- **More air is not always better.** Produce-cooling reports suggest the benefit levels off beyond a modest share of wall area, often quoted at around 7-8%, so extra slots mostly cost strength.
-
-<!-- VERIFY-LATER[BLOG-71]: the 7-8% vent-area rule of thumb is from general literature (designer constant VENT_AREA_USEFUL_PCT, DSG-72). Confirm with a packaging engineer or cold-chain adviser before using it as advice for a specific crop. -->
-
-The designer builds this honesty in. With vents or hand holes switched on, the strength guide shows a plain warning and treats its stack figure as a **guide, not a promise**. It does not subtract an exact percentage, because the real loss depends on the layout and only a sample compression test gives a reliable answer.
+The position and shape rules are in [vents, hand holes and windows](/blogs/vents-hand-holes-windows-box-design). In the designer, the strength guidance shows a plain warning whenever vents or hand holes are on and treats its stack figure as a **guide, not a promise**, because only a sample compression test gives a reliable answer for your layout.
 
 **What to do about it:**
 
 1. **Keep openings modest:** enough for airflow and a comfortable grip.
 2. **Step up the board** if the stack is tall or the load heavy. See [wall construction](/blogs/corrugated-wall-differences) and [box stacking strength](/blogs/box-stacking-strength-guide).
 3. **Test a sample**, loaded and stacked for as long as the real boxes will sit.
-4. **Remember moisture.** Board loses strength when damp, and fresh produce is damp. A box that is strong in a dry warehouse may behave differently in a humid cold room. Say so when you ask for a quote.
+4. **Remember moisture.** Board loses strength when damp, and fresh produce is damp. Say so when you ask for a quote.
 
 ---
 
@@ -151,14 +141,10 @@ An **open produce tray** has low walls, vents and no top flaps. It suits soft fr
 ## Where to go next
 
 - All the cut-outs in one place: [vents, hand holes and windows in box design](/blogs/vents-hand-holes-windows-box-design).
-- Start from a ready design: [a tour of the 74 box templates](/blogs/box-design-templates-tour).
-- Brand it: [how to add cutouts to your box design](/blogs/how-to-add-cutouts-box-design).
 - Specific fruit and sizes: [packing mangoes, apples and grapes](/blogs/mango-apple-grape-packing-boxes).
-- Strength: [will my box stack?](/blogs/box-stacking-strength-guide) and [burst strength and ECT](/blogs/burst-strength-ect-guide).
-- Board: [flute types](/blogs/flute-types-guide).
-- Heavy loads: [export cartons](/blogs/export-cartons-5-ply-7-ply).
+- Start from a ready design: [a tour of the 74 box templates](/blogs/box-design-templates-tour).
+- Strength: [will my box stack?](/blogs/box-stacking-strength-guide).
 - Hampers with hand holes: [festive gift and hamper boxes](/blogs/festive-gift-hamper-boxes).
-- New to the tool? [Step-by-step designer guide](/blogs/how-to-use-3d-box-designer).
 
 ---
 
@@ -185,10 +171,6 @@ It depends on whether the fruit touches the board. Tell us what you are packing 
 ### Can I print my farm name on the box?
 
 Yes. Add text, a logo or fruit graphics on any wall in the Customize tab, then download the dieline or send the design to us.
-
-### Can I order a small quantity to test?
-
-Ask the quote team about minimum quantities. Many buyers run a small sample first to test strength and fit.
 
 ---
 

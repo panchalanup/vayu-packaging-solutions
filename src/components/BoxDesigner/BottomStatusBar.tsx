@@ -63,7 +63,8 @@ export default function BottomStatusBar({
           variant="ghost"
           size="sm"
           className="h-7 w-7 p-0 text-paper-50 hover:bg-ink-800 hover:text-paper-50 mac-transition disabled:opacity-30"
-          title="Undo (Cmd+Z)"
+          title="Undo (Ctrl+Z)"
+          aria-label="Undo"
         >
           <Undo2 className="w-3.5 h-3.5" />
         </Button>
@@ -74,7 +75,8 @@ export default function BottomStatusBar({
           variant="ghost"
           size="sm"
           className="h-7 w-7 p-0 text-paper-50 hover:bg-ink-800 hover:text-paper-50 mac-transition disabled:opacity-30"
-          title="Redo (Cmd+Shift+Z)"
+          title="Redo (Ctrl+Shift+Z)"
+          aria-label="Redo"
         >
           <Redo2 className="w-3.5 h-3.5" />
         </Button>

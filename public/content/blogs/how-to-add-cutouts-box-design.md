@@ -1,16 +1,17 @@
 ---
-title: "How to Add Cutouts to Your Box Design: The Complete Guide to Stickers, Patterns and Brand Colours"
+title: "Add Cutouts to a Box Design: Stickers, Patterns, Colours"
 slug: "how-to-add-cutouts-box-design"
-description: "A step-by-step guide to cutouts in the free 3D Box Designer: add ready-made stickers to any box face, resize and recolour them, repeat one as a pattern, match your brand colour and let Surprise me suggest a layout."
+description: "Add cutouts to a box design: pick from 512 stickers, resize, recolour to your brand and repeat as a pattern. Try it free in the 3D Box Designer."
 category: "Designer Guides"
 date: "2026-10-27"
+updated: "2026-10-27"
 readingTime: "10 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-DG-09-thumbnail"
 socialImage: "BLOG-DG-09-social"
 ---
 
-# How to Add Cutouts to Your Box Design: The Complete Guide to Stickers, Patterns and Brand Colours
+# Add Cutouts to a Box Design: Stickers, Patterns, Colours
 
 You have a box style, a size and a board. You open the artwork tab and meet a blank carton. You do not have a designer on call, your logo is a small file, and you still want to know one thing: **will this box look like it belongs to my brand?**
 
@@ -57,7 +58,7 @@ The library is organised in groups, so you can browse instead of guess:
 
 Two things are worth knowing. The badges use **plain generic words only**, with no "organic", "certified" or similar claims, because a claim you have not earned on a food box is a legal problem, not a design choice. If you hold a certification mark, upload it as an image from your certifier's file. And there are **no third-party brand logos**; the contact icons are generic symbols.
 
-![The Cutouts section of the Artwork tab with category chips, a search box, a Recommended for this box row and a grid of stickers](/blog-images/designer/designer-cutouts-panel.png)
+![The Cutouts section of the Customize tab with category chips, a search box, a Recommended for this box row and a grid of stickers](/blog-images/designer/designer-cutouts-panel.png)
 *The Cutouts section: group chips, search, a "Recommended for this box" row and the grid.*
 
 ---
@@ -66,7 +67,7 @@ Two things are worth knowing. The badges use **plain generic words only**, with 
 
 1. Open the [3D Box Designer](/box-designer) and choose a style and size (see [how to use the designer](/blogs/how-to-use-3d-box-designer) if this is your first visit).
 2. Select a face of the box. The face you select is where new cutouts land. If nothing is selected, the first printable face is used.
-3. Open the **Artwork** tab and find **Cutouts**, next to image and text.
+3. Open the **Customize** tab and find **Cutouts**, next to image and text.
 
 You will see a counter ("12/80 used"), two helper buttons (Surprise me and Match brand colour), a search box, group chips and a grid.
 
@@ -158,7 +159,7 @@ Not keen? Press **Undo**, or tap again for a different arrangement. Treat it as 
 Before you finish, run through this short list:
 
 1. **Fold the box.** Drag the assembly slider from flat to sealed. A cutout that looks centred on a flat face can end up across a fold or under a flap. The print checks warn you when artwork crosses a fold.
-2. **Check the dieline.** Cutouts are included in the flat dieline view and the PDF, so your printer sees the same placement. Read [dielines explained](/blogs/dielines-explained) for how to hand it over.
+2. **Check the dieline.** The downloaded dieline shows the cut and crease lines of the box, not your artwork, so send the share link or the spec sheet to show where each cutout sits. Read [dielines explained](/blogs/dielines-explained) for how to hand it over. <!-- VERIFY-LATER[BLOG-214]: the dieline SVG and PDF carry structure only; confirm whether the spec sheet PDF and its three views show placed cutouts before promising that in this guide. -->
 3. **Take product shots.** Studio backgrounds and the 360 spin include your cutouts ([product shots guide](/blogs/packaging-product-shots-360-video)).
 4. **Share the link.** A share link stores each cutout's id, place, size, colour and pattern, so whoever opens it sees your full design.
 5. **Ask the printer about detail.** Printing on corrugated is coarser than on paper. Very fine lines and tiny cutouts may not reproduce, especially on kraft, so ask for the minimum line weight and number of colours.
@@ -181,7 +182,7 @@ Before you finish, run through this short list:
 Yes. The designer has no sign-up and no locked features. The cutout library is part of it.
 
 ### Can I use cutouts on a real print order?
-Yes, as part of your artwork. The cutouts are original or openly licensed graphics, and credits are listed on the [image credits page](/image-credits). Your own logo goes in as an image on the Artwork tab (see the [artwork guide](/blogs/logo-artwork-on-boxes)).
+Yes, as part of your artwork. The cutouts are original or openly licensed graphics, and sources are credited on the [image credits page](/image-credits). <!-- VERIFY-LATER[BLOG-215]: the cutout library is built from original SVGs plus MIT and ISC icon sets (scripts/stickers/build.mjs); confirm the image credits page lists those sources before this sentence goes live. --> Your own logo goes in as an image on the Artwork tab (see the [artwork guide](/blogs/logo-artwork-on-boxes)).
 
 ### How many cutouts can I add?
 Up to 80 on one design. A pattern fill counts as one cutout however many times it repeats.

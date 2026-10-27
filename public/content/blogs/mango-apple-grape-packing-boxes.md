@@ -1,16 +1,17 @@
 ---
-title: "Packing Mangoes, Apples and Grapes for Sale and Export: Box Sizes, Board and Design Ideas"
+title: "Mango, Apple and Grape Packing Boxes: Sizes and Board"
 slug: "mango-apple-grape-packing-boxes"
-description: "Practical box ideas for mangoes, apples and grapes, for local sale and export: starting sizes, board choice, vents, branding and a pallet check, all designed in 3D before you order."
+description: "Box ideas for mangoes, apples and grapes: starting sizes, board, vents, branding and a pallet check. Design a fruit box in 3D before you order."
 category: "Use Cases"
 date: "2026-10-27"
+updated: "2026-10-27"
 readingTime: "9 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-UC-11-thumbnail"
 socialImage: "BLOG-UC-11-social"
 ---
 
-# Packing Mangoes, Apples and Grapes for Sale and Export: Box Sizes, Board and Design Ideas
+# Mango, Apple and Grape Packing Boxes: Sizes and Board
 
 Three fruits, three different packing problems. **Mangoes** are heavy, bruise at a touch and ripen on the journey. **Apples** are firm and robust but travel in layers that must not shift. **Grapes** are delicate, crush under their own weight and need airflow more than almost anything else. A box that suits one can quietly ruin another.
 
@@ -69,7 +70,7 @@ Mangoes are often packed in a single layer or two, each fruit wrapped in paper o
 1. Open **Templates**, filter to **Fruit & produce** and choose **Mango carton**.
 2. In **Edit Box**, set the inside size from one wrapped fruit: length across a tray, number across, number of layers, plus the paper or pulp between them. Add a little headroom.
 3. Check the **Cut-outs** section: hand holes and vents are on. Try switching vents off to see the plainer look, then back on. The strength guide warns that openings reduce stacking strength.
-4. In **Customize**, put your farm name or brand on the wall that faces out. Add a mango graphic from the **Cutouts** panel (search "mango", or the Hindi word *aam*, or *keri*) and a "Hand picked" or "Fresh" badge.
+4. In **Customize**, put your farm name or brand on the wall that faces out. Add a mango graphic from the **Cutouts** panel (search "mango", or the local words *aam* or *keri*) and a "Hand picked" or "Fresh" badge.
 5. In **Price & order**, enter the packed box weight and check the strength guide. If it recommends the next ply up, try it and compare the price.
 
 ![The mango carton template with vents, hand holes, a mango graphic and a farm name on the front wall](/blog-images/designer/designer-mango-carton.png)
@@ -147,28 +148,13 @@ Marking, labels and language on export cartons are set by the buyer and the dest
 
 ---
 
-## Features you will use
-
-| Feature | Use for fruit |
-|---|---|
-| Mango, apple, grape, citrus and tropical templates | A fast start per fruit |
-| Vents and hand holes (Cut-outs) | Compare airflow and handling options |
-| Fruit and vegetable cutouts, badges, pattern fill | Branded look without a designer |
-| Strength guide | Honest stack guidance with a vent warning |
-| On a pallet scene | See a pallet load of your box |
-| Share link, spec sheet, dieline | Agree the spec with buyers and suppliers |
-
----
-
 ## Where to go next
 
-- Start from a ready design: [a tour of the 74 box templates](/blogs/box-design-templates-tour).
-- Brand it: [how to add cutouts to your box design](/blogs/how-to-add-cutouts-box-design).
 - The science behind vents: [ventilated cartons, open trays and hand holes](/blogs/fruit-vegetable-ventilated-boxes).
-- Size the box: [find the right box size](/blogs/find-right-box-size) and [how to measure boxes](/blogs/box-measurements-guide).
-- Price the order: [box price estimate guide](/blogs/box-price-estimate-guide).
-- Show a buyer: [product shots and 360 video](/blogs/packaging-product-shots-360-video).
-- Gift packs of dry fruit and fruit hampers: [festive gift and hamper boxes](/blogs/festive-gift-hamper-boxes).
+- Start from a ready design: [a tour of the 74 box templates](/blogs/box-design-templates-tour).
+- Size the box: [find the right box size](/blogs/find-right-box-size).
+- Plan a pallet or an export order: [export cartons](/blogs/export-cartons-5-ply-7-ply).
+- Show a buyer: [product shots and 360° video](/blogs/packaging-product-shots-360-video).
 
 ---
 
@@ -189,10 +175,6 @@ Not necessarily. Hand holes help with carrying, but a small light box may not ne
 ### Can I export in your boxes?
 
 Export packing depends on your buyer's specification and the destination market. We can make boxes to a size and board you specify; we do not state which standards a box meets. Ask your buyer or exporter for their requirements.
-
-### Are the template sizes standard pack sizes?
-
-No. They are starting points taken from common pack ideas. Always size from your own fruit.
 
 ### Is the board food safe for fresh fruit?
 

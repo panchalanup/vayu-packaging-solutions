@@ -31,7 +31,21 @@ export type BlogTag =
   | 'uc-produce'
   | 'uc-fashion'
   | 'uc-cake'
-  | 'uc-takeaway';
+  | 'uc-takeaway'
+  // Size charts and calculators (blog writer N1): each links to the calculator or preset the article is about
+  | 'n1-volumetric'
+  | 'n1-sizes'
+  | 'n1-mailer'
+  | 'n1-cake'
+  | 'n1-cbm'
+  | 'n1-choose'
+  // Buying and technical guides (blog writer N2): each links to the designer or calculator view the article is about
+  | 'bg-order'
+  | 'bg-moq'
+  | 'bg-cost'
+  | 'uc-seller'
+  | 'tg-capacity'
+  | 'tg-spec';
 
 export const BLOG_TAGS: Record<string, BlogTag[]> = {
   'types-of-corrugated-boxes': ['types', 'ply'],
@@ -71,6 +85,20 @@ export const BLOG_TAGS: Record<string, BlogTag[]> = {
   'which-box-style-should-you-choose': ['dg-picker', 'designer', 'types'],
   'box-design-ideas-in-5-minutes': ['dg-ideas', 'designer', 'types'],
   'vents-hand-holes-windows-box-design': ['dg-openings', 'designer', 'strength'],
+  // Buying and technical guides (blog writer N2)
+  'how-to-order-custom-printed-boxes-india': ['bg-order', 'designer', 'types'],
+  'minimum-order-quantity-custom-boxes': ['bg-moq', 'designer', 'types'],
+  'packing-for-amazon-flipkart-meesho': ['uc-seller', 'designer', 'sizing'],
+  'how-many-kg-can-corrugated-box-hold': ['tg-capacity', 'strength', 'ply'],
+  'reading-box-spec-ply-bf-gsm': ['tg-spec', 'ply', 'material'],
+  'what-does-a-5-ply-box-cost': ['bg-cost', 'designer', 'types'],
+  // Size charts, calculators and buying guide (Workstream N1)
+  'volumetric-weight-calculator-india': ['n1-volumetric', 'sizing'],
+  'standard-corrugated-box-sizes-india': ['n1-sizes', 'sizing'],
+  'mailer-box-sizes-tshirt-kurti-saree-jewellery': ['n1-mailer', 'uc-fashion', 'designer', 'sizing'],
+  'cake-box-size-chart': ['n1-cake', 'uc-cake', 'designer', 'sizing'],
+  'cbm-calculator-cartons-per-container': ['n1-cbm', 'sizing', 'strength'],
+  'choose-corrugated-box-manufacturer-ahmedabad': ['n1-choose', 'types', 'designer'],
 };
 
 export interface BlogCtaCard {
@@ -86,6 +114,60 @@ export interface BlogCtaCard {
 
 /** First matching tag wins, in this priority order */
 const CARDS: BlogCtaCard[] = [
+  {
+    tag: 'n1-volumetric',
+    eyebrow: 'Free calculator',
+    title: 'Check what a courier may bill for your box',
+    body: 'Enter the box size and weight, pick a divisor and see how much a smaller box would save.',
+    label: 'Open the volumetric weight calculator',
+    href: () => '/tools/volumetric-weight-calculator',
+    intent: 'navigate',
+  },
+  {
+    tag: 'n1-cbm',
+    eyebrow: 'Free calculator',
+    title: 'Work out CBM and cartons per container',
+    body: 'Enter the carton size, quantity and weight to see CBM, cartons per pallet and per container.',
+    label: 'Open the CBM calculator',
+    href: () => '/tools/cbm-calculator',
+    intent: 'navigate',
+  },
+  {
+    tag: 'n1-sizes',
+    eyebrow: 'Free calculator',
+    title: 'Not on the chart? Work out your own size',
+    body: 'Enter your product size and padding to get the inside and outside box size, then open it in 3D.',
+    label: 'Open the box size calculator',
+    href: () => '/tools/box-size-calculator',
+    intent: 'navigate',
+  },
+  {
+    tag: 'n1-mailer',
+    eyebrow: 'Try it',
+    title: 'Open a T-shirt mailer in 3D',
+    body: 'Start from 30.5 x 24.5 x 5.5 cm inside, change it to your folded size and fold the box.',
+    label: 'Open a T-shirt mailer',
+    href: (slug) => `/box-designer?style=mailer&l=30.5&w=24.5&h=5.5&ply=3-ply&fl=E&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'n1-cake',
+    eyebrow: 'Try it',
+    title: 'Open a 1 kg cake box in 3D',
+    body: 'Start from 25 x 25 x 12 cm inside with a window, then change it to your cake board.',
+    label: 'Open a 1 kg cake box',
+    href: (slug) => `/box-designer?style=cake-box&l=25&w=25&h=12&ply=3-ply&fl=E&col=F5F5F0&opt=window&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'n1-choose',
+    eyebrow: 'Try it',
+    title: 'Get comparable quotes from the same file',
+    body: 'Set your size and board in the designer, check the indicative estimate, then send the same spec to every supplier.',
+    label: 'Start from my spec',
+    href: () => '/box-designer',
+    intent: 'designer',
+  },
   {
     tag: 'dg-styles',
     eyebrow: 'Try it',
@@ -231,6 +313,60 @@ const CARDS: BlogCtaCard[] = [
     intent: 'designer',
   },
   {
+    tag: 'bg-order',
+    eyebrow: 'Try it',
+    title: 'Start your order with a 3D spec',
+    body: 'Set the style, size and board, add your logo, then send the design with your quote request.',
+    label: 'Open a mailer box in 3D',
+    href: () => '/box-designer?style=mailer&l=30&w=22&h=8&ply=3-ply&fl=B',
+    intent: 'designer',
+  },
+  {
+    tag: 'bg-moq',
+    eyebrow: 'Try it',
+    title: 'See how quantity moves the price',
+    body: 'Open a box and compare 100, 500, 1,000 and 5,000 in the Price & order tab. It is an indicative range, not a quote.',
+    label: 'Compare quantities',
+    href: () => '/box-designer?style=rsc&l=30&w=22&h=15&ply=3-ply&fl=B',
+    intent: 'designer',
+  },
+  {
+    tag: 'bg-cost',
+    eyebrow: 'Try it',
+    title: 'Run your own estimate',
+    body: 'Change the size, ply, print colours and quantity and watch the indicative range move.',
+    label: 'Get an instant estimate',
+    href: () => '/box-designer?style=rsc&l=40&w=30&h=25&ply=5-ply&fl=BC',
+    intent: 'designer',
+  },
+  {
+    tag: 'uc-seller',
+    eyebrow: 'Try it',
+    title: 'Size a seller mailer in 3D',
+    body: 'Start from a mailer, set the folded size from your product and check the fit before you order.',
+    label: 'Design a mailer box',
+    href: () => '/box-designer/mailer-box',
+    intent: 'designer',
+  },
+  {
+    tag: 'tg-capacity',
+    eyebrow: 'Calculator',
+    title: 'Estimate how much your box can stack',
+    body: 'Enter the inside size, board and the weight of one packed box. The free calculator shows an indicative stack height.',
+    label: 'Open the strength calculator',
+    href: () => '/tools/box-strength-calculator',
+    intent: 'navigate',
+  },
+  {
+    tag: 'tg-spec',
+    eyebrow: 'Try it',
+    title: 'Turn a spec line into a 3D box',
+    body: 'Pick the ply, set the size and watch the board thickness change, then ask for a quote that spells out the papers.',
+    label: 'Open a 5-ply box',
+    href: () => '/box-designer?style=rsc&l=40&w=30&h=25&ply=5-ply&fl=BC',
+    intent: 'designer',
+  },
+  {
     tag: 'designer',
     eyebrow: 'Try it',
     title: 'Design your box in 3D before you order',
@@ -252,7 +388,7 @@ const CARDS: BlogCtaCard[] = [
     tag: 'strength',
     eyebrow: 'Specs',
     title: 'Need 5-ply boxes? See specs',
-    body: 'Double wall for heavier goods. Strength test reports are available on request.',
+    body: 'Double wall for heavier goods.',
     label: 'See 5-ply specs',
     href: () => '/products/5-ply',
     intent: 'navigate',

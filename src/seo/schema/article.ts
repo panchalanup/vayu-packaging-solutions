@@ -5,13 +5,30 @@
 
 import { SEO_CONFIG } from '../config';
 import { BlogPost } from '@/constants/blogs';
+import { compactTitle } from '../meta';
+
+/** "8 min read" to ISO 8601 "PT8M" (schema.org timeRequired) */
+export const readingTimeToIso = (readingTime: string): string | undefined => {
+  const m = /(\d+)/.exec(readingTime);
+  return m ? `PT${m[1]}M` : undefined;
+};
+
+export interface ArticleSchemaExtras {
+  /** Words in the article body, counted from the markdown */
+  wordCount?: number;
+  /** Keywords for the article (from BLOG_SEO_METADATA); defaults to the title */
+  keywords?: string[];
+  /** Reading time in minutes counted from the markdown; defaults to the registry's readingTime string */
+  readingMinutes?: number;
+}
 
 /** `ogImage`: the article's exported /blog-images/*-og.png (scripts/illustrations/export-seo.mjs), if it has one */
-export const getArticleSchema = (post: BlogPost, ogImage?: string) => ({
+export const getArticleSchema = (post: BlogPost, ogImage?: string, extras: ArticleSchemaExtras = {}) => ({
   '@context': 'https://schema.org',
   '@type': 'Article',
   '@id': `${SEO_CONFIG.siteUrl}/blogs/${post.slug}#article`,
-  headline: post.title,
+  // Google asks for headlines under 110 characters
+  headline: post.title.length <= 110 ? post.title : compactTitle(post.title, 110),
   description: post.description,
   image: {
     '@type': 'ImageObject',
@@ -42,7 +59,7 @@ export const getArticleSchema = (post: BlogPost, ogImage?: string) => ({
   
   // Dates
   datePublished: post.date,
-  dateModified: post.date, // Update if you track modification dates
+  dateModified: post.updated ?? post.date,
   
   // Article Details
   mainEntityOfPage: {
@@ -54,10 +71,11 @@ export const getArticleSchema = (post: BlogPost, ogImage?: string) => ({
   articleSection: post.category,
   
   // Keywords
-  keywords: post.title,
+  keywords: extras.keywords?.length ? extras.keywords.join(', ') : post.title,
+  ...(extras.wordCount ? { wordCount: extras.wordCount } : {}),
   
-  // Reading Time
-  timeRequired: post.readingTime,
+  // Reading Time (ISO 8601 duration)
+  timeRequired: extras.readingMinutes ? `PT${extras.readingMinutes}M` : readingTimeToIso(post.readingTime),
   
   // Language
   inLanguage: 'en-IN',

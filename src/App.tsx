@@ -1,17 +1,15 @@
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useNavigate, type Location as RouterLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, type Location as RouterLocation } from "react-router-dom";
 import { MotionConfig } from "framer-motion";
 import { lazy, Suspense, useEffect } from "react";
 import { AnalyticsProvider } from "@/contexts/AnalyticsContext";
 import { ANALYTICS_CONFIG } from "@/config/analytics";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
-import { useIsMobile } from "@/hooks/use-mobile";
 import Index from "./pages/Home";
 import AdminRouteGuard from "@/components/admin/AdminRouteGuard";
 import { ADMIN_ROUTES } from "@/config/adminAuth";
+import { dismissPrerender } from "@/lib/prerender";
 
 // Every route except Home is code-split so visitors only download what they open (admin + jsPDF included)
 const About = lazy(() => import("./pages/About"));
@@ -30,7 +28,10 @@ const CompareQuote = lazy(() => import("./pages/CompareQuote"));
 const BoxDesigner = lazy(() => import("./pages/BoxDesigner"));
 const BoxDesignerLanding = lazy(() => import("./pages/BoxDesignerLanding"));
 const BoxDesignerEmbed = lazy(() => import("./pages/BoxDesignerEmbed"));
+const ToolsIndex = lazy(() => import("./pages/ToolsIndex"));
+const ToolPage = lazy(() => import("./pages/ToolPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const AdminEntityOverlay = lazy(() => import("@/components/admin/AdminEntityOverlay"));
 const AdminLayout = lazy(() => import("@/components/admin/AdminLayout"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -52,41 +53,16 @@ const RouteFallback = () => (
 
 const queryClient = new QueryClient();
 
+/** Hands over from the prerendered HTML shell to the app once the first route has rendered (see src/lib/prerender.ts) */
+const DismissPrerender = () => {
+  useEffect(() => { dismissPrerender(); }, []);
+  return null;
+};
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
   return null;
-};
-
-const AdminEntityOverlay = () => {
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
-
-  const closeOverlay = () => {
-    navigate(-1);
-  };
-
-  if (isMobile) {
-    return (
-      <Drawer open onOpenChange={(open) => !open && closeOverlay()}>
-        <DrawerContent className="max-h-[94dvh] overflow-y-auto">
-          <div className="p-3 pb-6">
-            <Outlet />
-          </div>
-        </DrawerContent>
-      </Drawer>
-    );
-  }
-
-  return (
-    <Dialog open onOpenChange={(open) => !open && closeOverlay()}>
-      <DialogContent className="h-[94vh] max-h-[94vh] max-w-6xl overflow-y-auto p-0">
-        <div className="min-h-full p-6">
-          <Outlet />
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
 };
 
 const AnimatedRoutes = () => {
@@ -111,6 +87,8 @@ const AnimatedRoutes = () => {
           <Route path="/box-designer" element={<BoxDesigner />} />
           <Route path="/box-designer/:style" element={<BoxDesignerLanding />} />
           <Route path="/embed/box-designer" element={<BoxDesignerEmbed />} />
+          <Route path="/tools" element={<ToolsIndex />} />
+          <Route path="/tools/:slug" element={<ToolPage />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:slug" element={<BlogPost />} />
           <Route path="/contact" element={<Contact />} />
@@ -135,6 +113,8 @@ const AnimatedRoutes = () => {
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
+
+      <DismissPrerender />
 
       {backgroundLocation && (
         <Routes>

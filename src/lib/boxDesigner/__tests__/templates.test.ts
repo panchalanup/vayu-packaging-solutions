@@ -9,7 +9,8 @@ import { loadAllCategories } from '../stickers/library';
 import { SCALE_LIMITS } from '../stickers/placement';
 import { DIMENSION_LIMITS, PLY_OPTIONS } from '../constants';
 import { decodeShareHash, encodeShareHashDetailed, parseDesign, serializeDesign } from '../designCodec';
-import { getStyle, STYLES } from '../styles/registry';
+import { getLayoutOpenings, getStyle, STYLES } from '../styles/registry';
+import { faceSizesForDesign, layoutForDesign } from '../styles/designLayout';
 import {
   DESIGN_TEMPLATES,
   TEMPLATE_CATEGORIES,
@@ -126,6 +127,77 @@ describe('every template is valid', () => {
       if (t.options.window) expect(caps.window, `${t.id} window`).toBe(true);
       if (t.options.frontCut) expect(t.style, `${t.id} front cut`).toBe('shelf-tray');
     }
+  });
+
+  it('sample text and stickers keep clear of the handling marks (bottom right of the front)', () => {
+    const PT = 0.03528;
+    for (const t of DESIGN_TEMPLATES.filter((x) => x.showIcons)) {
+      const { length: W, height: H } = t.dimensions;
+      // same geometry as drawShippingIcons in textures/printLayer.ts
+      const margin = 0.9;
+      const gap = 0.25;
+      const size = Math.min(3.6, H * 0.26, (W * 0.5 - 2 * gap) / 3);
+      const total = 3 * size + 2 * gap;
+      const mark = { x0: W - margin - total, x1: W - margin, y0: H - margin - size, y1: H - margin };
+      const clear = (x0: number, x1: number, y0: number, y1: number) => x1 <= mark.x0 || x0 >= mark.x1 || y1 <= mark.y0 || y0 >= mark.y1;
+      for (const text of t.texts.filter((x) => x.face === 'front')) {
+        const w = Math.max(...text.text.split('\n').map((l) => l.length)) * 0.6 * text.size * PT;
+        const h = text.size * PT * 1.2 * text.text.split('\n').length;
+        const cx = text.position.x * W;
+        const cy = text.position.y * H;
+        expect(clear(cx - w / 2, cx + w / 2, cy - h / 2, cy + h / 2), `${t.id} text "${text.text}" overlaps the handling marks`).toBe(true);
+      }
+      for (const st of t.stickers.filter((x) => x.face === 'front')) {
+        const half = (st.scale * Math.min(W, H)) / 2;
+        const cx = st.x * W;
+        const cy = st.y * H;
+        expect(clear(cx - half, cx + half, cy - half, cy + half), `${t.id} sticker ${st.id} overlaps the handling marks`).toBe(true);
+      }
+    }
+  });
+
+  it('sample text and stickers sit inside the real printable face and clear of cut-outs', () => {
+    const PT = 0.03528;
+    const problems: string[] = [];
+    // wide, thin artwork (dividers, ribbons) is not square: only check it by its centre
+    const WIDE = /divider|ribbon|banner|stripe|border|frame/;
+    type Box = { cx: number; cy: number; w: number; h: number };
+    const outside = (face: { widthCm: number; heightCm: number }, b: Box) =>
+      b.cx - b.w / 2 < -0.05 || b.cx + b.w / 2 > face.widthCm + 0.05 || b.cy - b.h / 2 < -0.05 || b.cy + b.h / 2 > face.heightCm + 0.05;
+    const hits = (a: Box, o: Box) => Math.abs(a.cx - o.cx) < (a.w + o.w) / 2 && Math.abs(a.cy - o.cy) < (a.h + o.h) / 2;
+    for (const t of DESIGN_TEMPLATES) {
+      const design = designFromTemplate(t);
+      const sizes = faceSizesForDesign(design);
+      const openings = getLayoutOpenings(layoutForDesign(design));
+      const items: { label: string; face: NonNullable<(typeof t.stickers)[number]['face']>; box: Box; checkEdges: boolean; fill: number }[] = [];
+      for (const st of t.stickers) {
+        const f = sizes[st.face];
+        if (!f) {
+          problems.push(`${t.id}: no ${st.face} face`);
+          continue;
+        }
+        const side = st.scale * Math.min(f.widthCm, f.heightCm);
+        items.push({ label: `${t.id} sticker ${st.id}`, face: st.face, box: { cx: st.x * f.widthCm, cy: st.y * f.heightCm, w: side, h: side }, checkEdges: !WIDE.test(st.id), fill: 0.75 });
+      }
+      for (const tx of t.texts) {
+        const f = sizes[tx.face];
+        if (!f) continue;
+        const lines = tx.text.split('\n');
+        const w = Math.max(...lines.map((l) => l.length)) * 0.6 * tx.size * PT;
+        const h = tx.size * PT * 1.2 * lines.length;
+        items.push({ label: `${t.id} text "${tx.text}"`, face: tx.face, box: { cx: tx.position.x * f.widthCm, cy: tx.position.y * f.heightCm, w, h }, checkEdges: true, fill: 1 });
+      }
+      for (const it of items) {
+        const f = sizes[it.face]!;
+        if (it.checkEdges && outside(f, it.box)) problems.push(`${it.label} (${it.face}) spills over the edge of a ${f.widthCm.toFixed(1)} x ${f.heightCm.toFixed(1)} cm face`);
+        // openings are measured from the panel centre, +y up; artwork y runs down
+        for (const o of openings[it.face] ?? []) {
+          const ob: Box = { cx: f.widthCm / 2 + o.cx, cy: f.heightCm / 2 - o.cy, w: o.width, h: o.height };
+          if (hits({ ...it.box, w: it.box.w * it.fill, h: it.box.h * it.fill }, ob)) problems.push(`${it.label} (${it.face}) overlaps a ${o.kind} cut-out`);
+        }
+      }
+    }
+    expect(problems).toEqual([]);
   });
 
   it('sample text fits its face (rough width estimate)', () => {
