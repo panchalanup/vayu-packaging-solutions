@@ -76,6 +76,16 @@ import blogUcApparel from '@/assets/illustrations/blog-uc-apparel.svg';
 import blogUcGift from '@/assets/illustrations/blog-uc-gift.svg';
 import blogUcExport from '@/assets/illustrations/blog-uc-export.svg';
 import blogUcMistakes from '@/assets/illustrations/blog-uc-mistakes.svg';
+import blogP2Produce from '@/assets/illustrations/blog-p2-produce.svg';
+import blogP2FruitPack from '@/assets/illustrations/blog-p2-fruit-pack.svg';
+import blogP2Fashion from '@/assets/illustrations/blog-p2-fashion.svg';
+import blogP2Cake from '@/assets/illustrations/blog-p2-cake.svg';
+import blogP2Takeaway from '@/assets/illustrations/blog-p2-takeaway.svg';
+import blogDgCutouts from '@/assets/illustrations/blog-dg-cutouts.svg';
+import blogDgTemplates from '@/assets/illustrations/blog-dg-templates.svg';
+import blogDgPicker from '@/assets/illustrations/blog-dg-picker.svg';
+import blogDgOpenings from '@/assets/illustrations/blog-dg-openings.svg';
+import blogUcIdeas from '@/assets/illustrations/blog-uc-ideas.svg';
 
 /** Every illustration is authored at 4:3 (1200×900); blog art at 16:9 (1600×900). */
 const SIZE_43 = { width: 1200, height: 900 } as const;
@@ -196,6 +206,16 @@ export const BLOG_IMAGES = {
   'BLOG-UC-06-thumbnail': blogUcGift, // festive-gift-hamper-boxes
   'BLOG-UC-07-thumbnail': blogUcExport, // export-cartons-5-ply-7-ply
   'BLOG-UC-08-thumbnail': blogUcMistakes, // packaging-mistakes-small-business
+  'BLOG-DG-09-thumbnail': blogDgCutouts, // how-to-add-cutouts-box-design
+  'BLOG-DG-10-thumbnail': blogDgTemplates, // box-design-templates-tour
+  'BLOG-DG-11-thumbnail': blogDgPicker, // which-box-style-should-you-choose
+  'BLOG-DG-12-thumbnail': blogDgOpenings, // vents-hand-holes-windows-box-design
+  'BLOG-UC-09-thumbnail': blogUcIdeas, // box-design-ideas-in-5-minutes
+  'BLOG-UC-10-thumbnail': blogP2Produce, // fruit-vegetable-ventilated-boxes
+  'BLOG-UC-11-thumbnail': blogP2FruitPack, // mango-apple-grape-packing-boxes
+  'BLOG-UC-12-thumbnail': blogP2Fashion, // clothing-saree-footwear-boxes
+  'BLOG-UC-13-thumbnail': blogP2Cake, // cake-sweet-bakery-boxes
+  'BLOG-UC-14-thumbnail': blogP2Takeaway, // takeaway-tiffin-pizza-boxes-cloud-kitchens
   alt: 'Vayu Packaging Solutions: corrugated boxes and packaging',
 } as const;
 

@@ -10,12 +10,14 @@ import { productScenes } from './scenes-products.mjs';
 import { siteScenes } from './scenes-site.mjs';
 import { blogScenes } from './scenes-blog.mjs';
 import { blogUseCaseScenes } from './scenes-blog-usecases.mjs';
+import { blogPhase2Scenes } from './scenes-blog-phase2.mjs';
+import { blogPhase2bScenes } from './scenes-blog-phase2b.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const outDir = path.join(root, 'src/assets/illustrations');
 fs.mkdirSync(outDir, { recursive: true });
 
-const scenes = { ...productScenes, ...siteScenes, ...blogScenes, ...blogUseCaseScenes };
+const scenes = { ...productScenes, ...siteScenes, ...blogScenes, ...blogUseCaseScenes, ...blogPhase2Scenes, ...blogPhase2bScenes };
 const filter = process.argv[2];
 let n = 0;
 for (const [name, make] of Object.entries(scenes)) {

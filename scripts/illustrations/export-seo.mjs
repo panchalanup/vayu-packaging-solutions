@@ -63,6 +63,18 @@ const BLOGS = {
   'uc-gift-og': 'blog-uc-gift',
   'uc-export-og': 'blog-uc-export',
   'uc-mistakes-og': 'blog-uc-mistakes',
+  // Phase 2 designer articles (scenes-blog-phase2b.mjs)
+  'dg-cutouts-og': 'blog-dg-cutouts',
+  'dg-templates-og': 'blog-dg-templates',
+  'dg-picker-og': 'blog-dg-picker',
+  'dg-openings-og': 'blog-dg-openings',
+  'uc-ideas-og': 'blog-uc-ideas',
+  // Phase 2 use cases (scenes-blog-phase2.mjs)
+  'uc-produce-og': 'blog-p2-produce',
+  'uc-fruit-pack-og': 'blog-p2-fruit-pack',
+  'uc-fashion-og': 'blog-p2-fashion',
+  'uc-cake-og': 'blog-p2-cake',
+  'uc-takeaway-og': 'blog-p2-takeaway',
 };
 if (!only || only === 'blogs') for (const [name, svg] of Object.entries(BLOGS)) shot(cover(ill(svg), 1200, 630), path.join(root, `public/blog-images/${name}.png`), 1200, 630);
 

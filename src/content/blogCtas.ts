@@ -21,7 +21,17 @@ export type BlogTag =
   | 'dg-artwork'
   | 'dg-dieline'
   | 'dg-shots'
-  | 'dg-stack';
+  | 'dg-stack'
+  | 'dg-cutouts'
+  | 'dg-templates'
+  | 'dg-picker'
+  | 'dg-ideas'
+  | 'dg-openings'
+  // Use cases for the phase 2 styles: each links to its style landing page
+  | 'uc-produce'
+  | 'uc-fashion'
+  | 'uc-cake'
+  | 'uc-takeaway';
 
 export const BLOG_TAGS: Record<string, BlogTag[]> = {
   'types-of-corrugated-boxes': ['types', 'ply'],
@@ -50,6 +60,17 @@ export const BLOG_TAGS: Record<string, BlogTag[]> = {
   'dielines-explained': ['dg-dieline', 'designer'],
   'packaging-product-shots-360-video': ['dg-shots', 'designer'],
   'box-stacking-strength-guide': ['dg-stack', 'designer', 'strength'],
+  // Use Cases for phase 2 styles (Workstream I1)
+  'fruit-vegetable-ventilated-boxes': ['uc-produce', 'designer', 'strength'],
+  'mango-apple-grape-packing-boxes': ['uc-produce', 'designer', 'sizing'],
+  'clothing-saree-footwear-boxes': ['uc-fashion', 'designer', 'sizing'],
+  'cake-sweet-bakery-boxes': ['uc-cake', 'designer', 'sizing'],
+  'takeaway-tiffin-pizza-boxes-cloud-kitchens': ['uc-takeaway', 'designer', 'sizing'],
+  'how-to-add-cutouts-box-design': ['dg-cutouts', 'designer'],
+  'box-design-templates-tour': ['dg-templates', 'designer'],
+  'which-box-style-should-you-choose': ['dg-picker', 'designer', 'types'],
+  'box-design-ideas-in-5-minutes': ['dg-ideas', 'designer', 'types'],
+  'vents-hand-holes-windows-box-design': ['dg-openings', 'designer', 'strength'],
 };
 
 export interface BlogCtaCard {
@@ -68,7 +89,7 @@ const CARDS: BlogCtaCard[] = [
   {
     tag: 'dg-styles',
     eyebrow: 'Try it',
-    title: 'Try all eight styles on your size',
+    title: 'Try the styles on your size',
     body: 'Set your inside size once, then click through the styles and watch each one fold.',
     label: 'Compare styles in 3D',
     href: () => '/box-designer',
@@ -126,6 +147,87 @@ const CARDS: BlogCtaCard[] = [
     body: 'Enter the weight of one packed box and get a plain-language strength verdict.',
     label: 'Check my box strength',
     href: () => '/box-designer',
+    intent: 'designer',
+  },
+  {
+    tag: 'dg-cutouts',
+    eyebrow: 'Try it',
+    title: 'Put cutouts on your own box',
+    body: 'Pick a sticker, tint it to your brand colour, repeat it as a pattern and fold the box.',
+    label: 'Add cutouts in 3D',
+    href: () => '/box-designer',
+    intent: 'designer',
+  },
+  {
+    tag: 'dg-templates',
+    eyebrow: 'Try it',
+    title: 'Start from a ready box design',
+    body: 'Open one of 74 templates for fruit, food, fashion or gifts, then make it yours.',
+    label: 'Browse templates',
+    href: () => '/box-designer',
+    intent: 'designer',
+  },
+  {
+    tag: 'dg-picker',
+    eyebrow: 'Try it',
+    title: 'Find the style for your product',
+    body: 'Tap what you are packing and the style picker shows the best matches first.',
+    label: 'Open the style picker',
+    href: () => '/box-designer',
+    intent: 'designer',
+  },
+  {
+    tag: 'dg-ideas',
+    eyebrow: 'Try it',
+    title: 'Build one of these in 5 minutes',
+    body: 'Choose the idea closest to your product and recreate it in the free 3D designer.',
+    label: 'Build my box',
+    href: () => '/box-designer',
+    intent: 'designer',
+  },
+  {
+    tag: 'dg-openings',
+    eyebrow: 'Try it',
+    title: 'Try vents, hand holes or a window',
+    body: 'Switch an opening on, see it on the box and read the strength note before you decide.',
+    label: 'Try cut-outs in 3D',
+    href: () => '/box-designer',
+    intent: 'designer',
+  },
+  {
+    tag: 'uc-produce',
+    eyebrow: 'Try it',
+    title: 'Design a ventilated fruit box',
+    body: 'Set the size for your fruit, switch vents and hand holes on and off, and see the dieline cut lines.',
+    label: 'Design a fruit box',
+    href: () => '/box-designer/fruit-box',
+    intent: 'designer',
+  },
+  {
+    tag: 'uc-fashion',
+    eyebrow: 'Try it',
+    title: 'Design a clothing or footwear box',
+    body: 'Pick a window mailer, saree box or shoe box, set the folded size and add your label.',
+    label: 'Design a window mailer',
+    href: () => '/box-designer/window-mailer-box',
+    intent: 'designer',
+  },
+  {
+    tag: 'uc-cake',
+    eyebrow: 'Try it',
+    title: 'Design a window cake box',
+    body: 'Size it from your cake board, set the window and add your bakery name.',
+    label: 'Design a cake box',
+    href: () => '/box-designer/cake-box',
+    intent: 'designer',
+  },
+  {
+    tag: 'uc-takeaway',
+    eyebrow: 'Try it',
+    title: 'Design a takeaway box',
+    body: 'Size a clamshell from your wrapped food and your delivery bag, then add your brand.',
+    label: 'Design a takeaway box',
+    href: () => '/box-designer/takeaway-box',
     intent: 'designer',
   },
   {

@@ -196,5 +196,233 @@
     "path": "/box-designer",
     "state": "Phone view of the designer with a branded kraft mailer and the bottom controls visible (used in 3d-box-designer-tool-free)",
     "viewport": "mobile"
+  },
+  {
+    "file": "designer-cutouts-panel.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Artwork tab open on the Cutouts section: category chips, search box, a \"Recommended for this box\" row of fruit cutouts and the thumbnail grid; fruit carton visible in 3D",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cutout-controls.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Add a mango cutout to the front face and select it: sticker controls open showing Size, Opacity, Colour swatches, \"Repeat as a pattern\" switch, Flip, layer order, Duplicate, Delete",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cutouts-brand-colour.png",
+    "path": "/box-designer/cake-box",
+    "state": "Cake box with 3-4 cutouts placed; \"Match brand colour\" swatches open and one green chosen so every cutout on the box is that green",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cutouts-pattern.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Fruit carton: one large mango on the front, a small leaf cutout repeated as a pattern (Repeat as a pattern on, low opacity, offset rows on) on the side face; box rotated to show both faces",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cutouts-surprise-me.png",
+    "path": "/box-designer/cake-box",
+    "state": "Window cake box immediately after pressing \"Surprise me\": hero cutout on the lid, small cutouts around it, soft pastel pattern on sides, toast \"Surprise: ... palette\" visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-gallery.png",
+    "path": "/box-designer",
+    "state": "Template gallery open (Edit tab > Templates): category tabs, search box, \"All box styles\" filter and a grid of template cards (Fruit & produce tab selected)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-mango-carton.png",
+    "path": "/box-designer",
+    "state": "Mango carton template applied (5-ply B+C 36 x 26 x 14, vents and hand holes on), kraft, mango and leaf sprig cutouts, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-cake-box.png",
+    "path": "/box-designer",
+    "state": "Cake box with window template applied (white glossy 25 x 25 x 12, window at 60%, cake slice cutout), lid slightly open, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-tshirt-mailer.png",
+    "path": "/box-designer",
+    "state": "T-shirt mailer template applied (white 30 x 24 x 5 mailer, T-shirt cutout on the lid), lid half open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-festive-gift.png",
+    "path": "/box-designer",
+    "state": "Festive gift box template applied (red and gold telescope box 26 x 26 x 8, gloss, star divider and sparkler on the lid), lid lifted a little",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-style-picker-groups.png",
+    "path": "/box-designer",
+    "state": "Style picker open showing the group tabs (All, Shipping, Retail & gifts, Food & bakery, Fruit & produce, Display), the \"What are you packing?\" chips and cards with option hints",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-style-picker-search.png",
+    "path": "/box-designer",
+    "state": "Style picker with the word \"fruit\" typed in the search box: ventilated produce carton and open produce tray cards listed first",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-slide-box.png",
+    "path": "/box-designer/slide-box",
+    "state": "Slide box (tray and sleeve) with fold slider mid-way so the tray is partly out of its printed sleeve; three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-idea-honey-jar-box.png",
+    "path": "/box-designer",
+    "state": "Honey jar box template applied (crash-lock bottom, 10 x 10 x 13, yellow board, honey and bee cutouts), three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-idea-kidswear-window.png",
+    "path": "/box-designer",
+    "state": "Kidswear box template applied (window mailer 26 x 20 x 6, yellow, teddy bear and star cutouts, window at 55%), lid slightly open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-idea-snack-counter-display.png",
+    "path": "/box-designer",
+    "state": "Snack counter display template applied (shelf display tray 32 x 22 x 10, red, popcorn cutout, front cut at 55%), three-quarter view from slightly above",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-vents.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Ventilated produce carton with vents and hand holes on; size and board panel scrolled to the Cut-outs section with the Hand holes and Vent slots switches visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-hand-holes.png",
+    "path": "/box-designer/carry-box",
+    "state": "Carry box with hand holes on, box rotated so a hand hole in a short wall is clearly visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-window.png",
+    "path": "/box-designer/cake-box",
+    "state": "Window cake box with the Window size slider visible in the Cut-outs section at about 60%; box viewed from above at an angle so the lid window shows",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-strength-warning.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Strength guidance panel for the vented produce carton with a weight entered, showing the warning that hand holes and vents lower stacking strength",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-dieline.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Dieline view of the vented produce carton showing the true vent slot and hand hole cut lines on the flat blank",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-produce-picker.png",
+    "path": "/box-designer",
+    "state": "Open the style picker, set 'What are you packing?' to the Fruit & vegetables chip so the ventilated produce carton and open produce tray lead the list",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-produce-vents.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Edit Box tab, Cut-outs section visible with Hand holes and Vent slots switched on; ventilated produce carton rotated to show vents and a hand hole",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-produce-strength-warning.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Price & order tab: enter 10 kg for one packed box with vents and hand holes on, strength guide showing the warning that holes and vents reduce stacking strength",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mango-carton.png",
+    "path": "/box-designer",
+    "state": "Load the Mango carton template (Templates > Fruit & produce), fully closed, three-quarter view showing vents, hand hole, mango graphic and brand text",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-apple-tray.png",
+    "path": "/box-designer",
+    "state": "Load the Apple tray template (Templates > Fruit & produce), open produce tray with vents, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-grape-box.png",
+    "path": "/box-designer",
+    "state": "Load the Grape box template (Templates > Fruit & produce), green vented carton, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-clothing-styles.png",
+    "path": "/box-designer",
+    "state": "Style picker open on the Retail & gifts group showing tuck-end, window mailer, slide box and book-style cards",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-window-mailer-garment.png",
+    "path": "/box-designer/window-mailer-box",
+    "state": "Window mailer preset with the assembly slider about half way (lid open) and the Cut-outs section showing the Window size slider",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-saree-box.png",
+    "path": "/box-designer",
+    "state": "Load the Saree box template (Templates > Clothing & fashion), gold telescope box with the lid lifted mid fold",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-shoe-box-lid.png",
+    "path": "/box-designer/shoe-box",
+    "state": "Shoe box preset with the fold slider at the open stop, lid lifted off, sneaker graphic and size text visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-saree-showcase.png",
+    "path": "/box-designer",
+    "state": "Saree box template loaded, Showcase tab open with a studio background selected and the box centred",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-bakery-styles.png",
+    "path": "/box-designer",
+    "state": "Style picker open on the Food & bakery group showing the window cake box, takeaway clamshell and tray cards",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cake-window-box.png",
+    "path": "/box-designer/cake-box",
+    "state": "Cake box preset, Edit Box tab with the Window size slider visible, window cake box closed and rotated to show the lid",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mithai-box.png",
+    "path": "/box-designer",
+    "state": "Load the Sweet box (mithai) template (Templates > Food & bakery), red telescope box with the lid lifting off to show the gold inside",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-takeaway-styles.png",
+    "path": "/box-designer",
+    "state": "Style picker open on the Food & bakery group showing takeaway clamshell, pizza box and tray cards",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-takeaway-clamshell.png",
+    "path": "/box-designer",
+    "state": "Load the Burger takeaway box template (Templates > Food & bakery), clamshell with the lid open mid fold, burger graphic on the lid",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-pizza-box-lid.png",
+    "path": "/box-designer/pizza-box",
+    "state": "Pizza box preset with the lid lifted open, showing the white inside and pizza graphic on the lid",
+    "viewport": "desktop"
   }
 ]

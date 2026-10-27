@@ -406,6 +406,36 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/fruit-vegetable-ventilated-boxes</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/mango-apple-grape-packing-boxes</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/clothing-saree-footwear-boxes</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/cake-sweet-bakery-boxes</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/takeaway-tiffin-pizza-boxes-cloud-kitchens</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
   <!-- Designer Guides blog posts (Workstream D1) -->
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/how-to-use-3d-box-designer</loc>
@@ -452,6 +482,36 @@
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/box-stacking-strength-guide</loc>
     <lastmod>2026-10-26T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/how-to-add-cutouts-box-design</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/box-design-templates-tour</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/which-box-style-should-you-choose</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/box-design-ideas-in-5-minutes</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://vayupackaging.vercel.app/blogs/vents-hand-holes-windows-box-design</loc>
+    <lastmod>2026-10-27T10:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

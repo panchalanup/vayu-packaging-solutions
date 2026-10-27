@@ -44,11 +44,11 @@ When the designer opens you see a plain kraft carton in the middle of the screen
 
 There are three ways to begin:
 
-1. **Pick a style.** The style picker shows a card for each box style with a short "best for" line: the regular slotted carton (RSC), half slotted (HSC), full overlap, sleeve, telescope lid and base, mailer, pizza box and tray. If you are not sure which one you need, read our guide to the [8 box styles in 3D](/blogs/box-styles-in-3d).
-2. **Use a template.** Templates are ready-made starting points such as an e-commerce shipper, an apparel mailer, a pizza box, a bakery tray, a gift box, a shoe box or an export carton. Each comes with a sensible size, board and sample artwork that you then replace with your own.
+1. **Pick a style.** The style picker shows a card for each of the **20 box styles** with a short "best for" line, sorted into five groups (Shipping, Retail and gifts, Food and bakery, Fruit and produce, Display). It starts with the regular slotted carton (RSC), half slotted (HSC), full overlap, sleeve, telescope lid and base, mailer, pizza box and tray, and adds carry boxes, ventilated fruit cartons, tuck-end and bottle boxes, window mailers, cake boxes, clamshells, display trays, slide boxes and book-style boxes. You can also tap "what are you packing?" or search. If you are not sure which one you need, read [which of 20 box styles should you choose](/blogs/which-box-style-should-you-choose), or the original guide to the [8 box styles in 3D](/blogs/box-styles-in-3d).
+2. **Use a template.** There are **74 templates** in 13 categories: fruit and produce cartons, cake and sweet boxes, T-shirt and saree boxes, soap and perfume cartons, gift boxes, an e-commerce shipper, an export carton and more. Each comes with a sensible size, board, cut-outs such as vents or a window, and sample artwork that you then replace with your own. See the [template tour](/blogs/box-design-templates-tour).
 3. **Answer "Find my box".** Guided mode asks four plain questions: what you are packing, how heavy it is, how fragile it is, and how it travels (courier, local delivery, retail shelf, pallet or export). It then recommends a style, an inside size, a ply and a flute, with a one-line reason for each. One tap applies the whole recommendation.
 
-![The style picker in the 3D Box Designer, showing eight box style cards with a short best-for line under each](/blog-images/designer/designer-style-picker.png)
+![The style picker in the 3D Box Designer, showing box style cards with a short best-for line under each](/blog-images/designer/designer-style-picker.png)
 *The style picker: every card says what the style is best for.*
 
 **Tip:** if you already have a box you like, start from the same style and copy its inside measurements in step 2. It is the fastest way to a reorder spec.
@@ -103,6 +103,7 @@ Click any face of the box (or choose it from the surface list) and add:
 
 - **An image:** your logo or artwork as PNG, JPG or SVG. Drag it to position it, then scale and rotate it.
 - **Text:** a tagline, "Handle with care", a website or a batch line, with font, size, alignment and colour.
+- **Cutouts:** 512 ready-made stickers (fruit, bakery, clothing, gifts, shipping marks, badges and patterns). Add one with a tap, resize it, tint it to your brand colour or repeat it as a pattern. See the [cutouts guide](/blogs/how-to-add-cutouts-box-design).
 - **Brand colours:** type your exact hex or RGB values, and reuse recent colours across faces. Save your logo and colours as a **brand kit** so the next design starts branded.
 
 As you work, **print checks** flag the problems printers reject artwork for: an image that is too low-resolution for its printed size, artwork running over an edge or too close to a fold, and text that is too small or hard to read on the board colour. Click a warning and the tool selects the item so you can fix it. Our [artwork and logo guide](/blogs/logo-artwork-on-boxes) goes through each check.
@@ -186,6 +187,9 @@ The fastest route to a box that fits: open the designer, answer "Find my box", p
 [Design your box in 3D](/box-designer)
 
 **Keep reading:**
+- [Which of 20 box styles should you choose?](/blogs/which-box-style-should-you-choose)
+- [How to add cutouts to your box design](/blogs/how-to-add-cutouts-box-design)
+- [Start from a template: 74 ready box designs](/blogs/box-design-templates-tour)
 - [8 box styles in 3D: which one fits your product](/blogs/box-styles-in-3d)
 - [How to find the right box size for your product](/blogs/find-right-box-size)
 - [Instant box price estimates: what drives cost per box](/blogs/box-price-estimate-guide)

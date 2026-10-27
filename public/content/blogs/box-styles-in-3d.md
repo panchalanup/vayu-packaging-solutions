@@ -18,6 +18,8 @@ The trouble is that style names (RSC, HSC, FOL, 0427) mean little until you see 
 
 [Try the styles in 3D](/box-designer)
 
+> **Update:** the designer now offers **20 styles**. This guide covers the original eight; the newer carry, ventilated produce, tuck-end, crash-lock, window, cake, clamshell, display, slide and book-style boxes are listed at the end of this section and in [which of 20 box styles should you choose](/blogs/which-box-style-should-you-choose).
+
 ---
 
 ## The eight styles at a glance
@@ -35,8 +37,8 @@ The trouble is that style names (RSC, HSC, FOL, 0427) mean little until you see 
 
 <!-- VERIFY-LATER[BLOG-21]: FEFCO codes quoted below (0201, 0200, 0203, 03xx, 0427, 04xx) are the usual references for these styles; confirm the exact code for our sleeve, telescope, pizza and tray constructions with production. -->
 
-![The style picker in the 3D Box Designer with all eight styles shown as cards](/blog-images/designer/designer-style-picker.png)
-*All eight styles in the designer's style picker.*
+![The style picker in the 3D Box Designer with the styles shown as cards](/blog-images/designer/designer-style-picker.png)
+*The designer's style picker, with the original eight styles and the newer ones.*
 
 ---
 
@@ -113,6 +115,20 @@ A die-cut tray is a mailer base with no lid. Bakeries and fruit sellers use tray
 
 ---
 
+## Beyond the original eight
+
+Twelve more styles have been added, in the same designer, each with its own landing page:
+
+- **Shipping:** [carry box with hand holes](/box-designer/carry-box).
+- **Fruit and produce:** [ventilated produce carton](/box-designer/fruit-box) and an open produce tray.
+- **Retail and gifts:** [tuck-end carton](/box-designer/tuck-end-box), [crash-lock bottom box](/box-designer/crash-lock-box), a 1-2-3 bottom box, [window mailer](/box-designer/window-mailer-box), [slide box](/box-designer/slide-box) and [book-style flip-lid box](/box-designer/book-box).
+- **Food and bakery:** [window cake box](/box-designer/cake-box) and [takeaway clamshell](/box-designer/takeaway-box).
+- **Display:** [shelf display tray](/box-designer/display-tray).
+
+Some offer openings (vents, hand holes, windows); read [vents, hand holes and windows](/blogs/vents-hand-holes-windows-box-design) before adding them. You can also start from one of 74 [ready templates](/blogs/box-design-templates-tour) and decorate any style with [cutouts](/blogs/how-to-add-cutouts-box-design).
+
+---
+
 ## How to choose in 30 seconds
 
 Answer these in order and you will usually land on the right style:
@@ -168,17 +184,18 @@ Yes. In the designer you can add artwork to any printable face of every style. D
 For the same inside size, usually the RSC or HSC. Check the **dieline** and the **estimate** in the designer to compare your exact size.
 
 ### My style is not listed. Can you make it?
-Very likely. The designer covers the most common styles; ask us about inserts, partitions, crash-lock bottoms and other constructions.
+Very likely. The designer now covers 20 common styles, including crash-lock bottoms; ask us about inserts, partitions and other constructions.
 
 ---
 
 ## Try your size in every style
 
-Set your size once, then click through all eight styles and watch each one fold. It is the fastest way to see what you are actually buying.
+Set your size once, then click through the styles and watch each one fold. It is the fastest way to see what you are actually buying.
 
 [Open the 3D Box Designer](/box-designer)
 
 **Keep reading:**
+- [Which of 20 box styles should you choose? (updated)](/blogs/which-box-style-should-you-choose)
 - [How to use the 3D Box Designer: a complete step-by-step guide](/blogs/how-to-use-3d-box-designer)
 - [Understanding different types of corrugated boxes](/blogs/types-of-corrugated-boxes)
 - [How to find the right box size for your product](/blogs/find-right-box-size)
