@@ -327,6 +327,10 @@ describe('studio helpers', () => {
     expect(html).toContain('/embed/box-designer?style=mailerscript&l=30&w=23&h=6');
     expect(html).not.toContain('<script>');
   });
+
+  it('keeps the hyphen of hyphenated style ids so the embed opens that style', () => {
+    expect(embedSnippet('https://example.com', { style: 'window-mailer', l: 28, w: 22, h: 7 })).toContain('style=window-mailer&');
+  });
 });
 
 describe('embed params', () => {

@@ -89,6 +89,26 @@ const BLOGS = {
   'n1-cake-sizes-og': 'blog-n1-cake-sizes',
   'n1-cbm-og': 'blog-n1-cbm',
   'n1-choose-og': 'blog-n1-choose',
+  // Third batch, blog writer P1 (scenes-blog-p1.mjs)
+  'p1-shoe-sizes-og': 'blog-p1-shoe-sizes',
+  'p1-mithai-sizes-og': 'blog-p1-mithai-sizes',
+  'p1-fragile-og': 'blog-p1-fragile',
+  'p1-pallet-og': 'blog-p1-pallet',
+  'p1-board-types-og': 'blog-p1-board-types',
+  'p1-cost-worksheet-og': 'blog-p1-cost-worksheet',
+  'p1-checklist-og': 'blog-p1-checklist',
+  'p1-kesar-og': 'blog-p1-kesar',
+  'p1-jars-og': 'blog-p1-jars',
+  // Tool comparison, process, trade and planning guides (scenes-blog-p2x.mjs)
+  'p2x-compare-og': 'blog-p2x-compare',
+  'p2x-dielines-og': 'blog-p2x-dielines',
+  'p2x-made-og': 'blog-p2x-made',
+  'p2x-tile-og': 'blog-p2x-tile',
+  'p2x-embed-og': 'blog-p2x-embed',
+  'p2x-export-og': 'blog-p2x-export',
+  'p2x-print-og': 'blog-p2x-print',
+  'p2x-calendar-og': 'blog-p2x-calendar',
+  'p2x-stamps-og': 'blog-p2x-stamps',
 };
 if (!only || only === 'blogs') for (const [name, svg] of Object.entries(BLOGS)) shot(cover(ill(svg), 1200, 630), path.join(root, `public/blog-images/${name}.png`), 1200, 630);
 

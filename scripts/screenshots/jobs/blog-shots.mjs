@@ -31,6 +31,10 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
     await page.rect({ sel, text, block: 'start' });
     await sleep(400);
   };
+  const fit = async () => {
+    await page.click({ sel: 'button', label: 'Fit view', after: 400 });
+    await page.settle(2000);
+  };
   const openPicker = async () => {
     await d.tab('edit');
     await page.click({ sel: 'button', text: 'Change style' });
@@ -46,6 +50,15 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
     await sleep(900);
     await page.click({ sel: 'button', labelStarts: 'Add ', within: '[role="list"][aria-label="Cutouts"]', nth });
     await sleep(900);
+  };
+  const parkInCorner = async () => {
+    // a new cutout lands mid-wall, on the vent row: nudge it (Shift+arrows = 5%) into the top-left corner strip
+    await page.call(`() => document.querySelector('[role="application"][aria-label^="Artwork layout"]').focus()`);
+    await page.eval(`document.querySelector('[data-sticker-id]').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0, pointerId: 1 }))`);
+    await page.call(`() => document.querySelector('[role="application"][aria-label^="Artwork layout"]').focus()`);
+    for (let i = 0; i < 5; i++) await page.key('ArrowLeft', 'ArrowLeft', 37, 8);
+    for (let i = 0; i < 5; i++) await page.key('ArrowUp', 'ArrowUp', 38, 8);
+    await sleep(800);
   };
   const faceRadio = async (name) => {
     await page.click({ sel: 'button[role="radio"]', within: '[aria-label="Box surface"]', text: name });
@@ -94,6 +107,7 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
       await d.tab('customize');
       await faceRadio('Front');
       await addCutout('mango');
+      await parkInCorner();
       await page.type({ sel: 'input[aria-label="Search cutouts"]' }, '');
       await scrollPanelTo('Cutout: Mango', 'h3');
     },
@@ -101,19 +115,19 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
       await d.viaLanding('cake-box');
       await d.stopSpin();
       await d.tab('customize');
-      await faceRadio('Lid');
-      for (const [q, n] of [['cake slice', 0], ['strawberry', 0], ['star', 0], ['cherry', 0]]) {
-        await addCutout(q, n);
-        await page.eval(`(() => { const i = document.querySelector('input[aria-label="Search cutouts"]'); i.focus(); })()`);
-      }
-      // spread them apart by dragging in the layout preview is fiddly; the add step offsets each one
+      await faceRadio('Front');
+      // spread a varied set with Surprise me (a few cutouts at once), then recolour it with Match brand colour
+      await jsClick('Surprise me');
+      await sleep(1500);
       await jsClick('Match brand colour');
       await sleep(500);
-      const green = await page.eval(`(() => { const b = [...document.querySelectorAll('button[aria-label^="Use #"]')].find((x) => { const h = x.getAttribute('aria-label').slice(5); const r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), bl = parseInt(h.slice(5,7),16); return g > r + 25 && g > bl + 25; }); if (!b) return null; b.scrollIntoView({block:'center'}); b.click(); return b.getAttribute('aria-label'); })()`);
+      const green = await page.eval(`(() => { const b = [...document.querySelectorAll('button[aria-label^="Use #"]')].find((x) => { const h = x.getAttribute('aria-label').slice(4); const r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), bl = parseInt(h.slice(5,7),16); return g > r + 25 && g > bl + 25; }); if (!b) return null; b.scrollIntoView({block:'center'}); b.click(); return b.getAttribute('aria-label'); })()`);
       log('brand colour used: ' + green);
       await sleep(1500);
       await jsClick('Match brand colour').catch(() => undefined);
       await sleep(400);
+      await d.angle('3/4 hero');
+      await d.tab('customize');
       await scrollPanelTo('Cutouts', 'h3');
     },
     async 'designer-cutouts-pattern.png'() {
@@ -122,9 +136,7 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
       await d.tab('customize');
       await faceRadio('Front');
       await addCutout('mango');
-      await page.eval(`(() => { const i = document.querySelector('input[aria-label="Search cutouts"]'); i.focus(); })()`);
-      // grow the mango
-      await page.eval(`(() => { const e = document.querySelector('[data-sticker-id]'); e && e.click(); })()`);
+      await parkInCorner();
       await faceRadio('Right');
       await page.type({ sel: 'input[aria-label="Search cutouts"]' }, 'leaf sprig');
       await sleep(900);
@@ -188,11 +200,9 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
       await sleep(900);
     },
     async 'designer-slide-box.png'() {
-      await d.viaLanding('slide-box');
-      await d.stopSpin();
-      await d.angle('3/4 hero');
-      await d.tab('edit');
+      await tpl('skincare-set');
       await d.fold(55);
+      await fit();
     },
     async 'designer-idea-honey-jar-box.png'() {
       await tpl('honey-jar-box');
@@ -277,13 +287,14 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
       await d.fold(82);
     },
     async 'designer-shoe-box-lid.png'() {
-      await d.viaLanding('shoe-box');
-      await d.stopSpin();
-      await d.angle('3/4 hero');
-      await d.tab('edit');
-      await d.fold(await stopNamed(/open|off/i));
-      await d.p.click({ sel: 'button', label: 'Fit view', after: 400 });
-      await d.p.settle(1500);
+      await tpl('shoe-box');
+      await d.fold(76);
+      await fit();
+    },
+    async 'designer-saree-box.png'() {
+      await tpl('saree-box');
+      await d.fold(76);
+      await fit();
     },
     async 'designer-saree-showcase.png'() {
       await tpl('saree-box');
@@ -305,7 +316,8 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
     },
     async 'designer-mithai-box.png'() {
       await tpl('mithai-box');
-      await d.fold(88);
+      await d.fold(76);
+      await fit();
     },
     async 'designer-takeaway-styles.png'() {
       await d.open({});
@@ -320,11 +332,10 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
       await d.fold(50);
     },
     async 'designer-pizza-box-lid.png'() {
-      await d.viaLanding('pizza-box');
-      await d.stopSpin();
-      await d.angle('3/4 hero');
-      await d.tab('edit');
+      await tpl('pizza-box');
       await d.fold('Open lid');
+      await d.angle('Back 3/4');
+      await d.tab('edit');
     },
   };
 
@@ -342,6 +353,7 @@ export default async ({ d, page, Q, log, sleep, step, H }) => {
       try {
         if (shot.viewport === 'mobile') d.mobile = true;
         await handler();
+        await d.scrollToTool().catch(() => undefined);
         const r = await fitBudget(page, shot.file, OUT_DIR);
         log(`   saved ${r.w}x${r.h} ${Math.round(r.bytes / 1024)} KB${r.over ? ' OVER BUDGET' : ''}`);
         results.push([shot.file, 'ok']);

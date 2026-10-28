@@ -15,8 +15,8 @@ describe('related posts by shared tags', () => {
     }
   });
 
-  it('puts topic matches first: a ventilated produce box links to the other produce article', () => {
-    expect(getRelatedByTags('fruit-vegetable-ventilated-boxes', 1)[0].slug).toBe('mango-apple-grape-packing-boxes');
+  it('puts topic matches first: a ventilated produce box links to another produce article', () => {
+    expect(BLOG_TAGS[getRelatedByTags('fruit-vegetable-ventilated-boxes', 1)[0].slug]).toContain('uc-produce');
     // strength articles surface other strength articles first
     expect(BLOG_TAGS[getRelatedByTags('burst-strength-ect-guide', 1)[0].slug]).toContain('strength');
   });

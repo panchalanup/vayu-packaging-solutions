@@ -44,7 +44,7 @@ function Thumb({ sticker, onAdd }: { sticker: StickerDef; onAdd: (s: StickerDef)
       onClick={() => onAdd(sticker)}
       title={sticker.name}
       aria-label={`Add ${sticker.name}`}
-      className="group flex aspect-square items-center justify-center rounded-md border border-border bg-white p-1.5 transition hover:border-primary hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary active:scale-95"
+      className="group flex aspect-square w-full items-center justify-center rounded-md border border-border bg-white p-1.5 transition hover:border-primary hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary active:scale-95"
     >
       <img src={sticker.src} alt="" loading="lazy" decoding="async" draggable={false} className="max-h-full max-w-full object-contain" />
     </button>

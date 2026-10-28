@@ -8,6 +8,16 @@
 import { quoteHref } from '@/lib/quotePrefill';
 
 export type BlogTag =
+  // Guides from blog writer P1: shoe and mithai sizes, fragile and jar packing, pallets, board types, cost worksheet, checklist, Kesar mangoes
+  | 'p1-shoe'
+  | 'p1-mithai'
+  | 'p1-fragile'
+  | 'p1-pallet'
+  | 'p1-boards'
+  | 'p1-cost'
+  | 'p1-checklist'
+  | 'p1-kesar'
+  | 'p1-jars'
   | 'ply'
   | 'strength'
   | 'sizing'
@@ -45,9 +55,29 @@ export type BlogTag =
   | 'bg-cost'
   | 'uc-seller'
   | 'tg-capacity'
-  | 'tg-spec';
+  | 'tg-spec'
+  // Tool comparison, process, trade and planning guides (blog writer P2)
+  | 'p2x-compare'
+  | 'p2x-dielines'
+  | 'p2x-made'
+  | 'p2x-tile'
+  | 'p2x-embed'
+  | 'p2x-export'
+  | 'p2x-print'
+  | 'p2x-calendar'
+  | 'p2x-stamps';
 
 export const BLOG_TAGS: Record<string, BlogTag[]> = {
+  // Guides from blog writer P1
+  'shoe-box-size-chart': ['p1-shoe', 'uc-fashion', 'designer', 'sizing'],
+  'mithai-sweet-box-sizes': ['p1-mithai', 'uc-cake', 'designer', 'sizing'],
+  'how-to-pack-fragile-items-for-courier': ['p1-fragile', 'dg-fit', 'designer', 'sizing'],
+  'how-many-boxes-fit-on-a-pallet': ['p1-pallet', 'sizing', 'strength'],
+  'cardboard-vs-corrugated-vs-duplex-boxes': ['p1-boards', 'ply', 'types'],
+  'packaging-cost-per-order-worksheet': ['p1-cost', 'designer', 'sizing'],
+  'reduce-damage-rto-packing-checklist': ['p1-checklist', 'dg-fit', 'designer', 'strength'],
+  'pack-kesar-mangoes-online-sale': ['p1-kesar', 'uc-produce', 'designer', 'strength'],
+  'pack-pickle-ghee-spice-jars-courier': ['p1-jars', 'dg-fit', 'designer', 'sizing'],
   'types-of-corrugated-boxes': ['types', 'ply'],
   'corrugated-wall-differences': ['ply', 'strength'],
   'flute-types-guide': ['ply', 'material'],
@@ -99,6 +129,16 @@ export const BLOG_TAGS: Record<string, BlogTag[]> = {
   'cake-box-size-chart': ['n1-cake', 'uc-cake', 'designer', 'sizing'],
   'cbm-calculator-cartons-per-container': ['n1-cbm', 'sizing', 'strength'],
   'choose-corrugated-box-manufacturer-ahmedabad': ['n1-choose', 'types', 'designer'],
+  // Tool comparison, process, trade and planning guides (blog writer P2)
+  'pacdora-vs-packhelp-vs-vayu-box-designer': ['p2x-compare', 'designer', 'dg-dieline'],
+  'free-dieline-template-library-box-styles': ['p2x-dielines', 'dg-dieline', 'designer'],
+  'how-corrugated-boxes-are-made': ['p2x-made', 'material', 'ply'],
+  'tile-ceramic-packaging-morbi-heavy-duty-cartons': ['p2x-tile', 'strength', 'ply', 'designer'],
+  'embed-3d-box-designer-on-your-website': ['p2x-embed', 'designer', 'dg-shots'],
+  'export-packaging-checklist-india': ['p2x-export', 'strength', 'ply', 'designer'],
+  'flexo-offset-digital-printing-corrugated-boxes': ['p2x-print', 'dg-artwork', 'designer'],
+  'festive-wedding-season-packaging-order-calendar': ['p2x-calendar', 'designer', 'types'],
+  'low-cost-box-branding-stamps-stickers-cutouts': ['p2x-stamps', 'dg-cutouts', 'designer'],
 };
 
 export interface BlogCtaCard {
@@ -114,6 +154,168 @@ export interface BlogCtaCard {
 
 /** First matching tag wins, in this priority order */
 const CARDS: BlogCtaCard[] = [
+  {
+    tag: 'p1-shoe',
+    eyebrow: 'Try it',
+    title: 'Open a sneaker box in 3D',
+    body: 'Start from 32.5 x 21.5 x 13.5 cm inside, change it to your packed pair and lift the lid off.',
+    label: 'Open a shoe box',
+    href: (slug) => `/box-designer?style=telescope&l=32.5&w=21.5&h=13.5&ply=3-ply&fl=B&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p1-mithai',
+    eyebrow: 'Try it',
+    title: 'Open a 500 g sweet box in 3D',
+    body: 'Start from 24.5 x 24.5 x 4 cm for 25 pieces, then change it to your own piece size.',
+    label: 'Open a sweet box',
+    href: (slug) => `/box-designer?style=telescope&l=24.5&w=24.5&h=4&ply=3-ply&fl=E&col=A8352E&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p1-fragile',
+    eyebrow: 'Try it',
+    title: 'Size a snug box for a fragile item',
+    body: 'Enter the item size and tick fragile: the fit checker adds 2.5 cm of padding on every side.',
+    label: 'Open a mug box in 3D',
+    href: (slug) => `/box-designer?style=rsc&l=15.5&w=15.5&h=15&ply=3-ply&fl=B&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p1-pallet',
+    eyebrow: 'Free calculator',
+    title: 'Count cartons per pallet',
+    body: 'Enter the carton size to see cartons per layer, layers and cartons per pallet and container.',
+    label: 'Open the CBM calculator',
+    href: () => '/tools/cbm-calculator',
+    intent: 'navigate',
+  },
+  {
+    tag: 'p1-boards',
+    eyebrow: 'Try it',
+    title: 'See board thickness change by ply',
+    body: 'Pick 3, 5 or 7-ply in the designer and watch the corrugated board get thicker.',
+    label: 'Open a 5-ply box',
+    href: (slug) => `/box-designer?style=rsc&l=30&w=20&h=15&ply=5-ply&fl=BC&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p1-cost',
+    eyebrow: 'Free calculator',
+    title: 'Work out your cost per order',
+    body: 'Enter your box, tape, courier rate and damage rate, then compare a smaller box.',
+    label: 'Open the cost calculator',
+    href: () => '/tools/packaging-cost-calculator',
+    intent: 'navigate',
+  },
+  {
+    tag: 'p1-checklist',
+    eyebrow: 'Free calculator',
+    title: 'Get the box size right first',
+    body: 'Enter your product size and padding to get the inside size, then open it in 3D.',
+    label: 'Open the box size calculator',
+    href: () => '/tools/box-size-calculator',
+    intent: 'navigate',
+  },
+  {
+    tag: 'p1-kesar',
+    eyebrow: 'Try it',
+    title: 'Open a 5 kg mango box in 3D',
+    body: 'A ventilated carton with vents and hand holes, 41 x 23 x 17 cm inside. Change it to your fruit.',
+    label: 'Open a mango box',
+    href: (slug) => `/box-designer?style=produce&l=41&w=23&h=17&ply=5-ply&fl=BC&opt=handHoles,vents&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p1-jars',
+    eyebrow: 'Try it',
+    title: 'Size a carton for your jars',
+    body: 'Enter the jar size and tick fragile: the fit checker adds padding on every side of each jar.',
+    label: 'Open a 2-jar carton',
+    href: (slug) => `/box-designer?style=rsc&l=25&w=14&h=17&ply=3-ply&fl=B&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p2x-compare',
+    eyebrow: 'Try it',
+    title: 'Try the free designer on your own box',
+    body: 'Set an inside size, fold the box and download its dieline, then compare it with what other tools give you.',
+    label: 'Open the designer',
+    href: (slug) => `/box-designer?style=rsc&l=30&w=20&h=15&ply=3-ply&fl=B&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p2x-dielines',
+    eyebrow: 'Try it',
+    title: 'Get a dieline at your size',
+    body: 'Open a preset, change the numbers to your product and download an SVG or PDF dieline at 1:1 mm.',
+    label: 'Open a mailer preset',
+    href: (slug) => `/box-designer?style=mailer&l=30&w=23&h=6&ply=3-ply&fl=E&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p2x-made',
+    eyebrow: 'Try it',
+    title: 'See the box the corrugator produces',
+    body: 'Pick a ply and flute, fold the box in 3D and download its dieline.',
+    label: 'Open a 5-ply carton',
+    href: (slug) => `/box-designer?style=rsc&l=40&w=30&h=25&ply=5-ply&fl=BC&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p2x-tile',
+    eyebrow: 'Try it',
+    title: 'Spec a heavy-duty carton in 3D',
+    body: 'Start from a full overlap 7-ply carton at 62.5 x 62.5 x 6 cm, change it to your tile stack and read the strength note.',
+    label: 'Open a heavy-duty carton',
+    href: (slug) => `/box-designer?style=fol&l=62.5&w=62.5&h=6&ply=7-ply&fl=CBC&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p2x-embed',
+    eyebrow: 'Try it',
+    title: 'Set the box you want to embed',
+    body: 'Choose a style and size, then copy the code from the Showcase tab under Embed on your website.',
+    label: 'Open the designer',
+    href: (slug) => `/box-designer?style=window-mailer&l=28&w=22&h=7&ply=3-ply&fl=E&opt=window&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p2x-export',
+    eyebrow: 'Try it',
+    title: 'Size an export carton',
+    body: 'Start from a 50 x 40 x 40 cm 7-ply full overlap carton and change it to your packed size and weight.',
+    label: 'Open an export carton',
+    href: (slug) => `/box-designer?style=fol&l=50&w=40&h=40&ply=7-ply&fl=CBC&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p2x-print',
+    eyebrow: 'Try it',
+    title: 'Preview your logo on a box',
+    body: 'Place your logo, run the print checks and see what one colour looks like on kraft.',
+    label: 'Open a mailer in 3D',
+    href: (slug) => `/box-designer?style=mailer&l=30&w=23&h=6&ply=3-ply&fl=E&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p2x-calendar',
+    eyebrow: 'Try it',
+    title: 'Start a festive gift box',
+    body: 'Open a gift box, set your size and check the indicative estimate before you plan the order date.',
+    label: 'Open a gift box',
+    href: (slug) => `/box-designer?style=telescope&l=20&w=20&h=10&ply=3-ply&fl=E&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
+  {
+    tag: 'p2x-stamps',
+    eyebrow: 'Try it',
+    title: 'Preview a stamp or sticker on your box',
+    body: 'Place a cutout or your logo, tint it to one colour and fold the box before you buy a stamp.',
+    label: 'Open a mailer in 3D',
+    href: (slug) => `/box-designer?style=mailer&l=30&w=23&h=6&ply=3-ply&fl=E&src=blog.${slug}.mid`,
+    intent: 'designer',
+  },
   {
     tag: 'n1-volumetric',
     eyebrow: 'Free calculator',

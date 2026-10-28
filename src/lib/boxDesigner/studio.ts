@@ -171,7 +171,7 @@ export function qualityToTier(pref: QualityPref): PerfTier | null {
 /** Copy-paste iframe for other websites (#37). Values are numbers/enums only. */
 export function embedSnippet(origin: string, params: { style: string; l: number; w: number; h: number }): string {
   const q = new URLSearchParams({
-    style: params.style.replace(/[^a-z]/g, ''),
+    style: params.style.replace(/[^a-z-]/g, ''),
     l: String(Math.round(params.l * 10) / 10),
     w: String(Math.round(params.w * 10) / 10),
     h: String(Math.round(params.h * 10) / 10),

@@ -706,7 +706,7 @@ class Designer {
       const r = await fitBudget(this.p, `landing-${slug}.png`, SCRATCH);
       log(`   landing ${slug}: ${r.dest}`);
     }
-    await this.p.click({ sel: 'a[href*="/box-designer?template="]', nth: 0, after: 800 });
+    await this.p.click({ sel: 'a[href*="/box-designer?template="], a[href*="/box-designer?style="]', nth: 0, after: 800 });
     await this.hideNoise();
     await this.p.waitCanvas();
     await this.p.settle(2500);

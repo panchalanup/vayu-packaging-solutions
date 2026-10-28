@@ -87,12 +87,30 @@ import blogN1MailerSizes from '@/assets/illustrations/blog-n1-mailer-sizes.svg';
 import blogN1CakeSizes from '@/assets/illustrations/blog-n1-cake-sizes.svg';
 import blogN1Cbm from '@/assets/illustrations/blog-n1-cbm.svg';
 import blogN1Choose from '@/assets/illustrations/blog-n1-choose.svg';
+import blogP1Shoe from '@/assets/illustrations/blog-p1-shoe-sizes.svg';
+import blogP1Mithai from '@/assets/illustrations/blog-p1-mithai-sizes.svg';
+import blogP1Fragile from '@/assets/illustrations/blog-p1-fragile.svg';
+import blogP1Pallet from '@/assets/illustrations/blog-p1-pallet.svg';
+import blogP1Boards from '@/assets/illustrations/blog-p1-board-types.svg';
+import blogP1Cost from '@/assets/illustrations/blog-p1-cost-worksheet.svg';
+import blogP1Checklist from '@/assets/illustrations/blog-p1-checklist.svg';
+import blogP1Kesar from '@/assets/illustrations/blog-p1-kesar.svg';
+import blogP1Jars from '@/assets/illustrations/blog-p1-jars.svg';
 import blogN2Order from '@/assets/illustrations/blog-n2-order.svg';
 import blogN2Moq from '@/assets/illustrations/blog-n2-moq.svg';
 import blogN2Marketplace from '@/assets/illustrations/blog-n2-marketplace.svg';
 import blogN2Capacity from '@/assets/illustrations/blog-n2-capacity.svg';
 import blogN2Spec from '@/assets/illustrations/blog-n2-spec.svg';
 import blogN2Cost from '@/assets/illustrations/blog-n2-cost.svg';
+import blogP2xCompare from '@/assets/illustrations/blog-p2x-compare.svg';
+import blogP2xDielines from '@/assets/illustrations/blog-p2x-dielines.svg';
+import blogP2xMade from '@/assets/illustrations/blog-p2x-made.svg';
+import blogP2xTile from '@/assets/illustrations/blog-p2x-tile.svg';
+import blogP2xEmbed from '@/assets/illustrations/blog-p2x-embed.svg';
+import blogP2xExport from '@/assets/illustrations/blog-p2x-export.svg';
+import blogP2xPrint from '@/assets/illustrations/blog-p2x-print.svg';
+import blogP2xCalendar from '@/assets/illustrations/blog-p2x-calendar.svg';
+import blogP2xStamps from '@/assets/illustrations/blog-p2x-stamps.svg';
 import blogDgCutouts from '@/assets/illustrations/blog-dg-cutouts.svg';
 import blogDgTemplates from '@/assets/illustrations/blog-dg-templates.svg';
 import blogDgPicker from '@/assets/illustrations/blog-dg-picker.svg';
@@ -234,12 +252,30 @@ export const BLOG_IMAGES = {
   'BLOG-N1-04-thumbnail': blogN1CakeSizes, // cake-box-size-chart
   'BLOG-N1-05-thumbnail': blogN1Cbm, // cbm-calculator-cartons-per-container
   'BLOG-N1-06-thumbnail': blogN1Choose, // choose-corrugated-box-manufacturer-ahmedabad
+  'BLOG-P1-01-thumbnail': blogP1Shoe, // shoe-box-size-chart
+  'BLOG-P1-02-thumbnail': blogP1Mithai, // mithai-sweet-box-sizes
+  'BLOG-P1-03-thumbnail': blogP1Fragile, // how-to-pack-fragile-items-for-courier
+  'BLOG-P1-04-thumbnail': blogP1Pallet, // how-many-boxes-fit-on-a-pallet
+  'BLOG-P1-05-thumbnail': blogP1Boards, // cardboard-vs-corrugated-vs-duplex-boxes
+  'BLOG-P1-06-thumbnail': blogP1Cost, // packaging-cost-per-order-worksheet
+  'BLOG-P1-07-thumbnail': blogP1Checklist, // reduce-damage-rto-packing-checklist
+  'BLOG-P1-08-thumbnail': blogP1Kesar, // pack-kesar-mangoes-online-sale
+  'BLOG-P1-09-thumbnail': blogP1Jars, // pack-pickle-ghee-spice-jars-courier
   'BLOG-N2-01-thumbnail': blogN2Order, // how-to-order-custom-printed-boxes-india
   'BLOG-N2-02-thumbnail': blogN2Moq, // minimum-order-quantity-custom-boxes
   'BLOG-N2-03-thumbnail': blogN2Marketplace, // packing-for-amazon-flipkart-meesho
   'BLOG-N2-04-thumbnail': blogN2Capacity, // how-many-kg-can-corrugated-box-hold
   'BLOG-N2-05-thumbnail': blogN2Spec, // reading-box-spec-ply-bf-gsm
   'BLOG-N2-06-thumbnail': blogN2Cost, // what-does-a-5-ply-box-cost
+  'BLOG-P2X-01-thumbnail': blogP2xCompare, // pacdora-vs-packhelp-vs-vayu-box-designer
+  'BLOG-P2X-02-thumbnail': blogP2xDielines, // free-dieline-template-library-box-styles
+  'BLOG-P2X-03-thumbnail': blogP2xMade, // how-corrugated-boxes-are-made
+  'BLOG-P2X-04-thumbnail': blogP2xTile, // tile-ceramic-packaging-morbi-heavy-duty-cartons
+  'BLOG-P2X-05-thumbnail': blogP2xEmbed, // embed-3d-box-designer-on-your-website
+  'BLOG-P2X-06-thumbnail': blogP2xExport, // export-packaging-checklist-india
+  'BLOG-P2X-07-thumbnail': blogP2xPrint, // flexo-offset-digital-printing-corrugated-boxes
+  'BLOG-P2X-08-thumbnail': blogP2xCalendar, // festive-wedding-season-packaging-order-calendar
+  'BLOG-P2X-09-thumbnail': blogP2xStamps, // low-cost-box-branding-stamps-stickers-cutouts
   alt: 'Vayu Packaging Solutions: corrugated boxes and packaging',
 } as const;
 
