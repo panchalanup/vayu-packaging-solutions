@@ -1,4 +1,4 @@
-import { FileSpreadsheet, FileText, LayoutDashboard, LogOut, Users } from "lucide-react";
+import { Box, FileSpreadsheet, FileText, LayoutDashboard, LogOut, Users } from "lucide-react";
 import adminLogo from "@/assets/black-vps-logo.png";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
@@ -38,6 +38,11 @@ const navigationItems = [
     title: "Invoices",
     href: ADMIN_ROUTES.invoices,
     icon: FileSpreadsheet,
+  },
+  {
+    title: "Designer enquiries",
+    href: ADMIN_ROUTES.enquiries,
+    icon: Box,
   },
 ];
 

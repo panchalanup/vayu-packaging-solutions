@@ -9,6 +9,12 @@ import { useEffect, useMemo, useRef, useState, PointerEvent as ReactPointerEvent
 import { AlignCenter, AlignLeft, AlignRight, Copy, Crosshair, ImagePlus, Trash2, Type, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import CutoutPanel from './CutoutPanel';
+import StickerControls from './StickerControls';
+import { StickerCanvas, StickerHandles } from './StickerLayer';
+import { applyToAllFaces, clampSticker, duplicateSticker, moveLayer, nudge as nudgeSticker, type LayerMove } from '@/lib/boxDesigner/stickers/placement';
+import { useStickerLibrary } from '@/lib/boxDesigner/stickers/useStickerLibrary';
+import { DESIGNER_EVENTS, designProps, useDesignerTracker } from '@/lib/boxDesigner/funnel';
 import { Card } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
@@ -16,7 +22,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PT_TO_CM } from '@/lib/boxDesigner/textures/printLayer';
 import { prepareUpload, ACCEPTED_TYPES } from '@/lib/boxDesigner/imageUpload';
-import type { BoxDesign, BoxFace, FaceImage, TextElement } from '@/types/boxDesigner';
+import type { BoxDesign, BoxFace, FaceImage, StickerPlacement, TextElement } from '@/types/boxDesigner';
 import { FACE_LABELS } from '@/lib/boxDesigner/constants';
 
 type Update = (patch: Partial<BoxDesign> | ((d: BoxDesign) => Partial<BoxDesign>), key?: string) => void;
@@ -34,7 +40,7 @@ interface ArtworkEditorProps {
 const FONTS = ['Inter', 'Arial', 'Helvetica', 'Georgia', 'Times New Roman', 'Courier New', 'Verdana', 'Trebuchet MS', 'Impact'];
 const INK_SWATCHES = ['#111111', '#FFFFFF', '#1A6FE6', '#B3261E', '#2E7D32', '#E3B53C'];
 
-type Selection = { kind: 'image' } | { kind: 'text'; id: string } | null;
+type Selection = { kind: 'image' } | { kind: 'text'; id: string } | { kind: 'sticker'; id: string } | null;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const newId = () => `text-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -45,6 +51,11 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
   const size = face ? faceSizes[face]! : null;
   const image = face ? design.faceImages.find((i) => i.face === face) : undefined;
   const texts = useMemo(() => (face ? design.textElements.filter((t) => t.face === face) : []), [face, design.textElements]);
+  const faceStickers = useMemo(() => (face ? design.stickers.filter((s) => s.face === face) : []), [face, design.stickers]);
+  const { registry } = useStickerLibrary(design.stickers.length > 0);
+  const track = useDesignerTracker();
+  const keepSelection = useRef<Selection>(null);
+  const [, setAspectTick] = useState(0);
 
   const [selection, setSelection] = useState<Selection>(null);
   const [busy, setBusy] = useState(false);
@@ -54,11 +65,15 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
   const drag = useRef<{ kind: 'image' | 'text'; id?: string; dx: number; dy: number } | null>(null);
 
   // reset selection when the face changes or the element disappears (undo)
-  useEffect(() => setSelection(null), [face]);
+  useEffect(() => {
+    setSelection(keepSelection.current);
+    keepSelection.current = null;
+  }, [face]);
   useEffect(() => {
     if (selection?.kind === 'image' && !image) setSelection(null);
     if (selection?.kind === 'text' && !texts.some((t) => t.id === selection.id)) setSelection(null);
-  }, [image, texts, selection]);
+    if (selection?.kind === 'sticker' && !faceStickers.some((s) => s.id === selection.id)) setSelection(null);
+  }, [image, texts, faceStickers, selection]);
 
   useEffect(() => {
     const el = previewRef.current;
@@ -70,6 +85,8 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
 
   const updateImage = (patch: Partial<FaceImage>, key?: string) =>
     update((d) => ({ faceImages: d.faceImages.map((i) => (i.face === face ? { ...i, ...patch } : i)) }), key);
+  const updateSticker = (id: string, patch: Partial<StickerPlacement>, key?: string) =>
+    update((d) => ({ stickers: d.stickers.map((s) => (s.id === id ? clampSticker({ ...s, ...patch }) : s)) }), key);
   const updateText = (id: string, patch: Partial<TextElement>, key?: string) =>
     update((d) => ({ textElements: d.textElements.map((t) => (t.id === id ? { ...t, ...patch } : t)) }), key);
 
@@ -128,6 +145,10 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
   // Keyboard nudging for the selected element (accessibility + precision)
   const nudge = (e: React.KeyboardEvent) => {
     if (!selection) return;
+    if (selection.kind === 'sticker') {
+      stickerKey(e, selection.id);
+      return;
+    }
     const step = e.shiftKey ? 0.05 : 0.01;
     const delta = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
     if (!delta) {
@@ -142,13 +163,63 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
     else updateText(selection.id, { position }, 'nudge');
   };
 
+  // Cutout shortcuts: Delete, Ctrl/Cmd+D, arrows (Shift = bigger step), [ and ] for layer order
+  const stickerKey = (e: React.KeyboardEvent, id: string) => {
+    const sticker = design.stickers.find((s) => s.id === id);
+    if (!sticker) return;
+    const key = e.key;
+    if (key === 'Delete' || key === 'Backspace') {
+      e.preventDefault();
+      removeSelected();
+    } else if ((e.ctrlKey || e.metaKey) && key.toLowerCase() === 'd') {
+      e.preventDefault();
+      duplicateSelectedSticker(id);
+    } else if (key === '[' || key === ']') {
+      e.preventDefault();
+      layerSticker(id, key === '[' ? (e.shiftKey ? 'back' : 'backward') : e.shiftKey ? 'front' : 'forward');
+    } else if (key.startsWith('Arrow')) {
+      e.preventDefault();
+      if (sticker.locked) return;
+      const step = e.shiftKey ? 0.05 : 0.01;
+      const d = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[key];
+      if (d) update((cur) => ({ stickers: cur.stickers.map((st) => (st.id === id ? nudgeSticker(st, d[0], d[1]) : st)) }), 'nudge-sticker');
+    }
+  };
+  const duplicateSelectedSticker = (id: string) => {
+    const { list, created } = duplicateSticker(design.stickers, id);
+    if (!created) {
+      toast.error('You have reached the cutout limit for this design');
+      return;
+    }
+    update({ stickers: list });
+    setSelection({ kind: 'sticker', id: created.id });
+  };
+  const layerSticker = (id: string, move: LayerMove) => update((d) => ({ stickers: moveLayer(d.stickers, id, move) }));
+  const applyStickerToAll = (id: string) => {
+    const next = applyToAllFaces(design.stickers, id, faces);
+    if (next.length === design.stickers.length) {
+      toast.message('Already on every surface');
+      return;
+    }
+    update({ stickers: next });
+    toast.success(`Added to ${next.length - design.stickers.length} more surface(s)`);
+  };
+
   const removeSelected = () => {
     if (!selection) return;
-    if (selection.kind === 'image') update((d) => ({ faceImages: d.faceImages.filter((i) => i.face !== face) }));
+    if (selection.kind === 'sticker') update((d) => ({ stickers: d.stickers.filter((st) => st.id !== selection.id) }));
+    else if (selection.kind === 'image') update((d) => ({ faceImages: d.faceImages.filter((i) => i.face !== face) }));
     else update((d) => ({ textElements: d.textElements.filter((t) => t.id !== selection.id) }));
     setSelection(null);
   };
 
+  const selectedSticker = selection?.kind === 'sticker' ? faceStickers.find((st) => st.id === selection.id) : undefined;
+  const previewHeight = size ? (previewWidth * size.heightCm) / size.widthCm : 0;
+  const stickerName = (id: string) => registry.getSticker(id)?.name ?? 'Cutout';
+  const selectSticker = (id: string) => {
+    setSelection({ kind: 'sticker', id });
+    previewRef.current?.focus({ preventScroll: true }); // so Delete, Ctrl+D and the arrow keys work straight away
+  };
   const selectedText = selection?.kind === 'text' ? texts.find((t) => t.id === selection.id) : undefined;
   const pxPerCm = size ? previewWidth / size.widthCm : 1;
 
@@ -169,7 +240,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
               }`}
             >
               {FACE_LABELS[f]}
-              {(design.faceImages.some((i) => i.face === f) || design.textElements.some((t) => t.face === f)) && (
+              {(design.faceImages.some((i) => i.face === f) || design.textElements.some((t) => t.face === f) || design.stickers.some((st) => st.face === f)) && (
                 <span className={`ml-1 ${face === f ? 'text-white/80' : 'text-primary'}`}>●</span>
               )}
             </button>
@@ -177,6 +248,24 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
         </div>
         <p className="text-xs text-muted-foreground">Tip: you can also click a face on the 3D box.</p>
       </Card>
+
+      {/* Empty state: nothing selected yet */}
+      {!face && (
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-border px-4 py-6 text-center">
+          <span className="flex h-11 w-11 animate-[pulse_2.4s_ease-in-out_infinite] items-center justify-center rounded-full bg-primary/10 text-primary motion-reduce:animate-none">
+            <ImagePlus className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <p className="text-sm font-semibold">Put your brand on the box</p>
+          <p className="max-w-[26ch] text-xs text-muted-foreground">
+            Pick a surface above, or tap the box itself. Then drop in your logo (PNG, SVG or JPG) or add text.
+          </p>
+          {faces.includes('front') && (
+            <Button size="sm" variant="outline" className="mt-1" onClick={() => onSelectFace('front')}>
+              Start with the front
+            </Button>
+          )}
+        </div>
+      )}
 
       {face && size && (
         <Card className="p-4 space-y-3">
@@ -206,6 +295,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
             className="relative w-full overflow-hidden rounded-md border border-border shadow-inner select-none touch-none focus:outline-none focus:ring-2 focus:ring-primary"
             style={{ aspectRatio: `${size.widthCm} / ${size.heightCm}`, backgroundColor: design.colorHex }}
           >
+            <StickerCanvas stickers={faceStickers} pass="under" width={previewWidth} height={previewHeight} />
             {image && (
               <img
                 src={image.imageUrl}
@@ -219,9 +309,20 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
                   maxWidth: `${image.scale * 100}%`,
                   maxHeight: `${image.scale * 100}%`,
                   transform: `translate(-50%, -50%) rotate(${image.rotation}deg)`,
+                  zIndex: 10,
                 }}
               />
             )}
+            <StickerCanvas stickers={faceStickers} pass="over" width={previewWidth} height={previewHeight} onDrawn={() => setAspectTick((n) => n + 1)} />
+            <StickerHandles
+              stickers={faceStickers}
+              selectedId={selection?.kind === 'sticker' ? selection.id : null}
+              width={previewWidth}
+              height={previewHeight}
+              containerRef={previewRef}
+              onSelect={selectSticker}
+              onChange={updateSticker}
+            />
             {texts.map((t) => (
               <div
                 key={t.id}
@@ -235,6 +336,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
                   maxWidth: '90%',
                   width: 'max-content',
                   fontFamily: `"${t.font}", Arial, sans-serif`,
+                  zIndex: 40,
                   fontSize: Math.max(4, t.size * PT_TO_CM * pxPerCm),
                   color: t.color,
                   textAlign: t.align,
@@ -244,9 +346,9 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
                 {t.text || ' '}
               </div>
             ))}
-            {!image && texts.length === 0 && (
+            {!image && texts.length === 0 && faceStickers.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center text-xs text-black/40 pointer-events-none text-center px-4">
-                Drop an image here, or use the buttons below
+                Drop an image here, add text, or pick a cutout below
               </div>
             )}
           </div>
@@ -269,9 +371,22 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
           />
 
           {/* Layers */}
-          {(image || texts.length > 0) && (
+          {(image || texts.length > 0 || faceStickers.length > 0) && (
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">On this surface</Label>
+              {faceStickers.map((st) => (
+                <button
+                  key={st.id}
+                  onClick={() => selectSticker(st.id)}
+                  className={`w-full truncate rounded border px-2 py-1.5 text-left text-xs ${
+                    selection?.kind === 'sticker' && selection.id === st.id ? 'border-primary bg-primary/5' : 'border-border'
+                  }`}
+                >
+                  ✦ {stickerName(st.stickerId)}
+                  {st.pattern ? ' (pattern)' : ''}
+                  {st.locked ? ' (locked)' : ''}
+                </button>
+              ))}
               {image && (
                 <button
                   onClick={() => setSelection({ kind: 'image' })}
@@ -294,6 +409,21 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
             </div>
           )}
         </Card>
+      )}
+
+      {/* Selected cutout controls */}
+      {face && selectedSticker && (
+        <StickerControls
+          sticker={selectedSticker}
+          name={stickerName(selectedSticker.stickerId)}
+          onChange={(patch, key) => updateSticker(selectedSticker.id, patch, key)}
+          onDuplicate={() => duplicateSelectedSticker(selectedSticker.id)}
+          onDelete={removeSelected}
+          onLayer={(move) => layerSticker(selectedSticker.id, move)}
+          onApplyAll={() => applyStickerToAll(selectedSticker.id)}
+          canApplyAll={faces.length > 1}
+          onPatternToggled={(on) => on && track(DESIGNER_EVENTS.stickerPattern, { ...designProps(design), action: 'toggle' })}
+        />
       )}
 
       {/* Selected image controls */}
@@ -371,7 +501,7 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
             <Label className="text-xs">
               Size: {selectedText.size} pt (~{Math.round(selectedText.size * PT_TO_CM * 10) / 10} cm tall)
             </Label>
-            <Slider min={8} max={300} step={1} value={[selectedText.size]} onValueChange={([v]) => updateText(selectedText.id, { size: v }, 'text-size')} />
+            <Slider min={6} max={300} step={1} value={[selectedText.size]} onValueChange={([v]) => updateText(selectedText.id, { size: v }, 'text-size')} />
           </div>
           <div className="space-y-2">
             <Label className="text-xs">Rotation: {selectedText.rotation}°</Label>
@@ -418,6 +548,21 @@ export default function ArtworkEditor({ design, update, selectedFace, onSelectFa
             </Button>
           </div>
         </Card>
+      )}
+
+      {faces.length > 0 && (
+        <CutoutPanel
+          design={design}
+          update={update}
+          face={face}
+          faceSizes={faceSizes}
+          onAdded={(placement) => {
+            if (face !== placement.face) {
+              keepSelection.current = { kind: 'sticker', id: placement.id };
+              onSelectFace(placement.face);
+            } else setSelection({ kind: 'sticker', id: placement.id });
+          }}
+        />
       )}
     </div>
   );

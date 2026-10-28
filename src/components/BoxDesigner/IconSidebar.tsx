@@ -4,14 +4,16 @@
  */
 
 import { motion } from 'framer-motion';
-import { Edit3, Box, Palette, Save, Info } from 'lucide-react';
+import { Edit3, Box, Palette, Save, Info, IndianRupee, MonitorPlay } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-export type DesignerTab = 'edit' | 'customize' | 'export';
+export type DesignerTab = 'edit' | 'customize' | 'studio' | 'price' | 'export';
 
 interface IconSidebarProps {
   activeTab: DesignerTab;
   onTabChange: (tab: DesignerTab) => void;
+  /** Help button: replays the quick tour */
+  onHelp?: () => void;
 }
 
 interface TabConfig {
@@ -35,6 +37,18 @@ const TABS: TabConfig[] = [
     color: '#3DBA5A', // green-400
   },
   {
+    id: 'studio',
+    icon: MonitorPlay,
+    label: 'Showcase',
+    color: '#3DBA5A', // green-400
+  },
+  {
+    id: 'price',
+    icon: IndianRupee,
+    label: 'Price & order',
+    color: '#3DBA5A', // green-400
+  },
+  {
     id: 'export',
     icon: Save,
     label: 'Actions',
@@ -42,7 +56,7 @@ const TABS: TabConfig[] = [
   },
 ];
 
-export default function IconSidebar({ activeTab, onTabChange }: IconSidebarProps) {
+export default function IconSidebar({ activeTab, onTabChange, onHelp }: IconSidebarProps) {
   return (
     <TooltipProvider delayDuration={200}>
       <div className="flex flex-col h-full bg-ink-900 border-r border-ink-800">
@@ -108,14 +122,14 @@ export default function IconSidebar({ activeTab, onTabChange }: IconSidebarProps
         <div className="border-t border-ink-800 py-4">
           <Tooltip>
             <TooltipTrigger asChild>
-              <button type="button" aria-label="Help and info" className="w-full h-12 flex items-center justify-center group">
+              <button type="button" aria-label="Help: replay the quick tour" onClick={onHelp} className="w-full h-12 flex items-center justify-center group">
                 <div className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-ink-800 transition-colors">
                   <Info className="w-5 h-5 text-paper-muted group-hover:text-paper-50" />
                 </div>
               </button>
             </TooltipTrigger>
             <TooltipContent side="right" className="font-medium">
-              Help & Info
+              Quick tour
             </TooltipContent>
           </Tooltip>
         </div>

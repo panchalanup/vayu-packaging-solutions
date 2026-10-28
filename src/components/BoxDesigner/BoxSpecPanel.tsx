@@ -1,23 +1,27 @@
 /**
  * Box spec panel (Edit tab)
- * Template, exact inside dimensions, board (ply + flute), colour and handling marks.
+ * Style (visual cards from the style registry), exact inside dimensions, board (ply + flute), colour, finish,
+ * inside liner and handling marks.
  * Every change goes through the undoable design store.
  */
 
-import { useEffect, useState } from 'react';
-import { Box, Check, Layers, Palette, PackageOpen, Mail, Ruler } from 'lucide-react';
+import { useMemo } from 'react';
+import { Box, Check, Layers, Palette, Ruler, Sparkles } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import QuickSizePresets from './QuickSizePresets';
-import {
-  BOX_COLOR_OPTIONS,
-  BOX_TEMPLATES,
-  DIMENSION_LIMITS,
-  PLY_OPTIONS,
-} from '@/lib/boxDesigner/constants';
-import { getBoardSpec, getBoardThicknessCm } from '@/lib/boxDesigner/boardSpecs';
-import type { BoxDesign, BoxDimensions, BoxTemplate } from '@/types/boxDesigner';
+import UnitToggle from './UnitToggle';
+import UnitDimensionField from './UnitDimensionField';
+import { formatDimensions, formatLength } from '@/lib/boxDesigner/units';
+import { BOX_COLOR_OPTIONS, DIMENSION_LIMITS, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
+import { getBoardSpec } from '@/lib/boxDesigner/boardSpecs';
+import { getStyle, type StyleDefinition } from '@/lib/boxDesigner/styles/registry';
+import StylePicker from './StylePicker';
+import { layoutForDesign } from '@/lib/boxDesigner/styles/designLayout';
+import { resolveLidDepth } from '@/lib/boxDesigner/rig/telescopeLayout';
+import { DEFAULT_FRONT_RATIO } from '@/lib/boxDesigner/rig/dieCutLayout';
+import type { BoxDesign, BoxDimensions, PrintFinish } from '@/types/boxDesigner';
 
 type Update = (patch: Partial<BoxDesign> | ((d: BoxDesign) => Partial<BoxDesign>), key?: string) => void;
 
@@ -27,44 +31,64 @@ interface BoxSpecPanelProps {
   onFoldReset: () => void;
 }
 
-const TEMPLATE_ICONS: Record<BoxTemplate, typeof Box> = { rsc: Box, hsc: PackageOpen, mailer: Mail };
+/** Inside liner presets: same as outside (null), white-lined, kraft, black */
+const INSIDE_OPTIONS: { id: string; name: string; color: string | null }[] = [
+  { id: 'same', name: 'Same as outside', color: null },
+  { id: 'white', name: 'White lined', color: '#F4F2EC' },
+  { id: 'kraft', name: 'Kraft', color: '#B08B5C' },
+  { id: 'black', name: 'Black', color: '#2B2B2D' },
+];
 
-const clampDim = (value: number) =>
-  Math.round(Math.min(DIMENSION_LIMITS.max, Math.max(DIMENSION_LIMITS.min, value)) * 10) / 10;
+const FINISHES: { id: PrintFinish; name: string; hint: string }[] = [
+  { id: 'matte', name: 'Matte', hint: 'Natural, uncoated look' },
+  { id: 'gloss', name: 'Gloss', hint: 'Varnished or laminated shine' },
+];
 
-/** Numeric field that only commits valid values (on blur / Enter), so typing "12" never jumps to "52" */
-function DimensionField({ label, value, onCommit }: { label: string; value: number; onCommit: (v: number) => void }) {
-  const [text, setText] = useState(String(value));
-  useEffect(() => setText(String(value)), [value]);
-  const commit = (raw: string) => {
-    const parsed = parseFloat(raw.replace(',', '.'));
-    if (!Number.isFinite(parsed)) {
-      setText(String(value));
-      return;
-    }
-    const next = clampDim(parsed);
-    setText(String(next));
-    if (next !== value) onCommit(next);
-  };
-  const id = `dim-${label.toLowerCase()}`;
+const OPENING_TOGGLES = [
+  { key: 'handHoles', cap: 'hand', label: 'Hand holes', hint: 'A hand slot in each short wall' },
+  { key: 'vents', cap: 'vents', label: 'Vent slots', hint: 'Airflow and cooling for produce' },
+  { key: 'window', cap: 'window', label: 'Window', hint: 'A clear film window on the front' },
+] as const;
+
+/** Hand holes, vents and window: only the cut-outs this style offers (forced ones are part of the style) */
+function OpeningToggles({ design, style, update }: { design: BoxDesign; style: StyleDefinition; update: Update }) {
+  const offered = OPENING_TOGGLES.filter((t) => style.openings?.[t.cap] && !style.forcedOpenings?.[t.cap]);
+  if (offered.length === 0 && !(style.openings?.window && style.forcedOpenings?.window)) return null;
   return (
-    <div className="space-y-1">
-      <Label htmlFor={id} className="text-xs text-muted-foreground">
-        {label}
-      </Label>
-      <div className="relative">
-        <input
-          id={id}
-          inputMode="decimal"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onBlur={(e) => commit(e.currentTarget.value)}
-          onKeyDown={(e) => e.key === 'Enter' && (e.currentTarget as HTMLInputElement).blur()}
-          className="w-full h-10 rounded-md border border-border bg-white pl-3 pr-9 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
-          aria-describedby="dim-help"
-        />
-        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground/70">cm</span>
-      </div>
+    <div className="space-y-2 border-t pt-3">
+      <p className="text-xs font-medium">Cut-outs</p>
+      {offered.map((t) => (
+        <div key={t.key} className="flex items-center justify-between gap-3">
+          <Label htmlFor={`opening-${t.key}`} className="text-xs">
+            {t.label}
+            <span className="block text-[11px] font-normal text-muted-foreground">{t.hint}</span>
+          </Label>
+          <Switch
+            id={`opening-${t.key}`}
+            checked={design.options[t.key]}
+            onCheckedChange={(on) => update((d) => ({ options: { ...d.options, [t.key]: on } }), `opening-${t.key}`)}
+          />
+        </div>
+      ))}
+      {style.openings?.window && (design.options.window || style.forcedOpenings?.window) && (
+        <div className="space-y-1">
+          <label htmlFor="window-ratio" className="flex justify-between text-xs text-muted-foreground">
+            <span>Window size</span>
+            <span className="font-medium text-ink-900">{Math.round(design.options.windowRatio * 100)}%</span>
+          </label>
+          <input
+            id="window-ratio"
+            type="range"
+            min={20}
+            max={85}
+            step={5}
+            value={Math.round(design.options.windowRatio * 100)}
+            onChange={(e) => update((d) => ({ options: { ...d.options, windowRatio: Number(e.target.value) / 100 } }), 'window-ratio')}
+            className="w-full accent-primary"
+          />
+        </div>
+      )}
+      <p className="text-[11px] text-muted-foreground">Shown on the model. The dieline has the true cut lines. Holes and vents lower stacking strength.</p>
     </div>
   );
 }
@@ -72,57 +96,100 @@ function DimensionField({ label, value, onCommit }: { label: string; value: numb
 export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPanelProps) {
   const { dimensions } = design;
   const board = getBoardSpec(design.ply, design.flutes);
-  const thicknessMm = Math.round(getBoardThicknessCm(board, dimensions) * 100) / 10;
+  const style = getStyle(design.template);
+  // outside size from the same layout as the 3D model and dieline
+  const outside = useMemo(
+    () => layoutForDesign(design).outside,
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the layout depends on these fields only
+    [design.template, design.dimensions, design.ply, design.flutes, design.lidDepth, design.options]
+  );
+  const lidDepth = resolveLidDepth(dimensions.height, design.lidDepth);
+  const frontShare = Math.round((design.options.frontCut > 0 ? 1 - design.options.frontCut : DEFAULT_FRONT_RATIO) * 100);
   const setDims = (patch: Partial<BoxDimensions>) => update((d) => ({ dimensions: { ...d.dimensions, ...patch } }));
 
   return (
     <div className="space-y-5">
-      {/* Template */}
+      {/* Style */}
       <Card className="p-4 space-y-3">
         <h3 className="font-semibold flex items-center gap-2">
           <Box className="w-4 h-4 text-primary" /> Box style
         </h3>
-        <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="Box style">
-          {BOX_TEMPLATES.map((t) => {
-            const Icon = TEMPLATE_ICONS[t.id];
-            const active = design.template === t.id;
-            return (
-              <button
-                key={t.id}
-                role="radio"
-                aria-checked={active}
-                disabled={!t.available}
-                onClick={() => update({ template: t.id })}
-                title={t.description}
-                className={`p-2 rounded-lg border-2 text-center transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                  active ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
-                }`}
-              >
-                <Icon className="w-5 h-5 mx-auto mb-1 text-ink-900" />
-                <div className="text-xs font-semibold">{t.shortName}</div>
-                <div className="text-[10px] text-muted-foreground">{t.available ? `FEFCO ${t.fefco}` : 'Soon'}</div>
-              </button>
-            );
-          })}
-        </div>
-        <p className="text-xs text-muted-foreground">{BOX_TEMPLATES.find((t) => t.id === design.template)?.description}</p>
+        <StylePicker design={design} update={update} />
+        <p className="text-xs text-muted-foreground">{style.description}</p>
+        <OpeningToggles design={design} style={style} update={update} />
+        {style.id === 'shelf-tray' && (
+          <div className="space-y-1">
+            <label htmlFor="front-height" className="flex justify-between text-xs text-muted-foreground">
+              <span>Front wall height</span>
+              <span className="font-medium text-ink-900">{frontShare}% of the sides</span>
+            </label>
+            <input
+              id="front-height"
+              type="range"
+              min={15}
+              max={100}
+              step={5}
+              value={frontShare}
+              onChange={(e) => update((d) => ({ options: { ...d.options, frontCut: Math.min(0.9, 1 - Number(e.target.value) / 100) } }), 'front-cut')}
+              className="w-full accent-primary"
+            />
+            <p className="text-[11px] text-muted-foreground">Lower = easier to reach the products; higher = holds more.</p>
+          </div>
+        )}
+        {style.id === 'telescope' && (
+          <div className="space-y-1">
+            <label htmlFor="lid-depth" className="flex justify-between text-xs text-muted-foreground">
+              <span>Lid depth{design.lidDepth == null ? ' (automatic)' : ''}</span>
+              <span className="font-medium text-ink-900">{formatLength(lidDepth, design.unit)}</span>
+            </label>
+            <input
+              id="lid-depth"
+              type="range"
+              min={Math.min(DIMENSION_LIMITS.min, dimensions.height)}
+              max={dimensions.height}
+              step={0.5}
+              value={lidDepth}
+              onChange={(e) => update({ lidDepth: Math.max(DIMENSION_LIMITS.min, Number(e.target.value)) }, 'lid-depth')}
+              className="w-full accent-primary"
+            />
+            <p className="text-[11px] text-muted-foreground">Full height = a full telescope lid; shallow = a shoe-box style lid.</p>
+          </div>
+        )}
       </Card>
 
       {/* Dimensions */}
       <Card className="p-4 space-y-3">
-        <h3 className="font-semibold flex items-center gap-2">
-          <Ruler className="w-4 h-4 text-primary" /> Inside dimensions
-        </h3>
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="font-semibold flex items-center gap-2">
+            <Ruler className="w-4 h-4 text-primary" /> Inside dimensions
+          </h3>
+          <UnitToggle value={design.unit} onChange={(unit) => update({ unit }, 'unit')} />
+        </div>
         <div className="grid grid-cols-3 gap-2">
-          <DimensionField label="Length" value={dimensions.length} onCommit={(v) => setDims({ length: v })} />
-          <DimensionField label="Width" value={dimensions.width} onCommit={(v) => setDims({ width: v })} />
-          <DimensionField label="Height" value={dimensions.height} onCommit={(v) => setDims({ height: v })} />
+          {(['length', 'width', 'height'] as const).map((k) => (
+            <UnitDimensionField
+              key={k}
+              label={k[0].toUpperCase() + k.slice(1)}
+              value={dimensions[k]}
+              unit={design.unit}
+              min={DIMENSION_LIMITS.min}
+              max={DIMENSION_LIMITS.max}
+              describedBy="dim-help"
+              onCommit={(v) => setDims({ [k]: v })}
+            />
+          ))}
         </div>
         <p id="dim-help" className="text-xs text-muted-foreground">
-          {DIMENSION_LIMITS.min}-{DIMENSION_LIMITS.max} cm, decimals allowed. Outside is about{' '}
-          {Math.round((dimensions.length + thicknessMm / 5) * 10) / 10} x{' '}
-          {Math.round((dimensions.width + thicknessMm / 5) * 10) / 10} x{' '}
-          {Math.round((dimensions.height + (thicknessMm / 10) * (design.template === 'hsc' ? 2 : 4)) * 10) / 10} cm.
+          {formatLength(DIMENSION_LIMITS.min, design.unit)} to {formatLength(DIMENSION_LIMITS.max, design.unit)}, decimals allowed. Outside is about{' '}
+          {formatDimensions(
+            {
+              length: Math.round(outside.length * 10) / 10,
+              width: Math.round(outside.width * 10) / 10,
+              height: Math.round(outside.height * 10) / 10,
+            },
+            design.unit
+          )}
+          .
         </p>
         <QuickSizePresets currentDimensions={dimensions} onChange={(d) => update({ dimensions: d })} onFoldReset={onFoldReset} />
       </Card>
@@ -229,7 +296,60 @@ export default function BoxSpecPanel({ design, update, onFoldReset }: BoxSpecPan
             Custom colour <span className="text-muted-foreground/70 font-mono text-xs">{design.colorHex.toUpperCase()}</span>
           </span>
         </label>
-        <p className="text-xs text-muted-foreground">Colour is applied to the whole board: outside, inside and edges.</p>
+        <p className="text-xs text-muted-foreground">Colour is applied to the outside of the board; pick the inside below.</p>
+      </Card>
+
+      {/* Finish and inside */}
+      <Card className="p-4 space-y-3">
+        <h3 className="font-semibold flex items-center gap-2">
+          <Sparkles className="w-4 h-4 text-primary" /> Finish and inside
+        </h3>
+        <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Print finish">
+          {FINISHES.map((f) => {
+            const active = design.finish === f.id;
+            return (
+              <button
+                key={f.id}
+                role="radio"
+                aria-checked={active}
+                onClick={() => update({ finish: f.id })}
+                className={`p-2 rounded-lg border-2 text-left transition-all ${
+                  active ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                }`}
+              >
+                <div className="text-xs font-semibold">{f.name}</div>
+                <div className="text-[11px] text-muted-foreground">{f.hint}</div>
+              </button>
+            );
+          })}
+        </div>
+        <div className="space-y-1.5">
+          <div className="text-xs text-muted-foreground">Inside colour</div>
+          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Inside colour">
+            {INSIDE_OPTIONS.map((o) => {
+              const active = (design.insideColorHex?.toLowerCase() ?? null) === (o.color?.toLowerCase() ?? null);
+              return (
+                <button
+                  key={o.id}
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => update({ insideColorHex: o.color })}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border ${
+                    active ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                  }`}
+                >
+                  <span
+                    className="w-3.5 h-3.5 rounded-full border border-border"
+                    style={{ backgroundColor: o.color ?? design.colorHex }}
+                    aria-hidden="true"
+                  />
+                  {o.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">Preview only: we confirm coatings and liners with your quote.</p>
       </Card>
 
       {/* Marks */}

@@ -1,5 +1,5 @@
 /** Blog thumbnails (16:9, 1600×900). Educational diagrams in the same palette as the product set. */
-import { C, fitIso, makeIso, poly, line3, box, flutes, openBox, shadow, svg, boardSection } from './lib.mjs';
+import { C, fitIso, makeIso, poly, line3, box, flutes, openBox, pallet, shadow, svg, boardSection } from './lib.mjs';
 
 const W = 1600;
 const H = 900;
@@ -183,3 +183,290 @@ export const blogScenes = {
     return blog('Laptop showing a 3D corrugated box designer with a rotating box', out.join(''));
   },
 };
+
+// ---------------------------------------------------------------------------
+// Designer Guides: feature guides for the 3D Box Designer (/box-designer). Same palette and restraint as above:
+// one idea per picture, kraft board, green for the thing the reader should look at.
+// ---------------------------------------------------------------------------
+
+const pill = (x, y, w, h, label, on = false, size = 28) =>
+  `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h / 2}" fill="${on ? C.green600 : C.paper100}" stroke="${on ? C.green700 : C.paper300}" stroke-width="2"/>` +
+  text(x + w / 2, y + h / 2 + size * 0.36, label, size, { fill: on ? C.paper50 : C.ink500 });
+
+const stepNo = (cx, cy, n) => `<circle cx="${cx}" cy="${cy}" r="30" fill="${C.green600}"/>` + text(cx, cy + 11, String(n), 32, { fill: C.paper50 });
+
+const tick = (cx, cy, ok = true) =>
+  ok
+    ? `<circle cx="${cx}" cy="${cy}" r="22" fill="${C.green600}"/><polyline points="${cx - 10},${cy} ${cx - 3},${cy + 8} ${cx + 11},${cy - 8}" fill="none" stroke="${C.paper50}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`
+    : `<circle cx="${cx}" cy="${cy}" r="22" fill="${C.k400}"/><line x1="${cx}" y1="${cy - 11}" x2="${cx}" y2="${cy + 3}" stroke="${C.paper50}" stroke-width="5" stroke-linecap="round"/><circle cx="${cx}" cy="${cy + 11}" r="3.2" fill="${C.paper50}"/>`;
+
+/** Flat RSC blank: glue flap + L, W, L, W panels with half-width flaps. Solid = cut, dashed = crease. */
+function dieline2d({ x, y, L, Wd, Hh, cut = C.ink800, score = C.green600, fill = C.k200, sw = 3 }) {
+  const fl = Wd / 2;
+  const g = Math.max(14, Hh * 0.16);
+  const gap = Math.max(3, Wd * 0.03);
+  const widths = [L, Wd, L, Wd];
+  const xs = [x + g];
+  widths.forEach((w) => xs.push(xs[xs.length - 1] + w));
+  const yb = y + fl;
+  const out = [];
+  out.push(`<polygon points="${x},${yb + g * 0.6} ${x + g},${yb} ${x + g},${yb + Hh} ${x},${yb + Hh - g * 0.6}" fill="${fill}"/>`);
+  widths.forEach((w, i) => {
+    const px = xs[i];
+    out.push(`<rect x="${px}" y="${yb}" width="${w}" height="${Hh}" fill="${fill}"/>`);
+    out.push(`<rect x="${px + gap}" y="${y}" width="${w - 2 * gap}" height="${fl}" fill="${fill}"/>`);
+    out.push(`<rect x="${px + gap}" y="${yb + Hh}" width="${w - 2 * gap}" height="${fl}" fill="${fill}"/>`);
+  });
+  const c = [`M ${x + g} ${yb} L ${x} ${yb + g * 0.6} L ${x} ${yb + Hh - g * 0.6} L ${x + g} ${yb + Hh}`];
+  widths.forEach((w, i) => {
+    const px = xs[i];
+    c.push(`M ${px} ${yb} L ${px + gap} ${yb} L ${px + gap} ${y} L ${px + w - gap} ${y} L ${px + w - gap} ${yb} L ${px + w} ${yb}`);
+    c.push(`M ${px} ${yb + Hh} L ${px + gap} ${yb + Hh} L ${px + gap} ${yb + Hh + fl} L ${px + w - gap} ${yb + Hh + fl} L ${px + w - gap} ${yb + Hh} L ${px + w} ${yb + Hh}`);
+  });
+  c.push(`M ${xs[4]} ${yb} L ${xs[4]} ${yb + Hh}`);
+  out.push(`<path d="${c.join(' ')}" fill="none" stroke="${cut}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"/>`);
+  const s = [];
+  widths.forEach((w, i) => s.push(`M ${xs[i] + gap} ${yb} L ${xs[i] + w - gap} ${yb}`, `M ${xs[i] + gap} ${yb + Hh} L ${xs[i] + w - gap} ${yb + Hh}`));
+  for (let i = 0; i < 4; i++) s.push(`M ${xs[i]} ${yb} L ${xs[i]} ${yb + Hh}`);
+  out.push(`<path d="${s.join(' ')}" fill="none" stroke="${score}" stroke-width="${sw}" stroke-dasharray="${sw * 4} ${sw * 3}" stroke-linecap="round"/>`);
+  return { svg: out.join(''), w: xs[4] - x, h: Hh + 2 * fl };
+}
+
+/** Quads drawn on the two visible faces of a box: L = the y+d face (u along x), R = the x+w face (u along y) */
+const faceQuad = (P, b, side, u, v, w, h, attrs) => {
+  const at = side === 'L' ? (uu, vv) => P(b.x + uu, b.y + b.d, (b.z ?? 0) + vv) : (uu, vv) => P(b.x + b.w, b.y + uu, (b.z ?? 0) + vv);
+  return `<polygon points="${[at(u, v), at(u + w, v), at(u + w, v + h), at(u, v + h)].map((p) => p.join(',')).join(' ')}" ${attrs}/>`;
+};
+
+/** Open-top shell without flaps (half-slotted look, trays, mailer bases) */
+function openShell(P, { x, y, z = 0, w, d, h, outer = [C.k400, C.k500], inner = ['#B58A5B', '#A47B4F', '#946B42'], stroke = C.k700, sw = 1.2, contents = '' }) {
+  const zt = z + h;
+  return [
+    poly(P, [[x, y, z], [x + w, y, z], [x + w, y, zt], [x, y, zt]], inner[0], { stroke, sw }),
+    poly(P, [[x, y, z], [x, y + d, z], [x, y + d, zt], [x, y, zt]], inner[1], { stroke, sw }),
+    poly(P, [[x, y, z + 1], [x + w, y, z + 1], [x + w, y + d, z + 1], [x, y + d, z + 1]], inner[2], { stroke: 'none' }),
+    contents,
+    poly(P, [[x, y + d, z], [x + w, y + d, z], [x + w, y + d, zt], [x, y + d, zt]], outer[0], { stroke, sw }),
+    poly(P, [[x + w, y, z], [x + w, y + d, z], [x + w, y + d, zt], [x + w, y, zt]], outer[1], { stroke, sw }),
+  ].join('');
+}
+
+const logoOnL = (P, b, u, v, s) =>
+  faceQuad(P, b, 'L', u, v, s, s, `fill="${C.green600}" stroke="${C.green700}" stroke-width="1.5"`) +
+  faceQuad(P, b, 'L', u + s * 0.28, v + s * 0.28, s * 0.44, s * 0.44, `fill="${C.paper50}"`);
+
+/** The eight styles the designer draws, each as a small sketch with its own bounding box */
+const STYLE_SKETCHES = [
+  { label: 'RSC', bb: [0, 0, 0, 160, 120, 110], draw: (P) => box(P, { x: 0, y: 0, w: 160, d: 120, h: 110, tape: true }) },
+  { label: 'HSC', bb: [0, 0, 0, 160, 120, 110], draw: (P) => openShell(P, { x: 0, y: 0, w: 160, d: 120, h: 110 }) },
+  {
+    label: 'Full overlap',
+    bb: [0, 0, 0, 160, 120, 110],
+    draw: (P) =>
+      box(P, { x: 0, y: 0, w: 160, d: 120, h: 110 }) +
+      poly(P, [[0, 14, 110], [160, 14, 110], [160, 120, 110], [0, 120, 110]], C.k200, { stroke: C.k700, sw: 1.2 }),
+  },
+  {
+    label: 'Sleeve',
+    bb: [0, 0, 0, 200, 110, 90],
+    draw: (P) => {
+      const b = { x: 0, y: 0, w: 200, d: 110, h: 90 };
+      return box(P, b) + faceQuad(P, b, 'R', 7, 7, 96, 76, `fill="${C.k900}" opacity="0.82"`);
+    },
+  },
+  {
+    label: 'Telescope',
+    bb: [-6, -6, 0, 156, 126, 160],
+    draw: (P) => box(P, { x: 0, y: 0, w: 150, d: 120, h: 100 }) + box(P, { x: -6, y: -6, z: 116, w: 162, d: 132, h: 40, top: C.k200 }),
+  },
+  {
+    label: 'Mailer',
+    bb: [0, -50, 0, 170, 130, 165],
+    draw: (P) => {
+      const a = (72 * Math.PI) / 180;
+      const [dy, dz] = [-130 * Math.cos(a), 130 * Math.sin(a)];
+      return poly(P, [[0, 0, 45], [170, 0, 45], [170, dy, 45 + dz], [0, dy, 45 + dz]], '#B58A5B', { stroke: C.k700, sw: 1.2 }) + openShell(P, { x: 0, y: 0, w: 170, d: 130, h: 45 });
+    },
+  },
+  {
+    label: 'Pizza',
+    bb: [0, 0, 0, 170, 170, 30],
+    draw: (P) => box(P, { x: 0, y: 0, w: 170, d: 170, h: 30 }) + line3(P, [0, 150, 30], [170, 150, 30], { sw: 1.4, op: 0.7 }),
+  },
+  { label: 'Tray', bb: [0, 0, 0, 180, 130, 36], draw: (P) => openShell(P, { x: 0, y: 0, w: 180, d: 130, h: 36 }) },
+];
+
+Object.assign(blogScenes, {
+  // DG-01: how to use the designer, three steps
+  'blog-dg-how-to': () => {
+    const out = [];
+    const xs = [80, 580, 1080];
+    xs.forEach((x) => out.push(card(x, 160, 440, 580)));
+    out.push(arrow(526, 450, 572, 450, C.green600, 6) + arrow(1026, 450, 1072, 450, C.green600, 6));
+    // 1. pick a style (flat blank)
+    const d = dieline2d({ x: 0, y: 0, L: 90, Wd: 60, Hh: 90, sw: 2.5 });
+    out.push(`<g transform="translate(${80 + (440 - d.w) / 2} ${430 - d.h / 2})">${d.svg}</g>`);
+    // 2. set the size
+    const P2 = fitIso([-30, 0, 0, 200, 180, 140], { cx: 800, cy: 440, maxW: 320, maxH: 290 });
+    const b2 = { x: 0, y: 0, w: 200, d: 150, h: 140 };
+    const dim = (a, c) => {
+      const [x1, y1] = P2(...a);
+      const [x2, y2] = P2(...c);
+      return arrow(x1, y1, x2, y2, C.green700, 4) + arrow(x2, y2, x1, y1, C.green700, 4);
+    };
+    out.push(shadow(P2, { ...b2, pad: 16 }) + box(P2, { ...b2, tape: true }) + flutes(P2, { ...b2, n: 10 }));
+    out.push(dim([0, 178, 0], [200, 178, 0]) + dim([-22, 150, 0], [-22, 150, 140]));
+    // 3. add your logo
+    const P3 = fitIso([0, 0, 0, 200, 150, 140], { cx: 1300, cy: 440, maxW: 300, maxH: 280 });
+    const b3 = { x: 0, y: 0, w: 200, d: 150, h: 140 };
+    out.push(shadow(P3, { ...b3, pad: 16 }) + box(P3, b3) + logoOnL(P3, b3, 40, 50, 56));
+    out.push(faceQuad(P3, b3, 'L', 108, 74, 64, 10, `fill="${C.ink800}"`) + faceQuad(P3, b3, 'L', 108, 56, 44, 8, `fill="${C.ink500}"`));
+    out.push(tick(1450, 250));
+    ['Pick a style', 'Set the size', 'Add your logo'].forEach((label, i) => out.push(stepNo(xs[i] + 56, 216, i + 1), text(xs[i] + 220, 680, label, 40)));
+    return blog('Three steps in the 3D box designer: pick a style, set the size, add your logo', out.join(''));
+  },
+
+  // DG-02: eight box styles
+  'blog-dg-styles': () => {
+    const out = [];
+    STYLE_SKETCHES.forEach((s, i) => {
+      const cx0 = 91 + (i % 4) * 366;
+      const cy0 = i < 4 ? 110 : 470;
+      out.push(card(cx0, cy0, 320, 320));
+      const P = fitIso(s.bb, { cx: cx0 + 160, cy: cy0 + 140, maxW: 220, maxH: 170 });
+      out.push(s.draw(P));
+      out.push(text(cx0 + 160, cy0 + 286, s.label, 32));
+    });
+    return blog('Eight corrugated box styles: RSC, HSC, full overlap, sleeve, telescope, mailer, pizza and tray', out.join(''));
+  },
+
+  // DG-03: box size and fit
+  'blog-dg-fit': () => {
+    const out = [];
+    const P = fitIso([-40, -40, 0, 320, 260, 200], { cx: 540, cy: 480, maxW: 700, maxH: 580 });
+    const b = { x: 0, y: 0, w: 300, d: 220, h: 180 };
+    const product = box(P, { x: 45, y: 45, z: 1, w: 210, d: 130, h: 168, top: C.green500, left: C.green600, right: C.green700, stroke: C.green700 });
+    out.push(shadow(P, { ...b, pad: 30 }) + openBox(P, { ...b, back: 70, front: -30, contents: product }));
+    // clearance arrows between product and wall, at rim height
+    const [ax, ay] = P(255, 110, 169);
+    const [bx2, by2] = P(300, 110, 180);
+    out.push(arrow(ax, ay, bx2, by2, C.ink800, 4) + arrow(bx2, by2, ax, ay, C.ink800, 4));
+    out.push(card(1040, 190, 460, 520));
+    const rows = [
+      [C.green600, 'Your product'],
+      [C.k300, '+ padding'],
+      [C.k500, '= inside size'],
+    ];
+    rows.forEach(([fill, label], i) => {
+      const y = 270 + i * 92;
+      out.push(`<rect x="1090" y="${y - 26}" width="52" height="52" rx="10" fill="${fill}" stroke="${C.k700}" stroke-width="1.5"/>`);
+      out.push(text(1166, y + 12, label, 36, { anchor: 'start', weight: i === 2 ? 700 : 500 }));
+    });
+    out.push(`<line x1="1090" y1="520" x2="1450" y2="520" stroke="${C.paper300}" stroke-width="2"/>`);
+    out.push(pill(1090, 560, 110, 60, 'mm') + pill(1215, 560, 110, 60, 'cm', true) + pill(1340, 560, 110, 60, 'in'));
+    return blog('A product inside a box with clearance marked, beside a fit checklist and mm, cm and inch units', out.join(''));
+  },
+
+  // DG-04: price estimate and quantity tiers
+  'blog-dg-price': () => {
+    const out = [];
+    const P = fitIso([0, 0, 0, 260, 190, 160], { cx: 360, cy: 500, maxW: 480, maxH: 400 });
+    const b = { x: 0, y: 0, w: 260, d: 190, h: 160 };
+    out.push(shadow(P, { ...b, pad: 26 }) + box(P, { ...b, tape: true }) + flutes(P, { ...b, n: 14 }));
+    const [tx, ty] = P(260, 0, 160);
+    out.push(`<path d="M ${tx} ${ty} C ${tx + 30} ${ty - 60}, ${tx + 70} ${ty - 70}, ${tx + 110} ${ty - 60}" fill="none" stroke="${C.ink500}" stroke-width="3"/>`);
+    out.push(`<circle cx="${tx + 150}" cy="${ty - 70}" r="52" fill="${C.green600}" stroke="${C.green700}" stroke-width="3"/>` + text(tx + 150, ty - 50, '₹', 60, { fill: C.paper50 }));
+    out.push(card(880, 160, 620, 580));
+    out.push(text(930, 236, 'Cost per box', 32, { anchor: 'start', fill: C.ink500, weight: 500 }));
+    const hs = [330, 250, 200, 160];
+    const labels = ['100', '500', '1,000', '5,000'];
+    const tops = [];
+    hs.forEach((h, i) => {
+      const x = 950 + i * 132;
+      tops.push([x + 45, 640 - h]);
+      out.push(`<rect x="${x}" y="${640 - h}" width="90" height="${h}" rx="8" fill="${i === 3 ? C.green600 : C.k400}" stroke="${i === 3 ? C.green700 : C.k700}" stroke-width="2"/>`);
+      out.push(text(x + 45, 690, labels[i], 30, { weight: 600, fill: C.ink800 }));
+    });
+    out.push(`<polyline points="${tops.map(([x, y]) => `${x},${y - 26}`).join(' ')}" fill="none" stroke="${C.ink500}" stroke-width="3" stroke-dasharray="10 8"/>`);
+    out.push(`<line x1="930" y1="640" x2="1450" y2="640" stroke="${C.ink500}" stroke-width="3"/>`);
+    return blog('A box with a rupee tag beside a bar chart where the cost per box falls as the order quantity rises', out.join(''));
+  },
+
+  // DG-05: logo and artwork
+  'blog-dg-artwork': () => {
+    const out = [];
+    const P = fitIso([-20, -20, 0, 320, 220, 200], { cx: 560, cy: 470, maxW: 760, maxH: 620 });
+    const b = { x: 0, y: 0, w: 300, d: 200, h: 200 };
+    out.push(shadow(P, { ...b, pad: 30 }) + box(P, b));
+    out.push(faceQuad(P, b, 'L', 20, 20, 260, 160, `fill="none" stroke="${C.green700}" stroke-width="3" stroke-dasharray="12 9"`));
+    out.push(logoOnL(P, b, 52, 76, 76));
+    out.push(faceQuad(P, b, 'L', 150, 120, 104, 15, `fill="${C.ink800}"`) + faceQuad(P, b, 'L', 150, 94, 76, 11, `fill="${C.ink500}"`) + faceQuad(P, b, 'L', 150, 72, 90, 11, `fill="${C.ink500}"`));
+    for (let i = 0; i < 16; i++) out.push(faceQuad(P, b, 'R', 50 + i * 6.5, 30, i % 3 ? 2.6 : 4.4, 56, `fill="${C.ink800}"`));
+    out.push(card(1060, 220, 440, 460));
+    out.push(text(1100, 290, 'Print check', 36, { anchor: 'start' }));
+    [
+      [true, 'Image is sharp'],
+      [true, 'Inside safe area'],
+      [false, 'Text too small'],
+    ].forEach(([ok, label], i) => {
+      const y = 380 + i * 96;
+      out.push(tick(1122, y, ok) + text(1166, y + 11, label, 32, { anchor: 'start', weight: 500 }));
+    });
+    return blog('A box with a logo and text inside a dashed safe area, beside a print checklist', out.join(''));
+  },
+
+  // DG-06: dieline
+  'blog-dg-dieline': () => {
+    const out = [card(70, 120, 1460, 660)];
+    const d = dieline2d({ x: 140, y: 0, L: 230, Wd: 150, Hh: 230, sw: 4 });
+    out.push(`<g transform="translate(0 ${450 - d.h / 2})">${d.svg}</g>`);
+    const P = fitIso([0, 0, 0, 230, 150, 230], { cx: 1270, cy: 340, maxW: 240, maxH: 260 });
+    const b = { x: 0, y: 0, w: 230, d: 150, h: 230 };
+    out.push(shadow(P, { ...b, pad: 14 }) + box(P, { ...b, seam: true }));
+    out.push(`<line x1="1120" y1="580" x2="1220" y2="580" stroke="${C.ink800}" stroke-width="5" stroke-linecap="round"/>` + text(1240, 592, 'cut', 32, { anchor: 'start', weight: 500 }));
+    out.push(`<line x1="1120" y1="650" x2="1220" y2="650" stroke="${C.green600}" stroke-width="5" stroke-dasharray="16 12" stroke-linecap="round"/>` + text(1240, 662, 'crease', 32, { anchor: 'start', weight: 500 }));
+    return blog('A flat box dieline with solid cut lines and dashed crease lines, beside the folded box', out.join(''));
+  },
+
+  // DG-07: product shots and 360 video
+  'blog-dg-shots': () => {
+    const out = [];
+    out.push(`<rect x="250" y="100" width="1100" height="700" rx="26" fill="${C.paper100}" stroke="${C.paper300}" stroke-width="2"/>`);
+    out.push(`<ellipse cx="800" cy="650" rx="330" ry="92" fill="${C.ink300}" opacity="0.35"/><ellipse cx="800" cy="636" rx="320" ry="86" fill="${C.paper200}" stroke="${C.paper300}" stroke-width="3"/>`);
+    const P = fitIso([0, 0, 0, 240, 180, 170], { cx: 800, cy: 470, maxW: 420, maxH: 330 });
+    const b = { x: 0, y: 0, w: 240, d: 180, h: 170 };
+    out.push(shadow(P, { ...b, pad: 18 }) + box(P, b) + logoOnL(P, b, 50, 60, 56) + faceQuad(P, b, 'L', 124, 84, 80, 12, `fill="${C.ink800}"`));
+    out.push(`<path d="M 440 664 A 360 112 0 0 0 1150 676" fill="none" stroke="${C.green600}" stroke-width="7" stroke-linecap="round"/>`);
+    out.push(arrow(1118, 712, 1152, 672, C.green600, 7));
+    const corner = (x, y, sx, sy) => `<polyline points="${x},${y + sy * 64} ${x},${y} ${x + sx * 64},${y}" fill="none" stroke="${C.ink800}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`;
+    out.push(corner(320, 170, 1, 1) + corner(1280, 170, -1, 1) + corner(320, 730, 1, -1) + corner(1280, 730, -1, -1));
+    out.push(`<circle cx="1222" cy="222" r="14" fill="${C.green600}"/>` + text(1196, 234, '360°', 34, { anchor: 'end' }));
+    return blog('A branded box on a turntable inside a camera frame, with a 360 degree rotation arrow', out.join(''));
+  },
+
+  // DG-08: stacking strength
+  'blog-dg-stack': () => {
+    const out = [];
+    const P = fitIso([0, 0, 0, 440, 340, 520], { cx: 600, cy: 500, maxW: 700, maxH: 640 });
+    out.push(shadow(P, { x: 0, y: 0, w: 440, d: 340, pad: 26 }));
+    out.push(pallet(P, { x: 0, y: 0, w: 440, d: 340 }));
+    const cells = [];
+    for (const x of [0, 225]) for (const y of [0, 175]) for (const k of [0, 1, 2]) cells.push({ x, y, z: 27 + k * 124, w: 215, d: 165, h: 120, tape: true });
+    cells.sort((a, c) => a.x + a.y - (c.x + c.y) || a.z - c.z);
+    cells.forEach((c) => out.push(box(P, c)));
+    const [sx, sy] = P(220, 170, 400);
+    out.push(arrow(sx - 70, sy - 190, sx - 70, sy - 40, C.green600, 9) + arrow(sx + 70, sy - 190, sx + 70, sy - 40, C.green600, 9));
+    out.push(card(1080, 220, 420, 460));
+    const cx = 1290;
+    const cy = 480;
+    const r = 130;
+    const pt = (deg) => [cx + r * Math.cos((deg * Math.PI) / 180), cy - r * Math.sin((deg * Math.PI) / 180)];
+    const [a0, a1, a2] = [pt(180), pt(60), pt(0)];
+    out.push(`<path d="M ${a0[0]} ${a0[1]} A ${r} ${r} 0 0 1 ${a2[0]} ${a2[1]}" fill="none" stroke="${C.paper300}" stroke-width="28" stroke-linecap="round"/>`);
+    out.push(`<path d="M ${a0[0]} ${a0[1]} A ${r} ${r} 0 0 1 ${a1[0]} ${a1[1]}" fill="none" stroke="${C.green600}" stroke-width="28" stroke-linecap="round"/>`);
+    const [nx, ny] = [cx + (r - 40) * Math.cos((105 * Math.PI) / 180), cy - (r - 40) * Math.sin((105 * Math.PI) / 180)];
+    out.push(`<line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="${C.ink800}" stroke-width="8" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="14" fill="${C.ink800}"/>`);
+    out.push(text(cx, 590, 'Stack strength', 34));
+    return blog('A pallet of stacked cartons with load arrows on top, beside a strength gauge', out.join(''));
+  },
+});

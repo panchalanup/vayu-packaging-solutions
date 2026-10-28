@@ -7,7 +7,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Slider } from '@/components/ui/slider';
 import { Ruler, RectangleHorizontal, Box, FoldVertical } from 'lucide-react';
-import { BoxDimensions } from '@/types/boxDesigner';
+import { BoxDimensions, LengthUnit } from '@/types/boxDesigner';
+import { toUnit, UNIT_LABELS } from '@/lib/boxDesigner/units';
 import { DIMENSION_LIMITS } from '@/lib/boxDesigner/constants';
 
 type ControlType = 'length' | 'width' | 'height' | 'flaps';
@@ -17,6 +18,10 @@ interface BottomFloatingControlsProps {
   foldPercentage: number;
   onDimensionsChange: (dimensions: BoxDimensions) => void;
   onFoldChange: (percentage: number) => void;
+  /** Display unit for the size sliders (values stay cm) */
+  unit?: LengthUnit;
+  /** Named fold stops of the current style (from the style registry) */
+  foldStops?: { label: string; value: number }[];
 }
 
 interface ControlConfig {
@@ -43,7 +48,11 @@ export default function BottomFloatingControls({
   foldPercentage,
   onDimensionsChange,
   onFoldChange,
+  unit = 'cm',
+  foldStops = FOLD_STOP_BUTTONS,
 }: BottomFloatingControlsProps) {
+  // Size sliders move in cm; labels show the chosen unit
+  const show = (id: ControlType, v: number) => (id === 'flaps' ? Math.round(v) : toUnit(v, unit));
   const [activeControl, setActiveControl] = useState<ControlType | null>(null);
 
   const controls: ControlConfig[] = [
@@ -52,7 +61,7 @@ export default function BottomFloatingControls({
       icon: Ruler,
       label: 'Length',
       value: dimensions.length,
-      unit: 'cm',
+      unit: UNIT_LABELS[unit],
       min: DIMENSION_LIMITS.min,
       max: DIMENSION_LIMITS.max,
       step: 1,
@@ -63,7 +72,7 @@ export default function BottomFloatingControls({
       icon: RectangleHorizontal,
       label: 'Width',
       value: dimensions.width,
-      unit: 'cm',
+      unit: UNIT_LABELS[unit],
       min: DIMENSION_LIMITS.min,
       max: DIMENSION_LIMITS.max,
       step: 1,
@@ -74,7 +83,7 @@ export default function BottomFloatingControls({
       icon: Box,
       label: 'Height',
       value: dimensions.height,
-      unit: 'cm',
+      unit: UNIT_LABELS[unit],
       min: DIMENSION_LIMITS.min,
       max: DIMENSION_LIMITS.max,
       step: 1,
@@ -156,7 +165,7 @@ export default function BottomFloatingControls({
                   </div>
                   <div className="text-right">
                     <span className="text-2xl font-bold" style={{ color: activeControlConfig.color }}>
-                      {Math.round(activeControlConfig.value)}
+                      {show(activeControlConfig.id, activeControlConfig.value)}
                     </span>
                     <span className="text-sm text-muted-foreground ml-1">
                       {activeControlConfig.unit}
@@ -182,7 +191,7 @@ export default function BottomFloatingControls({
                 {/* Min/Max labels, or named assembly stops */}
                 {activeControl === 'flaps' ? (
                   <div className="flex justify-between gap-2" role="group" aria-label="Assembly stops">
-                    {FOLD_STOP_BUTTONS.map((stop) => (
+                    {foldStops.map((stop) => (
                       <button
                         key={stop.value}
                         onClick={() => onFoldChange(stop.value)}
@@ -198,8 +207,8 @@ export default function BottomFloatingControls({
                   </div>
                 ) : (
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{activeControlConfig.min}{activeControlConfig.unit}</span>
-                    <span>{activeControlConfig.max}{activeControlConfig.unit}</span>
+                    <span>{show(activeControlConfig.id, activeControlConfig.min)} {activeControlConfig.unit}</span>
+                    <span>{show(activeControlConfig.id, activeControlConfig.max)} {activeControlConfig.unit}</span>
                   </div>
                 )}
               </div>

@@ -5,16 +5,22 @@
  */
 
 import { memo, useMemo } from 'react';
-import Canvas3D from './Canvas3D';
+import Canvas3D, { type CanvasStudioProps } from './Canvas3D';
 import BoxScene from './BoxScene';
 import { getBoardSpec, getBoardThicknessCm } from '@/lib/boxDesigner/boardSpecs';
-import { computeRscLayout, getViewExtents } from '@/lib/boxDesigner/rig/rscLayout';
+import { getLayoutViewExtents } from '@/lib/boxDesigner/styles/registry';
+import { layoutForDesign } from '@/lib/boxDesigner/styles/designLayout';
+import type { CartonRig } from '@/lib/boxDesigner/rig/panelRig';
 import type { BoxDesign, BoxFace } from '@/types/boxDesigner';
 
 export interface BoxDesigner3DProps {
   design: BoxDesign;
-  /** 0 = flat blank, 1 = sealed */
+  /** 0 = flat blank, 1 = assembled */
   foldTarget: number;
+  /** Hide the front wall to show the inside */
+  cutaway?: boolean;
+  /** The live carton rig, e.g. for snapshots of the carton in other scenes */
+  onRigReady?: (rig: CartonRig | null) => void;
   selectedFace: BoxFace | null;
   controlMode: 'rotate' | 'pan';
   autoRotate: boolean;
@@ -22,11 +28,15 @@ export interface BoxDesigner3DProps {
   onFaceSelect: (face: BoxFace | null) => void;
   onBackgroundClick: () => void;
   onCaptureReady: (capture: () => Promise<Blob | null>) => void;
+  /** Showcase studio (backgrounds, scenes, quality, shot/video/model API); owned by Workstream C */
+  studio?: CanvasStudioProps;
 }
 
 function BoxDesigner3D({
   design,
   foldTarget,
+  cutaway = false,
+  onRigReady,
   selectedFace,
   controlMode,
   autoRotate,
@@ -34,17 +44,19 @@ function BoxDesigner3D({
   onFaceSelect,
   onBackgroundClick,
   onCaptureReady,
+  studio,
 }: BoxDesigner3DProps) {
   const { dimensions, ply, flutes, template } = design;
   const board = useMemo(() => getBoardSpec(ply, flutes), [ply, flutes]);
   const thickness = getBoardThicknessCm(board, dimensions);
-  const topFlaps = template !== 'hsc';
+  const { lidDepth } = design;
+  // Every style comes from the registry: the same layout drives the model, the artwork sizes and the dieline
   const layout = useMemo(
-    () => computeRscLayout(dimensions, thickness, { topFlaps }),
+    () => layoutForDesign(design),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- depend on the numbers, not the object identity
-    [dimensions.length, dimensions.width, dimensions.height, thickness, topFlaps]
+    [dimensions.length, dimensions.width, dimensions.height, thickness, template, lidDepth, design.options.handHoles, design.options.vents, design.options.window, design.options.windowRatio, design.options.frontCut]
   );
-  const extents = useMemo(() => getViewExtents(layout, foldTarget), [layout, foldTarget]);
+  const extents = useMemo(() => getLayoutViewExtents(layout, foldTarget), [layout, foldTarget]);
 
   return (
     <Canvas3D
@@ -54,14 +66,20 @@ function BoxDesigner3D({
       autoRotate={autoRotate && !selectedFace}
       fitSignal={fitSignal}
       onBackgroundClick={onBackgroundClick}
+      studio={studio}
     >
       <BoxScene
         layout={layout}
         board={board}
         colorHex={design.colorHex}
+        finish={design.finish}
+        insideColorHex={design.insideColorHex}
+        cutaway={cutaway}
+        onRigReady={onRigReady}
         foldTarget={foldTarget}
         faceImages={design.faceImages}
         textElements={design.textElements}
+        stickers={design.stickers}
         showIcons={design.showIcons}
         selectedFace={selectedFace}
         onFaceSelect={onFaceSelect}

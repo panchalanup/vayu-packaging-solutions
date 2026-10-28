@@ -6,6 +6,7 @@
 import { Undo2, Redo2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BoxDimensions, PlyType, BoxTemplate } from '@/types/boxDesigner';
+import { getStyle } from '@/lib/boxDesigner/styles/registry';
 
 interface BottomStatusBarProps {
   dimensions: BoxDimensions;
@@ -50,7 +51,7 @@ export default function BottomStatusBar({
         
         <div className="flex items-center gap-1.5">
           <span className="font-medium text-paper-50">Style:</span>
-          <span className="capitalize">{template}</span>
+          <span>{getStyle(template).shortName}</span>
         </div>
       </div>
 
@@ -62,7 +63,8 @@ export default function BottomStatusBar({
           variant="ghost"
           size="sm"
           className="h-7 w-7 p-0 text-paper-50 hover:bg-ink-800 hover:text-paper-50 mac-transition disabled:opacity-30"
-          title="Undo (Cmd+Z)"
+          title="Undo (Ctrl+Z)"
+          aria-label="Undo"
         >
           <Undo2 className="w-3.5 h-3.5" />
         </Button>
@@ -73,7 +75,8 @@ export default function BottomStatusBar({
           variant="ghost"
           size="sm"
           className="h-7 w-7 p-0 text-paper-50 hover:bg-ink-800 hover:text-paper-50 mac-transition disabled:opacity-30"
-          title="Redo (Cmd+Shift+Z)"
+          title="Redo (Ctrl+Shift+Z)"
+          aria-label="Redo"
         >
           <Redo2 className="w-3.5 h-3.5" />
         </Button>

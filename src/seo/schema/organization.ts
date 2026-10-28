@@ -26,7 +26,6 @@ export const getOrganizationSchema = () => ({
       contactType: 'Sales',
       areaServed: 'IN',
       availableLanguage: ['en', 'hi', 'gu'],
-      contactOption: 'TollFree',
     },
     {
       '@type': 'ContactPoint',
@@ -80,7 +79,7 @@ export const getOrganizationSchema = () => ({
   },
   
   // Awards & Certifications
-  award: SEO_CONFIG.certifications,
+  // VERIFY-LATER[CERT-01]: "award: certifications" removed. BIS / ISO / FSSAI are unverified claims, so they stay out of structured data.
   
   // Know As
   alternateName: [
@@ -88,14 +87,7 @@ export const getOrganizationSchema = () => ({
     'Vayu Corrugated Solutions',
   ],
   
-  // Aggregate Rating - Star ratings for search results
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: SEO_CONFIG.aggregateRating.ratingValue,
-    reviewCount: SEO_CONFIG.aggregateRating.reviewCount,
-    bestRating: SEO_CONFIG.aggregateRating.bestRating,
-    worstRating: SEO_CONFIG.aggregateRating.worstRating,
-  },
+  // VERIFY-LATER[SEO-RATING]: aggregateRating removed (see localBusiness.ts).
 });
 
 export default getOrganizationSchema;

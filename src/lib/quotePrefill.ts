@@ -4,7 +4,8 @@
  * and the result is only ever rendered as text.
  */
 
-import { INDUSTRY_SLUGS, INTENTS, PRODUCTS, QTY_BANDS, type QuoteInput } from './quoteSchema';
+import { INDUSTRY_SLUGS, INTENTS, PRODUCTS, QTY_BANDS } from './quoteOptions';
+import type { QuoteInput } from './quoteSchema';
 
 type Prefill = Partial<Pick<QuoteInput, 'intent' | 'product' | 'qty' | 'l' | 'w' | 'h' | 'industry' | 'src'>>;
 

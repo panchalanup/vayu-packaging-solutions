@@ -21,3 +21,4 @@ export {
   type BoxDesignerSchemaData,
   type BoxDesignerFAQItem 
 } from './boxDesigner';
+export { getWebSiteSchema, getBlogIndexSchema } from './site';

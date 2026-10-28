@@ -36,7 +36,8 @@ export async function prepareUpload(file: File): Promise<string> {
     });
     const w = img.naturalWidth || 1024; // SVG without intrinsic size
     const h = img.naturalHeight || 1024;
-    const scale = Math.min(1, MAX_EDGE_PX / Math.max(w, h));
+    // Vector logos are drawn at full working size so they stay sharp in the print check; bitmaps are never enlarged
+    const scale = type === 'image/svg+xml' ? MAX_EDGE_PX / Math.max(w, h) : Math.min(1, MAX_EDGE_PX / Math.max(w, h));
     const canvas = document.createElement('canvas');
     canvas.width = Math.max(1, Math.round(w * scale));
     canvas.height = Math.max(1, Math.round(h * scale));

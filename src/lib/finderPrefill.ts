@@ -4,12 +4,12 @@
  * ranges and are only ever used as form defaults, never as HTML or URLs.
  */
 
-import type { PlyType, BoxTemplate } from '@/types/boxDesigner';
+import { BOX_TEMPLATE_IDS, type BoxDesign, type PlyType, type BoxTemplate } from '@/types/boxDesigner';
 import { DEFAULT_DESIGN, encodeShareHash } from '@/lib/boxDesigner/designCodec';
 import { DIMENSION_LIMITS, PLY_OPTIONS } from '@/lib/boxDesigner/constants';
 
 const PLIES: readonly PlyType[] = ['3-ply', '5-ply', '7-ply'];
-const STYLES: readonly BoxTemplate[] = ['rsc', 'hsc', 'mailer'];
+const STYLES: readonly BoxTemplate[] = BOX_TEMPLATE_IDS;
 
 export interface FinderPrefill {
   length_mm?: number;
@@ -52,7 +52,12 @@ function fromBoxDesignState(state: unknown): FinderPrefill {
   if (!state || typeof state !== 'object') return {};
   const design = (state as { boxDesign?: unknown }).boxDesign;
   if (!design || typeof design !== 'object') return {};
-  const { dimensions, ply, template } = design as { dimensions?: Record<string, unknown>; ply?: unknown; template?: unknown };
+  const { dimensions, ply, template, quantity } = design as {
+    dimensions?: Record<string, unknown>;
+    ply?: unknown;
+    template?: unknown;
+    quantity?: unknown;
+  };
   const cmToMm = (cm: unknown) => (typeof cm === 'number' ? dimMm(cm * 10) : undefined);
   return {
     length_mm: cmToMm(dimensions?.length),
@@ -60,6 +65,7 @@ function fromBoxDesignState(state: unknown): FinderPrefill {
     height_mm: cmToMm(dimensions?.height),
     ply: plyOf(ply),
     style: styleOf(template),
+    quantity: qtyOf(quantity),
   };
 }
 
@@ -92,4 +98,21 @@ export function designerHref(dims: { length_mm?: number; width_mm?: number; heig
     dimensions: { length: cm(length_mm), width: cm(width_mm), height: cm(height_mm) },
   });
   return `/box-designer${hash}`;
+}
+
+/** /compare-quote link pre-filled from a designer design (#3): inside size in mm, ply, style and quantity */
+export function finderHrefFromDesign(design: Pick<BoxDesign, 'dimensions' | 'ply' | 'template' | 'quantity'>): string {
+  const mm = (cm: number) => dimMm(cm * 10);
+  const params: Record<string, string | number | undefined> = {
+    l: mm(design.dimensions.length),
+    w: mm(design.dimensions.width),
+    h: mm(design.dimensions.height),
+    ply: plyOf(design.ply)?.charAt(0),
+    style: styleOf(design.template),
+    qty: qtyOf(design.quantity),
+    src: 'designer',
+  };
+  const qs = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => v !== undefined && qs.set(k, String(v)));
+  return `/compare-quote?${qs.toString()}`;
 }
