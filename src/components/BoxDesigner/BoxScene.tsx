@@ -8,30 +8,41 @@
  *  - Artwork is rendered per surface into decal textures, debounced and cancellable.
  */
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { ThreeEvent, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { BoxRig } from '@/lib/boxDesigner/rig/boxRig';
-import type { RscLayout } from '@/lib/boxDesigner/rig/rscLayout';
+import { createCartonRig, type CartonRig } from '@/lib/boxDesigner/rig/createRig';
+import { getRigKey, type CartonLayout } from '@/lib/boxDesigner/styles/registry';
 import type { BoardSpec } from '@/lib/boxDesigner/boardSpecs';
 import { setSurfaceTextureAnisotropy } from '@/lib/boxDesigner/textures/surfaceTextures';
 import { printContentKey, renderPrintCanvas } from '@/lib/boxDesigner/textures/printLayer';
-import type { BoxFace, FaceImage, TextElement } from '@/types/boxDesigner';
+import type { BoxFace, FaceImage, PrintFinish, StickerPlacement, TextElement } from '@/types/boxDesigner';
 
 interface BoxSceneProps {
-  layout: RscLayout;
+  layout: CartonLayout;
   board: BoardSpec;
   colorHex: string;
+  finish?: PrintFinish;
+  /** Inside liner colour; null = a shade of the board colour */
+  insideColorHex?: string | null;
+  /** Hide the front wall to show the inside */
+  cutaway?: boolean;
   /** Target fold progress: 0 = flat blank, 1 = sealed */
   foldTarget: number;
   faceImages: FaceImage[];
   textElements: TextElement[];
+  /** Cutouts (stickers) on any surface */
+  stickers?: StickerPlacement[];
   showIcons: boolean;
   selectedFace: BoxFace | null;
   onFaceSelect: (face: BoxFace | null) => void;
   /** Receives a function that renders a clean, high-resolution PNG of the current view */
   onCaptureReady?: (capture: () => Promise<Blob | null>) => void;
+  /** The live carton rig (null on unmount), for scenes that need it (snapshots, bounds) */
+  onRigReady?: (rig: CartonRig | null) => void;
 }
+
+const NO_STICKERS: StickerPlacement[] = [];
 
 /** Wait for edits to settle before redrawing artwork (dimension drags, typing) */
 const PRINT_DEBOUNCE_MS = 120;
@@ -45,19 +56,27 @@ export default function BoxScene({
   layout,
   board,
   colorHex,
+  finish = 'matte',
+  insideColorHex = null,
+  cutaway = false,
   foldTarget,
   faceImages,
   textElements,
+  stickers = NO_STICKERS,
   showIcons,
   selectedFace,
   onFaceSelect,
   onCaptureReady,
+  onRigReady,
 }: BoxSceneProps) {
   const invalidate = useThree((state) => state.invalidate);
   const gl = useThree((state) => state.gl);
   const scene = useThree((state) => state.scene);
   const camera = useThree((state) => state.camera);
-  const [rig] = useState(() => new BoxRig());
+  // One rig per rig kind: resizing updates it in place; only a style switch to another kind builds a new one
+  const rigKey = getRigKey(layout);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- rebuilt only when the rig kind changes
+  const rig = useMemo(() => createCartonRig(layout), [rigKey]);
 
   const targetRef = useRef(foldTarget);
   const progressRef = useRef(foldTarget);
@@ -76,6 +95,22 @@ export default function BoxScene({
     rig.setColor(colorHex);
     invalidate();
   }, [rig, colorHex, invalidate]);
+
+  useEffect(() => {
+    rig.setInsideColor(insideColorHex);
+    rig.setFinish(finish);
+    invalidate();
+  }, [rig, insideColorHex, finish, invalidate]);
+
+  useEffect(() => {
+    rig.setCutaway(cutaway);
+    invalidate();
+  }, [rig, cutaway, invalidate]);
+
+  useEffect(() => {
+    onRigReady?.(rig);
+    return () => onRigReady?.(null);
+  }, [rig, onRigReady]);
 
   useEffect(() => {
     setSurfaceTextureAnisotropy(gl.capabilities.getMaxAnisotropy());
@@ -102,10 +137,11 @@ export default function BoxScene({
     invalidate();
   }, [rig, selectedFace, invalidate]);
 
-  // Free GPU resources and never leave the pointer cursor behind
+  // Free GPU resources (also when a style switch replaces the rig) and never leave the pointer cursor behind
   useEffect(
     () => () => {
       gl.domElement.style.cursor = '';
+      hoveredRef.current = null;
       rig.dispose();
     },
     [rig, gl]
@@ -142,7 +178,10 @@ export default function BoxScene({
       for (const surface of rig.getPrintSurfaces()) {
         const image = faceImages.find((img) => img.face === surface.face);
         const texts = textElements.filter((text) => text.face === surface.face);
-        const options = { shippingIcons: showIcons && surface.face === 'front' };
+        const options = {
+          shippingIcons: showIcons && surface.face === 'front',
+          stickers: stickers.filter((s) => s.face === surface.face),
+        };
         const key = printContentKey(surface, image, texts, options);
         if (rig.getPrintKey(surface.face) === key) continue;
 
@@ -162,7 +201,7 @@ export default function BoxScene({
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [rig, layout, faceImages, textElements, showIcons, gl, invalidate]);
+  }, [rig, layout, faceImages, textElements, stickers, showIcons, gl, invalidate]);
 
   // Clean export: no grid, no selection, 2x resolution, rendered and read back in the same task
   // (so the canvas needs no preserveDrawingBuffer)

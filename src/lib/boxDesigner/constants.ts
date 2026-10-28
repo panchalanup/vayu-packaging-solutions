@@ -3,36 +3,19 @@
  */
 
 import { BoxFace, BoxTemplateConfig, FluteType, PlyType } from '@/types/boxDesigner';
+import { FACE_NAMES } from './styles/faceNames';
+import { STYLES } from './styles/registry';
 
-export const BOX_TEMPLATES: BoxTemplateConfig[] = [
-  {
-    id: 'rsc',
-    name: 'Regular Slotted Container (RSC)',
-    shortName: 'RSC',
-    fefco: '0201',
-    description: 'The standard shipping carton: four flaps on top and bottom',
-    icon: 'Box',
-    available: true,
-  },
-  {
-    id: 'hsc',
-    name: 'Half Slotted Container (HSC)',
-    shortName: 'HSC',
-    fefco: '0200',
-    description: 'Open top, flaps only on the bottom: trays, display and lidded boxes',
-    icon: 'PackageOpen',
-    available: true,
-  },
-  {
-    id: 'mailer',
-    name: 'Mailer Box',
-    shortName: 'Mailer',
-    fefco: '0427',
-    description: 'Self-locking tuck-top for e-commerce (3D preview coming soon, quotes available)',
-    icon: 'Mail',
-    available: false,
-  },
-];
+/** Style list for pickers and summaries, derived from the style registry (src/lib/boxDesigner/styles) */
+export const BOX_TEMPLATES: BoxTemplateConfig[] = STYLES.map((style) => ({
+  id: style.id,
+  name: style.name,
+  shortName: style.shortName,
+  fefco: style.fefco,
+  description: style.description,
+  icon: style.id,
+  available: true,
+}));
 
 export interface FluteSpec {
   type: FluteType;
@@ -120,15 +103,4 @@ export const BOX_COLOR_OPTIONS: BoxColorConfig[] = [
 export const DEFAULT_BOX_COLOR = BOX_COLOR_OPTIONS[0].color;
 
 /** Human-readable surface names */
-export const FACE_LABELS: Record<BoxFace, string> = {
-  front: 'Front',
-  back: 'Back',
-  left: 'Left',
-  right: 'Right',
-  'top-front': 'Top · front flap',
-  'top-back': 'Top · back flap',
-  'top-left': 'Top · left flap',
-  'top-right': 'Top · right flap',
-  bottom: 'Bottom',
-};
-
+export const FACE_LABELS: Record<BoxFace, string> = FACE_NAMES;

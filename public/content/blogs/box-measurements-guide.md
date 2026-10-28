@@ -1,572 +1,133 @@
 ---
-title: "How to Measure Corrugated Boxes: The Complete L × B × H Guide"
+title: "How to Measure Corrugated Boxes: L × B × H and Inside Size"
 slug: "box-measurements-guide"
-description: "Learn how to correctly measure corrugated boxes using Length × Breadth × Height (L × B × H) dimensions. Understand interior vs exterior measurements and avoid costly sizing mistakes."
+description: "How to measure corrugated boxes: L × B × H order, inside vs outside size, mm and inches, volumetric weight. Get the size right, then design it in 3D."
 category: "Buying Guide"
 date: "2025-02-01"
-readingTime: "6 min read"
+updated: "2026-10-27"
+readingTime: "5 min read"
 author: "Vayu Packaging Team"
 thumbnail: "BLOG-06-thumbnail"
 socialImage: "BLOG-06-social"
 ---
 
-# How to Measure Corrugated Boxes: The Complete L × B × H Guide
+# How to Measure Corrugated Boxes: L × B × H and Inside Size
 
-An e-commerce business owner once ordered 5,000 custom boxes for their new product line. When the boxes arrived, they were shocked—the products didn't fit. After measuring again, they realized their mistake: they'd measured the OUTSIDE of their current boxes and ordered the same size, forgetting that corrugated boards have thickness.
+Most wrong boxes are not made wrongly. They are **described** wrongly: a size sent without saying whether it is inside or outside, or with length and breadth swapped. The factory builds exactly what the email says, and the product does not fit.
 
-This simple measurement error cost them ₹1,20,000 in wasted boxes and a 2-week delay in their product launch.
+This guide shows how to measure a box, how to write the size so nobody can misread it, and how size affects shipping cost.
 
-Box measurements seem straightforward—length, breadth, height—how hard can it be? But small mistakes lead to big problems: products that don't fit, wasted space, higher shipping costs, and expensive reorders.
+**Next step:** enter your size in the [3D Box Designer](/box-designer), which always treats your numbers as inside dimensions, or [send us your spec for a quote](/quote).
 
-Today, we'll show you exactly how to measure boxes correctly, understand standard formats, and avoid costly mistakes.
+## The standard order: L × B × H
 
-## The Standard Format: L × B × H
+Box sizes are written **length × breadth (width) × height**:
 
-### Understanding the Convention
+- **Length (L):** the longer side of the opening.
+- **Breadth or width (B or W):** the shorter side of the opening.
+- **Height (H):** from the opening down to the base.
 
-Corrugated box dimensions are always written in this order:
+A box of 300 × 200 × 150 mm and one of 300 × 150 × 200 mm hold the same volume but are different boxes: one is wide and shallow, the other narrow and deep. Decide which way up your product sits in the box before you measure. Our other guides write "L × W × H", the same thing.
 
-**L × B × H**
+## Inside or outside? Quote the inside
 
-- **L = Length** (longest dimension of the opening)
-- **B = Breadth** (shorter dimension of the opening)
-- **H = Height** (vertical dimension when standing)
+Corrugated board has thickness, so every box has two sizes:
 
-<!-- IMAGE_PLACEHOLDER: BLOG-06-IMG-01
-Description: Clear diagram showing L, B, H dimensions on a box
-Size: 800x600px
-Shows: Open corrugated box with arrows pointing to each dimension, clearly labeled
--->
+- **Inside dimensions:** the space your product gets. This is what you should specify for any box you will pack.
+- **Outside dimensions:** the space the box takes on a shelf, in a courier bag and on a pallet.
 
-### Example
+For a regular slotted carton the outside is bigger than the inside by about **two board thicknesses** in length and width, and a bit more in height. The designer models 3-ply (B flute) at about 2.8 mm and 5-ply (B + C) at about 6.6 mm. That is why a box copied from an old box's outside measurements comes out smaller inside. <!-- VERIFY-LATER[BLOG-209]: board thickness figures are indicative (from the designer's board model); confirm against the board combinations Vayu runs. -->
 
-A box written as **12" × 10" × 8"** means:
-- Length: 12 inches (30.5 cm)
-- Breadth: 10 inches (25.4 cm)
-- Height: 8 inches (20.3 cm)
+**The rule:** write "ID" (inside dimensions) next to the size, and let the box maker add the board allowance. If a supplier quotes outside dimensions, ask for the inside size too and compare.
 
-### Why This Order Matters
+## Step by step: measure a product or a sample box
 
-**Wrong Order = Wrong Box**
+1. **Pack the product the way it will travel**, including any bag, tissue, insert or divider. Measure that, not the bare product.
+2. **Measure the longest side, then the next, then the height** with a steel rule or tape. For a group of items, arrange them as they will sit and measure the whole arrangement.
+3. **Add clearance.** You need a few millimetres of ease so the product slides in, plus padding for protection on every side. The [fit checker guide](/blogs/find-right-box-size) shows how much and does the arithmetic.
+4. **Round up**, never down. A box 2 mm too big works. A box 2 mm too small does not.
+5. **Write it down in one unit**, with the word "inside".
 
-Ordering a 10" × 12" × 8" box instead of 12" × 10" × 8" gives you a completely different box shape!
+To measure an **existing box** you want to reorder, open it fully and measure from inside wall to inside wall at the middle of each side (boxes can bow). Measure the flat walls, not the flaps or the glue joint. If you can only measure outside, subtract two board thicknesses from length and width, and check with a sample.
 
----
+## mm, cm or inches?
 
-## Interior vs Exterior Dimensions
+Use whatever you measured in, but never mix units in one spec. A size in inches read as centimetres is a common error. In the designer you can switch between **mm, cm and inches** at any time; the box does not change, only the numbers.
 
-### The Critical Difference
+| Inches | mm | | Inches | mm |
+|---|---|---|---|---|
+| 4" | 102 | | 14" | 356 |
+| 6" | 152 | | 16" | 406 |
+| 8" | 203 | | 18" | 457 |
+| 10" | 254 | | 20" | 508 |
+| 12" | 305 | | 24" | 610 |
 
-This is where most mistakes happen. Boxes have THICKNESS, which means:
+1 inch = 25.4 mm. 10 mm = 1 cm.
 
-**Interior Dimensions** = Inside measurements (where your product sits)
-**Exterior Dimensions** = Outside measurements (including board thickness)
+## Styles that need extra care
 
-<!-- IMAGE_PLACEHOLDER: BLOG-06-IMG-02
-Description: Side-by-side comparison showing interior vs exterior dimensions
-Size: 1200x800px
-Shows: Cross-section view highlighting the difference, measurements labeled
--->
+- **Telescope (lid and base) boxes:** the lid is slightly larger than the base so it slides over. Specify the base inside size, and let the lid size follow. In the designer you can set the lid depth.
+- **Mailers and other die-cut boxes:** the size usually refers to the inside of the assembled box. Wall thickness and the tuck affect fit, so check a sample.
+- **Non-rectangular products:** measure the longest point in each direction, and send a photo or drawing.
 
-### How Much Difference?
+## Writing a spec a supplier can use
 
-**Single Wall (3-ply):**
-- Board thickness: 3-5mm
-- Per dimension loss: 6-10mm (both sides)
+A clear enquiry lists:
 
-**Double Wall (5-ply):**
-- Board thickness: 6-8mm
-- Per dimension loss: 12-16mm (both sides)
+| Item | Example |
+|---|---|
+| Product and weight | Ceramic plate set, 3.5 kg |
+| Inside size (L × B × H) and unit | 300 × 300 × 150 mm, inside |
+| Style | RSC |
+| Ply and flute | 5-ply, B + C |
+| Print | 1 colour, logo on two sides |
+| Quantity | 1,000 |
+| Delivery city | Ahmedabad |
 
-### Real-World Example
+The designer's **spec sheet PDF** captures all of this on one page for you.
 
-**Order:** 12" × 10" × 8" box
-**Assumption:** Interior dimensions
-**Reality:** These are EXTERIOR dimensions (industry standard)
+## Size, shipping and pallets
 
-**Actual Interior Space:**
-- Length: 12" - 0.4" = **11.6"**
-- Breadth: 10" - 0.4" = **9.6"**
-- Height: 8" - 0.4" = **7.6"**
+**Volumetric weight.** Couriers charge on the larger of actual weight and volumetric weight. A common formula is:
 
-Your 11.5" × 9.5" × 7.5" product WON'T FIT!
+> volumetric weight (kg) = length × width × height (all in cm) ÷ 5,000
 
----
+Many Indian couriers use 5,000 for domestic parcels, but the divisor varies, so check your courier's rate card. For example, a 40 × 30 × 25 cm box is 30,000 cm³, so its volumetric weight is 6 kg. If the parcel weighs 2 kg you pay for 6. Use the **outside** size here, and convert inches to centimetres first. <!-- VERIFY-LATER[BLOG-210]: 5,000 is a commonly used domestic courier divisor, but each courier sets its own; confirm with the couriers your customers use before presenting it as standard. -->
 
-## How to Measure Correctly
+**Pallets.** A box footprint that divides neatly into the pallet wastes less space and avoids overhang, which weakens the stack. Pallet sizes vary by market and buyer (for example, 1,200 × 1,000 mm is common), so confirm yours before you fix the carton size. Check the stack in the designer's pallet view. See [export cartons](/blogs/export-cartons-5-ply-7-ply).
 
-### Step 1: Determine What You're Measuring
+## Common mistakes
 
-**Scenario A: Measuring Your Product**
-→ Add clearance to get INTERIOR dimensions needed
+1. **No "inside" on the spec.** The most common cause of wrong boxes.
+2. **Measuring the bare product** without its packing.
+3. **Swapping length and breadth.**
+4. **Measuring flaps or the glue joint.**
+5. **Copying an old box's outside size** onto a new order with different board.
+6. **Mixing units.**
+7. **Skipping a sample** on the first order.
 
-**Scenario B: Measuring an Existing Box**
-→ Decide if measuring interior OR exterior
+## Frequently asked questions
 
-**Scenario C: Ordering New Boxes**
-→ Specify whether dimensions are interior or exterior
+### Do box makers use inside or outside dimensions?
+Most corrugated box orders are specified by inside dimensions. Always say which you mean.
 
-### Step 2: Gather Your Tools
+### What does L × B × H mean?
+Length × breadth × height. Breadth is the same as width.
 
-✓ Measuring tape or ruler (metric and imperial)
-✓ Your product or sample box
-✓ Notepad for recording
-✓ Calculator (for adding clearances)
+### How much bigger is the outside than the inside?
+For a slotted carton, about two board thicknesses in length and width, so roughly 6 mm more for 3-ply and 13 mm more for 5-ply, and more in height. The designer shows both sizes.
 
-<!-- IMAGE_PLACEHOLDER: BLOG-06-IMG-03
-Description: Measuring tools and box measurement setup
-Size: 800x600px
-Shows: Measuring tape, ruler, box being measured, notepad with dimensions
--->
+### How do I convert inches to cm?
+Multiply inches by 2.54, or by 25.4 for mm.
 
-### Step 3: Measure Your Product
+## Put the size in 3D
 
-**For Single Products:**
+Enter your inside size, check the outside size the designer shows, and see the box fold before you order.
 
-1. Place product on flat surface
-2. Measure **longest dimension** = Length
-3. Measure **next longest** = Breadth  
-4. Measure **height** (vertical when standing) = Height
+[Open the 3D Box Designer](/box-designer) or [get a quote](/quote).
 
-**For Multiple Items/Sets:**
-
-1. Arrange items as they'll sit in box
-2. Measure the entire arrangement
-3. Add clearance for cushioning materials
-
-**Product Measurement Example:**
-
-Product: Laptop (14" screen)
-- Measured dimensions: 13.5" × 9.2" × 0.8"
-
-### Step 4: Add Clearance
-
-**Minimum Clearances (per side):**
-
-| Product Type | Clearance Needed |
-|--------------|------------------|
-| **Non-fragile** (books, clothing) | 0.5" - 1" |
-| **Moderately fragile** (electronics) | 1" - 1.5" |
-| **Very fragile** (glass, ceramics) | 1.5" - 2" |
-| **With bubble wrap** | 2" - 3" |
-
-**Laptop Box Example (continued):**
-
-Product: 13.5" × 9.2" × 0.8"
-Clearance: 1.5" per side (electronics)
-
-**Required INTERIOR dimensions:**
-- Length: 13.5" + 1.5" + 1.5" = **16.5"**
-- Breadth: 9.2" + 1.5" + 1.5" = **12.2"**
-- Height: 0.8" + 2" + 2" = **4.8"**
-
-Round up to standard: **17" × 13" × 5"**
-
-### Step 5: Convert to Exterior (for Ordering)
-
-Since industry standard is EXTERIOR dimensions:
-
-**Formula:**
-```
-Exterior = Interior + (Board Thickness × 2)
-```
-
-**Laptop Box Example (continued):**
-
-Interior needed: 17" × 13" × 5"
-Board thickness: 0.2" (single wall)
-
-**Exterior to order:**
-- Length: 17" + 0.4" = **17.4"** → Round to **18"**
-- Breadth: 13" + 0.4" = **13.4"** → Round to **14"**
-- Height: 5" + 0.4" = **5.4"** → Round to **6"**
-
-**Order specification: 18" × 14" × 6" exterior dimensions**
-
----
-
-## Measuring Existing Boxes
-
-### Interior Measurement Method
-
-**Best for:** Determining usable space
-
-**Steps:**
-1. Open box fully
-2. Measure from inside wall to inside wall
-3. Measure at the middle (boxes can bow slightly)
-4. Record as "Interior: L × B × H"
-
-**Tools:** Use a stiff ruler or folding ruler for accuracy
-
-### Exterior Measurement Method
-
-**Best for:** Reordering same boxes
-
-**Steps:**
-1. Close and seal box
-2. Measure from outside edge to outside edge
-3. Measure flat surfaces (not flaps or joints)
-4. Record as "Exterior: L × B × H"
-
-**Common Mistake:** Measuring diagonal or including flap overlap!
-
-<!-- IMAGE_PLACEHOLDER: BLOG-06-IMG-04
-Description: Correct vs incorrect measuring techniques
-Size: 800x600px
-Shows: Side-by-side showing right and wrong ways to measure
--->
-
----
-
-## Standard Box Sizes
-
-### Common E-Commerce Sizes (Exterior)
-
-| Size Code | Dimensions | Best For |
-|-----------|------------|----------|
-| **Small** | 6" × 4" × 4" | Jewelry, accessories |
-| **Medium** | 12" × 9" × 6" | Books, clothing, shoes |
-| **Large** | 18" × 14" × 10" | Electronics, appliances |
-| **X-Large** | 24" × 18" × 14" | Multiple items, bulk |
-
-### FMCG Standard Sizes
-
-| Product Type | Common Size (mm) | Common Size (inches) |
-|--------------|------------------|---------------------|
-| **Bottled Goods** | 300 × 200 × 250 | 12" × 8" × 10" |
-| **Canned Foods** | 400 × 300 × 250 | 16" × 12" × 10" |
-| **Dry Goods** | 450 × 350 × 300 | 18" × 14" × 12" |
-
-### Export Pallet Sizes
-
-**Standard Pallet:** 48" × 40" (1200mm × 1000mm)
-**Euro Pallet:** 47.2" × 39.4" (1200mm × 800mm)
-
-**Important:** Box base should be designed to maximize pallet utilization
-
-**Example:**
-- Pallet: 48" × 40"
-- Box: 16" × 13.3" × Any height
-- Fit: 3 boxes × 3 boxes = 9 boxes per layer (perfect!)
-
----
-
-## Common Measurement Mistakes
-
-### Mistake #1: Confusion Between Interior and Exterior
-
-**Problem:** Ordering exterior dimensions when you need interior space
-
-**Example:**
-- Product: 11" × 9" × 7"
-- Ordered: 11" × 9" × 7" box (exterior)
-- Reality: Interior = 10.6" × 8.6" × 6.6"
-- **Result:** Product doesn't fit!
-
-**Solution:** Always specify "Interior" or "Exterior" when ordering
-
-### Mistake #2: Insufficient Clearance
-
-**Problem:** Measuring product exactly, not adding cushioning space
-
-**Example:**
-- Product: 10" × 8" × 6"
-- Ordered: 10" × 8" × 6" interior
-- Reality: No room for bubble wrap, difficult to pack
-- **Result:** Products get damaged in transit
-
-**Solution:** Add minimum 1-1.5" clearance per side
-
-### Mistake #3: Wrong L × B × H Order
-
-**Problem:** Mixing up which dimension is which
-
-**Example:**
-- Needed: 15" × 10" × 8" (wide, shallow box)
-- Ordered: 10" × 15" × 8" (narrow, long box)
-- **Result:** Completely wrong box shape
-
-**Solution:** Always double-check measurements with supplier
-
-### Mistake #4: Measuring Flaps or Irregular Parts
-
-**Problem:** Including flaps, joints, or bulges in measurements
-
-**Example:**
-- Measured flap overlap as part of height
-- Box appears to be 10" tall but only 8" usable
-- **Result:** Space calculations are wrong
-
-**Solution:** Measure only the flat, rectangular portions
-
-### Mistake #5: Not Accounting for Board Thickness
-
-**Problem:** Assuming standard boxes have no thickness loss
-
-**Example:**
-- Customer measures 12" × 10" × 8" exterior of old box
-- Orders 12" × 10" × 8" (same spec)
-- New supplier uses thicker board
-- **Result:** Interior space is smaller
-
-**Solution:** Always specify interior requirements AND board type
-
----
-
-## Metric vs Imperial Measurements
-
-### Understanding Both Systems
-
-**Imperial (inches):**
-- Common in India for packaging
-- Used by most manufacturers
-- Example: 12" × 10" × 8"
-
-**Metric (millimeters):**
-- International standard
-- Export documentation
-- Example: 305 × 254 × 203 mm
-
-### Conversion
-
-**Inches to MM:** Multiply by 25.4
-**MM to Inches:** Divide by 25.4
-
-**Quick Reference:**
-
-| Inches | Millimeters | | Inches | Millimeters |
-|--------|-------------|---|--------|-------------|
-| 4" | 102 mm | | 14" | 356 mm |
-| 6" | 152 mm | | 16" | 406 mm |
-| 8" | 203 mm | | 18" | 457 mm |
-| 10" | 254 mm | | 20" | 508 mm |
-| 12" | 305 mm | | 24" | 610 mm |
-
-<!-- IMAGE_PLACEHOLDER: BLOG-06-IMG-05
-Description: Conversion chart or dual-scale ruler
-Size: 800x600px
-Shows: Visual guide for quick inch-to-mm conversions
--->
-
----
-
-## Special Considerations
-
-### Die-Cut and Custom Shapes
-
-**For non-rectangular boxes:**
-1. Measure the longest points in each direction
-2. Create a 3D sketch with dimensions
-3. Provide detailed drawings to supplier
-4. Order samples before bulk production
-
-### Telescoping Boxes (2-piece)
-
-**Two parts:**
-- **Base:** Slightly smaller
-- **Lid:** Slightly larger (overlaps base)
-
-**Measurement:**
-- Specify BOTH pieces separately
-- Base interior = product + clearance
-- Lid exterior = base exterior + overlap (usually 1-2")
-
-### Mailer Boxes
-
-**Self-locking boxes:**
-- Measure interior space when assembled
-- Account for lock flap thickness
-- Test assembly before bulk ordering
-
----
-
-## Creating a Measurement Specification Sheet
-
-### Information to Include
-
-When ordering custom boxes, provide:
-
-**1. Product Details**
-- Product name
-- Actual product dimensions
-- Weight per unit
-
-**2. Box Requirements**
-- Required INTERIOR dimensions
-- Preferred exterior dimensions (if any)
-- Board type (3-ply, 5-ply, 7-ply)
-- Flute type (if specified)
-
-**3. Clearance Notes**
-- Cushioning requirements
-- Packing materials used
-- Fragility concerns
-
-**4. Quantity**
-- Order quantity
-- Future volume estimates
-
-**5. Special Requirements**
-- Printing needs
-- Handle cutouts
-- Ventilation holes
-- Custom features
-
-### Example Specification Sheet
-
-```
-PRODUCT: Ceramic Dinner Plates (set of 6)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-PRODUCT DIMENSIONS:
-- Plate diameter: 10.5"
-- Stack height with packaging: 4"
-- Weight: 3.5 kg per set
-
-REQUIRED INTERIOR SPACE:
-- Length: 12" (10.5" + 1.5" clearance)
-- Breadth: 12" (10.5" + 1.5" clearance)
-- Height: 6" (4" + 2" cushioning)
-
-SPECIFY: Interior dimensions above
-
-BOX CONSTRUCTION:
-- 3-ply corrugated
-- C-flute preferred
-- 390 GSM minimum
-- 14 kg/cm² burst strength
-
-QUANTITY: 1,000 boxes
-PRINTING: 2-color logo on top
-
-SPECIAL: Handle cutouts on sides
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
----
-
-## Testing Your Measurements
-
-### Before Bulk Ordering
-
-**Step 1: Order Samples**
-- Get 10-50 sample boxes
-- Cost: Usually ₹30-100 per box for samples
-
-**Step 2: Test Packing**
-- Pack actual products
-- Include all cushioning materials
-- Seal and test handling
-
-**Step 3: Measure Usability**
-- Is packing easy?
-- Is product secure?
-- Any wasted space?
-- Can it be optimized?
-
-**Step 4: Test Stacking**
-- Stack boxes as they'll be stored/shipped
-- Check for crushing, bulging
-- Verify box strength
-
-**Step 5: Adjust If Needed**
-- Too tight? Add 0.5-1" per dimension
-- Too loose? Reduce dimensions
-- Wrong shape? Recalculate L × B × H
-
----
-
-## Cost Implications of Size
-
-### How Size Affects Price
-
-**Box Cost Factors:**
-1. Material used (area of cardboard)
-2. Manufacturing complexity
-3. Standard vs custom dimensions
-
-**Shipping Cost Factors:**
-1. Dimensional weight calculation
-2. Courier pricing tiers
-3. Pallet utilization
-
-### Dimensional Weight (DIM Weight)
-
-**Formula:**
-```
-DIM Weight = (L × B × H) ÷ Volumetric Factor
-```
-
-**Courier Factors:**
-- Domestic: Usually 5000
-- International: Usually 5000-6000
-
-**Example:**
-
-Box: 20" × 16" × 12"
-DIM Weight = (20 × 16 × 12) ÷ 5000 = 7.68 kg
-
-If actual weight is 4 kg, you'll be charged for 7.68 kg!
-
-### Optimization Tips
-
-✓ **Minimize empty space** without compromising protection
-✓ **Consider multiple box sizes** for different product lines
-✓ **Test different orientations** (sometimes rotating saves space)
-✓ **Round to standard sizes** when possible (lower costs)
-✓ **Design for pallet efficiency** (export/bulk shipping)
-
----
-
-## Key Takeaways
-
-✅ **L × B × H format** is the industry standard: Length × Breadth × Height
-
-✅ **Interior vs exterior** measurements are DIFFERENT - always specify which
-
-✅ **Add clearance** for cushioning - minimum 1-1.5" per side for most products
-
-✅ **Measure products first**, then calculate box requirements
-
-✅ **Board thickness matters** - typically adds 0.4-0.8" to exterior dimensions
-
-✅ **Test with samples** before bulk ordering to avoid costly mistakes
-
-✅ **Standard sizes** are usually cheaper than fully custom dimensions
-
-✅ **Dimensional weight** can increase shipping costs - optimize box size
-
-✅ **Create specification sheets** with clear details for suppliers
-
-✅ **Double-check order** - confirm interior/exterior and L × B × H order
-
----
-
-## Get Expert Sizing Assistance
-
-Measuring boxes correctly is crucial for protecting your products and controlling costs. At Vayu Packaging Solutions, we help businesses get their box dimensions exactly right the first time.
-
-**What We Offer:**
-
-**Free Sizing Consultation:** Send us your product dimensions, and we'll calculate optimal box size
-
-**Sample Program:** Test multiple sizes before committing to bulk orders
-
-**Product Testing:** We pack your actual products to verify fit and protection
-
-**Cost Optimization:** We find the sweet spot between protection and cost efficiency
-
-**Standard & Custom Sizes:** Both available with same quality standards
-
-**Detailed Specifications:** Clear documentation showing interior vs exterior dimensions
-
-**No Minimums for Samples:** Test first, order later with confidence
-
-**Minimum bulk order from 500 boxes | Pan-India delivery | Expert sizing support**
-
-[Get Free Sizing Consultation →](/contact)
-
----
-
-*Questions about box measurements? Need help calculating dimensions? Contact our team at vayu.packagingsolutions@gmail.com or call +91 85116 58600.*
+**Keep reading:**
+- [Right box size for your product: padding and the fit checker](/blogs/find-right-box-size)
+- [Types of corrugated boxes](/blogs/types-of-corrugated-boxes)
+- [Dielines explained](/blogs/dielines-explained)
+- [Packaging mistakes small businesses make](/blogs/packaging-mistakes-small-business)

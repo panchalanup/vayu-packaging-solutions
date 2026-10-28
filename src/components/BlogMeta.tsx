@@ -3,7 +3,7 @@
  * chips) and en-IN date formatting. Colour is never the only signal: every chip carries an icon and its name.
  */
 
-import { BadgeCheck, Compass, LayoutGrid, Lightbulb, Ruler, type LucideIcon } from 'lucide-react';
+import { BadgeCheck, Box, Briefcase, Compass, LayoutGrid, Lightbulb, Ruler, type LucideIcon } from 'lucide-react';
 import type { BlogCategory } from '@/constants/blogs';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +19,8 @@ export const CATEGORY_META: Record<BlogCategory, CategoryMeta> = {
   'Technical Guide': { icon: Ruler, chip: 'border-ink-900/25 bg-ink-900/[0.06] text-ink-900' },
   'Quality Standards': { icon: BadgeCheck, chip: 'border-green-600/35 bg-green-600/10 text-green-700' },
   'Industry Insights': { icon: Lightbulb, chip: 'border-cyan-700/35 bg-cyan-700/10 text-cyan-700' },
+  'Designer Guides': { icon: Box, chip: 'border-green-700 bg-green-700 text-paper-50' },
+  'Use Cases': { icon: Briefcase, chip: 'border-kraft-700/40 bg-kraft-700/10 text-kraft-700' },
 };
 
 export function CategoryChip({ category, className }: { category: BlogCategory; className?: string }) {

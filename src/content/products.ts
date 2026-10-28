@@ -11,7 +11,8 @@
 import { PRODUCT_IMAGES, SUPPLY_IMAGES } from '@/constants/images';
 import type { ImageSlotData } from '@/components/site/ImageSlot';
 import type { MadeOrSourced } from '@/components/site/Blocks';
-import { INDUSTRY_SLUGS, type QuoteInput } from '@/lib/quoteSchema';
+import { INDUSTRY_SLUGS } from '@/lib/quoteOptions';
+import type { QuoteInput } from '@/lib/quoteSchema';
 import { getBoardSpec } from '@/lib/boxDesigner/boardSpecs';
 import type { PlyType } from '@/types/boxDesigner';
 import { INDUSTRY_PANELS } from './home';

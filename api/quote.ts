@@ -2,9 +2,13 @@
  * POST /api/quote  (Vercel serverless function)
  * Re-validates every field, rejects bots, rate-limits by IP, then forwards the lead to the sheet.
  * The sheet URL lives in a server-side env var so it never ships to the browser.
+ * Two payloads share this path: the /quote form, and the 3D designer's "Send my design to Vayu" (kind: 'designer'),
+ * which also goes to the admin CRM sheet ("DesignerEnquiries") where Apps Script sends the follow-up email.
  */
 
 import { MIN_FILL_MS, formatQuoteForSheet, quoteSubmissionSchema } from '../src/lib/quoteSchema';
+import { designerLeadSubmissionSchema, formatDesignerLeadForSheet, type DesignerEnquiry } from '../src/lib/designerLeadSchema';
+import { ADMIN_SHEETS_CONFIG } from '../src/config/adminSheets';
 
 interface Req {
   method?: string;
@@ -63,6 +67,10 @@ export default async function handler(req: Req, res: Res) {
     }
   }
 
+  if (body && typeof body === 'object' && (body as { kind?: unknown }).kind === 'designer') {
+    return handleDesignerLead(body, res);
+  }
+
   const parsed = quoteSubmissionSchema.safeParse(body);
   if (!parsed.success) {
     return res.status(400).json({ ok: false, error: 'invalid_fields', fields: Object.keys(parsed.error.flatten().fieldErrors) });
@@ -90,4 +98,66 @@ export default async function handler(req: Req, res: Res) {
   }
 
   return res.status(200).json({ ok: true });
+}
+
+// VERIFY-LATER[DSG-19]: set CRM_WEBHOOK_URL and CRM_TOKEN in Vercel (same values as the admin CRM Apps Script);
+// until then the public admin endpoint/token from src/config/adminSheets.ts are used.
+const crmUrl = () => process.env.CRM_WEBHOOK_URL || ADMIN_SHEETS_CONFIG.CRM_ENDPOINT;
+const crmToken = () => process.env.CRM_TOKEN || ADMIN_SHEETS_CONFIG.CRM_TOKEN;
+
+function enquiryId(): string {
+  const day = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const rand = globalThis.crypto?.randomUUID?.().slice(0, 6) ?? Math.random().toString(36).slice(2, 8);
+  return `DE-${day}-${rand}`.toUpperCase();
+}
+
+async function handleDesignerLead(body: unknown, res: Res) {
+  const parsed = designerLeadSubmissionSchema.safeParse(body);
+  if (!parsed.success) {
+    return res.status(400).json({ ok: false, error: 'invalid_fields', fields: Object.keys(parsed.error.flatten().fieldErrors) });
+  }
+  const { website, elapsedMs, kind: _kind, ...lead } = parsed.data;
+  if (website || elapsedMs < MIN_FILL_MS) {
+    return res.status(200).json({ ok: true });
+  }
+
+  // 1) The existing lead sheet (same columns as the /quote form), so nothing changes for the owner's inbox
+  const leadUrl = process.env.LEAD_WEBHOOK_URL || FALLBACK_WEBHOOK;
+  let leadOk = false;
+  try {
+    const upstream = await fetch(leadUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...formatDesignerLeadForSheet({ kind: 'designer', ...lead }), source: 'website-designer' }),
+      redirect: 'follow',
+    });
+    leadOk = upstream.ok;
+  } catch {
+    leadOk = false;
+  }
+
+  // 2) The admin CRM sheet: full record + preview for the "Designer enquiries" view and the follow-up email
+  const record: DesignerEnquiry = { ...lead, id: enquiryId(), createdAt: new Date().toISOString(), status: 'new' };
+  let crmOk = false;
+  try {
+    const upstream = await fetch(crmUrl(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'designerLead',
+        entity: 'DesignerEnquiries',
+        token: crmToken(),
+        indexNo: record.id,
+        data: JSON.stringify(record),
+      }),
+      redirect: 'follow',
+    });
+    crmOk = upstream.ok;
+  } catch {
+    crmOk = false;
+  }
+
+  // Either copy is enough for us to call the person back
+  if (!leadOk && !crmOk) return res.status(502).json({ ok: false, error: 'upstream_failed' });
+  return res.status(200).json({ ok: true, id: record.id });
 }

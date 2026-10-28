@@ -1,9 +1,10 @@
 /** S8 Proof + S9 "Talk to us" (quote form, contact rows, visible FAQ with FAQPage schema) */
 
+import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Section } from '@/components/site/Section';
 import { Cta } from '@/components/site/Cta';
-import QuoteForm from '@/components/quote/QuoteForm';
+import { LazyOnView } from '@/components/site/LazyOnView';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { StructuredData } from '@/seo';
 import { getFAQSchema } from '@/seo/schema';
@@ -11,6 +12,8 @@ import { HOME_FAQ, TESTIMONIALS } from '@/content/home';
 import { FACTS } from '@/content/facts';
 import { CONTACT_INFO } from '@/constants';
 import { mailHref, telHref, whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';
+
+const QuoteForm = lazy(() => import('@/components/quote/QuoteForm'));
 
 const initials = (name: string) =>
   name
@@ -82,7 +85,12 @@ export function TalkToUs() {
 
         <div className="mt-12 grid gap-10 lg:grid-cols-12">
           <div className="order-2 lg:order-1 lg:col-span-7" data-hide-fab>
-            <QuoteForm idPrefix="home-quote" prefill={{ src: 'home.contact.form' }} className="bg-ink-900" />
+            {/* The form (react-hook-form + zod) is loaded when the section is near the viewport, not in the first-load bundle */}
+            <LazyOnView className="min-h-[36rem]">
+              <Suspense fallback={null}>
+                <QuoteForm idPrefix="home-quote" prefill={{ src: 'home.contact.form' }} className="bg-ink-900" />
+              </Suspense>
+            </LazyOnView>
           </div>
           <div className="order-1 lg:order-2 lg:col-span-5">
             <ul className="border-t border-border">

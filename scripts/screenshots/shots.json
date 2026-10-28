@@ -1,0 +1,434 @@
+[
+  {
+    "file": "designer-style-picker.png",
+    "path": "/box-designer",
+    "state": "Spec panel open with the style picker card grid visible (all styles with best-for text)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-fit-checker.png",
+    "path": "/box-designer",
+    "state": "Fit checker open with a product size, padding and fragile ticked, showing the recommended inside size",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-estimate-tiers.png",
+    "path": "/box-designer",
+    "state": "Estimate panel showing per-box and total indicative prices at 100/500/1000/5000 with the indicative label",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-print-checks.png",
+    "path": "/box-designer",
+    "state": "Print-ready checks listing warnings (low-res logo, artwork near fold, small text)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-presentation-mode.png",
+    "path": "/box-designer",
+    "state": "Presentation mode: chrome-free full screen, branded RSC on the turntable, large spec overlay",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-spec-sheet-pdf.png",
+    "path": "/box-designer",
+    "state": "Spec sheet / proof PDF preview: three views, dimensions, board, finish, quantity, dieline thumbnail, approval block",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-shot-studio.png",
+    "path": "/box-designer",
+    "state": "Product shots panel with background presets (studio, wood, concrete, brand colour) and angle presets",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-embed-snippet.png",
+    "path": "/box-designer",
+    "state": "Embed snippet dialog with the copy-paste code and copy button",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-share-link.png",
+    "path": "/box-designer",
+    "state": "Export panel Save & share section with copy-link and spec sheet download",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-compare-quote-prefill.png",
+    "path": "/compare-quote",
+    "state": "Compare-quote form prefilled from a design (size, ply, quantity)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mailer-printed-inside.png",
+    "path": "/box-designer/mailer-box",
+    "state": "Kraft mailer, logo on lid, brand-colour inside with inside-lid message, lid half open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-pizza-box.png",
+    "path": "/box-designer/pizza-box",
+    "state": "Pizza preset with logo on the lid, lid open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-bakery-tray.png",
+    "path": "/box-designer",
+    "state": "Tray style (Bakery tray template) in white board, viewed from above at an angle",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-apparel-mailer.png",
+    "path": "/box-designer",
+    "state": "Apparel mailer template applied, wide shallow mailer with lid open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-shoe-box.png",
+    "path": "/box-designer/shoe-box",
+    "state": "Shoe box (telescope) preset with dark lid, fold slider mid-way so the lid is lifted",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-gift-box-lid.png",
+    "path": "/box-designer/gift-box",
+    "state": "Gift box (telescope) in a red board colour with logo on lid, lid lifting off the base",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-brand-colours.png",
+    "path": "/box-designer",
+    "state": "Brand colour picker open with a hex value entered and recent colours, print-confirmed-on-proof note visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-pallet-view.png",
+    "path": "/box-designer/shipping-carton",
+    "state": "Stacked / pallet scene of identical 5-ply cartons",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-strength-guidance.png",
+    "path": "/box-designer/shipping-carton",
+    "state": "Strength guidance for a 7-ply carton showing 'Good for up to ~X kg per box, stack N high'",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-guided-wizard.png",
+    "path": "/box-designer",
+    "state": "Find my box wizard on the result step with suggested style, size and ply explained",
+    "viewport": "mobile"
+  },
+  {
+    "file": "designer-size-units.png",
+    "path": "/box-designer",
+    "state": "Edit Box panel open: size inputs with the unit switch set to mm, fit checker section visible below; plain kraft RSC 300 x 200 x 150 mm",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-fold-slider.png",
+    "path": "/box-designer/mailer-box",
+    "state": "Kraft mailer with a logo on the lid, assembly slider about halfway between Flat and Sealed so the lid and side walls are mid-fold",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-artwork-panel.png",
+    "path": "/box-designer",
+    "state": "Customize panel open on the front face of a kraft RSC: logo image placed, one text line, print-check list showing one small-text warning",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-telescope-lid.png",
+    "path": "/box-designer",
+    "state": "Telescope lid and base style, lid depth set, fold slider mid-way so the lid is lifted above the base; plain kraft, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mailer-fold.png",
+    "path": "/box-designer/mailer-box",
+    "state": "Kraft mailer (FEFCO 0427) part-folded from flat, lid tuck clearly visible, no artwork",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-units-inch.png",
+    "path": "/box-designer",
+    "state": "Size panel with the unit switch set to inches showing the same RSC as designer-size-units.png (about 11.81 x 7.87 x 5.91 in)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-artwork-logo.png",
+    "path": "/box-designer",
+    "state": "Kraft RSC, front face selected, logo placed upper left with a tagline text below it, box rotated to three-quarter view, no warnings",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-finish-gloss.png",
+    "path": "/box-designer",
+    "state": "White-board RSC with a full-colour logo, finish set to gloss (capture a second copy in matte and place side by side)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-dieline-export.png",
+    "path": "/box-designer",
+    "state": "Export the dieline SVG of a 3-ply RSC 300 x 200 x 150 mm, open the downloaded file in a browser tab and capture it (cut solid, crease dashed, panel labels and footer visible)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-fold-flat.png",
+    "path": "/box-designer",
+    "state": "Actions panel open with the Dieline (SVG) and Dieline (PDF) buttons visible; assembly slider at Flat so the 3D box shows as the blank",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-turntable-video.png",
+    "path": "/box-designer",
+    "state": "Turntable / fold video recorder open, 360 spin selected, recording in progress, branded RSC on the studio background",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-strength-panel.png",
+    "path": "/box-designer/shipping-carton",
+    "state": "Strength guidance for a 5-ply (B+C) RSC 400 x 300 x 300 mm with 15 kg entered: verdict about 15 kg per box, stack 6 high, limited by height",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mobile-overview.png",
+    "path": "/box-designer",
+    "state": "Phone view of the designer with a branded kraft mailer and the bottom controls visible (used in 3d-box-designer-tool-free)",
+    "viewport": "mobile"
+  },
+  {
+    "file": "designer-cutouts-panel.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Artwork tab open on the Cutouts section: category chips, search box, a \"Recommended for this box\" row of fruit cutouts and the thumbnail grid; fruit carton visible in 3D",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cutout-controls.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Add a mango cutout to the front face and select it: sticker controls open showing Size, Opacity, Colour swatches, \"Repeat as a pattern\" switch, Flip, layer order, Duplicate, Delete",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cutouts-brand-colour.png",
+    "path": "/box-designer/cake-box",
+    "state": "Cake box with 3-4 cutouts placed; \"Match brand colour\" swatches open and one green chosen so every cutout on the box is that green",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cutouts-pattern.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Fruit carton: one large mango on the front, a small leaf cutout repeated as a pattern (Repeat as a pattern on, low opacity, offset rows on) on the side face; box rotated to show both faces",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cutouts-surprise-me.png",
+    "path": "/box-designer/cake-box",
+    "state": "Window cake box immediately after pressing \"Surprise me\": hero cutout on the lid, small cutouts around it, soft pastel pattern on sides, toast \"Surprise: ... palette\" visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-gallery.png",
+    "path": "/box-designer",
+    "state": "Template gallery open (Edit tab > Templates): category tabs, search box, \"All box styles\" filter and a grid of template cards (Fruit & produce tab selected)",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-mango-carton.png",
+    "path": "/box-designer",
+    "state": "Mango carton template applied (5-ply B+C 36 x 26 x 14, vents and hand holes on), kraft, mango and leaf sprig cutouts, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-cake-box.png",
+    "path": "/box-designer",
+    "state": "Cake box with window template applied (white glossy 25 x 25 x 12, window at 60%, cake slice cutout), lid slightly open, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-tshirt-mailer.png",
+    "path": "/box-designer",
+    "state": "T-shirt mailer template applied (white 30 x 24 x 5 mailer, T-shirt cutout on the lid), lid half open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-template-festive-gift.png",
+    "path": "/box-designer",
+    "state": "Festive gift box template applied (red and gold telescope box 26 x 26 x 8, gloss, star divider and sparkler on the lid), lid lifted a little",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-style-picker-groups.png",
+    "path": "/box-designer",
+    "state": "Style picker open showing the group tabs (All, Shipping, Retail & gifts, Food & bakery, Fruit & produce, Display), the \"What are you packing?\" chips and cards with option hints",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-style-picker-search.png",
+    "path": "/box-designer",
+    "state": "Style picker with the word \"fruit\" typed in the search box: ventilated produce carton and open produce tray cards listed first",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-slide-box.png",
+    "path": "/box-designer/slide-box",
+    "state": "Slide box (tray and sleeve) with fold slider mid-way so the tray is partly out of its printed sleeve; three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-idea-honey-jar-box.png",
+    "path": "/box-designer",
+    "state": "Honey jar box template applied (crash-lock bottom, 10 x 10 x 13, yellow board, honey and bee cutouts), three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-idea-kidswear-window.png",
+    "path": "/box-designer",
+    "state": "Kidswear box template applied (window mailer 26 x 20 x 6, yellow, teddy bear and star cutouts, window at 55%), lid slightly open",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-idea-snack-counter-display.png",
+    "path": "/box-designer",
+    "state": "Snack counter display template applied (shelf display tray 32 x 22 x 10, red, popcorn cutout, front cut at 55%), three-quarter view from slightly above",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-vents.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Ventilated produce carton with vents and hand holes on; size and board panel scrolled to the Cut-outs section with the Hand holes and Vent slots switches visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-hand-holes.png",
+    "path": "/box-designer/carry-box",
+    "state": "Carry box with hand holes on, box rotated so a hand hole in a short wall is clearly visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-window.png",
+    "path": "/box-designer/cake-box",
+    "state": "Window cake box with the Window size slider visible in the Cut-outs section at about 60%; box viewed from above at an angle so the lid window shows",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-strength-warning.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Strength guidance panel for the vented produce carton with a weight entered, showing the warning that hand holes and vents lower stacking strength",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-openings-dieline.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Dieline view of the vented produce carton showing the true vent slot and hand hole cut lines on the flat blank",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-produce-picker.png",
+    "path": "/box-designer",
+    "state": "Open the style picker, set 'What are you packing?' to the Fruit & vegetables chip so the ventilated produce carton and open produce tray lead the list",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-produce-vents.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Edit Box tab, Cut-outs section visible with Hand holes and Vent slots switched on; ventilated produce carton rotated to show vents and a hand hole",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-produce-strength-warning.png",
+    "path": "/box-designer/fruit-box",
+    "state": "Price & order tab: enter 10 kg for one packed box with vents and hand holes on, strength guide showing the warning that holes and vents reduce stacking strength",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mango-carton.png",
+    "path": "/box-designer",
+    "state": "Load the Mango carton template (Templates > Fruit & produce), fully closed, three-quarter view showing vents, hand hole, mango graphic and brand text",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-apple-tray.png",
+    "path": "/box-designer",
+    "state": "Load the Apple tray template (Templates > Fruit & produce), open produce tray with vents, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-grape-box.png",
+    "path": "/box-designer",
+    "state": "Load the Grape box template (Templates > Fruit & produce), green vented carton, three-quarter view",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-clothing-styles.png",
+    "path": "/box-designer",
+    "state": "Style picker open on the Retail & gifts group showing tuck-end, window mailer, slide box and book-style cards",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-window-mailer-garment.png",
+    "path": "/box-designer/window-mailer-box",
+    "state": "Window mailer preset with the assembly slider about half way (lid open) and the Cut-outs section showing the Window size slider",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-saree-box.png",
+    "path": "/box-designer",
+    "state": "Load the Saree box template (Templates > Clothing & fashion), gold telescope box with the lid lifted mid fold",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-shoe-box-lid.png",
+    "path": "/box-designer/shoe-box",
+    "state": "Shoe box preset with the fold slider at the open stop, lid lifted off, sneaker graphic and size text visible",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-saree-showcase.png",
+    "path": "/box-designer",
+    "state": "Saree box template loaded, Showcase tab open with a studio background selected and the box centred",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-bakery-styles.png",
+    "path": "/box-designer",
+    "state": "Style picker open on the Food & bakery group showing the window cake box, takeaway clamshell and tray cards",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-cake-window-box.png",
+    "path": "/box-designer/cake-box",
+    "state": "Cake box preset, Edit Box tab with the Window size slider visible, window cake box closed and rotated to show the lid",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-mithai-box.png",
+    "path": "/box-designer",
+    "state": "Load the Sweet box (mithai) template (Templates > Food & bakery), red telescope box with the lid lifting off to show the gold inside",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-takeaway-styles.png",
+    "path": "/box-designer",
+    "state": "Style picker open on the Food & bakery group showing takeaway clamshell, pizza box and tray cards",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-takeaway-clamshell.png",
+    "path": "/box-designer",
+    "state": "Load the Burger takeaway box template (Templates > Food & bakery), clamshell with the lid open mid fold, burger graphic on the lid",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-pizza-box-lid.png",
+    "path": "/box-designer/pizza-box",
+    "state": "Pizza box preset with the lid lifted open, showing the white inside and pizza graphic on the lid",
+    "viewport": "desktop"
+  },
+  {
+    "file": "designer-jar-fit-checker.png",
+    "path": "/box-designer",
+    "state": "Fit checker open with an 8.5 x 8.5 x 11.5 cm jar entered, the fragile switch on (padding raised to 2.5 cm) and the recommended inside size shown",
+    "viewport": "desktop"
+  }
+]

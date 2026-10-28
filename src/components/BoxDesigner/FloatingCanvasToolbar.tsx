@@ -3,7 +3,7 @@
  * macOS-style pill toolbar for camera controls
  */
 
-import { RotateCw, Hand, Maximize2, Minimize2, Play, Pause, Scan } from 'lucide-react';
+import { RotateCw, Hand, Maximize2, Minimize2, Play, Pause, Scan, PanelTopOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type ControlMode = 'rotate' | 'pan';
@@ -16,6 +16,9 @@ interface FloatingCanvasToolbarProps {
   onAutoRotateToggle: () => void;
   onFitView: () => void;
   onFullscreenToggle: () => void;
+  /** Cut-away view: hide the front wall to show the inside (button shown when the handler is given) */
+  cutaway?: boolean;
+  onCutawayToggle?: () => void;
 }
 
 export default function FloatingCanvasToolbar({
@@ -26,6 +29,8 @@ export default function FloatingCanvasToolbar({
   onAutoRotateToggle,
   onFitView,
   onFullscreenToggle,
+  cutaway = false,
+  onCutawayToggle,
 }: FloatingCanvasToolbarProps) {
   return (
     <div 
@@ -77,6 +82,21 @@ export default function FloatingCanvasToolbar({
       >
         <Scan className="w-3.5 h-3.5 text-ink-900" />
       </Button>
+
+      {/* Cut-away: show the inside */}
+      {onCutawayToggle && (
+        <Button
+          onClick={onCutawayToggle}
+          variant={cutaway ? 'default' : 'ghost'}
+          size="sm"
+          className={`h-7 w-7 p-0 mac-transition ${cutaway ? '' : 'hover:bg-foreground/5'}`}
+          title={cutaway ? 'Show the front wall' : 'Cut-away - hide the front wall to see inside (C)'}
+          aria-label="Cut-away view"
+          aria-pressed={cutaway}
+        >
+          <PanelTopOpen className={`w-3.5 h-3.5 ${cutaway ? 'text-white' : 'text-ink-900'}`} />
+        </Button>
+      )}
 
       {/* Fullscreen Toggle */}
       <Button

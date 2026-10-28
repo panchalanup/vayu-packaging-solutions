@@ -12,7 +12,7 @@ import { Section } from '@/components/site/Section';
 import { SectionHeader } from '@/components/site/Blocks';
 import MetaTags from '@/components/SEO/MetaTags';
 import { SEO_CONFIG } from '@/seo/config';
-import { IMAGE_CREDITS, OWN_ARTWORK_NOTE, type ImageCreditId } from '@/content/imageCredits';
+import { IMAGE_CREDITS, OWN_ARTWORK_NOTE, ARTWORK_SET_CREDITS, CUTOUT_OWN_ARTWORK_NOTE, type ImageCreditId } from '@/content/imageCredits';
 import conveyor from '@/assets/photos/corrugated-conveyor.jpg';
 import tester from '@/assets/photos/compression-tester.jpg';
 import closeup from '@/assets/photos/corrugated-closeup.jpg';
@@ -106,6 +106,37 @@ export default function ImageCredits() {
                 Photos under CC BY-SA stay under that licence when adapted, so you may reuse our resized copies on the same terms and with the
                 same credit.
               </p>
+            </div>
+
+            <div>
+              <h2 className="text-h3 font-bold">Box designer cutouts</h2>
+              <p className="mt-2 text-body-l text-muted-foreground">{CUTOUT_OWN_ARTWORK_NOTE}</p>
+              <p className="mt-2 text-body-l text-muted-foreground">
+                The rest of the cutout library uses these open-licence artwork sets. We ship only a selected subset and keep the licence text with it.
+              </p>
+              <ul className="mt-6 grid gap-6">
+                {ARTWORK_SET_CREDITS.map((c) => (
+                  <li key={c.id} className="rounded-xl border border-ink-900/15 p-5">
+                    <p className="font-semibold">{c.name}</p>
+                    <p className="mt-1 text-muted-foreground">
+                      By {c.author} ·{' '}
+                      <a className={ext} href={c.licenseUrl} target="_blank" rel="noopener noreferrer">
+                        {c.license}
+                      </a>{' '}
+                      ·{' '}
+                      <a className={ext} href={c.sourceUrl} target="_blank" rel="noopener noreferrer">
+                        Original source
+                      </a>
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground">Used on: {c.usedOn}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Changes: {c.changes}</p>
+                    <details className="mt-3 text-sm text-muted-foreground">
+                      <summary className="cursor-pointer">Licence text</summary>
+                      <pre className="mt-2 whitespace-pre-wrap font-sans">{c.licenseText}</pre>
+                    </details>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <p className="text-sm text-muted-foreground">

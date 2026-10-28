@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
-import { MetaTags } from '@/seo';
+import { MetaTags, StructuredData } from '@/seo';
+import { getBreadcrumbSchema } from '@/seo/schema';
 import QuoteForm from '@/components/quote/QuoteForm';
 import { Section } from '@/components/site/Section';
 import { Cta } from '@/components/site/Cta';
 import { parseQuotePrefill } from '@/lib/quotePrefill';
-import { LABELS } from '@/lib/quoteSchema';
+import { LABELS } from '@/lib/quoteOptions';
 import { FACTS } from '@/content/facts';
 import { mailHref, pageWhatsAppMessage, telHref, whatsappHref } from '@/lib/contactLinks';
 import { CONTACT_INFO } from '@/constants';
@@ -26,6 +27,7 @@ export default function Quote() {
         description={`Tell us what you ship. Corrugated boxes from ${FACTS.moqBoxes} units, stock sizes dispatched in ${FACTS.dispatchHours} hours from Ahmedabad.`}
         canonical={`${WEBSITE_URL}/quote`}
       />
+      <StructuredData type="BreadcrumbList" data={getBreadcrumbSchema([{ name: 'Home', url: '/' }, { name: 'Get a quote', url: '/quote' }])} />
       <Section name="quote" className="paper-grain">
         <div className="mx-auto grid max-w-content gap-10 px-4 py-12 md:px-6 md:py-20 lg:grid-cols-12 lg:px-10">
           <div className="lg:col-span-5">

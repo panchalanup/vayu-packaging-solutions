@@ -9,6 +9,7 @@ import { mailHref, telHref, whatsappHref } from '@/lib/contactLinks';
 import { useEventTracker } from '@/hooks/useAnalytics';
 import { Cta } from './Cta';
 import { SectionNameProvider } from './Section';
+import FooterPlayground from './footer/FooterPlayground';
 
 const PRODUCTS = [
   { label: '3-ply boxes', to: '/products' },
@@ -84,6 +85,21 @@ export default function SiteFooter() {
                   </Link>
                 </li>
                 <li>
+                  <Link to="/tools" className={link}>
+                    Free calculators
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/tools/volumetric-weight-calculator" className={link}>
+                    Volumetric weight
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/tools/cbm-calculator" className={link}>
+                    CBM calculator
+                  </Link>
+                </li>
+                <li>
                   <a
                     href={BROCHURE.href}
                     download="Vayu-Packaging-Solutions-Brochure.pdf"
@@ -146,12 +162,9 @@ export default function SiteFooter() {
           </div>
         </div>
 
-        <p
-          aria-hidden="true"
-          className="pointer-events-none mt-10 select-none text-center font-display text-[22vw] font-semibold leading-[0.8] text-transparent [-webkit-text-stroke:1px_rgb(169_180_172/0.25)]"
-        >
-          VAYU
-        </p>
+        <div className="mt-10">
+          <FooterPlayground />
+        </div>
       </footer>
     </SectionNameProvider>
   );

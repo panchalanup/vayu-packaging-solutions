@@ -194,6 +194,13 @@ export const PAGE_METADATA: Record<string, PageMeta> = {
     ],
     ogImage: '/og-box-designer.jpg',
   },
+
+  // Free calculators index; each calculator's own metadata lives in src/content/toolPages.ts
+  tools: {
+    title: 'Free Packaging Calculators | Volumetric Weight, CBM, Box Size, Box Strength',
+    description: 'Free packaging calculators for India: volumetric weight, CBM and container loading, box size from product size, box compression strength, box weight and packaging cost per order. No sign-up.',
+    keywords: ['packaging calculators', 'volumetric weight calculator', 'cbm calculator', 'box size calculator', 'box strength calculator', 'packaging cost calculator'],
+  },
 };
 
 // Location-Specific Metadata (for future location pages)

@@ -24,6 +24,21 @@ export interface RigPose {
   topMinor: number;
   bottomMajor: number;
   bottomMinor: number;
+  /** Second major flap of a full-overlap end (FEFCO 0203); equals the major angle otherwise */
+  topOuter: number;
+  bottomOuter: number;
+  /** Tuck tab beyond a lid flap: 0 = in line with the flap, PI/2 = folded down inside the opposite wall */
+  topTuck: number;
+  bottomTuck: number;
+}
+
+export interface PoseOptions {
+  /** Full-overlap ends close in three steps: minor, inner major, outer major */
+  overlapTop?: boolean;
+  overlapBottom?: boolean;
+  /** Tuck-end closures: dust flaps (minor), lid (major), then the tuck tab */
+  tuckTop?: boolean;
+  tuckBottom?: boolean;
 }
 
 export const FOLD_STOPS = { flat: 0, openTop: 0.72, sealed: 1 } as const;
@@ -38,12 +53,34 @@ const easeInOutCubic = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2
 const segment = (u: number, a: number, b: number) => easeInOutCubic(clamp01((u - a) / (b - a)));
 const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
 
-export function poseFromProgress(progress: number): RigPose {
+export function poseFromProgress(progress: number, options: PoseOptions = {}): RigPose {
   const u = Number.isFinite(progress) ? clamp01(progress) : 1;
 
   const relax = RELAXED * segment(u, 0.45, 0.6);
-  const topMinor = u < 0.72 ? relax : lerp(RELAXED, HALF_PI, segment(u, 0.72, 0.86));
-  const topMajor = u < 0.84 ? relax : lerp(RELAXED, HALF_PI, segment(u, 0.84, 1));
+  const close = (a: number, b: number) => (u < a ? relax : lerp(RELAXED, HALF_PI, segment(u, a, b)));
+  let topMinor: number;
+  let topMajor: number;
+  let topOuter: number;
+  let topTuck = 0;
+  if (options.tuckTop) {
+    topMinor = close(0.72, 0.83);
+    topMajor = close(0.81, 0.93);
+    topOuter = topMajor;
+    topTuck = HALF_PI * segment(u, 0.91, 1);
+  } else if (options.overlapTop) {
+    topMinor = close(0.72, 0.81);
+    topMajor = close(0.8, 0.9);
+    topOuter = close(0.89, 1);
+  } else {
+    topMinor = close(0.72, 0.86);
+    topMajor = close(0.84, 1);
+    topOuter = topMajor;
+  }
+  const staged = options.overlapBottom || options.tuckBottom;
+  const bottomMinor = HALF_PI * (staged ? segment(u, 0.5, 0.58) : segment(u, 0.5, 0.61));
+  const bottomMajor = HALF_PI * (staged ? segment(u, 0.57, 0.65) : segment(u, 0.6, 0.72));
+  const bottomOuter = options.overlapBottom ? HALF_PI * segment(u, 0.64, 0.72) : bottomMajor;
+  const bottomTuck = options.tuckBottom ? HALF_PI * segment(u, 0.64, 0.72) : 0;
 
   return {
     tilt: -HALF_PI * (1 - segment(u, 0.3, 0.5)),
@@ -54,9 +91,13 @@ export function poseFromProgress(progress: number): RigPose {
     ],
     // The tab must be tucked before the last wall closes over it
     tab: HALF_PI * segment(u, 0.03, 0.22),
-    bottomMinor: HALF_PI * segment(u, 0.5, 0.61),
-    bottomMajor: HALF_PI * segment(u, 0.6, 0.72),
+    bottomMinor,
+    bottomMajor,
+    bottomOuter,
     topMinor,
     topMajor,
+    topOuter,
+    topTuck,
+    bottomTuck,
   };
 }
