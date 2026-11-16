@@ -731,3 +731,30 @@
     animation: none;
   }
 }
+
+/* Blurred page behind the open mobile menu (components/site/MenuScrim). The blur and the dimming fade together in
+   300 ms. The -webkit- property is transitioned too, for older Safari. Without backdrop-filter support it is a plain
+   darker scrim. */
+.menu-scrim {
+  background-color: rgb(15 26 20 / 0);
+  -webkit-backdrop-filter: blur(0);
+  backdrop-filter: blur(0);
+  transition-property: background-color, backdrop-filter, -webkit-backdrop-filter;
+  transition-duration: 320ms;
+  transition-timing-function: var(--ease-paper);
+}
+.menu-scrim[data-shown='true'] {
+  background-color: rgb(15 26 20 / 0.28);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .menu-scrim[data-shown='true'] {
+    background-color: rgb(15 26 20 / 0.62);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-scrim {
+    transition-duration: 1ms;
+  }
+}

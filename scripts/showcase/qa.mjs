@@ -319,6 +319,39 @@ async function bench(page) {
   }
 }
 
+/** Mobile menu: page is locked while open, blur ramps up smoothly, and the page is restored exactly on close */
+async function menulock(page) {
+  await open(page, { w: 390, h: 844, mobile: true, query: '' });
+  await waitFor(page, `!!document.querySelector('h1')`);
+  await page.eval(`window.scrollTo({ top: 1500, behavior: 'instant' })`);
+  await sleep(900);
+  const before = await page.eval(`({ y: Math.round(scrollY), navH: Math.round(document.querySelector('header').getBoundingClientRect().height), hidden: document.querySelector('header').className.includes('-translate-y-full') })`);
+  log('before open:', JSON.stringify(before));
+  await page.eval(`document.querySelector('button[aria-controls="mobile-menu"]').click()`);
+  // sample the blur on every animation frame while it ramps up
+  const ramp = await page.eval(`new Promise((resolve) => {
+    const out = []; const t0 = performance.now();
+    const tick = () => { const e = document.querySelector('.menu-scrim'); const v = e ? parseFloat(getComputedStyle(e).backdropFilter.replace(/[^0-9.]/g, '')) || 0 : -1; out.push([Math.round(performance.now() - t0), Math.round(v * 10) / 10]); if (performance.now() - t0 < 700) requestAnimationFrame(tick); else resolve(out); };
+    requestAnimationFrame(tick);
+  })`, 30_000);
+  const steps = ramp.filter((_, i) => i % 3 === 0).map(([t, v]) => `${t}ms:${v}px`).join('  ');
+  log('blur per frame on open:', steps);
+  log('frames in ramp:', ramp.length, '| monotonic non-decreasing:', ramp.every((p, i) => i === 0 || p[1] >= ramp[i - 1][1] - 0.01), '| final', ramp[ramp.length - 1][1] + 'px');
+  await sleep(500);
+  const open1 = await page.eval(`({ position: document.body.style.position, top: document.body.style.top, scrollY: Math.round(scrollY), navH: Math.round(document.querySelector('header').getBoundingClientRect().height), hidden: document.querySelector('header').className.includes('-translate-y-full'), locked: document.body.dataset.scrollLocked, blur: getComputedStyle(document.querySelector('.menu-scrim')).backdropFilter })`);
+  log('menu open:', JSON.stringify(open1));
+  await shot(page, 'menulock-open.png');
+  // try to scroll the page with a real touch swipe on the dimmed area
+  await page.send('Input.synthesizeScrollGesture', { x: 195, y: 760, yDistance: -500, speed: 1200, gestureSourceType: 'touch' }, 20_000).catch((e) => log('gesture:', e.message));
+  await sleep(600);
+  const after = await page.eval(`({ top: document.body.style.top, scrollY: Math.round(scrollY) })`);
+  log('after swipe on the page area:', JSON.stringify(after), after.top === open1.top ? 'PAGE DID NOT MOVE' : 'PAGE MOVED');
+  await page.send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27 });
+  await sleep(700);
+  const closed = await page.eval(`({ position: document.body.style.position, scrollY: Math.round(scrollY), scrim: !!document.querySelector('.menu-scrim'), hidden: document.querySelector('header').className.includes('-translate-y-full'), navH: Math.round(document.querySelector('header').getBoundingClientRect().height) })`);
+  log('after close (Esc):', JSON.stringify(closed), closed.scrollY === before.y ? 'SCROLL RESTORED EXACTLY' : 'SCROLL NOT RESTORED');
+}
+
 async function interact(page) {
   await open(page, { w: 1440, h: 900, mobile: false, query: '?quality=high' });
   await waitFor(page, `!!document.querySelector('h1')`);
@@ -355,7 +388,7 @@ try {
   const page = await connect();
   const modes = MODE === 'all' ? ['layout', 'interact', 'visual', 'perf'] : [MODE];
   for (const m of modes) {
-    await { visual, layout, perf, network, interact, menu, bench }[m](page);
+    await { visual, layout, perf, network, interact, menu, bench, menulock }[m](page);
   }
   console.log('\nconsole problems:', issues.length ? '\n  ' + [...new Set(issues)].join('\n  ') : 'none');
   console.log('screenshots in', OUT);

@@ -17,6 +17,8 @@ import { Cta } from '@/components/site/Cta';
 import { SectionNameProvider } from '@/components/site/Section';
 import ToolsMegaMenu from '@/components/site/ToolsMegaMenu';
 import { ToolsMobilePanel, ToolsMobileRow } from '@/components/site/ToolsMobileMenu';
+import MenuScrim from '@/components/site/MenuScrim';
+import { useScrollLock } from '@/hooks/useScrollLock';
 
 const LINKS = [
   { label: 'Products', path: '/products' },
@@ -68,6 +70,27 @@ export default function Navbar() {
   const ink = theme === 'ink' && !open;
 
   useEffect(() => setOpen(false), [pathname]);
+
+  // While the mobile menu is open the page behind it does not scroll (the body is pinned in place), and the navbar
+  // ignores the scroll events that pinning causes, so it does not resize or hide under the menu.
+  const openRef = useRef(false);
+  openRef.current = open;
+  useScrollLock(open);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    const onResize = () => {
+      if (window.innerWidth >= 768) setOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [open]);
   useEffect(() => {
     if (!open) setMobileView('main');
   }, [open]);
@@ -77,6 +100,7 @@ export default function Navbar() {
     let frame = 0;
     const update = () => {
       frame = 0;
+      if (openRef.current) return;
       const y = window.scrollY;
       setCondensed(y > 24);
       const mobile = window.innerWidth < 768;
@@ -112,6 +136,7 @@ export default function Navbar() {
 
   return (
     <SectionNameProvider value="nav">
+      <MenuScrim open={open} onClose={() => setOpen(false)} />
       <a
         href="#main"
         className="fixed left-3 top-3 z-[60] -translate-y-24 rounded-md bg-ink-900 px-4 py-2 text-sm font-semibold text-paper-50 transition-transform focus:translate-y-0"
@@ -202,7 +227,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8, transition: { duration: DUR.quick * 0.7, ease: EASE.exit } }}
               transition={{ duration: DUR.base, ease: EASE.paper }}
-              className="max-h-[calc(100svh-64px)] overflow-y-auto border-t border-ink-900/10 px-4 pb-6 pt-2 md:hidden"
+              className="max-h-[calc(100svh-64px)] overflow-y-auto overscroll-contain border-t border-ink-900/10 px-4 pb-6 pt-2 md:hidden"
             >
               {mobileView === 'tools' ? (
                 <ToolsMobilePanel onBack={() => setMobileView('main')} />
