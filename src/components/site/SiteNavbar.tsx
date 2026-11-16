@@ -6,20 +6,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Box, Calculator, ChevronDown, Menu, Phone, Sparkles, X } from 'lucide-react';
+import { Menu, Phone, X } from 'lucide-react';
 import { LOGO_IMAGES } from '@/constants/images';
-import { CONTACT_INFO, TOOLS_MENU } from '@/constants';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { CONTACT_INFO } from '@/constants';
+import { isToolsPath } from '@/content/toolsMenu';
 import { cn } from '@/lib/utils';
 import { telHref, whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';
 import { DUR, EASE } from '@/lib/motion/tokens';
 import { Cta } from '@/components/site/Cta';
 import { SectionNameProvider } from '@/components/site/Section';
+import ToolsMegaMenu from '@/components/site/ToolsMegaMenu';
+import { ToolsMobilePanel, ToolsMobileRow } from '@/components/site/ToolsMobileMenu';
 
 const LINKS = [
   { label: 'Products', path: '/products' },
@@ -64,25 +61,16 @@ export default function Navbar() {
   const { pathname } = useLocation();
   const navRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
-  // Tools menu: opens on hover (mouse only), click and keyboard; a short close delay lets the pointer cross the gap
-  const [toolsOpen, setToolsOpen] = useState(false);
-  const toolsTimer = useRef<number>();
-  const hoverCapable = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const openTools = () => {
-    window.clearTimeout(toolsTimer.current);
-    if (hoverCapable()) setToolsOpen(true);
-  };
-  const closeTools = () => {
-    window.clearTimeout(toolsTimer.current);
-    if (hoverCapable()) toolsTimer.current = window.setTimeout(() => setToolsOpen(false), 140);
-  };
-  useEffect(() => () => window.clearTimeout(toolsTimer.current), []);
   const [condensed, setCondensed] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [mobileView, setMobileView] = useState<'main' | 'tools'>('main');
   const theme = useThemeUnderNav(navRef, pathname);
   const ink = theme === 'ink' && !open;
 
   useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    if (!open) setMobileView('main');
+  }, [open]);
 
   useEffect(() => {
     let last = window.scrollY;
@@ -120,7 +108,7 @@ export default function Navbar() {
       isActive ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'
     );
 
-  const toolsActive = TOOLS_MENU.some((tool) => tool.path === pathname || (tool.path === '/tools' && pathname.startsWith('/tools/')));
+  const toolsActive = isToolsPath(pathname);
 
   return (
     <SectionNameProvider value="nav">
@@ -136,7 +124,9 @@ export default function Navbar() {
         className={cn(
           'fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color,height] duration-quick ease-paper',
           hidden && !open ? '-translate-y-full' : 'translate-y-0',
-          condensed || open
+          open
+            ? 'border-b border-ink-900/10 bg-paper-50'
+            : condensed
             ? cn('border-b backdrop-blur-md', ink ? 'border-paper-50/10 bg-ink-900/85' : 'border-ink-900/10 bg-paper-50/85')
             : 'border-b border-transparent bg-transparent'
         )}
@@ -166,40 +156,7 @@ export default function Navbar() {
                 {link.label}
               </NavLink>
             ))}
-            <DropdownMenu modal={false} open={toolsOpen} onOpenChange={setToolsOpen}>
-              <DropdownMenuTrigger
-                onMouseEnter={openTools}
-                onMouseLeave={closeTools}
-                // A click on a hover-opened menu would toggle it shut; keep it open instead
-                onPointerDown={(e) => {
-                  if (toolsOpen && hoverCapable()) e.preventDefault();
-                }}
-                className={cn(
-                  linkClass({ isActive: toolsActive }),
-                  'inline-flex items-center gap-1 data-[state=open]:after:scale-x-100'
-                )}
-              >
-                Tools
-                <ChevronDown aria-hidden="true" className="h-3.5 w-3.5 transition-transform duration-quick [[data-state=open]_&]:rotate-180" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" sideOffset={8} onMouseEnter={openTools} onMouseLeave={closeTools} className="w-72 rounded-lg p-1">
-                {TOOLS_MENU.map((tool) => {
-                  const Icon = tool.icon === 'Box' ? Box : tool.icon === 'Calculator' ? Calculator : Sparkles;
-                  const label = tool.path === '/compare-quote' ? 'Packaging Finder' : tool.name;
-                  return (
-                    <DropdownMenuItem key={tool.path} asChild className="cursor-pointer rounded-md p-3 text-ink-900 focus:bg-paper-200 focus:text-ink-900 data-[highlighted]:bg-paper-200 data-[highlighted]:text-ink-900">
-                      <Link to={tool.path} className="flex items-start gap-3">
-                        <Icon aria-hidden="true" className="mt-0.5 h-5 w-5 text-green-600" />
-                        <span>
-                          <span className="block font-semibold text-ink-900">{label}</span>
-                          <span className="block text-xs text-ink-500">{tool.description}</span>
-                        </span>
-                      </Link>
-                    </DropdownMenuItem>
-                  );
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <ToolsMegaMenu active={toolsActive} triggerClass={linkClass({ isActive: toolsActive })} />
             {LINKS.slice(2).map((link) => (
               <NavLink key={link.path} to={link.path} className={linkClass}>
                 {link.label}
@@ -247,22 +204,33 @@ export default function Navbar() {
               transition={{ duration: DUR.base, ease: EASE.paper }}
               className="max-h-[calc(100svh-64px)] overflow-y-auto border-t border-ink-900/10 px-4 pb-6 pt-2 md:hidden"
             >
-              <ul className="divide-y divide-ink-900/10">
-                {[{ label: 'Home', path: '/' }, ...LINKS, ...TOOLS_MENU.map((t) => ({ label: t.path === '/compare-quote' ? 'Packaging Finder' : t.name, path: t.path })), { label: 'Contact', path: '/contact' }].map(
-                  (link) => (
+              {mobileView === 'tools' ? (
+                <ToolsMobilePanel onBack={() => setMobileView('main')} />
+              ) : (
+                <ul className="divide-y divide-ink-900/10">
+                  {[{ label: 'Home', path: '/' }, ...LINKS].map((link) => (
                     <li key={link.path}>
                       <NavLink
                         to={link.path}
-                        className={({ isActive }) =>
-                          cn('flex min-h-12 items-center text-lg font-medium', isActive ? 'text-green-700' : 'text-ink-900')
-                        }
+                        className={({ isActive }) => cn('flex min-h-12 items-center text-lg font-medium', isActive ? 'text-green-700' : 'text-ink-900')}
                       >
                         {link.label}
                       </NavLink>
                     </li>
-                  )
-                )}
-              </ul>
+                  ))}
+                  <li>
+                    <ToolsMobileRow onOpen={() => setMobileView('tools')} />
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/contact"
+                      className={({ isActive }) => cn('flex min-h-12 items-center text-lg font-medium', isActive ? 'text-green-700' : 'text-ink-900')}
+                    >
+                      Contact
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <Cta id="nav.mobile.whatsapp" intent="whatsapp" variant="whatsapp" href={whatsappHref(pageWhatsAppMessage(pathname))}>
                   WhatsApp

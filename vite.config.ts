@@ -18,6 +18,22 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // Packages that are only ever loaded with a dynamic import (PDF export, scroll animation, model export...).
+  // Vite does not see them at startup, so in dev it would bundle them on first use, answer "504 Outdated Optimize Dep"
+  // and the click that needed them would fail (the designer's PDF buttons). Listing them bundles them up front.
+  optimizeDeps: {
+    include: [
+      "jspdf",
+      "jspdf-autotable",
+      "gsap",
+      "gsap/ScrollTrigger",
+      "lenis",
+      "react-dom/server",
+      "three/examples/jsm/exporters/GLTFExporter.js",
+      "three/examples/jsm/exporters/USDZExporter.js",
+      "@fingerprintjs/fingerprintjs",
+    ],
+  },
   build: {
     rollupOptions: {
       output: {
