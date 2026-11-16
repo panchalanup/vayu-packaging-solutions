@@ -21,6 +21,7 @@ import { CONTACT_INFO } from '@/constants';
 import { PACKAGING_TOOL_FAQS } from '@/seo/schema/softwareApplication';
 import { BOX_DESIGNER_FAQS } from '@/seo/schema/boxDesigner';
 import { getStyle } from '@/lib/boxDesigner/styles';
+import { HERO_COPY, HOTSPOTS, SHOWCASE_FAQS, SHOWCASE_FEATURE_LIST, SHOWCASE_PATH, EXPERIENCE_PATH, UNFOLD_BEATS } from '@/content/designerShowcase';
 import { findTemplate } from '@/lib/boxDesigner/templates';
 import { quoteHref } from '@/lib/quotePrefill';
 import { designerTargetSlug, getAdjacentPosts, getDesignerCard, getRelatedByTags } from '@/lib/blogRelated';
@@ -40,6 +41,8 @@ const NAV: [string, string][] = [
   ['Products', '/products'],
   ['Industries and services', '/services'],
   ['3D Box Designer', '/box-designer'],
+  ['How the 3D designer works', SHOWCASE_PATH],
+  ['See the 3D designer in action', EXPERIENCE_PATH],
   ['Free tools', '/tools'],
   ['Packaging Finder', '/compare-quote'],
   ['Blog', '/blogs'],
@@ -582,6 +585,72 @@ function Designer({ page }: { page: SeoPage }) {
   );
 }
 
+function Showcase({ page }: { page: SeoPage }) {
+  return (
+    <>
+      <Crumbs items={[['Home', '/'], ['3D Box Designer', '/box-designer'], ['How it works']]} />
+      <h1>{HERO_COPY.buyer.headline}</h1>
+      <p>{page.description}</p>
+      <p>
+        <a href="/box-designer">Open the free 3D Box Designer</a> · <a href={EXPERIENCE_PATH}>See it in action</a>
+      </p>
+      <section>
+        <h2>Every box starts flat</h2>
+        <ol>
+          {UNFOLD_BEATS.buyer.map((b) => (
+            <li key={b.title}>
+              <strong>{b.title}.</strong> {b.text}
+            </li>
+          ))}
+        </ol>
+      </section>
+      <section>
+        <h2>Every line on your dieline PDF, explained</h2>
+        <dl>
+          {HOTSPOTS.buyer.map((h) => (
+            <div key={h.id}>
+              <dt>{h.title}</dt>
+              <dd>{h.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+      <section>
+        <h2>What the designer does</h2>
+        <ul>
+          {SHOWCASE_FEATURE_LIST.map((f) => (
+            <li key={f}>{f}</li>
+          ))}
+        </ul>
+      </section>
+      <Faqs faqs={SHOWCASE_FAQS} />
+      <p>
+        <a href={SHOWCASE_PATH}>How the 3D Box Designer works</a> · <a href="/box-designer">Open the designer</a> · <a href="/quote">Get a quote</a>
+      </p>
+    </>
+  );
+}
+
+function Experience({ page }: { page: SeoPage }) {
+  return (
+    <>
+      <Crumbs items={[['Home', '/'], ['3D Box Designer', '/box-designer'], ['See it in action']]} />
+      <h1>Design a box. Watch it fold.</h1>
+      <p>{page.description}</p>
+      <ol>
+        {UNFOLD_BEATS.buyer.map((b) => (
+          <li key={b.title}>
+            <strong>{b.title}.</strong> {b.text}
+          </li>
+        ))}
+      </ol>
+      <p>
+        <a href="/box-designer">Open the free 3D Box Designer</a> · <a href={SHOWCASE_PATH}>How it works</a> · <a href="/quote">Get a quote</a>
+      </p>
+    </>
+  );
+}
+
 function Landing({ landing }: { landing: DesignerLanding }) {
   const style = getStyle(landing.style);
   const template = findTemplate(landing.templateId);
@@ -801,6 +870,12 @@ export function renderBody(page: SeoPage, ctx: BodyContext): string {
     }
     case 'designer':
       content = <Designer page={page} />;
+      break;
+    case 'showcase':
+      content = <Showcase page={page} />;
+      break;
+    case 'experience':
+      content = <Experience page={page} />;
       break;
     case 'landing': {
       const landing = findLanding(slug) ?? ALL_LANDINGS.find((l) => l.slug === slug);

@@ -279,6 +279,79 @@
     background-size: 100% 1px;
   }
 
+  /* On-page dieline (components/showcase/DielineSvg): sizes are screen pixels via --u (mm per pixel), reveals read
+     the --d-* variables the showcase stage writes, and every var() falls back to "fully shown" */
+  .dl {
+    --dl-cut: #0f1a14;
+    --dl-score: #d0021b;
+    --dl-dim: #0b5cad;
+    --dl-text: #17231c;
+    --dl-hit: 35 160 70;
+  }
+  .dl[data-tone='ink'] {
+    --dl-cut: #fbf8f3;
+    --dl-score: #ff8585;
+    --dl-dim: #1fb5e0;
+    --dl-text: #e9e1d3;
+    --dl-hit: 61 186 90;
+  }
+  .dl-cut {
+    fill: none;
+    stroke: var(--dl-cut);
+    stroke-width: calc(1.6px * var(--u, 1.6));
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 100px 100px;
+    stroke-dashoffset: calc((1 - var(--d-cut, 1)) * 100px);
+  }
+  .dl-score {
+    fill: none;
+    stroke: var(--dl-score);
+    stroke-width: calc(1.4px * var(--u, 1.6));
+    stroke-dasharray: calc(7px * var(--u, 1.6)) calc(4px * var(--u, 1.6));
+    opacity: var(--d-score, 1);
+  }
+  .dl-panel {
+    fill: transparent;
+    outline: none;
+    transition: fill var(--dur-quick) var(--ease-paper);
+  }
+  .dl-panel:not([role]) {
+    pointer-events: none;
+  }
+  .dl-panel[role] {
+    cursor: pointer;
+  }
+  .dl-panel-on {
+    fill: rgb(var(--dl-hit) / 0.32);
+  }
+  .dl-panel[role]:focus-visible {
+    stroke: var(--dl-dim);
+    stroke-width: calc(2px * var(--u, 1.6));
+  }
+  .dl-dim {
+    fill: none;
+    stroke: var(--dl-dim);
+    stroke-width: calc(1px * var(--u, 1.6));
+  }
+  .dl-dim-text {
+    fill: var(--dl-dim);
+    font-family: var(--font-mono);
+    font-size: calc(11px * var(--u, 1.6));
+    font-variant-numeric: tabular-nums;
+  }
+  .dl-name {
+    fill: var(--dl-text);
+    font-size: calc(13px * var(--u, 1.6));
+    font-weight: 500;
+  }
+  .dl-sub {
+    fill: var(--dl-text);
+    opacity: 0.72;
+    font-family: var(--font-mono);
+    font-size: calc(10.5px * var(--u, 1.6));
+  }
+
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -342,3 +415,471 @@
   }
 }
 
+/* Showcase page: the cycling word in the H1 (all words stacked in one grid cell, so the heading never changes width).
+   Opacity and transform only. Reduced motion shows the first word and nothing moves. */
+@keyframes sc-word {
+  0% {
+    opacity: 0;
+    transform: translateY(40%);
+  }
+  4%,
+  30% {
+    opacity: 1;
+    transform: none;
+  }
+  34%,
+  100% {
+    opacity: 0;
+    transform: translateY(-40%);
+  }
+}
+.sc-word {
+  opacity: 0;
+  animation: sc-word 9s var(--ease-paper) infinite both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sc-word {
+    animation: none;
+  }
+  .sc-word:first-child {
+    opacity: 1;
+  }
+}
+
+/* Tools menu preview: a slow float, transform only, off with reduced motion */
+@keyframes sc-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [class*='animate-[sc-float'] {
+    animation: none;
+  }
+}
+
+/* Showcase stage: the cinema layout keeps the box clear of the headline. --s-shift (0..1) is written by the stage;
+   the offset is a transform, so moving it costs the compositor nothing. Desktop: right. Phone: down. */
+.sc-shift {
+  --shift-x: 0px;
+  --shift-y: 0px;
+  transform: translate3d(calc(var(--s-shift, 0) * var(--shift-x)), calc(var(--s-shift, 0) * var(--shift-y)), 0);
+  will-change: transform;
+}
+@media (min-width: 1024px) {
+  .sc-shift {
+    --shift-x: 16vw;
+  }
+}
+@media (max-width: 1023px) {
+  .sc-shift {
+    --shift-y: 15svh;
+    /* the hero box rides higher than the flat blank so it clears the controls (--s-lift is 1 only in the hero) */
+    transform: translate3d(calc(var(--s-shift, 0) * var(--shift-x)), calc(var(--s-shift, 0) * var(--shift-y) - var(--s-lift, 0) * 9svh), 0);
+  }
+}
+
+/* ShareFlow (components/showcase/visuals): the link travels, the page gets signed. Transform, opacity and
+   stroke-dashoffset only. Paused until in view; reduced motion shows the finished state. */
+.sf:not(.sf-run) * {
+  animation-play-state: paused;
+}
+.sf .sf-dash {
+  animation: sf-dash 1.1s linear infinite;
+}
+.sf .sf-bob {
+  animation: sf-bob 3.2s ease-in-out infinite;
+}
+.sf .sf-chip {
+  opacity: 0;
+  animation-duration: 6s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+.sf .sf-chip1 {
+  animation-name: sf-chip1;
+}
+.sf .sf-chip2 {
+  animation-name: sf-chip2;
+}
+.sf .sf-check {
+  stroke-dasharray: 60;
+  stroke-dashoffset: 60;
+  animation: sf-check 6s ease-out infinite;
+}
+@keyframes sf-dash {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+@keyframes sf-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes sf-chip1 {
+  0%,
+  6% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  34% {
+    transform: translateX(86px);
+    opacity: 1;
+  }
+  38%,
+  100% {
+    transform: translateX(86px);
+    opacity: 0;
+  }
+}
+@keyframes sf-chip2 {
+  0%,
+  46% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  72% {
+    transform: translateX(126px);
+    opacity: 1;
+  }
+  76%,
+  100% {
+    transform: translateX(126px);
+    opacity: 0;
+  }
+}
+@keyframes sf-check {
+  0%,
+  76% {
+    stroke-dashoffset: 60;
+  }
+  88%,
+  96% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 60;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sf .sf-dash,
+  .sf .sf-bob,
+  .sf .sf-chip {
+    animation: none;
+  }
+  .sf .sf-check {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* /experience: words rise in one by one on arrival; the scroll cue is a line that draws down. Transform and opacity only. */
+@keyframes sc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.sc-rise {
+  animation: sc-rise 0.85s var(--ease-paper) both;
+  animation-delay: calc(var(--i, 0) * 90ms + 120ms);
+}
+@keyframes sc-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+.sc-cue {
+  animation: sc-cue 2.2s var(--ease-paper) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sc-rise,
+  .sc-cue {
+    animation: none;
+  }
+}
+
+/* Kinetic headline (components/showcase/fx/SplitWords): each word slides up out of its own mask. Transform only. */
+.sw-w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
+}
+.sw-i {
+  display: inline-block;
+  transform: translateY(112%);
+  transition: transform 0.95s var(--ease-paper) var(--d, 0ms);
+}
+.sw-in .sw-i {
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sw-i {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Spotlight that follows the pointer inside a tile (usePointerFx sets --mx / --my). Off on touch. */
+.fx-spot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-paper);
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgb(61 186 90 / 0.2), transparent 65%);
+}
+.fx-spot[data-fx='on']::before {
+  opacity: 1;
+}
+.fx-tilt {
+  transition: transform 0.25s var(--ease-paper), border-color 0.25s var(--ease-paper);
+  will-change: transform;
+}
+
+/* Hero chips floating around the box (desktop): a gentle bob, staggered by --i. Transform only. */
+.sc-chip {
+  animation: sc-float 5.5s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -1.1s);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sc-chip {
+    animation: none;
+  }
+}
+
+/* Share drawing: a ring pulses out where the link lands and where the page is signed */
+.sf .sf-ring {
+  fill: none;
+  stroke: #3dba5a;
+  stroke-width: 2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sf-ring 6s ease-out infinite;
+}
+.sf .sf-ring2 {
+  animation-name: sf-ring2;
+}
+@keyframes sf-ring {
+  0%,
+  34% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  36% {
+    opacity: 0.9;
+  }
+  50%,
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+@keyframes sf-ring2 {
+  0%,
+  76% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  78% {
+    opacity: 0.9;
+  }
+  92%,
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sf .sf-ring {
+    animation: none;
+  }
+}
+
+/* Blurred page behind the open mobile menu (components/site/MenuScrim). The blur and the dimming fade together in
+   300 ms. The -webkit- property is transitioned too, for older Safari. Without backdrop-filter support it is a plain
+   darker scrim. */
+.menu-scrim {
+  background-color: rgb(15 26 20 / 0);
+  -webkit-backdrop-filter: blur(0);
+  backdrop-filter: blur(0);
+  transition-property: background-color, backdrop-filter, -webkit-backdrop-filter;
+  transition-duration: 320ms;
+  transition-timing-function: var(--ease-paper);
+}
+.menu-scrim[data-shown='true'] {
+  background-color: rgb(15 26 20 / 0.28);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .menu-scrim[data-shown='true'] {
+    background-color: rgb(15 26 20 / 0.62);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-scrim {
+    transition-duration: 1ms;
+  }
+}
+
+/* Board test scene (visuals/CrushTest): the press comes down, the gauge climbs, the wall gives way. One timeline
+   (--ct-t); the readout is tweened to match. Transform and opacity only. */
+.ct .ct-plate {
+  animation: ct-plate var(--ct-t, 3400ms) linear both;
+}
+.ct .ct-box {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ct-box var(--ct-t, 3400ms) linear both;
+}
+.ct .ct-fill {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ct-fill var(--ct-t, 3400ms) linear both;
+}
+.ct .ct-crack {
+  opacity: 0;
+  animation: ct-crack var(--ct-t, 3400ms) linear both;
+}
+@keyframes ct-plate {
+  0% {
+    transform: translateY(-110px);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.8, 0.6);
+  }
+  34% {
+    transform: translateY(0);
+    animation-timing-function: ease-in-out;
+  }
+  92%,
+  100% {
+    transform: translateY(17px);
+  }
+}
+@keyframes ct-box {
+  0%,
+  34% {
+    transform: none;
+    animation-timing-function: ease-in-out;
+  }
+  92% {
+    transform: scaleY(0.86);
+  }
+  94% {
+    transform: scaleY(0.84) skewX(-3deg);
+  }
+  97% {
+    transform: scaleY(0.83) skewX(2deg);
+  }
+  100% {
+    transform: scaleY(0.83);
+  }
+}
+@keyframes ct-fill {
+  0%,
+  34% {
+    transform: scaleY(0);
+    animation-timing-function: ease-in-out;
+  }
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+@keyframes ct-crack {
+  0%,
+  91% {
+    opacity: 0;
+  }
+  93%,
+  100% {
+    opacity: 1;
+  }
+}
+.ct-done .ct-plate {
+  animation: none;
+  transform: translateY(17px);
+}
+.ct-done .ct-box {
+  animation: none;
+  transform: scaleY(0.83);
+}
+.ct-done .ct-fill {
+  animation: none;
+}
+.ct-done .ct-crack {
+  animation: none;
+  opacity: 1;
+}
+
+/* Board cross-section layers drop in one after another; container blocks fill in deepest first. */
+.bl-layer {
+  animation: bl-in 0.7s var(--ease-paper) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+@keyframes bl-in {
+  from {
+    opacity: 0;
+    transform: translateY(-22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.cu-cube {
+  animation: cu-in 0.5s var(--ease-paper) both;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes cu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bl-layer,
+  .cu-cube {
+    animation: none;
+  }
+}

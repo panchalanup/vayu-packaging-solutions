@@ -314,8 +314,14 @@ export abstract class PanelRig implements CartonRig {
       metalness: 0,
       envMapIntensity: 0.4,
     });
-    this.edgeCrossMaterial = new THREE.MeshStandardMaterial({ roughness: 0.95, metalness: 0, envMapIntensity: 0.4 });
-    this.edgeAlongMaterial = new THREE.MeshStandardMaterial({ roughness: 0.95, metalness: 0, envMapIntensity: 0.4 });
+    // Cut-edge faces (the corrugated cross-section) can sit in exactly the same plane as a neighbouring panel's printed
+    // face, e.g. a wall's top edge flush with a closed lid. Two coplanar faces fight for the pixel and the winner flips
+    // with the camera angle, which shows as flaps blinking while the box turns. A small positive depth offset makes the
+    // edge faces lose such ties, so the printed face always wins and the result is stable.
+    const edgeMaterial = () =>
+      new THREE.MeshStandardMaterial({ roughness: 0.95, metalness: 0, envMapIntensity: 0.4, polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 2 });
+    this.edgeCrossMaterial = edgeMaterial();
+    this.edgeAlongMaterial = edgeMaterial();
 
     this.object3d.name = name;
     this.object3d.add(this.root);

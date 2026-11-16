@@ -28,6 +28,8 @@ const CompareQuote = lazy(() => import("./pages/CompareQuote"));
 const BoxDesigner = lazy(() => import("./pages/BoxDesigner"));
 const BoxDesignerLanding = lazy(() => import("./pages/BoxDesignerLanding"));
 const BoxDesignerEmbed = lazy(() => import("./pages/BoxDesignerEmbed"));
+const BoxDesignerShowcase = lazy(() => import("./pages/BoxDesignerShowcase"));
+const BoxDesignerExperience = lazy(() => import("./pages/BoxDesignerExperience"));
 const ToolsIndex = lazy(() => import("./pages/ToolsIndex"));
 const ToolPage = lazy(() => import("./pages/ToolPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -86,6 +88,8 @@ const AnimatedRoutes = () => {
           <Route path="/compare-quote" element={<CompareQuote />} />
           <Route path="/box-designer" element={<BoxDesigner />} />
           <Route path="/box-designer/:style" element={<BoxDesignerLanding />} />
+          <Route path="/3d-box-designer" element={<BoxDesignerShowcase />} />
+          <Route path="/3d-box-designer/experience" element={<BoxDesignerExperience />} />
           <Route path="/embed/box-designer" element={<BoxDesignerEmbed />} />
           <Route path="/tools" element={<ToolsIndex />} />
           <Route path="/tools/:slug" element={<ToolPage />} />

@@ -22,3 +22,4 @@ export {
   type BoxDesignerFAQItem 
 } from './boxDesigner';
 export { getWebSiteSchema, getBlogIndexSchema } from './site';
+export { getShowcaseSchemas, SHOWCASE_SCHEMA_TYPES } from './showcase';
