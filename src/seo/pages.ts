@@ -16,6 +16,7 @@ import { FACTS } from '@/content/facts';
 import { HOME_FAQ } from '@/content/home';
 import { TOOL_PAGES, TOOLS_INDEX_PATH } from '@/content/toolPages';
 import { availableLandings, landingOgImage, type DesignerLanding } from '@/content/designerLandings';
+import { EXPERIENCE_META, EXPERIENCE_PATH, SHOWCASE_META, SHOWCASE_PATH } from '@/content/designerShowcase';
 import { extractFaqs, countWords, readingMinutes, stripFrontmatter, stripLeadingTitle } from '@/lib/blogMarkdown';
 import { SEO_CONFIG } from './config';
 import { getToolHowToSchema, getToolWebApplicationSchema } from './schema/tool';
@@ -39,6 +40,7 @@ import {
   getProductCatalogSchema,
   getProductDetailSchema,
   getProductListSchema,
+  getShowcaseSchemas,
   getSoftwareApplicationSchema,
   getToolFAQSchema,
   getWebSiteSchema,
@@ -59,6 +61,8 @@ export type PageKind =
   | 'tools'
   | 'tool'
   | 'designer'
+  | 'showcase'
+  | 'experience'
   | 'landing'
   | 'blogs'
   | 'blog'
@@ -110,6 +114,7 @@ export const STATIC_LASTMOD = {
   credits: '2026-10-27',
   privacy: '2026-10-27',
   landings: '2026-10-27',
+  showcase: '2026-11-16',
 } as const;
 
 const latest = (dates: string[]) => dates.reduce((a, b) => (b > a ? b : a), '1970-01-01');
@@ -308,6 +313,40 @@ export function getSeoPages(options: SeoPageOptions = {}): SeoPage[] {
     changefreq: 'weekly',
     priority: 0.9,
     jsonLd: [getBoxDesignerSchema(), getBoxDesignerFAQSchema(), getBoxDesignerBreadcrumbSchema(), getBoxDesignerHowToSchema()],
+  });
+
+  pages.push({
+    kind: 'showcase',
+    path: SHOWCASE_PATH,
+    title: buildFullTitle(`${SHOWCASE_META.title} | Vayu Packaging`),
+    description: SHOWCASE_META.description,
+    keywords: [...SHOWCASE_META.keywords],
+    image: resolveOgImagePath(SHOWCASE_META.ogImage),
+    ogType: 'website',
+    lastmod: STATIC_LASTMOD.showcase,
+    changefreq: 'monthly',
+    priority: 0.85,
+    jsonLd: getShowcaseSchemas(),
+  });
+
+  pages.push({
+    kind: 'experience',
+    path: EXPERIENCE_PATH,
+    title: buildFullTitle(EXPERIENCE_META.title),
+    description: EXPERIENCE_META.description,
+    keywords: [...EXPERIENCE_META.keywords],
+    image: resolveOgImagePath(EXPERIENCE_META.ogImage),
+    ogType: 'website',
+    lastmod: STATIC_LASTMOD.showcase,
+    changefreq: 'monthly',
+    priority: 0.7,
+    jsonLd: [
+      getBreadcrumbSchema([
+        { name: 'Home', url: '/' },
+        { name: '3D Box Designer', url: '/box-designer' },
+        { name: 'See it in action', url: EXPERIENCE_PATH },
+      ]),
+    ],
   });
 
   for (const landing of availableLandings()) pages.push(landingPage(landing));

@@ -15,8 +15,8 @@ import type { ImageSlotData } from '@/components/site/ImageSlot';
 
 // Logos
 import logoMain from '@/assets/logo.png';
-import logoHorizontal from '@/assets/logo-horizontal.png';
-import logoHorizontalLight from '@/assets/logo-horizontal-light.png';
+import logoHorizontal from '@/assets/logo-horizontal.webp';
+import logoHorizontalLight from '@/assets/logo-horizontal-light.webp';
 
 // Video
 import factoryVideo from '@/assets/video/factory-top-view.mp4';

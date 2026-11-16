@@ -140,6 +140,8 @@
     { "source": "/blogs/:slug", "destination": "/blogs/:slug/index.html" },
     { "source": "/box-designer", "destination": "/box-designer/index.html" },
     { "source": "/box-designer/:style", "destination": "/box-designer/:style/index.html" },
+    { "source": "/3d-box-designer", "destination": "/3d-box-designer/index.html" },
+    { "source": "/3d-box-designer/experience", "destination": "/3d-box-designer/experience/index.html" },
     { "source": "/tools", "destination": "/tools/index.html" },
     { "source": "/tools/:slug", "destination": "/tools/:slug/index.html" },
     { "source": "/compare-quote", "destination": "/compare-quote/index.html" },
