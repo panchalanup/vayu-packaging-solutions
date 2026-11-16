@@ -352,6 +352,43 @@ async function menulock(page) {
   log('after close (Esc):', JSON.stringify(closed), closed.scrollY === before.y ? 'SCROLL RESTORED EXACTLY' : 'SCROLL NOT RESTORED');
 }
 
+/** The interactive scenes of the film: Size it, Test it, Price it, Stack it, Make it (low tier: no WebGL, fast) */
+async function scenes(page) {
+  for (const [label, cfg] of [
+    ['desktop', { w: 1440, h: 900, mobile: false, query: '?quality=low' }],
+    ['mobile', { w: 390, h: 844, mobile: true, query: '?quality=low' }],
+  ].filter(([l]) => !opt('viewport') || opt('viewport') === l)) {
+    log(`--- scenes ${label}`);
+    await open(page, cfg);
+    await waitFor(page, `!!document.querySelector('h1')`);
+    await sleep(1500);
+    const click = (sel, text) => page.eval(`(() => { const b = [...document.querySelectorAll(${JSON.stringify(sel)})].find((e) => e.textContent.trim() === ${JSON.stringify(text)}); if (!b) return false; b.click(); return true; })()`);
+    await toId(page, '#size-h', 40, 2200);
+    await shot(page, `${label}-s1-size.png`);
+    log('click Bottle:', await click('[role=radio]', 'Bottle'));
+    await sleep(1400);
+    await shot(page, `${label}-s1b-size-bottle.png`);
+    log('use this size:', await click('button', 'Use this size'));
+    await toId(page, '#board-h', 40, 5200);
+    await shot(page, `${label}-s2-board.png`);
+    log('click 7-Ply:', await click('[role=radio]', '7-Ply'));
+    await sleep(5200);
+    await shot(page, `${label}-s2b-board-7ply.png`);
+    await toId(page, '#price-h', 40, 1800);
+    await shot(page, `${label}-s3-price.png`);
+    await toId(page, '#stack-h', 40, 4200);
+    await shot(page, `${label}-s4-stack.png`);
+    log('click 40 ft:', await click('[role=radio]', '40 ft'));
+    await sleep(4200);
+    await shot(page, `${label}-s4b-stack-40ft.png`);
+    await toId(page, '#make-h', 40, 1800);
+    await shot(page, `${label}-s5-make.png`);
+    log('open lead form:', await click('button', 'Send this to Vayu'));
+    await sleep(2500);
+    await shot(page, `${label}-s5b-make-form.png`);
+  }
+}
+
 async function interact(page) {
   await open(page, { w: 1440, h: 900, mobile: false, query: '?quality=high' });
   await waitFor(page, `!!document.querySelector('h1')`);
@@ -388,7 +425,7 @@ try {
   const page = await connect();
   const modes = MODE === 'all' ? ['layout', 'interact', 'visual', 'perf'] : [MODE];
   for (const m of modes) {
-    await { visual, layout, perf, network, interact, menu, bench, menulock }[m](page);
+    await { visual, layout, perf, network, interact, menu, bench, menulock, scenes }[m](page);
   }
   console.log('\nconsole problems:', issues.length ? '\n  ' + [...new Set(issues)].join('\n  ') : 'none');
   console.log('screenshots in', OUT);

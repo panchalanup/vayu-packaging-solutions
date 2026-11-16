@@ -120,3 +120,22 @@ SVG line path) each cost frames in the CPU-rendered benchmark, so it was dropped
 **Measured** (headless Edge, CPU rendering): phone-size, 3D off: 16.8 ms 95th percentile, 0 long tasks. Desktop-size, 3D off:
 16.7 ms median, but more frames over 33 ms than before the upgrade; the same JavaScript runs on the phone size with none,
 so this is pixel-fill cost of the CPU renderer. Not yet measured on a real GPU.
+
+## 8. Round 3 (16 Nov 2026): more hero scenes, one after another
+
+The owner asked for more "wow" hero sections down the page, each useful and not only decorative. The filter: a scene earns its place only if it answers a question a buyer actually has, using the designer's own logic (no invented numbers).
+
+| Scene | Question it answers | Real logic behind it | Visual |
+|---|---|---|---|
+| Size it | "What size box do I need for my product?" | `lib/boxDesigner/fit.ts` (product + cushioning, fragile switch) | Isometric box with the product inside; "Use this size" feeds the shared design |
+| Test it | "Will it survive stacking?" | `strength.ts` (McKee estimate), board ply choice | Crush rig: press comes down, gauge climbs, wall buckles; board cross-section drops in layer by layer |
+| Price it | "What will it cost?" | `pricing.ts` `estimatePrice`, shared quantity | Per-box price count-up and tier bars |
+| Stack it | "How many fit in a container?" | `tools/cbm.ts` (pallet and container fill) | Isometric 20 / 40 / 40 HC container filling with cartons |
+| Share it, Sides | existing | | |
+| Make it | "How do I order this?" | `LeadForm` to `/api/quote` with the spec attached | Recap card (box, board, quantity, price) and the send / WhatsApp actions |
+
+Shared state: `useShowcaseValue` gives every scene one `boxDesign` (hero design + chosen ply + quantity), so a size picked in "Size it" changes the strength test, price, container load and the recap.
+
+Performance: the new scenes are SVG plus CSS (transform/opacity only), started when they scroll into view (`useInView`), with no extra canvas and no new dependency. Reduced motion shows the end state of each.
+
+Verified: desktop and phone (390 px) screenshots of every scene and interaction, no console errors, 869 unit tests, typecheck, lint, production build. Not verified: frame rate on a real GPU phone (the test browser renders on CPU). Prerendered SEO body for the new scenes is not updated yet.

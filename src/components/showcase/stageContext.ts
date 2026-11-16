@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { BoxFace, BoxDesign } from '@/types/boxDesigner';
+import type { BoxFace, BoxDesign, PlyType } from '@/types/boxDesigner';
 import type { Dieline } from '@/lib/boxDesigner/dieline';
 import type { Phase, StageDesign, StageStore } from '@/lib/showcase/stage';
 import type { SiteTier } from '@/lib/motion/siteTier';
@@ -35,9 +35,18 @@ export function useStage(): StageApi {
 }
 
 /** The design the visitor shaped in the hero, for chapters outside the sticky stage (samples, closing call to action) */
+export interface ShowcaseSpec {
+  ply: PlyType;
+  quantity: number;
+}
+
 export interface ShowcaseDesign {
   design: StageDesign;
+  /** The design with the chosen board and quantity applied (what the later scenes price, test and send) */
   boxDesign: BoxDesign;
+  setDesign: (next: Partial<StageDesign>) => void;
+  spec: ShowcaseSpec;
+  setSpec: (next: Partial<ShowcaseSpec>) => void;
 }
 
 export const ShowcaseDesignContext = createContext<ShowcaseDesign | null>(null);

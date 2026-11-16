@@ -4,7 +4,7 @@
  * as quantity grows. Always labelled indicative (ex-GST, ex-delivery): it is a talking point that leads to an exact quote.
  */
 
-import { useId, useMemo, useState } from 'react';
+import { useId, useMemo } from 'react';
 import { Cta } from '@/components/site/Cta';
 import { QUANTITY_TIERS, estimatePrice } from '@/lib/boxDesigner/pricing';
 import { getStyle } from '@/lib/boxDesigner/styles';
@@ -20,9 +20,10 @@ const rupees = (n: number) => `₹${n.toLocaleString('en-IN', { minimumFractionD
 const rupeesWhole = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
 
 export default function PriceScene() {
-  const { boxDesign, design } = useShowcaseDesign();
+  const { boxDesign, design, spec, setSpec } = useShowcaseDesign();
   const { trackEvent } = useEventTracker();
-  const [index, setIndex] = useState(1);
+  // the quantity is shared with the other scenes (the container load and the recap use it too)
+  const index = Math.max(0, QUANTITY_TIERS.findIndex((q) => q === spec.quantity));
   const labelId = useId();
 
   const estimates = useMemo(() => QUANTITY_TIERS.map((q) => estimatePrice({ ...boxDesign, quantity: q })), [boxDesign]);
@@ -36,7 +37,7 @@ export default function PriceScene() {
       <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-1/2 h-[34rem] w-[34rem] -translate-y-1/2 rounded-full bg-green-400/10 blur-3xl" />
       <div className="relative mx-auto grid max-w-content items-center gap-12 px-4 md:px-6 lg:grid-cols-2 lg:gap-20 lg:px-10">
         <div>
-          <SplitWords as="h2" id="price-h" text="Know the price." className="font-display text-[clamp(2.8rem,7vw,6.2rem)] leading-[0.92] tracking-tight text-paper-50" />
+          <SplitWords as="h2" id="price-h" text="Price it." className="font-display text-[clamp(2.8rem,7vw,6.2rem)] leading-[0.92] tracking-tight text-paper-50" />
           <Reveal className="mt-7">
             <p className="label-mono text-paper-muted">
               {getStyle(design.template).shortName} · {Math.round(length * 10)} × {Math.round(width * 10)} × {Math.round(height * 10)} mm
@@ -55,7 +56,7 @@ export default function PriceScene() {
                   role="radio"
                   aria-checked={index === i}
                   onClick={() => {
-                    setIndex(i);
+                    setSpec({ quantity: QUANTITY_TIERS[i] });
                     trackEvent('experience_price_tier', { quantity: q });
                   }}
                   className={cn(

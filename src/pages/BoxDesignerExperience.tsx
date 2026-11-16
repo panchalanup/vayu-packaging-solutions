@@ -5,32 +5,29 @@
  * "cinema" layout. SECURITY: all copy is static; JSON-LD is serialised by StructuredData.
  */
 
-import { useEffect, useMemo, useSyncExternalStore } from 'react';
+import { useEffect, useMemo } from 'react';
 import Layout from '@/components/Layout';
 import MetaTags from '@/components/SEO/MetaTags';
 import { StructuredData } from '@/components/SEO/StructuredData';
 import { SEO_CONFIG } from '@/seo/config';
 import { getBreadcrumbSchema } from '@/seo/schema';
 import { EXPERIENCE_META, EXPERIENCE_PATH } from '@/content/designerShowcase';
-import { DEFAULT_DESIGN } from '@/lib/boxDesigner/designCodec';
 import { DEFAULT_STAGE_DESIGN, createStageStore, sceneFor } from '@/lib/showcase/stage';
 import { useEventTracker } from '@/hooks/useAnalytics';
 import ScrollyShowcase from '@/components/showcase/ScrollyShowcase';
 import { ShowcaseDesignContext } from '@/components/showcase/stageContext';
+import { useShowcaseValue } from '@/components/showcase/useShowcaseValue';
 import { CinemaHero, CinemaPrint, CinemaUnfold, CinemaWords } from '@/components/showcase/cinema/CinemaScenes';
 import { AnyBoxScene, CloseScene, ShareScene, SidesScene } from '@/components/showcase/cinema/CinemaSections';
 import PriceScene from '@/components/showcase/cinema/PriceScene';
+import { BoardScene, MakeScene, SizeScene, StackScene } from '@/components/showcase/cinema/ToolScenes';
 import ScrollProgress from '@/components/showcase/fx/ScrollProgress';
 
 export default function BoxDesignerExperience() {
   const { trackEvent } = useEventTracker();
   const store = useMemo(() => createStageStore(sceneFor({ phase: 1, p: 0, slider: 1, has3d: false, variant: 'cinema' }), DEFAULT_STAGE_DESIGN), []);
   useEffect(() => () => store.dispose(), [store]);
-  const design = useSyncExternalStore(store.subscribe, () => store.get().design);
-  const value = useMemo(
-    () => ({ design, boxDesign: { ...DEFAULT_DESIGN, template: design.template, dimensions: design.dims, colorHex: design.colorHex } }),
-    [design]
-  );
+  const value = useShowcaseValue(store);
 
   useEffect(() => {
     trackEvent('experience_view', {});
@@ -62,9 +59,13 @@ export default function BoxDesignerExperience() {
         <div data-theme="ink" className="-mt-[72px] bg-ink-900 text-paper-50">
           <ScrollyShowcase store={store} layout="cinema" hero={<CinemaHero />} unfold={<CinemaUnfold />} anatomy={<CinemaPrint />} overlay={<CinemaWords />} />
           <AnyBoxScene />
+          <SizeScene />
+          <BoardScene />
           <PriceScene />
+          <StackScene />
           <ShareScene />
           <SidesScene />
+          <MakeScene />
           <CloseScene />
         </div>
       </ShowcaseDesignContext.Provider>

@@ -19,6 +19,7 @@ import { useEventTracker } from '@/hooks/useAnalytics';
 import AudienceSwitch from '@/components/showcase/AudienceSwitch';
 import { AudienceContext, initialAudience, rememberAudience, type AudienceApi } from '@/components/showcase/audienceContext';
 import { ShowcaseDesignContext } from '@/components/showcase/stageContext';
+import { useShowcaseValue } from '@/components/showcase/useShowcaseValue';
 import ScrollyShowcase from '@/components/showcase/ScrollyShowcase';
 import HeroDesign from '@/components/showcase/chapters/HeroDesign';
 import Unfold from '@/components/showcase/chapters/Unfold';
@@ -52,11 +53,7 @@ export default function BoxDesignerShowcase() {
   // The visitor's design (hero) lives in one store, shared by the sticky stage and the later chapters
   const store = useMemo(() => createStageStore(sceneFor({ phase: 1, p: 0, slider: 1, has3d: false }), DEFAULT_STAGE_DESIGN), []);
   useEffect(() => () => store.dispose(), [store]);
-  const design = useSyncExternalStore(store.subscribe, () => store.get().design);
-  const showcaseDesign = useMemo(
-    () => ({ design, boxDesign: { ...DEFAULT_DESIGN, template: design.template, dimensions: design.dims, colorHex: design.colorHex } }),
-    [design]
-  );
+  const showcaseDesign = useShowcaseValue(store);
 
   // One event on arrival and one per chapter, the first time it is reached
   useEffect(() => {
