@@ -11,6 +11,7 @@ import { getFAQSchema } from '@/seo/schema';
 import { HOME_FAQ, TESTIMONIALS } from '@/content/home';
 import { FACTS } from '@/content/facts';
 import { CONTACT_INFO } from '@/constants';
+import { EmailText } from '@/components/site/Blocks';
 import { mailHref, telHref, whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';
 
 const QuoteForm = lazy(() => import('@/components/quote/QuoteForm'));
@@ -105,8 +106,8 @@ export function TalkToUs() {
                 </Cta>
               </li>
               <li>
-                <Cta id="home.contact.email" intent="email" variant="link" href={mailHref} className={`${row} w-full break-all text-paper-50`}>
-                  {CONTACT_INFO.email}
+                <Cta id="home.contact.email" intent="email" variant="link" href={mailHref} className={`${row} w-full text-paper-50`}>
+                  <EmailText email={CONTACT_INFO.email} />
                 </Cta>
               </li>
             </ul>

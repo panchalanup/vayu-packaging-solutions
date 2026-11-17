@@ -140,7 +140,8 @@ export default function IndustryDetail() {
         <Section name="faq" theme="kraft" aria-labelledby="faq-heading" className="section-y">
           <div className={container}>
             <SectionHeader id="faq-heading" index="03 — FAQ" title={`${industry.name} questions.`} align="split" />
-            <div className="mt-8 lg:ml-[33.333%]">
+            {/* lines up with SectionHeader split: column 5 of 12 with the 2rem gap */}
+            <div className="mt-8 lg:ml-[calc((100%_+_2rem)/3)]">
               <FaqAccordion items={industry.faqs} idPrefix={`ind-${industry.slug}`} />
             </div>
           </div>
@@ -166,7 +167,11 @@ export default function IndustryDetail() {
 
         <CtaBand
           name="industry-cta"
-          title={`Get the ${industry.name} spec.`}
+          title={
+            <>
+              Get the <span className="whitespace-nowrap">{industry.name}</span> spec.
+            </>
+          }
           lead="Tell us the product, size and quantity. We will confirm the spec and price."
           note={`Reply within ${FACTS.replySla}. ${FACTS.businessHours}.`}
         >

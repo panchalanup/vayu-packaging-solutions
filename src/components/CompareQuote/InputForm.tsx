@@ -62,7 +62,7 @@ const PRIORITIES = [
 ] as const;
 
 const chipClass =
-  'flex min-h-11 cursor-pointer flex-col justify-center rounded-lg border border-input px-3.5 py-2 text-sm transition-colors duration-quick peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background hover:border-foreground/40';
+  'flex h-full min-h-11 cursor-pointer flex-col justify-center rounded-lg border border-input px-3.5 py-2 text-sm transition-colors duration-quick peer-checked:border-primary peer-checked:bg-primary peer-checked:text-primary-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background hover:border-foreground/40';
 
 const inputClass = 'h-12 text-base';
 

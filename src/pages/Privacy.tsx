@@ -12,6 +12,7 @@ import MetaTags from '@/components/SEO/MetaTags';
 import { FACTS } from '@/content/facts';
 import { getConsent, setConsent } from '@/lib/consent';
 import { mailHref } from '@/lib/contactLinks';
+import { cn } from '@/lib/utils';
 
 const BLOCKS: [string, string][] = [
   ['What you send us', 'When you ask for a quote, sample or call-back we receive the details you type: name, company, mobile number, optional email and GSTIN, and your packaging requirements. We use them only to reply to you and to prepare your quote.'],
@@ -47,7 +48,11 @@ export default function Privacy() {
                       setConsent(c);
                       setChoice(c);
                     }}
-                    className="min-h-11 rounded-lg border border-ink-900/25 px-5 text-sm font-semibold hover:bg-ink-900/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    aria-pressed={choice === c}
+                    className={cn(
+                      'min-h-11 rounded-lg border px-5 text-sm font-semibold transition-colors duration-quick focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                      choice === c ? 'border-ink-900 bg-ink-900 text-paper-50' : 'border-ink-900/25 hover:bg-ink-900/5'
+                    )}
                   >
                     {c === 'granted' ? 'Accept analytics' : 'Decline analytics'}
                   </button>
@@ -58,7 +63,7 @@ export default function Privacy() {
               {/* VERIFY-LATER[LEGAL-02]: name a grievance contact if the business has one */}
               Questions or deletion requests: <a className="text-accent underline underline-offset-4" href={mailHref}>email us</a>. {FACTS.legalName}, {FACTS.addressShort}.
             </p>
-            <Cta id="privacy.back" intent="navigate" variant="link" href="/contact">
+            <Cta id="privacy.back" intent="navigate" variant="link" href="/contact" className="self-start">
               Contact us
             </Cta>
           </div>

@@ -24,7 +24,7 @@ function Tiles({ list, tone, offset }: { list: typeof STYLES; tone: 'paper' | 'i
         <div
           key={s.id}
           className={cn(
-            'flex w-40 shrink-0 flex-col items-center rounded-2xl border p-4 transition-transform duration-base ease-paper hover:-translate-y-1.5 sm:w-52',
+            'flex w-40 shrink-0 flex-col items-center rounded-2xl border p-4 transition-[transform,border-color] duration-base ease-paper hover:-translate-y-1.5 sm:w-52',
             tone === 'ink' ? 'border-paper-50/10 bg-ink-800 hover:border-green-400/50' : 'border-foreground/10 bg-paper-50 hover:border-green-600/40'
           )}
         >
@@ -42,12 +42,13 @@ export default function StyleMarquee({ tone = 'paper', className }: StyleMarquee
     return [STYLES.slice(0, half), STYLES.slice(half)];
   }, []);
 
+  // Each row clips sideways, so it gets py-2 of headroom for the hover lift (8px > 6px); -my-2 keeps the outer layout
   return (
-    <div className={cn('space-y-4', className)}>
-      <VelocityMarquee speed={46} fade={tone === 'ink' ? 'ink' : 'paper'}>
+    <div className={cn('-my-2', className)}>
+      <VelocityMarquee speed={46} fade={tone === 'ink' ? 'ink' : 'paper'} className="py-2">
         <Tiles list={rows[0]} tone={tone} offset={0} />
       </VelocityMarquee>
-      <VelocityMarquee speed={38} reverse fade={tone === 'ink' ? 'ink' : 'paper'}>
+      <VelocityMarquee speed={38} reverse fade={tone === 'ink' ? 'ink' : 'paper'} className="py-2">
         <Tiles list={rows[1]} tone={tone} offset={3} />
       </VelocityMarquee>
     </div>

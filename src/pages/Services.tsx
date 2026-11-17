@@ -177,7 +177,8 @@ const Services = () => (
       <Section name="faq" aria-labelledby="faq-heading" className="section-y">
         <div className={container}>
           <SectionHeader id="faq-heading" index="04 — FAQ" title="Common questions." align="split" />
-          <div className="mt-8 lg:ml-[33.333%]">
+          {/* lines up with SectionHeader split: column 5 of 12 with the 2rem gap */}
+          <div className="mt-8 lg:ml-[calc((100%_+_2rem)/3)]">
             <FaqAccordion items={FAQS} idPrefix="svc-faq" />
           </div>
         </div>

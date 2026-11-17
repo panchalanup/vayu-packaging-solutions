@@ -14,7 +14,7 @@ import { PAGE_METADATA } from '@/seo/metadata/pages';
 import { getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 import { Section } from '@/components/site/Section';
 import { Cta } from '@/components/site/Cta';
-import { FactStrip, SectionHeader } from '@/components/site/Blocks';
+import { EmailText, FactStrip, SectionHeader } from '@/components/site/Blocks';
 import { StatLedger } from '@/components/site/StatLedger';
 import { ImageSlot, type ImageSlotData } from '@/components/site/ImageSlot';
 import { PageHero } from '@/components/pages/PageHero';
@@ -184,8 +184,8 @@ const About = () => {
               <Cta id="about.facts.call" intent="call" variant="link" href={telHref}>
                 {CONTACT_INFO.phone}
               </Cta>
-              <Cta id="about.facts.email" intent="email" variant="link" href={mailHref} className="break-all">
-                {CONTACT_INFO.email}
+              <Cta id="about.facts.email" intent="email" variant="link" href={mailHref}>
+                <EmailText email={CONTACT_INFO.email} />
               </Cta>
               <Cta id="about.facts.locations" intent="navigate" variant="link" href="/locations" arrow>
                 Gujarat network

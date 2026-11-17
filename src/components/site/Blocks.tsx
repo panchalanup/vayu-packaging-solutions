@@ -49,7 +49,8 @@ export function FactStrip({ facts, className }: { facts: Fact[]; className?: str
   return (
     <dl
       className={cn(
-        '-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0',
+        // scroll-px-4: snap-start aligns chips to the padded edge, not the screen edge
+        '-mx-4 flex snap-x scroll-px-4 gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:scroll-px-0 sm:px-0',
         className
       )}
     >
@@ -82,5 +83,18 @@ export function MadeSourcedBadge({ kind, className }: { kind: MadeOrSourced; cla
       <Diamond aria-hidden="true" className={cn('h-3 w-3', made && 'fill-current')} />
       {made ? 'Custom-made to order' : 'Sourced & QC-checked'}
     </span>
+  );
+}
+
+/** An email address that may wrap only before the "@" (break-all split "…gmail.co / m"); <wbr> stays out of copied text */
+export function EmailText({ email }: { email: string }) {
+  const at = email.indexOf('@');
+  if (at < 0) return <>{email}</>;
+  return (
+    <>
+      {email.slice(0, at)}
+      <wbr />
+      {email.slice(at)}
+    </>
   );
 }

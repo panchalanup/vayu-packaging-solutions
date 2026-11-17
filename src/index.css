@@ -193,6 +193,13 @@
     letter-spacing: 0;
   }
 
+  /* Clash Display's word space is narrow: at h3 size and below "How to use it" reads as one word.
+     Large display sizes are left alone so headline wrapping does not change. */
+  .font-display:is(.text-h3, .text-2xl, .text-xl, .text-lg),
+  :is(h1, h2):is(.text-h3, .text-2xl, .text-xl, .text-lg) {
+    word-spacing: 0.1em;
+  }
+
   :focus-visible {
     outline: 2px solid hsl(var(--ring));
     outline-offset: 2px;

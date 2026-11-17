@@ -136,7 +136,8 @@ export function MobileActionBar() {
   if (HIDDEN_ON.includes(pathname)) return null;
   const hidden = keyboardOpen || inZone;
 
-  const item = 'flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg text-sm font-semibold';
+  // WhatsApp and Call size to their label; Get quote takes the rest (equal shares left "WhatsApp" touching its border)
+  const item = 'flex min-h-12 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-semibold';
   return (
     <motion.nav
       aria-label="Quick contact"
@@ -146,7 +147,7 @@ export function MobileActionBar() {
       className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-foreground/10 bg-paper-50/95 backdrop-blur md:hidden"
       aria-hidden={hidden}
     >
-      <div className="flex gap-2 px-3 py-2">
+      <div className="flex gap-2 px-4 py-2">
         <a
           href={whatsappHref(pageWhatsAppMessage(pathname))}
           target="_blank"
@@ -173,7 +174,7 @@ export function MobileActionBar() {
           onClick={() =>
             trackEvent('cta_click', { id: 'global.bar.quote', intent: 'quote', section: 'mobile-bar', page: pathname })
           }
-          className={`${item} flex-[2] bg-green-600 text-white`}
+          className={`${item} flex-1 bg-green-600 text-white`}
         >
           Get quote
         </Link>
