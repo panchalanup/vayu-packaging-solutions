@@ -2,10 +2,12 @@
  * Kinetic headline: every word slides up out of its own mask, staggered. Transform only. It plays once, on mount or
  * when it scrolls into view. The real text is on the element (aria-label) and the animated words are hidden from
  * assistive tech, so screen readers and search engines read a normal heading. Reduced motion shows it at rest.
+ * variant="blur" swaps the mask-rise for a blur-in (see .sw-blur in index.css).
  */
 
 import { createElement, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useSiteTier } from '@/lib/motion/siteTier';
 
 interface SplitWordsProps {
   text: string;
@@ -21,11 +23,15 @@ interface SplitWordsProps {
   /** Milliseconds between words */
   stagger?: number;
   id?: string;
+  /** 'rise' (default): each word slides up out of a mask. 'blur': each word resolves from a soft blur (display text only; the low tier gets 'rise') */
+  variant?: 'rise' | 'blur';
 }
 
-export function SplitWords({ text, as = 'span', className, accent = [], accentClass = 'text-green-400', mount = false, delay = 0, stagger = 70, id }: SplitWordsProps) {
+export function SplitWords({ text, as = 'span', className, accent = [], accentClass = 'text-green-400', mount = false, delay = 0, stagger = 70, id, variant = 'rise' }: SplitWordsProps) {
   const ref = useRef<HTMLElement>(null);
   const [on, setOn] = useState(false);
+  const { tier } = useSiteTier();
+  const blur = variant === 'blur' && tier !== 'low';
 
   useEffect(() => {
     const el = ref.current;
@@ -55,7 +61,7 @@ export function SplitWords({ text, as = 'span', className, accent = [], accentCl
   const words = text.split(' ');
   return createElement(
     as,
-    { ref, id, className: cn('sw', on && 'sw-in', className), 'aria-label': text },
+    { ref, id, className: cn('sw', blur && 'sw-blur', on && 'sw-in', className), 'aria-label': text },
     words.map((w, i) => (
       <span key={`${w}-${i}`} aria-hidden="true">
         <span className="sw-w">

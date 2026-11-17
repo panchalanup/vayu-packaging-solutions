@@ -75,9 +75,12 @@ const BlogCard = ({ post, variant = 'default' }: BlogCardProps) => {
             {post.title}
           </h3>
 
-          <p className={cn('mt-3 text-sm text-muted-foreground md:text-base', featured ? 'line-clamp-4' : 'line-clamp-2 flex-1')}>
-            {post.description}
-          </p>
+          {/* the wrapper takes the spare height: a stretched line-clamp box shows the lines after its ellipsis */}
+          <div className={cn(!featured && 'flex-1')}>
+            <p className={cn('mt-3 text-sm text-muted-foreground md:text-base', featured ? 'line-clamp-4' : 'line-clamp-2')}>
+              {post.description}
+            </p>
+          </div>
 
           <div className="mt-5 flex items-center justify-between border-t border-border pt-4 text-sm">
             <time dateTime={post.date} className="tabular text-muted-foreground">

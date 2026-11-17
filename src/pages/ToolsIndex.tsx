@@ -12,6 +12,7 @@ import { SEO_CONFIG } from '@/seo/config';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
 import { getBreadcrumbSchema } from '@/seo/schema/breadcrumb';
 import { TOOL_PAGES, TOOLS_INDEX_PATH } from '@/content/toolPages';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
 
 const ICONS: Record<string, LucideIcon> = {
   'volumetric-weight-calculator': Scale,
@@ -69,14 +70,14 @@ export default function ToolsIndex() {
 
       <Section name="tools-grid" className="section-y">
         <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
-          <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <SpotlightGrid as="ul" className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {TOOL_PAGES.map((t) => {
               const Icon = ICONS[t.slug] ?? Calculator;
               return (
-                <li key={t.slug}>
+                <li key={t.slug} className="fx-glow rounded-2xl">
                   <Link
                     to={t.path}
-                    className="group flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition-all duration-quick hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md motion-reduce:hover:translate-y-0"
+                    className="group flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition-[border-color,box-shadow] duration-quick hover:border-primary/60 hover:shadow-md"
                   >
                     <Icon className="h-6 w-6 text-primary" aria-hidden="true" />
                     <span className="mt-3 block font-display text-lg">{t.name}</span>
@@ -88,7 +89,7 @@ export default function ToolsIndex() {
                 </li>
               );
             })}
-          </ul>
+          </SpotlightGrid>
 
           <div className="mt-12 flex flex-col items-start gap-4 rounded-2xl border border-primary/30 bg-paper-100 p-6 md:flex-row md:items-center md:justify-between">
             <div className="flex items-start gap-3">

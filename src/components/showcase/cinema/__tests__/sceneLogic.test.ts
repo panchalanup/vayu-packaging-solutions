@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_DESIGN } from '@/lib/boxDesigner/designCodec';
 import { CONTAINERS } from '@/lib/tools/cbm';
-import { fitScale, iso, isoBounds, paintersOrder, prismFaces } from '../../fx/iso';
+import { fitScale, iso, isoBounds, paintersOrder, prismFaces } from '@/components/fx/iso';
 import { PRODUCTS, boardTest, cubeGrid, filledCells, flutesFor, loadingFor, outsideCarton, sizeFor } from '../sceneLogic';
 
 const design = { ...DEFAULT_DESIGN, template: 'mailer' as const, dimensions: { length: 25, width: 18, height: 8 } };

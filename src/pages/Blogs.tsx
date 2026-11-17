@@ -20,6 +20,7 @@ import { quoteHref } from '@/lib/quotePrefill';
 import { MetaTags, StructuredData, SEO_CONFIG } from '@/seo';
 import { PAGE_METADATA } from '@/seo/metadata/pages';
 import { getBlogIndexSchema, getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
 
 const norm = (value: string) => value.toLowerCase().normalize('NFKD').replace(/[^\p{L}\p{N}\s]/gu, ' ');
 
@@ -122,13 +123,13 @@ const Blogs = () => {
             )}
 
             {grid.length > 0 && (
-              <ul className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <SpotlightGrid as="ul" className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {grid.map((post) => (
-                  <li key={post.slug}>
+                  <li key={post.slug} className="fx-glow rounded-[14px]">
                     <BlogCard post={post} />
                   </li>
                 ))}
-              </ul>
+              </SpotlightGrid>
             )}
 
             {filtered.length === 0 && (

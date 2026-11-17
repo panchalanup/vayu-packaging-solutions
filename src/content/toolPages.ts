@@ -144,7 +144,8 @@ export const TOOL_PAGES: ToolPage[] = [
     answer:
       'To find the box size for a product, add padding on every side of the product (or the group of products), plus a little ease so it slides in. That gives the inside size. The outside size adds the board thickness. Always tell your box maker whether a size is inside or outside. Enter your product below.',
     formula: 'Inside = product (or group) + 2 x padding + ease, rounded up to 0.5 cm.  Outside = inside + 2 x board thickness.',
-    formulaNote: 'Board thickness is approximate (VERIFY-LATER[MKT-06]); confirm with the mill. Padding is also left between items when you pack more than one.',
+    // VERIFY-LATER[MKT-06]: board thickness per ply, confirm with the mill
+    formulaNote: 'Board thickness is approximate; confirm with the mill. Padding is also left between items when you pack more than one.',
     example: {
       title: 'A 20 x 10 x 5 cm product with 1 cm padding per side',
       steps: [
@@ -187,7 +188,8 @@ export const TOOL_PAGES: ToolPage[] = [
     answer:
       'Box compression strength (BCT) is the load a box can take on top before it crushes. The simplified McKee formula estimates it from board edge crush (ECT), board thickness and the box perimeter. Divide by a safety factor to get a safe stacking load. It is a quick estimate, not a rating; confirm with a lab test.',
     formula: 'BCT (lbf) = 5.87 x ECT (lb/in) x sqrt(caliper (in) x perimeter (in)).  Safe load = BCT x (1 - openings loss) / safety factor.',
-    formulaNote: 'Indicative only. 1 kN/m = 5.71 lb/in. Real strength also depends on humidity, time under load, pallet pattern and print. The openings penalty is an editable guess (VERIFY-LATER[MKT-06]).',
+    // VERIFY-LATER[MKT-06]: the openings penalty is a guess, confirm with the mill
+    formulaNote: 'Indicative only. 1 kN/m = 5.71 lb/in. Real strength also depends on humidity, time under load, pallet pattern and print. The openings penalty is an editable guess.',
     example: {
       title: 'ECT 32 lb/in, caliper 0.125 in, perimeter 56 in',
       steps: [
@@ -230,7 +232,8 @@ export const TOOL_PAGES: ToolPage[] = [
     answer:
       'Corrugated box weight is the blank\'s area times the paper weight (GSM) of each layer, with fluted layers counted longer because the flute waves take up extra paper. Multiply by your own paper rate per kg to get the paper cost. Enter box size, ply and GSM below; no default rates are assumed.',
     formula: 'Blank = (2 x (L + W) + joint) x (H + W) mm.  Weight (g) = area (m2) x sum of GSM x take-up per layer.',
-    formulaNote: 'Regular slotted carton (RSC). Take-up factors and the example GSM values are typical ranges and are editable (VERIFY-LATER[MKT-19]). Not a price quote: conversion, printing, wastage and margin are extra.',
+    // VERIFY-LATER[MKT-19]: take-up factors and example GSM values
+    formulaNote: 'Regular slotted carton (RSC). Take-up factors and the example GSM values are typical ranges and are editable. Not a price quote: conversion, printing, wastage and margin are extra.',
     example: {
       title: 'A 400 x 300 x 250 mm 3-ply box, 150 / 120 / 150 GSM',
       steps: [
@@ -273,7 +276,8 @@ export const TOOL_PAGES: ToolPage[] = [
     answer:
       'Packaging cost per order is the box, tape, filler and labels, plus shipping, plus the cost of damage. A smaller box often lowers the shipping line when volumetric weight is what you are billed. Enter your own numbers to compare your current box with a smaller one and see the monthly saving.',
     formula: 'Cost per order = box + extras + billed kg x rate per kg + damage % x cost per damaged order.',
-    formulaNote: 'Every figure is yours; we supply formulas only and no benchmarks. Billed kg is the larger of actual and volumetric weight, rounded up to your slab. Real rate cards differ (VERIFY-LATER[MKT-04]).',
+    // VERIFY-LATER[MKT-04]: courier rate-card slabs
+    formulaNote: 'Every figure is yours; we supply formulas only and no benchmarks. Billed kg is the larger of actual and volumetric weight, rounded up to your slab. Real rate cards differ.',
     example: {
       title: 'Example numbers (replace them with yours)',
       steps: [

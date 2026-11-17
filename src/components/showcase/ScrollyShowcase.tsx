@@ -91,6 +91,8 @@ export default function ScrollyShowcase({ store, layout = 'split', hero, unfold,
   const [slider, setSliderState] = useState(1);
   const [near, setNear] = useState(true);
   const nearRef = useRef(true);
+  /** Schedules a scroll update; called when the stage comes back near the viewport */
+  const kickRef = useRef<() => void>();
   const [mount3d, setMount3d] = useState(false);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -203,9 +205,11 @@ export default function ScrollyShowcase({ store, layout = 'split', hero, unfold,
       if (!frame) frame = requestAnimationFrame(update);
     };
     update();
+    kickRef.current = onScroll;
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll);
     return () => {
+      kickRef.current = undefined;
       cancelAnimationFrame(frame);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
@@ -220,6 +224,9 @@ export default function ScrollyShowcase({ store, layout = 'split', hero, unfold,
       ([entry]) => {
         nearRef.current = entry.isIntersecting;
         setNear(entry.isIntersecting);
+        // a jump (Home key, tap on the status bar) lands here after its only scroll event was skipped while far away,
+        // which left the last scene's words over the hero
+        if (entry.isIntersecting) kickRef.current?.();
       },
       { rootMargin: '120% 0px 120% 0px' }
     );

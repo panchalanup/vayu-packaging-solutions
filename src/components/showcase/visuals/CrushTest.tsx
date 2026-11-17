@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { AnimatedNumber } from '../fx/Numbers';
+import { AnimatedNumber } from '@/components/fx/Numbers';
 
 const DURATION = 3400; // ms, the whole test
 const CONTACT = 0.34; // share of the timeline when the press touches the box
