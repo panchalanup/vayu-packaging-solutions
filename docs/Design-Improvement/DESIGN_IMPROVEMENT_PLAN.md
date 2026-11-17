@@ -1055,6 +1055,8 @@ Short lines beside forms and CTAs remove last-second doubts:
 
 ## 8. Motion system
 
+> **Amended 17 Nov 2026:** [WOW_EFFECTS_PLAN.md](WOW_EFFECTS_PLAN.md) §4 replaces the blur and glass lines in §8.3 and §8.7 below (blur-in for display text and glass on floating surfaces are now allowed under a budget).
+
 ### 8.1 Principles
 
 1. **Motion explains how packaging is made.** Folding, layering, stacking, dispatching. Never decoration for its own sake.
