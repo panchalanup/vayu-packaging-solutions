@@ -28,6 +28,7 @@ import { FACTS } from '@/content/facts';
 import { quoteHref } from '@/lib/quotePrefill';
 import { pageWhatsAppMessage, whatsappHref } from '@/lib/contactLinks';
 import { cn } from '@/lib/utils';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
 
 const WALL = { '3-ply': 'Single wall', '5-ply': 'Double wall', '7-ply': 'Triple wall' } as const;
 const LAYERS = {
@@ -166,7 +167,7 @@ export default function ProductDetail() {
 
         {/* Cross-section (3, 5 and 7-ply pages only) */}
         {product.crossSection && board && (
-          <Section name="product-board" theme="ink" aria-labelledby="board-heading" className="section-y">
+          <Section name="product-board" theme="ink" aria-labelledby="board-heading" className="ink-grain light-pools section-y">
             <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
               <SectionHeader
                 id="board-heading"
@@ -267,13 +268,13 @@ export default function ProductDetail() {
                 title="Related products"
                 lead={isBox ? 'Other plies and the supplies that ship with your boxes.' : 'Boxes and supplies often ordered together.'}
               />
-              <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <SpotlightGrid as="ul" className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {related.map((item) => (
-                  <li key={item.slug}>
+                  <li key={item.slug} className="fx-glow rounded-[14px]">
                     <ProductCard product={item} />
                   </li>
                 ))}
-              </ul>
+              </SpotlightGrid>
             </div>
           </Section>
         )}

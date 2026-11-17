@@ -7,7 +7,7 @@
 import { createElement, useEffect, useRef, type HTMLAttributes, type ReactNode } from 'react';
 
 interface SpotlightGridProps extends HTMLAttributes<HTMLElement> {
-  as?: 'div' | 'ul' | 'ol';
+  as?: 'div' | 'ul' | 'ol' | 'dl';
   children: ReactNode;
 }
 

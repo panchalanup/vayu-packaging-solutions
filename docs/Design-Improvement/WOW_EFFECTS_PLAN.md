@@ -583,6 +583,26 @@ Ship each phase on its own branch and PR; measure (§9) before starting the next
 
 ---
 
+## 8.1 Rollout status (17 Nov 2026)
+
+Approved on Home first, then rolled out to every page. Shared components carry most of it, so new pages get it for free.
+
+| Effect | Where it lives | Pages |
+|---|---|---|
+| Glass header + phone bar (FX-01, 18) | `GlassPane` in SiteNavbar, ContactDock | All |
+| Blur-in headings (FX-03) | `SectionHeader` (plain-text titles), Home headings | All pages that use SectionHeader |
+| Button shine (FX-08) | `Cta` primary variant | All |
+| Travelling edge light (FX-07) | `Cta beam`; `CtaBand` puts it on its first primary button; Finder "Best Value" card | Home hero, every page with a closing band, /compare-quote |
+| Ink grain + light pools (FX-05, 23) | footer, `CtaBand`, dark sections | All |
+| Cursor light on card grids (FX-06) | `SpotlightGrid` + `.fx-glow` | Home, Products, Product detail (related), Blog index, Tools index, Services, Locations, Industry pages, About (quality), designer landings |
+| Rolling numbers (FX-10) | `RollingNumber` / `RollingText` in `StatLedger`, calculator `Stat`, Finder prices | Home, About, every calculator, /compare-quote |
+| Text fills on scroll (FX-11) | `ScrollFill` | Home (recycling line), About (model statement) |
+| Stacking cards with sinking blur (FX-12) | `DielineToDispatch` | Home only (no other page has a tall step-by-step) |
+
+**Not built yet:** route transitions and card-to-page morph (FX-13/14), form craft (FX-19), progressive-blur edges (FX-02), pinned horizontal strip (FX-25), the 404 fold (FX-29), and all open bugs in section 3.2. These need a separate decision or touch navigation globally.
+
+---
+
 ## 9. QA and test plan
 
 1. **Screenshot audit:** `node scripts/screenshots/qa.mjs scripts/screenshots/jobs/site-audit.mjs` before and after each phase (env `AUDIT_ROUTES`, `AUDIT_VIEWS`, `AUDIT_SHOTS` narrow it). The `liftClip` check catches BUG-01-type clipping; `docOverflow` and `wide` catch sideways scroll.

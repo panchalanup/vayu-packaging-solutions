@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 
 interface ScrollFillProps {
   text: string;
-  as?: 'p' | 'h2' | 'h3';
+  as?: 'p' | 'span' | 'h2' | 'h3';
   className?: string;
   id?: string;
 }

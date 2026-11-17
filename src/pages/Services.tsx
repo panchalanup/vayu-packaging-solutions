@@ -23,6 +23,7 @@ import { FACTS } from '@/content/facts';
 import { quoteHref } from '@/lib/quotePrefill';
 import { whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';
 import { reveal, STAGGER } from '@/lib/motion/tokens';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
 
 // VERIFY-LATER[SVC-01]: confirm which of these services Vayu actually offers today. Remove any row that is not offered.
 const WHAT_WE_DO: { icon: LucideIcon; title: string; body: string }[] = [
@@ -87,13 +88,13 @@ const Services = () => (
       <Section name="industries" theme="kraft" aria-labelledby="industries-heading" className="section-y">
         <div className={container}>
           <SectionHeader id="industries-heading" index="01 — Industries" title="Six industries, six specs." align="split" />
-          <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <SpotlightGrid as="ul" className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {INDUSTRY_PAGES.map((ind, i) => (
               <motion.li
                 key={ind.slug}
                 {...reveal}
                 transition={{ ...reveal.transition, delay: (i % 3) * STAGGER }}
-                className="flex flex-col overflow-hidden rounded-[14px] bg-paper-50"
+                className="fx-glow flex flex-col overflow-hidden rounded-[14px] bg-paper-50"
               >
                 <ImageSlot slot={ind.image} aspect="16 / 10" sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 100vw" />
                 <div className="flex flex-1 flex-col p-6">
@@ -122,7 +123,7 @@ const Services = () => (
                 </div>
               </motion.li>
             ))}
-          </ul>
+          </SpotlightGrid>
         </div>
       </Section>
 
@@ -143,7 +144,7 @@ const Services = () => (
       </Section>
 
       {/* TOOLS BAND */}
-      <Section name="tools" theme="ink" aria-labelledby="tools-heading" className="section-y">
+      <Section name="tools" theme="ink" aria-labelledby="tools-heading" className="ink-grain light-pools section-y">
         <div className={container}>
           <SectionHeader
             id="tools-heading"
@@ -152,8 +153,8 @@ const Services = () => (
             lead="Two free tools to work out the spec before you talk to anyone."
             align="split"
           />
-          <div className="mt-10 grid gap-4 md:grid-cols-2">
-            <div className="flex flex-col rounded-[14px] border border-border bg-card p-6 md:p-8">
+          <SpotlightGrid className="mt-10 grid gap-4 md:grid-cols-2">
+            <div className="fx-glow flex flex-col rounded-[14px] border border-border bg-card p-6 md:p-8">
               <p className="label-mono text-paper-muted">Packaging Finder</p>
               <h3 className="mt-3 font-display text-h3">Get a spec and a price range</h3>
               <p className="mt-2 text-paper-muted">Answer three short steps and get the recommended ply, with an indicative price range.</p>
@@ -161,7 +162,7 @@ const Services = () => (
                 Find my box spec
               </Cta>
             </div>
-            <div className="flex flex-col rounded-[14px] border border-border bg-card p-6 md:p-8">
+            <div className="fx-glow flex flex-col rounded-[14px] border border-border bg-card p-6 md:p-8">
               <p className="label-mono text-paper-muted">3D box designer</p>
               <h3 className="mt-3 font-display text-h3">See your box in 3D</h3>
               <p className="mt-2 text-paper-muted">Set the size, ply and print, then send the design with your quote request. Free, no sign-up.</p>
@@ -169,7 +170,7 @@ const Services = () => (
                 Design in 3D
               </Cta>
             </div>
-          </div>
+          </SpotlightGrid>
         </div>
       </Section>
 

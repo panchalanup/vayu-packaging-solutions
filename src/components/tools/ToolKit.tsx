@@ -13,6 +13,7 @@ import { useEventTracker } from '@/hooks/useAnalytics';
 import UnitToggle from '@/components/BoxDesigner/UnitToggle';
 import { UNIT_LABELS, parseLength, toUnit } from '@/lib/boxDesigner/units';
 import { validDims } from '@/lib/tools/shared';
+import { RollingText } from '@/components/fx/RollingNumber';
 
 export { UnitToggle };
 
@@ -215,7 +216,7 @@ export function Stat({ label, value, note, tone = 'plain', className }: { label:
       )}
     >
       <p className="label-mono text-muted-foreground">{label}</p>
-      <p className="mt-1 font-display text-2xl tabular text-foreground">{value}</p>
+      <p className="mt-1 font-display text-2xl tabular text-foreground">{typeof value === 'string' ? <RollingText text={value} /> : value}</p>
       {note && <p className="mt-1 text-sm text-muted-foreground">{note}</p>}
     </div>
   );

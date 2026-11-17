@@ -42,10 +42,15 @@ interface RollingNumberProps {
   className?: string;
 }
 
+/** A formatted number: its digits roll */
 export function RollingNumber({ value, suffix = '', locale = 'en-IN', className }: RollingNumberProps) {
+  return <RollingText text={`${value.toLocaleString(locale)}${suffix}`} className={className} />;
+}
+
+/** Any text: every digit rolls, everything else (commas, units, symbols) stays still. Use for calculator results and prices. */
+export function RollingText({ text, className }: { text: string; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [phase, setPhase] = useState<Phase>('final');
-  const text = value.toLocaleString(locale);
 
   // Before the first paint on the client: park the digits at zero until the number is seen (reduced motion keeps 'final')
   useIsoLayoutEffect(() => {
@@ -83,11 +88,7 @@ export function RollingNumber({ value, suffix = '', locale = 'en-IN', className 
         seen += 1;
         return <Digit key={i} digit={Number(ch)} phase={phase} order={digitsFromRight - seen} />;
       })}
-      {suffix && <span aria-hidden="true">{suffix}</span>}
-      <span className="sr-only">
-        {text}
-        {suffix}
-      </span>
+      <span className="sr-only">{text}</span>
     </span>
   );
 }

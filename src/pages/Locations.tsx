@@ -22,6 +22,7 @@ import { whatsappHref } from '@/lib/contactLinks';
 import { quoteHref } from '@/lib/quotePrefill';
 import { useEventTracker } from '@/hooks/useAnalytics';
 import { cn } from '@/lib/utils';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
 
 const GujaratMap = lazy(() => import('@/components/pages/GujaratMap'));
 
@@ -176,9 +177,9 @@ const Locations = () => {
               lead="Each cluster has its own handling pattern, so the board spec and supply plan differ."
               align="split"
             />
-            <ul className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <SpotlightGrid as="ul" className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {REGIONS.map((r) => (
-                <li key={r.id} className="flex flex-col rounded-[14px] border border-border p-6">
+                <li key={r.id} className="fx-glow flex flex-col rounded-[14px] border border-border p-6">
                   <h3 className="font-display text-h3">{r.title}</h3>
                   <p className="label-mono mt-3 text-kraft-700">{r.focus}</p>
                   <p className="mt-4 text-sm">
@@ -191,7 +192,7 @@ const Locations = () => {
                   </p>
                 </li>
               ))}
-            </ul>
+            </SpotlightGrid>
           </div>
         </Section>
 
@@ -204,14 +205,14 @@ const Locations = () => {
               title="Common packaging challenges we solve."
               align="split"
             />
-            <ul className="mt-10 grid gap-4 md:grid-cols-3">
+            <SpotlightGrid as="ul" className="mt-10 grid gap-4 md:grid-cols-3">
               {USE_CASES.map((u) => (
-                <li key={u.problem} className="rounded-[14px] bg-paper-50 p-6">
+                <li key={u.problem} className="fx-glow rounded-[14px] bg-paper-50 p-6">
                   <p className="font-display text-h3">{u.problem}</p>
                   <p className="mt-3 text-muted-foreground">{u.solution}</p>
                 </li>
               ))}
-            </ul>
+            </SpotlightGrid>
             <div className="mt-12 grid gap-4 border-t border-ink-900/15 pt-8 lg:grid-cols-12 lg:gap-10">
               <h3 className="label-mono text-muted-foreground lg:col-span-4">Packaging distribution in Gujarat</h3>
               <div className="max-w-[68ch] space-y-4 text-body-l lg:col-span-8">
