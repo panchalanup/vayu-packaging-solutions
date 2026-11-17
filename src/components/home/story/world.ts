@@ -1,24 +1,35 @@
 /**
  * The 3D world of the home story, built once as plain three.js objects (like BoxRig) so scrolling never re-renders
- * React: update(p) just moves what beats.ts says should move. PHASE A BLOCKOUT: grey primitives with the final
- * timing, camera and layout; Phase B/C swap them for BoxRig, real materials and the RenderTexture monitor.
+ * React: update(p) moves what beats.ts says should move. Real scale (1 unit = 10 cm), real objects:
+ *  - every hero box is the Box Designer's own carton rig (board grain, flute edges, mitred corners, a real fold),
+ *  - the jar and the chai glass are lathe-turned glass, the pallet holds the actual 500 boxes (instanced),
+ *  - one soft key light follows the camera, so shadows work everywhere without a light per place.
  *
- * Layout: the desk and the monitor sit at the origin; the map and the doorstep are further along x (see WORLD).
+ * Nothing is shown or hidden in view of the camera between scenes (that read as flicker): places are far apart and the
+ * camera travels between them. The one switch, from the studio to the desk, is a cut into the monitor, which is
+ * showing that very studio shot at the moment of the cut (renderStudioShot), so it cannot be seen.
  */
 
 import * as THREE from 'three';
-import { deskNote } from '@/content/story';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { BoxRig } from '@/lib/boxDesigner/rig/boxRig';
+import { computeRscLayout } from '@/lib/boxDesigner/rig/rscLayout';
+import { getBoardSpec, getBoardThicknessCm } from '@/lib/boxDesigner/boardSpecs';
+import { DEFAULT_PADDING_CM, recommendInsideSize } from '@/lib/boxDesigner/fit';
+import { setSurfaceTextureAnisotropy } from '@/lib/boxDesigner/textures/surfaceTextures';
+import type { BoxFace } from '@/types/boxDesigner';
 import {
   PALLET_BOXES,
   REVEAL_SWAP,
   SCENES,
-  SWATCH_COUNT,
+  STUDIO_SHOT,
   WORLD,
+  cameraAt,
   clamp01,
   doorDropAt,
   easeInOut,
   easeOutCubic,
-  foldAt,
+  fitAt,
   jarRiseAt,
   makeAt,
   measureAt,
@@ -26,421 +37,617 @@ import {
   openAt,
   sceneAt,
   shipAt,
+  truckX,
 } from './beats';
+import {
+  INK,
+  SWATCHES,
+  asphaltTexture,
+  boxPrintTexture,
+  concreteTexture,
+  createScreenUI,
+  doorTexture,
+  glowTexture,
+  jarLabelTexture,
+  matTexture,
+  palletBoxTexture,
+  plasterTexture,
+  roadLinesTexture,
+  stickyNoteTexture,
+  tileTexture,
+  truckLiveryTexture,
+  woodTexture,
+} from './textures';
 
 const IDX = Object.fromEntries(SCENES.map((s) => [s.id, s.index])) as Record<(typeof SCENES)[number]['id'], number>;
-const DEG = Math.PI / 180;
 
-const GREY = { dark: '#1B1F1D', mid: '#3A403C', light: '#8C938F', paper: '#F4EFE6', kraft: '#C49A6C', green: '#23803A', ink: '#0F1A14' } as const;
-/** Same order as SWATCH_COUNT in beats.ts: kraft, white, black, red, blue, brand green */
-const TINTS = [GREY.kraft, '#F4EFE6', GREY.ink, '#B42318', '#1F4E8C', GREY.green] as const;
+/** The product in the story: a 500 g honey jar, 10 x 10 x 14 cm. The box is the fit checker's own recommendation */
+const JAR_CM = { length: 10, width: 10, height: 14 };
+export const STORY_BOX = recommendInsideSize({ product: JAR_CM, paddingCm: DEFAULT_PADDING_CM, fragile: false }).inside;
+export const STORY_BOX_SPEC = `${STORY_BOX.length} × ${STORY_BOX.width} × ${STORY_BOX.height} cm`;
+const CM = 0.1;
+const PRINT_FACES = new Set<BoxFace>(['front', 'back', 'left', 'right']);
 
-const lit = (color: string, extra: THREE.MeshStandardMaterialParameters = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, metalness: 0, ...extra });
-const flat = (color: string, extra: THREE.MeshBasicMaterialParameters = {}) => new THREE.MeshBasicMaterial({ color, ...extra });
-
-function mesh(geo: THREE.BufferGeometry, mat: THREE.Material, x = 0, y = 0, z = 0): THREE.Mesh {
-  const m = new THREE.Mesh(geo, mat);
-  m.position.set(x, y, z);
-  return m;
+export interface WorldOptions {
+  /** Real-time soft shadows (high tier) */
+  shadows: boolean;
+  /** Physically transmissive glass (high tier); otherwise a cheaper see-through glass */
+  glass: boolean;
 }
-
-// --- Props ---------------------------------------------------------------------------------------------------------
-
-interface Carton {
-  group: THREE.Group;
-  material: THREE.MeshStandardMaterial;
-  /** 0 = closed, 1 = flaps wide open */
-  setOpen(k: number): void;
-}
-
-/** An open-topped slotted carton with four hinged flaps: closed it looks sealed, open it shows the inside */
-function buildCarton(w: number, h: number, d: number, color: string): Carton {
-  const group = new THREE.Group();
-  const material = lit(color, { roughness: 0.9 });
-  const t = Math.min(w, d, h) * 0.06;
-  const wall = (sx: number, sy: number, sz: number, x: number, y: number, z: number) => group.add(mesh(new THREE.BoxGeometry(sx, sy, sz), material, x, y, z));
-  wall(w, t, d, 0, t / 2, 0);
-  wall(w, h, t, 0, h / 2, d / 2 - t / 2);
-  wall(w, h, t, 0, h / 2, -d / 2 + t / 2);
-  wall(t, h, d - 2 * t, w / 2 - t / 2, h / 2, 0);
-  wall(t, h, d - 2 * t, -w / 2 + t / 2, h / 2, 0);
-
-  const flap = (sx: number, sz: number, px: number, py: number, pz: number, cx: number, cz: number) => {
-    const pivot = new THREE.Group();
-    pivot.position.set(px, py, pz);
-    pivot.add(mesh(new THREE.BoxGeometry(sx, t * 0.8, sz), material, cx, 0, cz));
-    group.add(pivot);
-    return pivot;
-  };
-  // Major flaps meet in the middle; the minor ones sit a hair lower so they never fight them for the same pixels
-  const front = flap(w, d / 2, 0, h, d / 2, 0, -d / 4);
-  const back = flap(w, d / 2, 0, h, -d / 2, 0, d / 4);
-  const right = flap(w / 2 - t, d - 2 * t, w / 2, h - t, 0, -(w / 2 - t) / 2, 0);
-  const left = flap(w / 2 - t, d - 2 * t, -w / 2, h - t, 0, (w / 2 - t) / 2, 0);
-
-  return {
-    group,
-    material,
-    setOpen(k) {
-      const a = clamp01(k) * 115 * DEG;
-      front.rotation.x = a;
-      back.rotation.x = -a;
-      right.rotation.z = -a;
-      left.rotation.z = a;
-    },
-  };
-}
-
-/** A glass-jar stand-in: body, label band and lid. Origin at the base */
-function buildJar(scale = 1): THREE.Group {
-  const g = new THREE.Group();
-  g.add(mesh(new THREE.CylinderGeometry(1, 1, 2.2, 28), lit('#B9803A', { roughness: 0.35 }), 0, 1.1, 0));
-  g.add(mesh(new THREE.CylinderGeometry(1.015, 1.015, 0.8, 28), lit(GREY.paper), 0, 1.0, 0));
-  g.add(mesh(new THREE.CylinderGeometry(1.04, 1.04, 0.4, 28), lit('#C9A74E', { metalness: 0.5, roughness: 0.4 }), 0, 2.4, 0));
-  g.scale.setScalar(scale);
-  return g;
-}
-
-/** Sticky note texture: the occasion (seasonal) and the order size */
-function noteTexture(): THREE.CanvasTexture {
-  const [line1, line2] = deskNote();
-  const c = document.createElement('canvas');
-  c.width = 256;
-  c.height = 180;
-  const ctx = c.getContext('2d');
-  if (ctx) {
-    ctx.fillStyle = '#F2D46B';
-    ctx.fillRect(0, 0, c.width, c.height);
-    ctx.fillStyle = '#E0BF4E';
-    ctx.fillRect(0, 0, c.width, 26);
-    ctx.fillStyle = '#5A4A12';
-    ctx.font = '700 34px Satoshi, system-ui, sans-serif';
-    ctx.fillText(line1, 16, 82, 224);
-    ctx.font = '500 32px Satoshi, system-ui, sans-serif';
-    ctx.fillText(line2, 16, 130, 224);
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-function edges(geo: THREE.BufferGeometry, color: string, opacity = 1): THREE.LineSegments {
-  return new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color, transparent: opacity < 1, opacity }));
-}
-
-// --- The world -----------------------------------------------------------------------------------------------------
 
 export interface StoryWorld {
   root: THREE.Group;
+  fog: THREE.Fog;
   update(p: number): void;
+  /** True while the monitor is showing the studio shot (start of the reveal) */
+  needsStudioShot(p: number): boolean;
+  renderStudioShot(gl: THREE.WebGLRenderer, scene: THREE.Scene): void;
+  /** Paper grain and flute relief on the cartons (about 150 ms each: call when idle) */
+  enableDetail(gl: THREE.WebGLRenderer): void;
+  /** Redraw printed textures once the web fonts have loaded */
+  refreshText(): void;
   dispose(): void;
 }
 
-export function buildWorld(): StoryWorld {
-  const root = new THREE.Group();
+// --- Materials and small builders ------------------------------------------------------------------------------------
 
-  // Lights: a soft key, a cool fill, and warm sources that only light up for the burst and the unboxing
-  root.add(new THREE.AmbientLight('#ffffff', 0.9));
-  const key = new THREE.DirectionalLight('#fff4e0', 2.2);
-  key.position.set(10, 20, 12);
-  root.add(key);
-  const fill = new THREE.DirectionalLight('#bcd2ff', 0.6);
-  fill.position.set(-8, 6, -10);
-  root.add(fill);
-  const burst = new THREE.PointLight('#FFD58A', 0, 40, 1.6);
-  burst.position.set(WORLD.screenCenter[0] + 3, WORLD.screenCenter[1], WORLD.screenCenter[2] + 1);
-  root.add(burst);
-  const glow = new THREE.PointLight('#FFC873', 0, 30, 1.4);
-  glow.position.set(WORLD.door[0], 3.4, WORLD.door[2] + 2);
+const std = (color: THREE.ColorRepresentation, extra: THREE.MeshStandardMaterialParameters = {}) =>
+  new THREE.MeshStandardMaterial({ color, roughness: 0.8, metalness: 0, envMapIntensity: 0.55, ...extra });
+
+const metal = (color: THREE.ColorRepresentation, roughness = 0.35) => std(color, { metalness: 1, roughness, envMapIntensity: 1 });
+
+function mesh(geo: THREE.BufferGeometry, mat: THREE.Material | THREE.Material[], x = 0, y = 0, z = 0, cast = true): THREE.Mesh {
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(x, y, z);
+  m.castShadow = cast;
+  m.receiveShadow = true;
+  return m;
+}
+
+const rounded = (w: number, h: number, d: number, r = 0.04, seg = 3) => new RoundedBoxGeometry(w, h, d, seg, Math.min(r, w / 2, h / 2, d / 2));
+
+/** Turned shape from a profile listed bottom to top ([radius, height] pairs) */
+const lathe = (points: [number, number][], segments = 48) => new THREE.LatheGeometry(points.map(([x, y]) => new THREE.Vector2(x, y)), segments);
+
+function glassMaterial(physical: boolean): THREE.Material {
+  return physical
+    ? new THREE.MeshPhysicalMaterial({ color: '#ffffff', transmission: 1, thickness: 0.08, roughness: 0.04, ior: 1.5, envMapIntensity: 1 })
+    : new THREE.MeshPhysicalMaterial({ color: '#ffffff', transparent: true, opacity: 0.22, roughness: 0.05, clearcoat: 1, envMapIntensity: 1, depthWrite: false });
+}
+
+/** A 500 g honey jar, 10 cm across and 14 cm tall (1.0 x 1.4 units). Origin at the base */
+function buildJar(opts: WorldOptions, label: THREE.Texture): THREE.Group {
+  const g = new THREE.Group();
+  const honey = mesh(
+    lathe([[0, 0.03], [0.46, 0.03], [0.475, 0.06], [0.475, 1.02], [0.001, 1.02]]),
+    new THREE.MeshPhysicalMaterial({ color: '#B65F0C', roughness: 0.18, clearcoat: 0.6, emissive: '#3A1700', emissiveIntensity: 0.6, envMapIntensity: 0.8 })
+  );
+  const glass = mesh(lathe([[0, 0], [0.45, 0], [0.5, 0.05], [0.5, 1.08], [0.47, 1.16], [0.43, 1.2], [0.43, 1.26]]), glassMaterial(opts.glass));
+  const band = mesh(new THREE.CylinderGeometry(0.505, 0.505, 0.56, 48, 1, true), std('#ffffff', { map: label, roughness: 0.85 }), 0, 0.58, 0);
+  const lid = mesh(lathe([[0.001, 1.2], [0.45, 1.2], [0.475, 1.22], [0.475, 1.32], [0.465, 1.37], [0.42, 1.39], [0.001, 1.39]]), metal('#C9A24A', 0.3));
+  g.add(honey, glass, band, lid);
+  return g;
+}
+
+/** A cutting-chai glass with tea. Origin at the base */
+function buildChai(opts: WorldOptions): THREE.Group {
+  const g = new THREE.Group();
+  g.add(mesh(lathe([[0, 0.05], [0.235, 0.05], [0.255, 0.45], [0.285, 0.74], [0.001, 0.74]]), std('#8E5326', { roughness: 0.25 })));
+  g.add(mesh(lathe([[0, 0], [0.23, 0], [0.25, 0.04], [0.27, 0.5], [0.31, 0.92], [0.3, 0.93], [0.26, 0.5], [0.001, 0.05]]), glassMaterial(opts.glass)));
+  return g;
+}
+
+interface Carton {
+  rig: BoxRig;
+  group: THREE.Group;
+  prints: THREE.Texture[];
+}
+
+/** A carton from the Box Designer's own rig, at real size, optionally printed with the customer's mark */
+function buildCarton(color: string, printed: boolean): Carton {
+  const rig = new BoxRig();
+  const spec = getBoardSpec('3-ply');
+  rig.update(computeRscLayout(STORY_BOX, getBoardThicknessCm(spec, STORY_BOX)), spec);
+  rig.setColor(color);
+  rig.setPose(1);
+  const carton: Carton = { rig, group: new THREE.Group(), prints: [] };
+  if (printed) printCarton(carton);
+  rig.object3d.scale.setScalar(CM);
+  carton.group.add(rig.object3d);
+  return carton;
+}
+
+function printCarton(c: Carton) {
+  c.prints.forEach((t) => t.dispose());
+  c.prints = [];
+  for (const s of c.rig.getPrintSurfaces()) {
+    if (!PRINT_FACES.has(s.face)) continue;
+    const tex = boxPrintTexture(s.widthCm, s.heightCm);
+    c.prints.push(tex);
+    c.rig.setPrint(s.face, tex, `madhu-${c.prints.length}`);
+  }
+}
+
+function labelSprite(text: string): THREE.Sprite {
+  const c = document.createElement('canvas');
+  c.width = 256;
+  c.height = 96;
+  const ctx = c.getContext('2d');
+  if (ctx) {
+    ctx.fillStyle = '#3DBA5A';
+    ctx.font = '500 52px "Geist Mono", ui-monospace, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 128, 50);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false }));
+  sprite.scale.set(0.62, 0.23, 1);
+  return sprite;
+}
+
+// --- The monitor screen: the studio shot (render target) cross-fading into the mini designer ------------------------
+
+const SCREEN_VERT = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+const SCREEN_FRAG = /* glsl */ `
+  uniform sampler2D uStudio;
+  uniform sampler2D uUi;
+  uniform float uMix;
+  uniform float uExposure;
+  varying vec2 vUv;
+  vec3 rrtOdtFit(vec3 v) {
+    vec3 a = v * (v + 0.0245786) - 0.000090537;
+    vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081;
+    return a / b;
+  }
+  // The renderer's own ACES filmic curve, so the studio shot on the screen matches the frame it replaces
+  vec3 aces(vec3 c) {
+    const mat3 inM = mat3(vec3(0.59719, 0.07600, 0.02840), vec3(0.35458, 0.90834, 0.13383), vec3(0.04823, 0.01566, 0.83777));
+    const mat3 outM = mat3(vec3(1.60475, -0.10208, -0.00327), vec3(-0.53108, 1.10813, -0.07276), vec3(-0.07367, -0.00605, 1.07602));
+    c *= uExposure / 0.6;
+    return clamp(outM * rrtOdtFit(inM * c), 0.0, 1.0);
+  }
+  void main() {
+    vec3 studio = aces(texture2D(uStudio, vUv).rgb);
+    vec3 ui = texture2D(uUi, vUv).rgb;
+    gl_FragColor = vec4(mix(studio, ui, uMix), 1.0);
+    #include <colorspace_fragment>
+  }
+`;
+
+// --- The world -----------------------------------------------------------------------------------------------------
+
+export function buildWorld(opts: WorldOptions, exposure: number): StoryWorld {
+  const root = new THREE.Group();
+  const fog = new THREE.Fog('#0C110E', 20, 80);
+  const owned: { dispose(): void }[] = [];
+  const own = <T extends { dispose(): void }>(x: T) => (owned.push(x), x);
+  const m4 = new THREE.Matrix4();
+
+  // ---- Lights: soft sky fill and one warm key light that follows the camera (see aim) ----
+  root.add(new THREE.HemisphereLight('#AFC3D6', '#3A2C1E', 0.55));
+  const key = new THREE.DirectionalLight('#FFEFD8', 2.3);
+  key.castShadow = opts.shadows;
+  if (opts.shadows) {
+    key.shadow.mapSize.set(2048, 2048);
+    key.shadow.bias = -0.0004;
+  }
+  root.add(key, key.target);
+  const KEY_DIR = new THREE.Vector3(0.45, 0.8, 0.55).normalize();
+
+  const [SXs, SYs, SZs] = WORLD.screenCenter;
+  const [SW, SH] = WORLD.screenSize;
+  const S = new THREE.Vector3(...WORLD.studio);
+  const top = WORLD.deskTop;
+
+  const floorTex = own(concreteTexture());
+  floorTex.repeat.set(120, 55);
+  root.add(mesh(new THREE.PlaneGeometry(900, 400).rotateX(-Math.PI / 2), std('#5A5A54', { map: floorTex, roughness: 0.92 }), 110, 0, 20, false));
+
+  // ---- Studio (scenes 1-2): a product shot on a seamless floor under a warm spot ----
+  root.add(mesh(new THREE.CircleGeometry(60, 96).rotateX(-Math.PI / 2), std('#4B4741', { roughness: 0.95, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }), S.x, 0.01, S.z, false));
+  const spot = new THREE.SpotLight('#FFDDB0', 520, 0, 0.5, 0.75, 2);
+  spot.position.set(S.x + 1.2, 11, S.z + 3);
+  spot.target.position.set(S.x + 1.4, 0, S.z);
+  root.add(spot, spot.target);
+
+  const tex = {
+    label: jarLabelTexture(),
+    note: stickyNoteTexture(),
+    livery: truckLiveryTexture(),
+    mat: matTexture(),
+    palletBox: palletBoxTexture(),
+  };
+
+  const studioJar = buildJar(opts, tex.label);
+  studioJar.position.copy(S);
+  root.add(studioJar);
+
+  const lineMat = new THREE.MeshBasicMaterial({ color: '#3DBA5A', transparent: true, toneMapped: false });
+  const vLine = mesh(new THREE.BoxGeometry(0.014, 1.4, 0.014), lineMat, S.x - 0.78, 0.7, S.z, false);
+  const hLine = mesh(new THREE.BoxGeometry(1.0, 0.014, 0.014), lineMat, S.x, 1.62, S.z, false);
+  const ticks = (
+    [
+      [S.x - 0.78, 0.0, 0.12, 0.014],
+      [S.x - 0.78, 1.4, 0.12, 0.014],
+      [S.x - 0.5, 1.62, 0.014, 0.12],
+      [S.x + 0.5, 1.62, 0.014, 0.12],
+    ] as const
+  ).map(([x, y, w, h]) => mesh(new THREE.BoxGeometry(w, h, 0.014), lineMat, x, y, S.z, false));
+  const hLabel = labelSprite('14 cm');
+  hLabel.position.set(S.x - 1.22, 0.7, S.z);
+  const wLabel = labelSprite('10 cm');
+  wLabel.position.set(S.x, 1.86, S.z);
+  root.add(vLine, hLine, ...ticks, hLabel, wLabel);
+
+  const studioBox = buildCarton(SWATCHES[0], false);
+  studioBox.group.visible = false;
+  root.add(studioBox.group);
+
+  // ---- Desk (scenes 3a-3c): 160 x 80 cm, top at 75 cm, against a wall ----
+  const wood = own(woodTexture());
+  wood.repeat.set(2, 1);
+  root.add(mesh(rounded(16, 0.4, 8, 0.06), std('#FFFFFF', { map: wood, roughness: 0.55 }), 0, top - 0.2, -0.5));
+  for (const [x, z] of [[-7.4, -4.1], [7.4, -4.1], [-7.4, 3.1], [7.4, 3.1]]) root.add(mesh(new THREE.BoxGeometry(0.35, top - 0.4, 0.35), metal('#2B2D2C', 0.5), x, (top - 0.4) / 2, z));
+  const wallTex = own(plasterTexture());
+  root.add(mesh(new THREE.PlaneGeometry(52, 30), std('#3A4039', { map: wallTex, roughness: 0.95 }), -6, 15, -6.5, false));
+
+  root.add(mesh(rounded(SW + 0.24, SH + 0.3, 0.24, 0.08), std('#121314', { roughness: 0.42, envMapIntensity: 0.9 }), SXs, SYs - 0.05, SZs - 0.13));
+  root.add(mesh(rounded(0.55, 1.75, 0.22, 0.06), metal('#B9BBBD'), SXs, top + 0.85, SZs - 0.42));
+  root.add(mesh(rounded(2.3, 0.09, 1.6, 0.04), metal('#B9BBBD'), SXs, top + 0.045, SZs - 0.35));
+
+  const screenUI = createScreenUI(STORY_BOX_SPEC);
+  // the studio shot shown on the monitor during the reveal; lighter on phones and mid-range devices
+  const studioRT = own(opts.shadows ? new THREE.WebGLRenderTarget(1280, 720, { type: THREE.HalfFloatType, samples: 4 }) : new THREE.WebGLRenderTarget(960, 540, { type: THREE.HalfFloatType }));
+  const screenMat = new THREE.ShaderMaterial({
+    uniforms: { uStudio: { value: studioRT.texture }, uUi: { value: screenUI.texture }, uMix: { value: 1 }, uExposure: { value: exposure } },
+    vertexShader: SCREEN_VERT,
+    fragmentShader: SCREEN_FRAG,
+    toneMapped: false,
+  });
+  const screen = mesh(new THREE.PlaneGeometry(SW, SH), screenMat, SXs, SYs, SZs, false);
+  root.add(screen);
+  const glow = new THREE.PointLight('#D6E6FF', 7, 0, 2);
+  glow.position.set(SXs, SYs, SZs + 1.4);
   root.add(glow);
 
-  // ---- Desk and monitor (revealed in scene 3a) ----
-  // The desk comes in three parts so the reveal never shows the keyboard or stand overlapping the spotlight scene
-  const desk = new THREE.Group(); // surface and monitor frame
-  const props = new THREE.Group(); // stand, keyboard, mouse
-  const decor = new THREE.Group(); // chai, the customer's jar, the note
-  desk.add(mesh(new THREE.BoxGeometry(70, 0.5, 42), lit('#4A3626'), 0, -0.25, 6));
-  const [sx, sy, sz] = WORLD.screenCenter;
-  const [sw, sh] = WORLD.screenSize;
-  desk.add(mesh(new THREE.BoxGeometry(sw + 1.4, sh + 1.4, 0.7), lit(GREY.dark), sx, sy, sz - 0.45));
-  props.add(mesh(new THREE.BoxGeometry(1.6, 3.2, 0.8), lit(GREY.mid), sx, 1.6, sz - 0.5));
-  props.add(mesh(new THREE.CylinderGeometry(3.4, 3.8, 0.35, 32), lit(GREY.mid), sx, 0.18, sz - 0.2));
-  props.add(mesh(new THREE.BoxGeometry(9, 0.35, 3), lit(GREY.mid), 0, 0.18, -1.6));
-  const mouse = mesh(new THREE.BoxGeometry(1.2, 0.5, 2), lit(GREY.mid), 7.5, 0.25, -1.2);
-  props.add(mouse);
-  const chai = new THREE.Group();
-  chai.add(mesh(new THREE.CylinderGeometry(0.9, 0.7, 1.9, 20), lit('#B0723A', { transparent: true, opacity: 0.85 }), 0, 0.95, 0));
-  chai.position.set(-13, 0, 2.5);
-  decor.add(chai);
-  const customerJar = buildJar(0.85);
-  customerJar.position.set(-16, 0, -1.5);
-  decor.add(customerJar);
-  const noteTex = noteTexture();
-  const note = mesh(new THREE.PlaneGeometry(3.4, 2.4), new THREE.MeshBasicMaterial({ map: noteTex }), -9.2, 0.03, 3.4);
-  note.rotation.set(-Math.PI / 2, 0, 0.18);
-  decor.add(note);
-  desk.visible = props.visible = decor.visible = false;
-  root.add(desk, props, decor);
+  // the sticky note, stuck on the screen's lower-left corner
+  const note = mesh(new THREE.PlaneGeometry(0.76, 0.76), std('#FFFFFF', { map: tex.note, roughness: 0.9, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }), SXs - SW / 2 + 0.32, SYs - SH / 2 + 0.38, SZs + 0.02, false);
+  note.rotation.z = 0.09;
+  root.add(note);
 
-  // ---- On the monitor: the spotlight stage (scenes 1-2) ----
-  const stage = new THREE.Group();
-  stage.position.set(...WORLD.stage);
-  // Backdrop exactly on the monitor glass, in the stage's own coordinates
-  // It starts oversized, so the close-up scenes never show its edge, and closes in onto the monitor during the reveal
-  const backdrop = mesh(new THREE.PlaneGeometry(sw, sh), flat('#0A120D'), sx - WORLD.stage[0], sy - WORLD.stage[1], sz + 0.05 - WORLD.stage[2]);
-  backdrop.scale.setScalar(3);
-  stage.add(backdrop);
-  stage.add(mesh(new THREE.CylinderGeometry(3.1, 3.1, 0.5, 40), lit('#3A3A31'), 0, 0.25, 0));
-  const stageJar = buildJar();
-  stageJar.position.y = 0.5;
-  stage.add(stageJar);
-  const stageCarton = buildCarton(3.4, 4.2, 3.4, GREY.kraft);
-  stageCarton.group.position.y = 0.5;
-  stage.add(stageCarton.group);
-  const outline = edges(new THREE.BoxGeometry(3.7, 4.5, 3.7), '#3DBA5A');
-  outline.position.y = 0.5 + 2.25;
-  stage.add(outline);
-  const vLine = mesh(new THREE.BoxGeometry(0.05, 2.2, 0.05), flat('#3DBA5A'), -1.5, 0, 0.6);
-  const hLine = mesh(new THREE.BoxGeometry(2, 0.05, 0.05), flat('#3DBA5A'), 0, 3.25, 0.6);
-  stage.add(vLine, hLine);
-  root.add(stage);
+  // keyboard (aluminium deck, 75 keys), mouse, chai, and the customer's jar beside the screen
+  root.add(mesh(rounded(4.3, 0.1, 1.35, 0.04), metal('#C4C6C8', 0.4), -0.2, top + 0.05, 0.25));
+  const keys = new THREE.InstancedMesh(rounded(0.24, 0.06, 0.24, 0.025, 2), std('#2A2C2E', { roughness: 0.6 }), 75);
+  for (let r = 0; r < 5; r++) for (let c = 0; c < 15; c++) keys.setMatrixAt(r * 15 + c, m4.makeTranslation(-2.16 + c * 0.28, top + 0.13, -0.31 + r * 0.28));
+  keys.castShadow = keys.receiveShadow = true;
+  root.add(keys);
+  const mouse = mesh(new THREE.SphereGeometry(1, 32, 20), std('#DADAD5', { roughness: 0.35 }), 2.9, top + 0.02, 0.4);
+  mouse.scale.set(0.32, 0.17, 0.55);
+  root.add(mouse);
+  const chai = buildChai(opts);
+  chai.position.set(-3.5, top, 0.7);
+  root.add(chai);
+  const deskJar = buildJar(opts, tex.label);
+  deskJar.position.set(-4.6, top, -1.0);
+  deskJar.rotation.y = -1.2;
+  root.add(deskJar);
 
-  // ---- On the monitor: the mini designer (scenes 3b-3c). Screen space is 570 x 320 like the real tool ----
-  const ui = new THREE.Group();
-  ui.position.set(sx, sy, sz + 0.06);
-  const X = (px: number) => (px / 570 - 0.5) * sw;
-  const Y = (py: number) => (0.5 - py / 320) * sh;
-  const rect = (x0: number, y0: number, x1: number, y1: number, color: string, z = 0) => {
-    const m = mesh(new THREE.PlaneGeometry(((x1 - x0) / 570) * sw, ((y1 - y0) / 320) * sh), flat(color), X((x0 + x1) / 2), Y((y0 + y1) / 2), z);
-    ui.add(m);
-    return m;
-  };
-  rect(0, 0, 570, 320, '#F4EFE6');
-  rect(0, 0, 570, 26, GREY.ink, 0.01);
-  rect(0, 26, 24, 320, '#17231C', 0.01);
-  rect(24, 26, 174, 320, '#FBF8F3', 0.01);
-  const swatches = Array.from({ length: SWATCH_COUNT }, (_, i) => {
-    const s = mesh(new THREE.CircleGeometry(0.24, 20), flat(TINTS[i]), X(41 + i * 20), Y(80), 0.03);
-    ui.add(s);
-    return s;
-  });
-  const ring = mesh(new THREE.RingGeometry(0.3, 0.38, 24), flat(GREY.ink), X(41), Y(80), 0.04);
-  ui.add(ring);
-  rect(34, 110, 164, 148, '#FFFFFF', 0.02);
-  const logoMark = rect(44, 118, 70, 140, GREY.green, 0.03);
-  logoMark.visible = false;
-  const plyButtons = [0, 1, 2].map((i) => rect(34 + i * 44, 172, 75 + i * 44, 188, '#FFFFFF', 0.02));
-  [0, 1, 2].forEach((i) => rect(34 + i * 44, 212, 75 + i * 44, 228, '#FFFFFF', 0.02));
-  const quote = rect(470, 5, 562, 21, '#2E9B47', 0.02);
-
-  const miniCarton = buildCarton(3.4, 4.2, 3.4, GREY.kraft);
-  miniCarton.group.scale.setScalar(0.85);
-  miniCarton.group.position.set(X(372), Y(268), 0.06);
-  ui.add(miniCarton.group);
-  const miniLogo = mesh(new THREE.PlaneGeometry(1.6, 1.2), flat(GREY.paper), X(372), Y(268) + 1.9, 0.06 + 1.45);
-  miniLogo.visible = false;
-  ui.add(miniLogo);
-  const ghost = edges(new THREE.BoxGeometry(2.9, 3.6, 2.9), GREY.green);
-  ghost.position.set(X(372), Y(268) + 1.8, 0.06 + 1.45);
-  ghost.visible = false;
-  ui.add(ghost);
-
-  const cursor = new THREE.Group();
-  const arrow = new THREE.Shape();
-  arrow.moveTo(0, 0);
-  arrow.lineTo(0, -0.95);
-  arrow.lineTo(0.27, -0.7);
-  arrow.lineTo(0.5, -1.2);
-  arrow.lineTo(0.68, -1.1);
-  arrow.lineTo(0.45, -0.62);
-  arrow.lineTo(0.8, -0.62);
-  arrow.closePath();
-  cursor.add(mesh(new THREE.ShapeGeometry(arrow), flat('#FFFFFF')));
-  const ripple = mesh(new THREE.RingGeometry(0.4, 0.5, 28), flat('#3DBA5A', { transparent: true }), 0, 0, -0.01);
-  cursor.add(ripple);
-  cursor.position.z = 0.2;
-  ui.add(cursor);
-  ui.visible = false;
-  root.add(ui);
-
-  // ---- The box that steps out of the screen and lands on the desk ----
-  const landed = buildCarton(3.4, 4.2, 3.4, GREY.green);
-  landed.group.visible = false;
+  // ---- The designed box: pushes out through the screen and lands on the desk ----
+  const landed = buildCarton(SWATCHES[5], true);
+  const exitFrom = new THREE.Vector3(SXs + 0.95, SYs - 1.2, SZs - 0.6);
+  const exitTo = new THREE.Vector3(...WORLD.landing);
   root.add(landed.group);
-  const exitFrom = new THREE.Vector3(sx + X(372), sy + Y(268), sz + 0.12);
-  const exitTo = new THREE.Vector3(...WORLD.pallet);
+  const burst = new THREE.PointLight('#FFD58A', 0, 0, 2);
+  burst.position.set(SXs + 0.9, SYs - 0.6, SZs + 0.8);
+  root.add(burst);
 
-  // ---- Pallet of 500 ----
-  const pallet = new THREE.Group();
-  pallet.position.set(...WORLD.pallet);
-  pallet.add(mesh(new THREE.BoxGeometry(8.6, 0.5, 6.4), lit('#8A6440'), 0, 0.25, 0));
-  const cellGeo = new THREE.BoxGeometry(3.9, 2.5, 2.9);
-  const cellEdges = new THREE.EdgesGeometry(cellGeo);
-  const cellMat = lit(GREY.green);
-  const edgeMat = new THREE.LineBasicMaterial({ color: GREY.ink });
-  const cells = Array.from({ length: PALLET_BOXES }, (_, i) => {
-    const layer = Math.floor(i / 4);
-    const col = i % 2;
-    const row = Math.floor((i % 4) / 2);
-    const m = mesh(cellGeo, cellMat, (col - 0.5) * 4.1, 0.5 + 1.25 + layer * 2.55, (row - 0.5) * 3.05);
-    m.add(new THREE.LineSegments(cellEdges, edgeMat));
-    pallet.add(m);
-    return { mesh: m, baseY: m.position.y };
+  // ---- Factory: the pallet that fills with the 500 boxes ----
+  const F = new THREE.Vector3(...WORLD.factory);
+  const palletWood = std('#B08A5A', { map: wood, roughness: 0.8 });
+  for (let i = 0; i < 7; i++) root.add(mesh(new THREE.BoxGeometry(12, 0.22, 1.1), palletWood, F.x, 1.33, F.z - 4.4 + i * 1.47));
+  for (const x of [-5.4, 0, 5.4]) for (const z of [-4.3, 0, 4.3]) root.add(mesh(new THREE.BoxGeometry(1.3, 0.9, 1.3), palletWood, F.x + x, 0.77, F.z + z));
+  for (const z of [-4.3, 0, 4.3]) root.add(mesh(new THREE.BoxGeometry(12, 0.3, 1.3), palletWood, F.x, 0.16, F.z + z));
+  const BOX_W = STORY_BOX.length * CM + 0.06;
+  const BOX_H = STORY_BOX.height * CM + 0.06;
+  const PER_ROW = 9;
+  const PER_LAYER = PER_ROW * 7;
+  const stack = new THREE.InstancedMesh(rounded(BOX_W, BOX_H, BOX_W, 0.03, 2), std('#FFFFFF', { map: tex.palletBox, roughness: 0.85 }), PALLET_BOXES);
+  stack.castShadow = stack.receiveShadow = true;
+  stack.count = 0;
+  stack.frustumCulled = false;
+  const slots = Array.from({ length: PALLET_BOXES }, (_, i) => {
+    const layer = Math.floor(i / PER_LAYER);
+    const k = i % PER_LAYER;
+    return new THREE.Vector3(
+      F.x + ((k % PER_ROW) - (PER_ROW - 1) / 2) * (BOX_W + 0.02),
+      1.44 + BOX_H / 2 + layer * (BOX_H + 0.01),
+      F.z + (Math.floor(k / PER_ROW) - 3) * (BOX_W + 0.02)
+    );
   });
-  pallet.visible = false;
-  root.add(pallet);
+  root.add(stack);
+  const blanks = own(concreteTexture('#B98E5E', 13));
+  blanks.repeat.set(4, 1);
+  root.add(mesh(rounded(9, 2.2, 7, 0.05), std('#FFFFFF', { map: blanks, roughness: 0.9 }), F.x - 15, 1.1, F.z - 2));
 
-  // ---- Map and truck ----
-  const map = new THREE.Group();
-  map.position.set(...WORLD.map);
-  map.add(mesh(new THREE.PlaneGeometry(90, 56), lit('#101A14'), 0, 0, 0).rotateX(-Math.PI / 2));
-  const grid = new THREE.GridHelper(90, 45, 0x2e9b47, 0x1d2a22);
-  grid.position.y = 0.02;
-  (grid.material as THREE.Material).transparent = true;
-  (grid.material as THREE.Material).opacity = 0.35;
-  map.add(grid);
-  const curve = new THREE.CatmullRomCurve3([new THREE.Vector3(-26, 0.1, 11), new THREE.Vector3(-10, 0.1, -7), new THREE.Vector3(6, 0.1, 5), new THREE.Vector3(26, 0.1, -9)]);
-  const ROUTE_POINTS = 120;
-  const routeGeo = new THREE.BufferGeometry().setFromPoints(curve.getPoints(ROUTE_POINTS - 1));
-  routeGeo.setDrawRange(0, 0);
-  const routeLine = new THREE.Line(routeGeo, new THREE.LineBasicMaterial({ color: '#3DBA5A' }));
-  map.add(routeLine);
-  map.add(mesh(new THREE.SphereGeometry(1.5, 16, 12), flat('#3DBA5A'), -26, 0.6, 11));
-  map.add(mesh(new THREE.TorusGeometry(2, 0.3, 8, 24), flat('#3DBA5A'), 26, 0.3, -9).rotateX(Math.PI / 2));
+  // ---- Road and the delivery truck (drives along +x) ----
+  const asphalt = own(asphaltTexture());
+  root.add(mesh(new THREE.PlaneGeometry(330, 26).rotateX(-Math.PI / 2), std('#FFFFFF', { map: asphalt, roughness: 0.95, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }), 185, 0.02, WORLD.roadZ, false));
+  const lines = own(roadLinesTexture());
+  root.add(
+    mesh(
+      new THREE.PlaneGeometry(330, 22).rotateX(-Math.PI / 2),
+      new THREE.MeshStandardMaterial({ map: lines, transparent: true, roughness: 0.8, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2, depthWrite: false }),
+      185,
+      0.04,
+      WORLD.roadZ,
+      false
+    )
+  );
   const truck = new THREE.Group();
-  truck.add(mesh(new THREE.BoxGeometry(2.8, 2.8, 6.4), lit(GREY.green), 0, 1.9, -0.6));
-  truck.add(mesh(new THREE.BoxGeometry(2.4, 2.2, 1.9), lit('#E9E1D3'), 0, 1.5, 3.4));
-  [[-1.4, -2], [1.4, -2], [-1.4, 3.2], [1.4, 3.2]].forEach(([x, z]) => truck.add(mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.4, 14), lit(GREY.ink), x, 0.55, z).rotateZ(Math.PI / 2)));
-  truck.scale.setScalar(1.8);
-  map.add(truck);
-  map.visible = false;
-  root.add(map);
+  const paint = std(INK.green, { roughness: 0.5, envMapIntensity: 0.8 });
+  const liveryMat = std('#FFFFFF', { map: tex.livery, roughness: 0.5, envMapIntensity: 0.8 });
+  truck.add(mesh(new THREE.BoxGeometry(34, 22, 19), [paint, paint, paint, paint, liveryMat, liveryMat], -6, 15.5, 0));
+  truck.add(mesh(rounded(13, 16, 19, 1.2), std('#ECECE6', { roughness: 0.35, envMapIntensity: 0.9 }), 18.5, 12.5, 0));
+  const tinted = std('#0E1418', { roughness: 0.08, metalness: 0.3, envMapIntensity: 1.2 });
+  truck.add(mesh(new THREE.BoxGeometry(0.3, 6.2, 16.6), tinted, 25.05, 15.5, 0));
+  for (const z of [-9.55, 9.55]) truck.add(mesh(new THREE.BoxGeometry(7, 5.5, 0.2), tinted, 19.5, 15.8, z));
+  truck.add(mesh(new THREE.BoxGeometry(46, 2.2, 15), std('#1B1C1D', { roughness: 0.7 }), 2, 4.2, 0));
+  for (const z of [-6.5, 6.5]) truck.add(mesh(new THREE.BoxGeometry(0.4, 1.2, 2.6), new THREE.MeshStandardMaterial({ color: '#FFF6D8', emissive: '#FFF0C0', emissiveIntensity: 2 }), 25.1, 7.6, z, false));
+  const wheels: THREE.Group[] = [];
+  const tyre = std('#141414', { roughness: 0.9 });
+  const rim = metal('#9A9C9E', 0.4);
+  for (const x of [-15, -8.5, 17]) {
+    for (const z of [-8.6, 8.6]) {
+      const w = new THREE.Group();
+      w.position.set(x, 3.6, z);
+      w.add(mesh(new THREE.CylinderGeometry(3.6, 3.6, 2.6, 28).rotateX(Math.PI / 2), tyre));
+      w.add(mesh(new THREE.CylinderGeometry(2.1, 2.1, 2.7, 20).rotateX(Math.PI / 2), rim));
+      truck.add(w);
+      wheels.push(w);
+    }
+  }
+  truck.position.set(WORLD.truckFrom, 0, WORLD.roadZ);
+  root.add(truck);
 
-  // ---- Doorstep ----
-  const door = new THREE.Group();
-  door.position.set(...WORLD.door);
-  door.add(mesh(new THREE.PlaneGeometry(36, 16), lit('#1F241D'), 0, 8, -5));
-  door.add(mesh(new THREE.PlaneGeometry(4.6, 9), lit('#5A4130'), -4, 4.5, -4.95));
-  door.add(mesh(new THREE.PlaneGeometry(3.4, 3.4), flat('#FFD58A'), 7, 6.2, -4.95));
-  door.add(mesh(new THREE.PlaneGeometry(14, 40), lit('#2A2B24'), 0, -0.02, 14).rotateX(-Math.PI / 2));
-  door.add(mesh(new THREE.PlaneGeometry(7, 4.2), lit('#4A3A28'), 0, 0.02, -2).rotateX(-Math.PI / 2));
-  const parcel = buildCarton(3, 3, 3, GREY.green);
-  parcel.group.position.set(0, 0, 2);
-  door.add(parcel.group);
-  const innerJar = buildJar(0.8);
-  innerJar.position.set(0, 0.3, 2);
-  door.add(innerJar);
-  door.visible = false;
-  root.add(door);
+  // ---- The house: doorstep, mat, the parcel and the unboxing ----
+  const D = new THREE.Vector3(...WORLD.door);
+  const tiles = own(tileTexture());
+  root.add(mesh(new THREE.PlaneGeometry(30, 16).rotateX(-Math.PI / 2), std('#FFFFFF', { map: tiles, roughness: 0.6, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }), D.x, 0.02, D.z - 1, false));
+  const plaster = own(plasterTexture());
+  plaster.repeat.set(10, 5);
+  root.add(mesh(new THREE.BoxGeometry(70, 32, 1), std('#D2C4AB', { map: plaster, roughness: 0.95 }), D.x, 16, D.z - 4.6));
+  root.add(mesh(new THREE.BoxGeometry(11, 23, 0.6), std('#3B2A1E', { roughness: 0.7 }), D.x, 11.5, D.z - 4.0));
+  const doorTex = own(doorTexture());
+  const doorEdge = std('#5B3B26');
+  root.add(mesh(new THREE.BoxGeometry(9, 21, 0.35), [doorEdge, doorEdge, doorEdge, doorEdge, std('#FFFFFF', { map: doorTex, roughness: 0.6 }), doorEdge], D.x, 10.6, D.z - 3.6));
+  root.add(mesh(new THREE.SphereGeometry(0.28, 16, 12), metal('#C9A24A', 0.3), D.x + 3.4, 10, D.z - 3.3));
+  root.add(mesh(rounded(13, 0.5, 3, 0.08), std('#8E877C', { roughness: 0.85 }), D.x, 0.25, D.z - 2.6));
+  const coir = std('#7A5C34', { roughness: 1 });
+  root.add(mesh(rounded(5.4, 0.08, 3.4, 0.03, 2), [coir, coir, std('#FFFFFF', { map: tex.mat, roughness: 1 }), coir, coir, coir], D.x, 0.06, D.z + 0.1));
+  root.add(mesh(rounded(0.8, 1.4, 0.6, 0.1), new THREE.MeshStandardMaterial({ color: '#FFE2A8', emissive: '#FFC870', emissiveIntensity: 2.2 }), D.x + 7.5, 13, D.z - 3.8, false));
+  const lamp = new THREE.PointLight('#FFC873', 130, 0, 2);
+  lamp.position.set(D.x + 7.5, 12.4, D.z - 2.6);
+  root.add(lamp);
+  root.add(mesh(lathe([[0, 0], [0.75, 0], [0.95, 1.6], [1.0, 1.7], [0.001, 1.7]]), std('#A4532E', { roughness: 0.85 }), D.x - 7.2, 0, D.z - 1.6));
+  const leaves = std('#2F5A2A', { roughness: 0.7 });
+  for (const [x, y, z, r] of [[0, 2.6, 0, 0.9], [0.5, 2.3, 0.2, 0.7], [-0.45, 2.4, -0.2, 0.75], [0.1, 3.2, -0.1, 0.6]]) root.add(mesh(new THREE.IcosahedronGeometry(r, 1), leaves, D.x - 7.2 + x, y, D.z - 1.6 + z));
 
-  const spotlightIdx = IDX.reveal;
+  const parcel = buildCarton(SWATCHES[5], true);
+  parcel.group.position.copy(D);
+  root.add(parcel.group);
+  const innerJar = buildJar(opts, tex.label);
+  innerJar.position.copy(D);
+  root.add(innerJar);
+  const openLight = new THREE.PointLight('#FFC873', 0, 0, 2);
+  openLight.position.set(D.x, 1.0, D.z);
+  root.add(openLight);
+  const glowSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: own(glowTexture()), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, opacity: 0 }));
+  glowSprite.position.set(D.x, 2.1, D.z);
+  glowSprite.scale.set(3.4, 3.4, 1);
+  root.add(glowSprite);
+
+  // ---- Key light and fog follow whatever the camera is looking at, so shadows and depth work in every place ----
+  // To stop shadow edges shimmering while the camera moves, the shadow area grows in 6% steps and its centre snaps
+  // to whole shadow-map texels in the light's own space.
+  const lightBasis = new THREE.Matrix4().lookAt(new THREE.Vector3(), KEY_DIR.clone().negate(), new THREE.Vector3(0, 1, 0));
+  const lightInverse = lightBasis.clone().invert();
+  const snapped = new THREE.Vector3();
+  const aim = (target: THREE.Vector3, distance: number) => {
+    const raw = Math.min(70, Math.max(3, distance * 0.55));
+    const r = Math.pow(1.06, Math.round(Math.log(raw) / Math.log(1.06)));
+    snapped.copy(target);
+    if (opts.shadows) {
+      const texel = (2 * r) / key.shadow.mapSize.x;
+      snapped.applyMatrix4(lightInverse);
+      snapped.x = Math.round(snapped.x / texel) * texel;
+      snapped.y = Math.round(snapped.y / texel) * texel;
+      snapped.applyMatrix4(lightBasis);
+    }
+    key.target.position.copy(snapped);
+    key.position.copy(snapped).addScaledVector(KEY_DIR, r * 2.5);
+    if (opts.shadows) {
+      const cam = key.shadow.camera;
+      cam.left = -r;
+      cam.right = r;
+      cam.top = r;
+      cam.bottom = -r;
+      cam.near = 0.1;
+      cam.far = r * 6;
+      cam.updateProjectionMatrix();
+      key.shadow.normalBias = r * 0.003;
+    }
+    fog.near = distance * 1.6;
+    fog.far = distance * 5;
+  };
+  const mainTarget = new THREE.Vector3();
   const tmp = new THREE.Vector3();
-  const tan = new THREE.Vector3();
+  let mainDistance = 10;
+  let lastMake = -1;
+
+  const studioCam = new THREE.PerspectiveCamera(STUDIO_SHOT.fov, 16 / 9, 0.1, 600);
+  studioCam.position.set(...STUDIO_SHOT.pos);
+  studioCam.lookAt(...STUDIO_SHOT.target);
+  const studioTarget = new THREE.Vector3(...STUDIO_SHOT.target);
+  const studioDistance = studioCam.position.distanceTo(studioTarget);
+
+  const cartons = [studioBox, landed, parcel];
 
   return {
     root,
+    fog,
     update(p) {
       const s = sceneAt(p);
       const i = s.index;
+      const pose = cameraAt(p);
+      mainTarget.set(...pose.target);
+      mainDistance = tmp.set(...pose.pos).distanceTo(mainTarget);
+      aim(mainTarget, mainDistance);
 
-      // Stage on the monitor: scenes 1-2 and the first part of the reveal
-      const onScreen = i < spotlightIdx || (i === spotlightIdx && s.local < REVEAL_SWAP);
-      stage.visible = onScreen;
-      backdrop.scale.setScalar(i === spotlightIdx ? 3 - 2 * easeInOut(clamp01(s.local / 0.7)) : 3);
+      // Studio: the jar turns a little while the lines measure it; then the blank slides in, folds, takes the jar, closes
       const measure = measureAt(p);
-      vLine.visible = hLine.visible = i === 0;
-      vLine.position.y = 0.5 + 1.1 * measure;
+      const fit = fitAt(p);
+      const lines = measure * (1 - fit.slide);
+      lineMat.opacity = lines;
+      [vLine, hLine, ...ticks].forEach((m) => (m.visible = lines > 0.01));
       vLine.scale.y = Math.max(0.001, measure);
+      vLine.position.y = 0.7 * measure;
       hLine.scale.x = Math.max(0.001, measure);
-      stageJar.rotation.y = p * 8;
-      const fold = foldAt(p);
-      stageCarton.group.visible = i >= IDX.fit;
-      stageCarton.group.scale.y = i === IDX.fit ? Math.max(0.02, fold) : 1;
-      stageJar.visible = i < IDX.fit || (i === IDX.fit && fold < 0.75);
-      outline.visible = i === IDX.fit;
+      (hLabel.material as THREE.SpriteMaterial).opacity = (wLabel.material as THREE.SpriteMaterial).opacity = clamp01((measure - 0.5) * 2) * (1 - fit.slide);
+      hLabel.visible = wLabel.visible = lines > 0.01;
 
-      // Desk appears as the camera pulls back
-      const revealing = i === spotlightIdx;
-      const afterReveal = i > spotlightIdx;
-      desk.visible = afterReveal || (revealing && s.local > 0.1);
-      decor.visible = afterReveal || (revealing && s.local > 0.3);
-      props.visible = afterReveal || (revealing && s.local >= REVEAL_SWAP);
+      studioBox.group.visible = i >= IDX.fit;
+      studioBox.group.position.set(WORLD.studioBox[0] + (1 - fit.slide) * 9, 0, WORLD.studioBox[2]);
+      studioBox.rig.setPose(fit.rig);
+      const m = fit.jar;
+      // label brand faces the camera (it is printed at a quarter turn round the jar), with a slow turn while measured
+      studioJar.rotation.y = -1.45 + measure * 0.5;
+      studioJar.position.set(
+        S.x + (WORLD.studioBox[0] - S.x) * easeInOut(m),
+        Math.sin(Math.PI * m) * 2.5 + 0.03 * m,
+        S.z + (WORLD.studioBox[2] - S.z) * easeInOut(m)
+      );
 
-      // Mini designer
+      // Monitor: the studio shot until the reveal settles, then a soft cross-fade into the designer
+      screenMat.uniforms.uMix.value = i === IDX.reveal ? easeInOut(clamp01((s.local - REVEAL_SWAP) / 0.15)) : 1;
       const mini = miniAt(p);
-      ui.visible = (i === spotlightIdx && s.local >= REVEAL_SWAP) || (i > spotlightIdx && i <= IDX.make);
-      if (ui.visible) {
-        miniCarton.material.color.set(TINTS[mini.colorIndex]);
-        miniLogo.visible = mini.logo && mini.exit < 0.05;
-        miniCarton.group.visible = mini.exit < 0.05;
-        ghost.visible = mini.exit >= 0.05;
-        ring.position.x = swatches[mini.colorIndex].position.x;
-        logoMark.visible = mini.logo;
-        plyButtons.forEach((b, k) => (b.material as THREE.MeshBasicMaterial).color.set(k === mini.ply ? GREY.green : '#FFFFFF'));
-        (quote.material as THREE.MeshBasicMaterial).color.set(mini.quoteHot ? '#3DBA5A' : '#2E9B47');
-        cursor.position.set(X(mini.cursor[0] * 570), Y(mini.cursor[1] * 320), 0.2);
-        ripple.scale.setScalar(0.6 + (1 - mini.click) * 1.4);
-        (ripple.material as THREE.MeshBasicMaterial).opacity = mini.click;
-        ripple.visible = mini.click > 0.01;
-        mouse.position.set(7.5 + (mini.cursor[0] - 0.5) * 3, 0.25, -1.2 + (mini.cursor[1] - 0.5) * 2.4);
-      }
+      screenUI.draw(mini);
+      mouse.position.set(2.9 + (mini.cursor[0] - 0.5) * 0.9, top + 0.02, 0.4 + (mini.cursor[1] - 0.5) * 0.6);
 
-      // Order: the box steps out of the screen and lands on the desk, then the pallet takes over
-      const exit = mini.exit;
+      // Order: the designed box pushes through the screen and lands on the desk
+      const e = mini.exit;
+      landed.group.visible = e > 0;
+      landed.group.position.lerpVectors(exitFrom, exitTo, easeOutCubic(e));
+      landed.group.position.y += Math.sin(Math.PI * Math.min(1, e * 1.15)) * 1.6;
+      landed.group.scale.setScalar(0.75 + 0.25 * e);
+      landed.group.rotation.set(Math.sin(Math.PI * e) * 0.18, -0.35 + e * 0.6, Math.sin(Math.PI * e) * -0.12);
+      burst.intensity = i === IDX.order ? 40 * Math.sin(Math.PI * clamp01(e * 1.4)) : 0;
+
+      // Make: the 500 boxes stack up layer by layer, the newest few dropping into place
       const make = makeAt(p);
-      const palletBoxes = make * PALLET_BOXES;
-      landed.group.visible = exit > 0 && (i < IDX.make || (i === IDX.make && palletBoxes < 1));
-      if (landed.group.visible) {
-        const e = exit;
-        landed.group.position.lerpVectors(exitFrom, exitTo, e);
-        landed.group.position.y += Math.sin(Math.PI * e) * 5;
-        landed.group.scale.setScalar(0.85 + 0.15 * e);
-        landed.group.rotation.set(0, e * 0.8, Math.sin(Math.PI * e) * 0.15);
-      }
-      burst.intensity = i === IDX.order ? 60 * Math.sin(Math.PI * clamp01(exit)) : 0;
-
-      // Pallet
-      pallet.visible = i >= IDX.make;
-      if (pallet.visible) {
-        cells.forEach((c, k) => {
-          const a = clamp01(palletBoxes - k);
-          c.mesh.visible = a > 0;
-          c.mesh.position.y = c.baseY + (1 - easeOutCubic(a)) * 7;
-        });
+      if (make !== lastMake) {
+        lastMake = make;
+        const LEAD = 14;
+        const c = make * (PALLET_BOXES + LEAD);
+        const count = Math.min(PALLET_BOXES, Math.max(0, Math.ceil(c)));
+        for (let k = 0; k < count; k++) {
+          const at = slots[k];
+          stack.setMatrixAt(k, m4.makeTranslation(at.x, at.y + (1 - easeOutCubic(clamp01((c - k) / LEAD))) * 2.4, at.z));
+        }
+        stack.count = count;
+        stack.instanceMatrix.needsUpdate = true;
       }
 
-      // Map, truck and route
-      map.visible = i >= IDX.make && i <= IDX.door;
-      const ship = shipAt(p);
-      routeGeo.setDrawRange(0, Math.floor(ship * ROUTE_POINTS));
-      curve.getPointAt(clamp01(ship), tmp);
-      curve.getTangentAt(clamp01(ship), tan);
-      truck.position.copy(tmp);
-      truck.lookAt(tmp.x + tan.x, tmp.y, tmp.z + tan.z);
+      // Ship: the truck drives down the road, wheels turning
+      const x = truckX(shipAt(p));
+      truck.position.x = x;
+      wheels.forEach((w) => (w.rotation.z = -(x - WORLD.truckFrom) / 3.6));
 
-      // Doorstep
-      door.visible = i >= IDX.door;
+      // Door: the parcel drops onto the mat; then the flaps open, light spills out and the jar rises
       const drop = doorDropAt(p);
-      parcel.group.visible = drop.visible;
       parcel.group.position.y = drop.height;
+      parcel.group.rotation.y = -0.25 + drop.height * 0.06;
       const open = openAt(p);
-      parcel.setOpen(open);
+      parcel.rig.setPose(1 - 0.28 * open);
       const rise = jarRiseAt(p);
-      innerJar.visible = i === IDX.open && rise > 0;
-      innerJar.position.y = 0.3 + rise * 4.2;
-      glow.intensity = open * 45;
+      innerJar.visible = i >= IDX.open;
+      innerJar.position.set(D.x, 0.03 + drop.height + rise * 1.55, D.z);
+      innerJar.rotation.y = -1.75 + rise * 0.6;
+      openLight.intensity = 14 * open;
+      (glowSprite.material as THREE.SpriteMaterial).opacity = 0.75 * easeInOut(open);
+    },
+    needsStudioShot(p) {
+      const s = sceneAt(p);
+      return s.index === IDX.reveal && s.local < REVEAL_SWAP + 0.16;
+    },
+    renderStudioShot(gl, scene) {
+      // The studio is in its final "fit" state whenever the reveal is on screen (state comes from p), so only the
+      // camera, the key light and the fog need pointing at it for this one render
+      screen.visible = false;
+      aim(studioTarget, studioDistance);
+      gl.setRenderTarget(studioRT);
+      gl.clear();
+      gl.render(scene, studioCam);
+      gl.setRenderTarget(null);
+      screen.visible = true;
+      aim(mainTarget, mainDistance);
+    },
+    enableDetail(gl) {
+      cartons.forEach((c) => c.rig.enableSurfaceDetail());
+      setSurfaceTextureAnisotropy(gl.capabilities.getMaxAnisotropy());
+    },
+    refreshText() {
+      const swap = (key: keyof typeof tex, make: () => THREE.CanvasTexture) => {
+        const prev = tex[key];
+        const next = make();
+        root.traverse((o) => {
+          const mat = (o as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
+          (Array.isArray(mat) ? mat : mat ? [mat] : []).forEach((x) => {
+            const sm = x as THREE.MeshStandardMaterial;
+            if (sm.map === prev) {
+              sm.map = next;
+              sm.needsUpdate = true;
+            }
+          });
+        });
+        prev.dispose();
+        tex[key] = next;
+      };
+      swap('label', jarLabelTexture);
+      swap('note', stickyNoteTexture);
+      swap('livery', truckLiveryTexture);
+      swap('mat', matTexture);
+      swap('palletBox', palletBoxTexture);
+      printCarton(landed);
+      printCarton(parcel);
+      screenUI.refresh();
     },
     dispose() {
+      // The rigs dispose their own parts (some textures are shared with the designer), so detach them first
+      cartons.forEach((c) => {
+        c.rig.dispose();
+        c.prints.forEach((t) => t.dispose());
+        c.group.remove(c.rig.object3d);
+      });
       root.traverse((o) => {
         const m = o as THREE.Mesh;
         m.geometry?.dispose?.();
         const mat = m.material as THREE.Material | THREE.Material[] | undefined;
         (Array.isArray(mat) ? mat : mat ? [mat] : []).forEach((x) => {
-          (x as THREE.MeshBasicMaterial).map?.dispose?.();
+          (x as THREE.MeshStandardMaterial).map?.dispose?.();
           x.dispose();
         });
       });
-      noteTex.dispose();
+      Object.values(tex).forEach((t) => t.dispose());
+      screenUI.texture.dispose();
+      owned.forEach((d) => d.dispose());
     },
   };
 }

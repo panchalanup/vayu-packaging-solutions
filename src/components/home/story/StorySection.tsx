@@ -13,7 +13,7 @@
 
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Pause, Play } from 'lucide-react';
+import { ChevronsDown, Pause, Play } from 'lucide-react';
 import { Section } from '@/components/site/Section';
 import { Cta } from '@/components/site/Cta';
 import { useSiteTier } from '@/lib/motion/siteTier';
@@ -51,15 +51,20 @@ function useFilmScroll(store: FoldStore, track: React.RefObject<HTMLElement>, st
       const run = rect.height - stageEl.offsetHeight;
       target = run > 0 ? clamp01((readNavHeight() - rect.top) / run) : 0;
     };
-    const tick = () => {
+    // Frame-rate independent easing toward the scroll position: a soft, cinematic glide that never steps
+    let lastT = 0;
+    const tick = (now: number) => {
       frame = 0;
+      const dt = lastT ? Math.min(64, now - lastT) : 16;
+      lastT = now;
       const cur = store.get();
       const d = target - cur;
-      if (Math.abs(d) < 0.0004) {
+      if (Math.abs(d) < 0.00025) {
         store.set(target);
+        lastT = 0;
         return;
       }
-      store.set(cur + d * 0.14);
+      store.set(cur + d * (1 - Math.exp(-dt / 140)));
       frame = requestAnimationFrame(tick);
     };
     const onScroll = () => {
@@ -102,6 +107,22 @@ function Rail({ active, onGo, compact }: { active: number; onGo: (chapter: Chapt
         </li>
       ))}
     </ol>
+  );
+}
+
+function SkipButton({ onSkip, compact }: { onSkip: () => void; compact?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onSkip}
+      className={cn(
+        'pointer-events-auto inline-flex min-h-11 items-center gap-1.5 rounded-full border border-white/20 bg-black/35 text-paper-50/85 backdrop-blur-md transition-colors duration-quick hover:border-white/45 hover:text-paper-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        compact ? 'px-3 text-xs' : 'px-4 text-sm'
+      )}
+    >
+      Skip animation
+      <ChevronsDown className="h-4 w-4" aria-hidden="true" />
+    </button>
   );
 }
 
@@ -181,8 +202,16 @@ function StoryStage({ mode, tier }: { mode: Mode; tier: PerfTier }) {
     [film, player]
   );
 
-  const scene = SCENES[sceneIdx];
-  const word = SCENE_WORDS[scene.id];
+  // Skip: jump straight past the section (no smooth scroll, which would play the whole film at speed)
+  const skip = useCallback(() => {
+    trackEvent('story_skip', { scene: SCENES[sceneIdx].id, mode });
+    player.setPaused(true);
+    const end = document.getElementById('story-end');
+    if (!end) return;
+    window.scrollTo({ top: end.getBoundingClientRect().top + window.scrollY - readNavHeight(), behavior: 'instant' as ScrollBehavior });
+    end.focus({ preventScroll: true });
+  }, [trackEvent, sceneIdx, mode, player]);
+
   const activeChapter = chapterIndexOf(sceneIdx);
   const ctas = (
     <div className="pointer-events-auto flex flex-wrap gap-3">
@@ -222,29 +251,33 @@ function StoryStage({ mode, tier }: { mode: Mode; tier: PerfTier }) {
             </div>
           )}
 
+          {/* Soft scrims keep the words and the rail readable over bright scenes (the doorstep, the open box) */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(75%_65%_at_0%_0%,rgb(0_0_0/0.55),transparent_70%)]" />
+          <div aria-hidden="true" className={cn('pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 to-transparent', film ? 'h-28' : 'h-56')} />
+
           {/* Words, counter and buttons sit on a layer that ignores the pointer, except the buttons themselves */}
           <div className="pointer-events-none absolute inset-0">
             <div className="mx-auto max-w-content px-4 pt-8 md:px-6 lg:px-10 lg:pt-12">
-              <div className={cn('min-h-[3.2em]', !film && 'pt-6')} aria-hidden="true">
-                <AnimatePresence mode="wait" initial={false}>
-                  {word && (
-                    <motion.p
-                      key={word}
-                      className="font-display text-display-xl text-paper-50"
-                      initial={{ opacity: 0, y: 14, filter: 'blur(8px)' }}
-                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
-                      transition={{ duration: DUR.slow, ease: EASE.paper }}
+              {/* Every phrase is always mounted and cross-fades in place: no blank frame between scenes, no remounts */}
+              <div className={cn('relative h-[4.5em]', !film && 'mt-14')} aria-hidden="true">
+                {SCENES.map((s, i) =>
+                  SCENE_WORDS[s.id] ? (
+                    <div
+                      key={s.id}
+                      className={cn(
+                        'absolute inset-x-0 top-0 transition-[opacity,transform,filter] duration-slow ease-paper',
+                        i === sceneIdx ? 'translate-y-0 opacity-100 blur-0' : cn('opacity-0 blur-[6px]', i < sceneIdx ? '-translate-y-2' : 'translate-y-3')
+                      )}
                     >
-                      {word}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-                {sceneIdx === MAKE && (
-                  <p className="mt-2 text-body-l text-paper-50/60">
-                    {MAKE_LINE}
-                    <span className="mt-1 block text-xs text-paper-50/40">*{MAKE_FOOTNOTE}</span>
-                  </p>
+                      <p className="font-display text-display-xl text-paper-50 [text-shadow:0_2px_24px_rgb(0_0_0/0.45)]">{SCENE_WORDS[s.id]}</p>
+                      {i === MAKE && (
+                        <p className="mt-2 text-body-l text-paper-50/70">
+                          {MAKE_LINE}
+                          <span className="mt-1 block text-xs text-paper-50/50">*{MAKE_FOOTNOTE}</span>
+                        </p>
+                      )}
+                    </div>
+                  ) : null
                 )}
               </div>
               <AnimatePresence>
@@ -267,27 +300,32 @@ function StoryStage({ mode, tier }: { mode: Mode; tier: PerfTier }) {
             </div>
 
             {film ? (
-              <div className="absolute inset-x-0 bottom-3 mx-auto flex max-w-content items-end justify-between px-4 md:px-6 lg:px-10">
-                <div className="pointer-events-auto">
-                  <Rail active={activeChapter} onGo={goChapter} />
+              <>
+                <div className="absolute inset-x-0 top-4 mx-auto flex max-w-content justify-end px-4 md:px-6 lg:top-6 lg:px-10">
+                  <SkipButton onSkip={skip} />
                 </div>
-                <a href="#story-end" onClick={() => trackEvent('story_skip', { scene: scene.id })} className="pointer-events-auto link-draw pb-2 text-sm text-paper-50/60 hover:text-paper-50">
-                  Skip the story ↓
-                </a>
-              </div>
+                <div className="absolute inset-x-0 bottom-3 mx-auto flex max-w-content items-end px-4 md:px-6 lg:px-10">
+                  <div className="pointer-events-auto">
+                    <Rail active={activeChapter} onGo={goChapter} />
+                  </div>
+                </div>
+              </>
             ) : (
               <>
                 <div className="pointer-events-auto absolute inset-x-0 top-3 px-4">
                   <Rail active={activeChapter} onGo={goChapter} compact />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => player.setPaused(!player.paused)}
-                  aria-label={player.paused ? 'Play the story' : 'Pause the story'}
-                  className="pointer-events-auto absolute right-2 top-9 grid h-11 w-11 place-items-center rounded-full text-paper-50/70 hover:text-paper-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  {player.paused ? <Play className="h-4 w-4" aria-hidden="true" /> : <Pause className="h-4 w-4" aria-hidden="true" />}
-                </button>
+                <div className="absolute right-2 top-9 flex items-center gap-1">
+                  <SkipButton onSkip={skip} compact />
+                  <button
+                    type="button"
+                    onClick={() => player.setPaused(!player.paused)}
+                    aria-label={player.paused ? 'Play the story' : 'Pause the story'}
+                    className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full text-paper-50/70 hover:text-paper-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    {player.paused ? <Play className="h-4 w-4" aria-hidden="true" /> : <Pause className="h-4 w-4" aria-hidden="true" />}
+                  </button>
+                </div>
                 <div className="pointer-events-auto absolute inset-x-0 bottom-28 top-28 flex">
                   <button type="button" aria-label="Previous scene" className="h-full flex-1 focus-visible:outline-none" onClick={() => player.goto(sceneIdx - 1)} />
                   <button type="button" aria-label="Next scene" className="h-full flex-1 focus-visible:outline-none" onClick={() => player.goto(sceneIdx + 1)} />
@@ -302,11 +340,11 @@ function StoryStage({ mode, tier }: { mode: Mode; tier: PerfTier }) {
               </>
             )}
 
-            {debug && <p ref={debugRef} className="label-mono absolute right-3 top-3 rounded bg-black/60 px-2 py-1 text-green-400" />}
+            {debug && <p ref={debugRef} className="label-mono absolute bottom-16 right-3 rounded bg-black/60 px-2 py-1 text-green-400" />}
           </div>
         </div>
       </div>
-      <div id="story-end" />
+      <div id="story-end" tabIndex={-1} className="outline-none" />
     </Section>
   );
 }

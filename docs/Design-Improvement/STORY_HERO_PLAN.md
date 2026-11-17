@@ -1,6 +1,6 @@
 # Home page "story hero": plan
 
-**Date:** 17 Nov 2026 · **Status:** **Phase A (blockout) is built** and live on the home page behind the normal tier rules; Phases B–E are not started. See [Phase A status](#phase-a-status) just below the contents. Decisions D8 and D9 are settled (§13).
+**Date:** 17 Nov 2026 · **Status:** **Phases A and B are built** (blockout, then the realism pass: see [Phase B status](#phase-b-status-realism-pass)). Phase A (blockout) was and live on the home page behind the normal tier rules; Phases B–E are not started. See [Phase A status](#phase-a-status) just below the contents. Decisions D8 and D9 are settled (§13).
 **Relates to:** [WOW_EFFECTS_PLAN.md](WOW_EFFECTS_PLAN.md) (motion rules §4, tiers), [DESIGN_IMPROVEMENT_PLAN.md](DESIGN_IMPROVEMENT_PLAN.md) §6 (home sections), §8 (motion system).
 
 ![The whole story on one strip](story-hero/storyboard/00-overview.jpg)
@@ -56,6 +56,48 @@ Phone "stories" mode (autoplay, tap to step): ![](story-hero/phase-a/phone-desig
 - The lazy 3D chunk is **4.7 KB gzipped** (three and R3F are shared with the top hero), well under the 60 KB budget.
 - The desk objects physically overlap the spotlight scene because that scene sits right behind the monitor glass. Phase B2 fixes this properly (the spotlight scene renders into the screen texture); until then the stand and keyboard are held back until the screen swaps.
 - Open items for Phase B: framing the door scene properly (the window is a flat placeholder), and re-checking every camera pose once real materials change the look.
+
+---
+
+## Phase B status (realism pass)
+
+**Built 17 Nov 2026**, after the owner's review of Phase A: *"the flow is nice, but the 3D objects look boxy; frame changes flicker; make the animation smooth; add a skip animation button."*
+
+| Scene | Now |
+|---|---|
+| 1 Product | ![](story-hero/phase-b/1-product.jpg) |
+| 2 Fit | ![](story-hero/phase-b/2-fit.jpg) |
+| 3a Reveal (the cut into the monitor) | ![](story-hero/phase-b/3a-reveal.jpg) |
+| 3b Design | ![](story-hero/phase-b/3b-design.jpg) |
+| 3c Order | ![](story-hero/phase-b/3c-order.jpg) |
+| 4 Make | ![](story-hero/phase-b/4-make.jpg) |
+| 5 Ship | ![](story-hero/phase-b/5-ship.jpg) |
+| 6 Door | ![](story-hero/phase-b/6-door.jpg) |
+| 7 Open | ![](story-hero/phase-b/7-open.jpg) |
+
+Phone: ![](story-hero/phase-b/phone-make.jpg) ![](story-hero/phase-b/phone-open.jpg)
+
+**Real objects, real scale (1 unit = 10 cm):**
+- Every hero box is the **Box Designer's own carton rig**: board grain, flute edges, mitred corners. In scene 2 the flat blank really folds, the jar lifts in, and the top flaps close. At the door the flaps really open.
+- The box size is the fit checker's own answer for the jar: a 10 × 10 × 14 cm jar gets a **12.5 × 12.5 × 16.5 cm** box (shown on the monitor too).
+- Lathe-turned **glass honey jar** (honey, paper label, gold lid) and **cutting-chai glass**; real transmission on the high tier.
+- The **pallet holds the actual 500 boxes** (one instanced mesh), so the ×500 counter and the boxes on screen always agree.
+- Desk with wood grain, a 27" monitor on an aluminium stand, a keyboard with real keys, a mouse that follows the cursor, the seasonal sticky note.
+- The monitor shows a **drawn miniature of the real designer** with real text (top bar, Edit Box panel, swatches, logo, board, size, "Quote this design").
+- Delivery truck in Vayu livery on a road; a house front with panelled door, wall lamp, plant, tiles and a WELCOME mat.
+- Lighting: image-based light from a procedural room (no download), one warm key light with soft shadows that follows the camera, a studio spotlight, warm practical lights, fog for depth.
+
+**Flicker fixes:**
+- No stacked flat planes on the screen any more: the whole UI is one texture, so nothing can z-fight.
+- Nothing appears or disappears in view between scenes. Places are far apart and the camera travels; the studio-to-desk switch is a cut into the monitor, which is showing that exact studio frame at that moment (rendered to a texture with the same tone curve), so the cut cannot be seen.
+- Scene words are all mounted and cross-fade in place (no blank frame, no remounting).
+- Shadow edges no longer shimmer: the shadow area grows in steps and snaps to whole texels.
+
+**Smoothness:** frame-rate-independent easing of scroll into the story; scenes with their own action (the pallet filling, the truck setting off, the parcel dropping) let the camera arrive first and play the action to a settled frame.
+
+**Skip animation:** a "Skip animation" button on desktop (top right of the stage) and on phones (beside pause). It jumps straight past the section (no smooth scroll through the film) and moves keyboard focus there.
+
+**Still open:** post-processing (a little bloom on the unboxing glow), the steam on the chai, the India map for "On its way" (replaced by a real road and truck for now), stills for the fallback (Phase D). The headless test browser renders in software, so the screenshots above are a little soft; a real GPU renders them sharper.
 
 ---
 

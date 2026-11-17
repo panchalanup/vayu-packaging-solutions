@@ -3,14 +3,20 @@ import { FACTS } from '@/content/facts';
 import { CHAPTER_LABELS, SCENE_WORDS, deskNote } from '@/content/story';
 import {
   CHAPTERS,
+  CUT_IN,
+  DOOR_DROP,
   HOLD,
   PALLET_BOXES,
   SCENES,
+  SCREEN_FILL,
+  STUDIO_SHOT,
+  WORLD,
   cameraAt,
   chapterAnchor,
   chapterIndexOf,
   counterAt,
   doorDropAt,
+  fitAt,
   fitFov,
   foldAt,
   holdPoint,
@@ -22,6 +28,7 @@ import {
   sceneAt,
   settle,
   shipAt,
+  truckX,
 } from '../beats';
 
 describe('scenes', () => {
@@ -106,8 +113,9 @@ describe('rail', () => {
 describe('camera', () => {
   const near = (a: readonly number[], b: readonly number[]) => a.forEach((v, i) => expect(v).toBeCloseTo(b[i], 4));
 
-  it('has no jump at any scene boundary', () => {
+  it('has no jump at any scene boundary except the planned cut into the monitor', () => {
     for (let i = 1; i < SCENES.length; i++) {
+      if (CUT_IN.includes(SCENES[i].id)) continue;
       const before = cameraAt(SCENES[i].from - 1e-7);
       const after = cameraAt(SCENES[i].from + 1e-7);
       near(before.pos, after.pos);
@@ -122,6 +130,38 @@ describe('camera', () => {
       const b = cameraAt(s.from + (s.to - s.from) * 0.99);
       near(a.pos, b.pos);
     });
+  });
+
+  it('starts the reveal framed exactly on the monitor screen, which shows the studio shot', () => {
+    const reveal = SCENES.find((s) => s.id === 'reveal')!;
+    const c = cameraAt(reveal.from);
+    near(c.pos, SCREEN_FILL.pos);
+    near(c.target, WORLD.screenCenter);
+    const fit = SCENES.find((s) => s.id === 'fit')!;
+    near(cameraAt(fit.to - 1e-7).pos, STUDIO_SHOT.pos);
+  });
+
+  it('follows the truck down the road', () => {
+    const ship = SCENES.find((s) => s.id === 'ship')!;
+    const mid = ship.from + (ship.to - ship.from) * 0.5;
+    const end = holdPoint(ship.index);
+    expect(cameraAt(end).target[0]).toBeCloseTo(truckX(1) + 10, 4);
+    expect(cameraAt(end).target[0]).toBeGreaterThan(cameraAt(mid).target[0]);
+    expect(truckX(0)).toBe(WORLD.truckFrom);
+    expect(truckX(1)).toBe(WORLD.truckTo);
+  });
+
+  it('lets the camera arrive before the pallet fills and before the parcel drops', () => {
+    const at = (id: string, local: number) => {
+      const s = SCENES.find((x) => x.id === id)!;
+      return s.from + (s.to - s.from) * local;
+    };
+    near(cameraAt(at('make', 0.4)).pos, cameraAt(at('make', 0.95)).pos);
+    expect(makeAt(at('make', 0.3))).toBeCloseTo(0, 6);
+    expect(makeAt(at('make', 0.6))).toBeGreaterThan(0);
+    near(cameraAt(at('door', 0.42)).pos, cameraAt(at('door', 0.95)).pos);
+    expect(doorDropAt(at('door', 0.4)).height).toBe(DOOR_DROP);
+    expect(doorDropAt(at('door', 0.7)).height).toBeLessThan(DOOR_DROP);
   });
 
   it('widens the field of view on a portrait phone but not on a wide screen', () => {
@@ -161,7 +201,13 @@ describe('scene progress', () => {
     expect(counterAt(0)).toBe(1);
     expect(counterAt(holdPoint(make.index))).toBe(FACTS.moqBoxes);
     expect(counterAt(1)).toBe(FACTS.moqBoxes);
-    expect(PALLET_BOXES).toBe(16);
+    expect(PALLET_BOXES).toBe(FACTS.moqBoxes);
+    let prev = 0;
+    for (let k = 0; k <= 50; k++) {
+      const c = counterAt(make.from + ((make.to - make.from) * k) / 50);
+      expect(c).toBeGreaterThanOrEqual(prev);
+      prev = c;
+    }
   });
 
   it('only lifts the jar out once the flaps are well open', () => {
@@ -175,9 +221,31 @@ describe('scene progress', () => {
     expect(doorDropAt(door.from - 0.01).visible).toBe(false);
     const start = doorDropAt(door.from);
     expect(start.visible).toBe(true);
-    expect(start.height).toBeCloseTo(9, 4);
+    expect(start.height).toBeCloseTo(DOOR_DROP, 4);
     expect(doorDropAt(holdPoint(door.index)).height).toBe(0);
     expect(doorDropAt(1).height).toBe(0);
+  });
+});
+
+describe('fit choreography', () => {
+  const fit = SCENES.find((s) => s.id === 'fit')!;
+  const at = (local: number) => fit.from + (fit.to - fit.from) * local;
+
+  it('starts as a flat blank and ends sealed', () => {
+    expect(fitAt(0).rig).toBe(0);
+    expect(fitAt(at(0)).slide).toBe(0);
+    expect(fitAt(holdPoint(fit.index)).rig).toBe(1);
+    expect(fitAt(1).rig).toBe(1);
+  });
+
+  it('only moves the jar once the box stands open, and only closes the top after the jar is in', () => {
+    for (let k = 0; k <= 40; k++) {
+      const s = fitAt(at(k / 40));
+      if (s.jar > 0 && s.jar < 1) expect(s.rig).toBeCloseTo(0.72, 6);
+      if (s.rig > 0.72 + 1e-9) expect(s.jar).toBe(1);
+      expect(s.rig).toBeGreaterThanOrEqual(0);
+      expect(s.rig).toBeLessThanOrEqual(1);
+    }
   });
 });
 

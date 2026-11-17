@@ -99,7 +99,7 @@ const CHAPTER_ANCHOR: Record<ChapterId, SceneId> = { product: 'product', design:
 export const chapterAnchor = (chapter: ChapterId) => holdPoint(IDX[CHAPTER_ANCHOR[chapter]]);
 export const chapterIndexOf = (sceneIdx: number) => CHAPTERS.indexOf(SCENES[Math.min(SCENES.length - 1, Math.max(0, sceneIdx))].chapter);
 
-// --- Camera --------------------------------------------------------------------------------------------------------
+// --- World and camera ----------------------------------------------------------------------------------------------
 
 type V3 = readonly [number, number, number];
 export interface CamPose {
@@ -110,38 +110,92 @@ export interface CamPose {
 }
 
 /**
- * Where everything lives in the world (1 unit is about 10 cm of the real thing). The desk and the monitor sit at the
- * origin; the map and the doorstep are laid out along x, so the camera "travels" between places instead of cutting.
+ * Where everything lives, at real scale: 1 unit = 10 cm and the floor is y = 0. Each place is far enough from the
+ * others that nothing ever has to be hidden or swapped between scenes (popping objects read as flicker); the camera
+ * simply travels.
+ *  - studio: the product shot (scenes 1-2), a seamless floor under a spotlight, well away from everything
+ *  - desk: a 160 x 80 cm desk, top at 75 cm, with a 27" monitor (scenes 3a-3c)
+ *  - factory: the pallet of boxes (scene 4); road along x to the house (scenes 5-7)
  */
 export const WORLD = {
-  screenCenter: [0, 6.4, -6.1] as V3,
-  screenSize: [20, 11.25] as const,
-  stage: [0, 1.1, -5.7] as V3,
-  pallet: [0, 0, 6] as V3,
-  map: [80, 0, 0] as V3,
-  door: [140, 0, 0] as V3,
+  studio: [-80, 0, 0] as V3,
+  /** Where the box blank lands beside the jar in the studio */
+  studioBox: [-77, 0, 0.2] as V3,
+  deskTop: 7.5,
+  screenCenter: [0, 10.35, -2.6] as V3,
+  /** 27" 16:9 panel, 60 x 33.75 cm */
+  screenSize: [6, 3.375] as const,
+  /** Where the box lands on the desk after stepping out of the screen */
+  landing: [4.6, 7.5, -1.3] as V3,
+  factory: [40, 0, 2] as V3,
+  /** The road runs in front of the house (the house faces +z), well clear of the factory */
+  roadZ: 64,
+  truckFrom: 46,
+  truckTo: 286,
+  /** The box's resting spot on the doormat */
+  door: [300, 0, 39] as V3,
 } as const;
 
-// Tuned by eye with scripts/screenshots/jobs/story-beats.mjs
-const START: CamPose = { pos: [7, 4.6, 10.5], target: [-2.2, 2.2, -5.5], fov: 30 };
-const POSES: Record<SceneId, CamPose> = {
-  product: { pos: [4.2, 3.6, 8.5], target: [-2.2, 2.2, -5.5], fov: 30 },
-  fit: { pos: [6.2, 5.2, 9.2], target: [-2.2, 2.6, -5.5], fov: 30 },
-  reveal: { pos: [-2, 9, 36], target: [-3.5, 5, -4], fov: 30 },
-  design: { pos: [-2, 8, 30], target: [-5.5, 5.3, -5], fov: 30 },
-  order: { pos: [-2, 8.5, 31], target: [-4.5, 6, 0], fov: 30 },
-  make: { pos: [20, 19, 36], target: [-1, 3.5, 3], fov: 30 },
-  ship: { pos: [80, 62, 50], target: [80, 0, 1], fov: 30 },
-  door: { pos: [138, 5, 23], target: [138, 3.2, 0], fov: 30 },
-  open: { pos: [140, 11, 19], target: [138.5, 3.4, 2], fov: 30 },
+const [SX, SY, SZ] = WORLD.screenCenter;
+const S = WORLD.studio;
+const at3 = (o: V3, x: number, y: number, z: number): V3 => [o[0] + x, o[1] + y, o[2] + z];
+
+/**
+ * The camera framed so the monitor's screen exactly fills a 16:9 view. The reveal starts here: the monitor is showing
+ * the studio shot (rendered from the "fit" pose), so the switch from the studio to the desk is invisible, and then
+ * the camera pulls back.
+ */
+export const SCREEN_FILL: CamPose = {
+  pos: [SX, SY, SZ + WORLD.screenSize[1] / 2 / Math.tan((15 * Math.PI) / 180)],
+  target: [SX, SY, SZ],
+  fov: 30,
 };
+
+/** Truck position along the road (x) for a ship progress 0..1 */
+export const truckX = (ship: number) => lerp(WORLD.truckFrom, WORLD.truckTo, easeInOut(clamp01(ship)));
+
+// Tuned by eye with scripts/screenshots/jobs/story-beats.mjs. Subjects sit right of centre: the words are on the left.
+const START: CamPose = { pos: at3(S, 3.4, 2.4, 8.8), target: at3(S, -0.9, 0.8, 0), fov: 30 };
+const POSES: Record<SceneId, CamPose | ((p: number) => CamPose)> = {
+  product: { pos: at3(S, 2.3, 1.7, 6.6), target: at3(S, -0.95, 0.75, 0), fov: 30 },
+  fit: { pos: at3(S, 4.6, 3.6, 10.2), target: at3(S, 1.0, 0.9, 0.1), fov: 30 },
+  reveal: { pos: [-0.6, 12.4, 22], target: [-2.2, 9.5, -1.4], fov: 30 },
+  design: { pos: [0.6, 11.7, 12.6], target: [-1.5, 9.85, -1.8], fov: 30 },
+  order: { pos: [1.4, 11.4, 13.8], target: [-0.4, 9.3, -1.0], fov: 30 },
+  make: { pos: [64, 27, 36], target: [40, 5, 2], fov: 30 },
+  // a tracking shot: the camera follows the truck down the road
+  ship: (p) => {
+    const x = truckX(shipAt(p));
+    return { pos: [x - 50, 44, WORLD.roadZ + 95], target: [x + 10, 6, WORLD.roadZ], fov: 30 };
+  },
+  door: { pos: at3(WORLD.door, 1.7, 2.5, 8.2), target: at3(WORLD.door, -0.7, 1.7, -0.6), fov: 30 },
+  open: { pos: at3(WORLD.door, 1.3, 4.9, 4.9), target: at3(WORLD.door, -0.45, 1.25, -0.1), fov: 30 },
+};
+
+const poseOf = (id: SceneId, p: number): CamPose => {
+  const pose = POSES[id];
+  return typeof pose === 'function' ? pose(p) : pose;
+};
+
+/** Where the studio camera sits for the shot shown on the monitor at the start of the reveal */
+export const STUDIO_SHOT = POSES.fit as CamPose;
+
+/** Scenes that open with an intentional, invisible cut instead of a camera move from the previous scene */
+export const CUT_IN: readonly SceneId[] = ['reveal'];
 
 const lerp3 = (a: V3, b: V3, k: number): V3 => [lerp(a[0], b[0], k), lerp(a[1], b[1], k), lerp(a[2], b[2], k)];
 
+/**
+ * Share of a scene the camera takes to arrive. Where the scene has its own action (the pallet filling, the parcel
+ * dropping) the camera arrives early and the action plays to a settled frame instead of a moving one.
+ */
+const CAMERA_SHARE: Partial<Record<SceneId, number>> = { make: 0.4, ship: 0.25, door: 0.42 };
+
 export function cameraAt(p: number): CamPose {
-  const { index, scene, t } = sceneAt(p);
-  const from = index === 0 ? START : POSES[SCENES[index - 1].id];
-  const to = POSES[scene.id];
+  const { index, scene, local } = sceneAt(p);
+  const t = easeInOut(clamp01(local / (CAMERA_SHARE[scene.id] ?? 1 - HOLD)));
+  const from = index === 0 ? START : scene.id === 'reveal' ? SCREEN_FILL : poseOf(SCENES[index - 1].id, p);
+  const to = poseOf(scene.id, p);
   return { pos: lerp3(from.pos, to.pos, t), target: lerp3(from.target, to.target, t), fov: lerp(from.fov, to.fov, t) };
 }
 
@@ -165,29 +219,54 @@ function sceneProgress(p: number, id: SceneId): number {
   return index < own ? 0 : index > own ? 1 : t;
 }
 
+const span = (t: number, a: number, b: number) => easeInOut(clamp01((t - a) / (b - a)));
+
 /** "Your product.": measuring lines draw along the jar */
 export const measureAt = (p: number) => sceneProgress(p, 'product');
-/** "Sized to fit.": the flat blank folds up around the jar */
+/** "Sized to fit." as a whole */
 export const foldAt = (p: number) => sceneProgress(p, 'fit');
-/** "Made for you.": 0..1 while the pallet fills */
-export const makeAt = (p: number) => sceneProgress(p, 'make');
-/** "On its way.": how far along the route the truck is */
-export const shipAt = (p: number) => sceneProgress(p, 'ship');
+
+/**
+ * "Sized to fit." choreography, all from the designer's own carton rig: the flat blank slides in beside the jar,
+ * folds up to an open box (rig progress 0 -> 0.72), the jar lifts over and settles inside, then the top flaps close
+ * (0.72 -> 1).
+ */
+export function fitAt(p: number): { slide: number; rig: number; jar: number } {
+  const t = foldAt(p);
+  const rig = t < 0.8 ? 0.72 * span(t, 0.12, 0.52) : 0.72 + 0.28 * span(t, 0.8, 1);
+  return { slide: span(t, 0, 0.14), rig, jar: span(t, 0.54, 0.8) };
+}
+
+/** Eased 0..1 over a window [a, b] of one scene's range; 0 before the scene, 1 after it */
+function sceneWindow(p: number, id: SceneId, a: number, b: number): number {
+  const { index, local } = sceneAt(p);
+  const own = IDX[id];
+  return index < own ? 0 : index > own ? 1 : span(local, a, b);
+}
+
+/** "Made for you.": 0..1 while the pallet fills, once the camera has arrived at the factory */
+export const makeAt = (p: number) => sceneWindow(p, 'make', 0.3, 0.86);
+/** "On its way.": how far along the road the truck is (it waits at the factory until the camera has joined it) */
+export const shipAt = (p: number) => sceneWindow(p, 'ship', 0.22, 0.86);
 /** "Your turn.": how far the flaps are open */
 export const openAt = (p: number) => sceneProgress(p, 'open');
 /** The jar rises out of the open box once the flaps are most of the way open */
 export const jarRiseAt = (p: number) => clamp01((openAt(p) - 0.4) / 0.6);
 
-export const PALLET_BOXES = 16;
-/** The ×N counter: 1 up to the minimum order, rolling as the pallet fills */
-export const counterAt = (p: number) => Math.round(1 + (FACTS.moqBoxes - 1) * easeOutCubic(makeAt(p)));
+/** The pallet holds exactly the minimum order, so the ×N counter and the boxes on screen always agree */
+export const PALLET_BOXES = FACTS.moqBoxes;
+/** Boxes on the pallet (and the ×N counter): from 1 up to the minimum order */
+export const counterAt = (p: number) => Math.max(1, Math.min(PALLET_BOXES, Math.round(PALLET_BOXES * makeAt(p))));
 
+/** How high (in units) the parcel starts above the doormat */
+export const DOOR_DROP = 6;
 /** The box lands on the doorstep: height above its resting place (0 once it has landed), with a bounce */
 export function doorDropAt(p: number): { visible: boolean; height: number } {
   const { index, local } = sceneAt(p);
-  if (index < IDX.door) return { visible: false, height: 0 };
-  const landed = index > IDX.door ? 1 : clamp01(local / 0.5);
-  return { visible: true, height: (1 - easeOutBounce(landed)) * 9 };
+  if (index < IDX.door) return { visible: false, height: DOOR_DROP };
+  // the parcel drops once the camera has settled at the doorstep
+  const landed = index > IDX.door ? 1 : clamp01((local - 0.42) / 0.4);
+  return { visible: true, height: (1 - easeOutBounce(landed)) * DOOR_DROP };
 }
 
 // --- The mini designer on the monitor ------------------------------------------------------------------------------
