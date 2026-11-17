@@ -173,7 +173,7 @@ These replace the matching lines in DESIGN_IMPROVEMENT_PLAN §8.3 and §8.7. Eve
 |---|---|
 | "No `filter: blur()` reveals anywhere." | **Blur reveals are allowed for display text only**: headings, big words and stat labels, at most 3 lines. Radius ≤ **8 px** at the start, played **once**, never scrubbed, never on images, paragraphs or whole sections. High and medium tiers only; low tier and reduced motion get an opacity fade. Never on the LCP element. |
 | "No glassmorphism except the frosted sticky nav." | **Glass is allowed on floating surfaces only**: nav, menus, phone dock, WhatsApp button, toasts, dialogs and sheets, sticky filter bars. Never on content cards. One `.glass` recipe for all of them (FX-01). |
-| "Never animate … `filter` or `box-shadow`." | Unchanged for `box-shadow` (fade a pre-rendered shadow layer's opacity instead). `filter: blur` is animated only under the text rule above. **`backdrop-filter` radius is never animated**; fade the layer instead. |
+| "Never animate … `filter` or `box-shadow`." | Unchanged for `box-shadow` (fade a pre-rendered shadow layer's opacity instead). `filter: blur` is animated only in two places: the display-text rule above, and **cards sinking behind a stack** (FX-12): scroll-driven, covered cards only, ≤ 6 px (4 px on phones), off on the low tier and with reduced motion. **`backdrop-filter` radius is never animated**; fade the layer instead. |
 | Custom cursors / cursor-follow "not adopted" | Custom cursors stay out. **A light that follows the pointer inside a card grid is allowed** (FX-06): desktop with a fine pointer only, and the native cursor is never replaced. |
 
 ### 4.2 Blur and glass budget
@@ -237,7 +237,7 @@ Each entry: **Looks like** · **Where** · **Build** · **Fallback** · **Cost /
 **FX-01 Glass nav 2.0**
 - **Looks like:** once you scroll, the header becomes real frosted ink or paper glass. Colours of the content passing beneath bleed through softly, a 1 px light line runs along its top edge, and the "paper stack" shadow sits under it. Today it is `backdrop-blur-md` over 85% opacity, so the blur barely shows.
 - **Where:** [SiteNavbar.tsx](../../src/components/site/SiteNavbar.tsx) condensed state. The same `.glass` recipe is reused by FX-16/17/18.
-- **Build:** Josh Comeau's "extended backdrop": a child at `height: 200%` with `backdrop-filter: blur(16px) saturate(1.4)`, masked to the visible half; base `bg-ink-900/65` or `bg-paper-50/72`; `.glass-edge` is a 1 px `linear-gradient` top highlight at 12% white. The radius is never transitioned; the glass layer's opacity fades in over 180 ms.
+- **Build (done on Home, `components/fx/GlassPane.tsx`):** modelled on soda-lime glass. **Frost**: backdrop blur 16 px (12 px on phones) with a little extra saturation and light, a faint iron-oxide green and a fine etched grain. **Face**: Fresnel reflection (about 4% straight on, brighter toward the edges) and a soft specular highlight that follows the mouse (desktop) or drifts with scroll (touch). **Lip**: a 10 px clear polished edge below the pane, greener (seen through the thickness), with a bright total-internal-reflection rim, a faint dispersion fringe and a glint that runs along it with the light. In Chromium the lip is a real lens (SVG displacement inside `backdrop-filter`, red/green/blue bent slightly differently), so content passing under the edge is magnified; Safari and Firefox get the same edge without the lens. One light sweep when the pane appears. Every layer fades its own opacity (fading a parent would cut the blur off mid-fade). The phone bar uses the same pane with its edge on top.
 - **Fallback:** solid 92% on low tier and when unsupported. Firefox: avoid `overflow` + `border-radius` on sticky ancestors (known bug).
 - **Cost** low · **Effort** S · **P1** · Refs [B1–B4]
 
@@ -348,7 +348,7 @@ Each entry: **Looks like** · **Where** · **Build** · **Fallback** · **Cost /
 ### D. Scroll
 
 **FX-12 Sticky stacking process cards**
-- **Looks like:** "Dieline → Print → Corrugate → Die-cut → QC → Dispatch" cards pin and stack. Each new card slides over the last, which shrinks to 0.95 and darkens slightly. One idea per card, with the existing process illustrations.
+- **Looks like:** "Dieline → Print → Corrugate → Die-cut → QC → Dispatch" cards pin and stack. Each new card slides over the last, and the covered card **sinks behind: it shrinks, dims and goes soft (blur up to 6 px)**, more with every card piled on top. One idea per card, with the existing process illustrations. **Built on Home** (`DielineToDispatch.tsx`): each card's depth comes from how far the next card has slid over it.
 - **Where:** home S6 `DielineToDispatch`, Services "how we work".
 - **Build:** `position: sticky; top: calc(var(--nav-h) + n*12px)`. The scale and brightness of the previous card run on a CSS `view()` timeline; framer `useScroll` is the fallback.
 - **Fallback:** on phones, cards ≤ 70svh with stacking only (no scale). Reduced motion and low tier: a plain list.

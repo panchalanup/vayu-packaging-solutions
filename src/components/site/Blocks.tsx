@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Diamond } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SplitWords } from '@/components/fx/SplitWords';
 
 interface SectionHeaderProps {
   /** Mono index, e.g. "02 — STRENGTH" */
@@ -14,11 +15,16 @@ interface SectionHeaderProps {
 }
 
 export function SectionHeader({ index, title, lead, id, align = 'left', size = 'h2', className }: SectionHeaderProps) {
-  const heading = (
-    <h2 id={id} className={cn('font-display text-balance', size === 'display' ? 'text-display-l' : 'text-h2')}>
-      {title}
-    </h2>
-  );
+  const headingClass = cn('font-display text-balance', size === 'display' ? 'text-display-l' : 'text-h2');
+  // plain-text titles resolve from a soft blur as they scroll in (FX-03); titles with markup stay as they are
+  const heading =
+    typeof title === 'string' ? (
+      <SplitWords as="h2" variant="blur" id={id} text={title} stagger={45} className={headingClass} />
+    ) : (
+      <h2 id={id} className={headingClass}>
+        {title}
+      </h2>
+    );
   if (align === 'split') {
     return (
       <header className={cn('grid gap-4 lg:grid-cols-12 lg:gap-8', className)}>

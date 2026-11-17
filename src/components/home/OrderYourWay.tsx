@@ -2,6 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { Section } from '@/components/site/Section';
+import { SplitWords } from '@/components/fx/SplitWords';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
 import { Cta } from '@/components/site/Cta';
 import { FACTS } from '@/content/facts';
 import { whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';
@@ -25,18 +27,16 @@ const PRICE_DRIVERS = [
 ];
 
 export default function OrderYourWay() {
-  const tile = 'flex flex-col rounded-[14px] border border-border p-6';
+  const tile = 'fx-glow flex flex-col rounded-[14px] border border-border p-6';
   return (
     <Section name="ordering" aria-labelledby="ordering-heading" className="section-y">
       <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
         <header className="grid gap-4 lg:grid-cols-12 lg:gap-10">
           <p className="label-mono text-muted-foreground lg:col-span-5">06 — Ordering</p>
-          <h2 id="ordering-heading" className="font-display text-h2 lg:col-span-7">
-            Start the way that suits you.
-          </h2>
+          <SplitWords as="h2" variant="blur" id="ordering-heading" text="Start the way that suits you." stagger={45} className="font-display text-h2 lg:col-span-7" />
         </header>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
+        <SpotlightGrid className="mt-12 grid gap-4 md:grid-cols-3">
           <div className={tile}>
             <p className="label-mono text-muted-foreground">Talk to us</p>
             <p className="mt-3 text-h3 font-bold">WhatsApp or call</p>
@@ -72,7 +72,7 @@ export default function OrderYourWay() {
               </Cta>
             </div>
           </div>
-        </div>
+        </SpotlightGrid>
 
         <div className="mt-16 grid gap-12 lg:grid-cols-2">
           <div>

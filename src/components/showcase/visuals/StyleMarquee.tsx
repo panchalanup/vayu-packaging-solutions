@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import BoxThumbnail from '@/components/BoxDesigner/BoxThumbnail';
 import { STYLES } from '@/lib/boxDesigner/styles';
 import { cn } from '@/lib/utils';
-import VelocityMarquee from '../fx/VelocityMarquee';
+import VelocityMarquee from '@/components/fx/VelocityMarquee';
 
 const BOARD = ['#C9A87C', '#F1ECE2', '#33403A', '#23803A', '#D9BB91', '#E4B69C'];
 

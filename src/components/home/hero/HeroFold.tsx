@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { Section } from '@/components/site/Section';
 import { Cta } from '@/components/site/Cta';
+import { Magnetic } from '@/components/fx/pointerFx';
 import { FactStrip } from '@/components/site/Blocks';
 import { CropMarks } from '@/components/site/Decor';
 import { useSiteTier } from '@/lib/motion/siteTier';
@@ -181,9 +182,11 @@ export default function HeroFold() {
               invoice, delivered across Gujarat and India.
             </motion.p>
             <motion.div {...rise(2)} className="mt-8 flex flex-wrap gap-3">
-              <Cta id="home.hero.quote" intent="quote" href="/quote?src=home.hero.quote" size="lg" arrow>
-                Get a quote
-              </Cta>
+              <Magnetic strength={0.2}>
+                <Cta id="home.hero.quote" intent="quote" href="/quote?src=home.hero.quote" size="lg" arrow beam>
+                  Get a quote
+                </Cta>
+              </Magnetic>
               <Cta id="home.hero.whatsapp" intent="whatsapp" variant="whatsapp" size="lg" href={whatsappHref(pageWhatsAppMessage('/'))}>
                 WhatsApp us
               </Cta>

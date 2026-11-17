@@ -3,6 +3,9 @@
 import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Section } from '@/components/site/Section';
+import { SplitWords } from '@/components/fx/SplitWords';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
+import { ScrollFill } from '@/components/fx/ScrollFill';
 import { Cta } from '@/components/site/Cta';
 import { LazyOnView } from '@/components/site/LazyOnView';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -28,12 +31,10 @@ export function Proof() {
     <Section name="proof" theme="kraft" aria-labelledby="proof-heading" className="section-y">
       <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
         <p className="label-mono text-muted-foreground">07 — Proof</p>
-        <h2 id="proof-heading" className="mt-4 font-display text-h2">
-          What buyers say.
-        </h2>
-        <ul className="mt-10 grid gap-4 md:grid-cols-3">
+        <SplitWords as="h2" variant="blur" id="proof-heading" text="What buyers say." stagger={45} className="mt-4 font-display text-h2" />
+        <SpotlightGrid as="ul" className="mt-10 grid gap-4 md:grid-cols-3">
           {TESTIMONIALS.map((t) => (
-            <li key={t.name} className="flex flex-col rounded-[14px] bg-paper-50 p-6">
+            <li key={t.name} className="fx-glow flex flex-col rounded-[14px] border border-transparent bg-paper-50 p-6">
               <svg aria-hidden="true" viewBox="0 0 32 24" className="h-6 w-8 text-green-600">
                 <motion.path
                   d="M2 22V12C2 6 5 2 12 2M18 22V12c0-6 3-10 10-10"
@@ -58,12 +59,12 @@ export function Proof() {
               </div>
             </li>
           ))}
-        </ul>
-        <p className="mt-10 max-w-[68ch] border-t border-ink-900/15 pt-6 text-sm">
-          <span className="label-mono mr-3 text-kraft-700">Recyclable by design</span>
-          Corrugated board is paper-based and widely recyclable.
+        </SpotlightGrid>
+        <div className="mt-16 border-t border-ink-900/15 pt-8 lg:mt-24">
+          <p className="label-mono text-kraft-700">Recyclable by design</p>
           {/* VERIFY-LATER[FACT-23]: add recycled fibre % or FSC only if verified */}
-        </p>
+          <ScrollFill text="Corrugated board is paper-based and widely recyclable." className="mt-4 max-w-[22ch] font-display text-display-l text-balance" />
+        </div>
       </div>
     </Section>
   );
@@ -72,15 +73,14 @@ export function Proof() {
 export function TalkToUs() {
   const row = 'flex min-h-14 items-center justify-between gap-4 border-b border-border py-3';
   return (
-    <Section name="contact" theme="ink" id="talk" aria-labelledby="talk-heading" className="section-y">
+    <Section name="contact" theme="ink" id="talk" aria-labelledby="talk-heading" className="ink-grain light-pools section-y">
       <StructuredData type="FAQPage" data={getFAQSchema(HOME_FAQ)} />
       <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
         <header className="grid gap-4 lg:grid-cols-12 lg:gap-10">
           <p className="label-mono text-paper-muted lg:col-span-4">08 — Talk to us</p>
           <h2 id="talk-heading" className="font-display text-display-l lg:col-span-8">
-            Tell us what you ship.
-            <br />
-            We&apos;ll spec it and price it.
+            <SplitWords variant="blur" text="Tell us what you ship." stagger={45} className="block" />
+            <SplitWords variant="blur" text="We'll spec it and price it." delay={260} stagger={45} className="block" />
           </h2>
         </header>
 

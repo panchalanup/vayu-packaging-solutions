@@ -8,7 +8,7 @@
 import { useMemo } from 'react';
 import type { LoadingView } from '../cinema/sceneLogic';
 import { filledCells } from '../cinema/sceneLogic';
-import { fitScale, isoBounds, prismFaces } from '../fx/iso';
+import { fitScale, isoBounds, prismFaces } from '@/components/fx/iso';
 
 const W = 640;
 const H = 380;

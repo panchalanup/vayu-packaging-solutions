@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { GlassPane } from '@/components/fx/GlassPane';
 import { Phone } from 'lucide-react';
 import { whatsappHref, pageWhatsAppMessage, telHref } from '@/lib/contactLinks';
 import { useEventTracker } from '@/hooks/useAnalytics';
@@ -144,9 +145,10 @@ export function MobileActionBar() {
       initial={{ y: '100%' }}
       animate={{ y: hidden ? '100%' : 0 }}
       transition={{ duration: DUR.base, ease: EASE.paper }}
-      className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-foreground/10 bg-paper-50/95 backdrop-blur md:hidden"
+      className="pb-safe fixed inset-x-0 bottom-0 z-40 md:hidden"
       aria-hidden={hidden}
     >
+      <GlassPane tone="paper" on edge="top" />
       <div className="flex gap-2 px-4 py-2">
         <a
           href={whatsappHref(pageWhatsAppMessage(pathname))}

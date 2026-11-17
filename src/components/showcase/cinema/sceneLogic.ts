@@ -10,7 +10,7 @@ import { getBoardSpec } from '@/lib/boxDesigner/boardSpecs';
 import { recommendInsideSize, type FitResult } from '@/lib/boxDesigner/fit';
 import { assessStrength } from '@/lib/boxDesigner/strength';
 import { CONTAINERS, DEFAULT_PALLET_LOAD_HEIGHT_CM, DEFAULT_USABLE_PCT, assessLoading, type ContainerSpec } from '@/lib/tools/cbm';
-import { paintersOrder } from '../fx/iso';
+import { paintersOrder } from '@/components/fx/iso';
 
 // --- Size it ------------------------------------------------------------------------------------------------------
 

@@ -34,7 +34,7 @@ export default function SiteFooter() {
 
   return (
     <SectionNameProvider value="footer">
-      <footer data-theme="ink" className="relative overflow-hidden bg-ink-950 pb-8 pt-16 text-paper-100 md:pt-24">
+      <footer data-theme="ink" className="ink-grain light-pools relative overflow-hidden bg-ink-950 pb-8 pt-16 text-paper-100 md:pt-24">
         <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
           <div className="flex flex-col items-start justify-between gap-6 border-b border-paper-50/10 pb-10 md:flex-row md:items-end">
             <p className="font-display text-display-l text-paper-50">
