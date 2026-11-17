@@ -17,8 +17,8 @@ import { cn } from '@/lib/utils';
 import type { BoxTemplate } from '@/types/boxDesigner';
 import { downloadDielinePdf, downloadDielineSvg } from '../downloads';
 import { useStage } from '../stageContext';
-import { Magnetic } from '../fx/pointerFx';
-import { SplitWords } from '../fx/SplitWords';
+import { Magnetic } from '@/components/fx/pointerFx';
+import { SplitWords } from '@/components/fx/SplitWords';
 
 /** Colours offered as dots: enough to feel it, few enough to read as a choice */
 const DOT_IDS = ['kraft', 'white', 'black', 'red', 'blue', 'green'];

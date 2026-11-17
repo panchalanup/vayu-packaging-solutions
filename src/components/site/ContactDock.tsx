@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { GlassPane } from '@/components/fx/GlassPane';
 import { Phone } from 'lucide-react';
 import { whatsappHref, pageWhatsAppMessage, telHref } from '@/lib/contactLinks';
 import { useEventTracker } from '@/hooks/useAnalytics';
@@ -136,17 +137,19 @@ export function MobileActionBar() {
   if (HIDDEN_ON.includes(pathname)) return null;
   const hidden = keyboardOpen || inZone;
 
-  const item = 'flex min-h-12 flex-1 items-center justify-center gap-2 rounded-lg text-sm font-semibold';
+  // WhatsApp and Call size to their label; Get quote takes the rest (equal shares left "WhatsApp" touching its border)
+  const item = 'flex min-h-12 items-center justify-center gap-1.5 rounded-lg px-3 text-sm font-semibold';
   return (
     <motion.nav
       aria-label="Quick contact"
       initial={{ y: '100%' }}
       animate={{ y: hidden ? '100%' : 0 }}
       transition={{ duration: DUR.base, ease: EASE.paper }}
-      className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-foreground/10 bg-paper-50/95 backdrop-blur md:hidden"
+      className="pb-safe fixed inset-x-0 bottom-0 z-40 md:hidden"
       aria-hidden={hidden}
     >
-      <div className="flex gap-2 px-3 py-2">
+      <GlassPane tone="paper" on edge="top" />
+      <div className="flex gap-2 px-4 py-2">
         <a
           href={whatsappHref(pageWhatsAppMessage(pathname))}
           target="_blank"
@@ -173,7 +176,7 @@ export function MobileActionBar() {
           onClick={() =>
             trackEvent('cta_click', { id: 'global.bar.quote', intent: 'quote', section: 'mobile-bar', page: pathname })
           }
-          className={`${item} flex-[2] bg-green-600 text-white`}
+          className={`${item} flex-1 bg-green-600 text-white`}
         >
           Get quote
         </Link>

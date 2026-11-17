@@ -33,6 +33,7 @@ import { FACTS } from '@/content/facts';
 import { quoteHref } from '@/lib/quotePrefill';
 import { whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';
 import { cn } from '@/lib/utils';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
 
 type FilterKey = 'ply' | 'type' | 'industry' | 'source';
 
@@ -198,13 +199,13 @@ export default function Products() {
             </div>
 
             {results.length > 0 ? (
-              <ul className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <SpotlightGrid as="ul" className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {results.map((product) => (
-                  <li key={product.slug}>
+                  <li key={product.slug} className="fx-glow rounded-[14px]">
                     <ProductCard product={product} />
                   </li>
                 ))}
-              </ul>
+              </SpotlightGrid>
             ) : (
               <div className="mt-4 rounded-[14px] border border-dashed border-foreground/25 p-8 text-center md:p-12">
                 <p className="font-display text-h3 font-semibold">No product matches all of those filters.</p>

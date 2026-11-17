@@ -21,7 +21,7 @@ import { CinemaHero, CinemaPrint, CinemaUnfold, CinemaWords } from '@/components
 import { AnyBoxScene, CloseScene, ShareScene, SidesScene } from '@/components/showcase/cinema/CinemaSections';
 import PriceScene from '@/components/showcase/cinema/PriceScene';
 import { BoardScene, MakeScene, SizeScene, StackScene } from '@/components/showcase/cinema/ToolScenes';
-import ScrollProgress from '@/components/showcase/fx/ScrollProgress';
+import ScrollProgress from '@/components/fx/ScrollProgress';
 
 export default function BoxDesignerExperience() {
   const { trackEvent } = useEventTracker();

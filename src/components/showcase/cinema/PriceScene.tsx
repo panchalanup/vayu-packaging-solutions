@@ -10,9 +10,9 @@ import { QUANTITY_TIERS, estimatePrice } from '@/lib/boxDesigner/pricing';
 import { getStyle } from '@/lib/boxDesigner/styles';
 import { useEventTracker } from '@/hooks/useAnalytics';
 import { cn } from '@/lib/utils';
-import { AnimatedNumber } from '../fx/Numbers';
-import { Magnetic } from '../fx/pointerFx';
-import { SplitWords } from '../fx/SplitWords';
+import { AnimatedNumber } from '@/components/fx/Numbers';
+import { Magnetic } from '@/components/fx/pointerFx';
+import { SplitWords } from '@/components/fx/SplitWords';
 import { Reveal } from '../Reveal';
 import { useShowcaseDesign } from '../stageContext';
 

@@ -8,6 +8,7 @@ import { ConfidenceBadge } from './ConfidenceBadge';
 import { DetailView } from './DetailView';
 import { ResultActions } from './ResultActions';
 import { formatInr } from './pricing';
+import { RollingText } from '@/components/fx/RollingNumber';
 
 interface ResultCardProps {
   result: ScoredResult;
@@ -33,7 +34,13 @@ export function ResultCard({ result, input, index }: ResultCardProps) {
   if (result.extra_packaging !== 'None') specs.push(['Extras', result.extra_packaging]);
 
   return (
-    <article className="flex h-full flex-col rounded-lg border border-border bg-card p-5 md:p-6" aria-label={`${result.label}: ${result.board_type} ${result.box_style}`}>
+    <article
+      className={cn(
+        'relative flex h-full flex-col rounded-lg border border-border bg-card p-5 md:p-6',
+        // the best-value card gets the travelling edge light (green, on this light card)
+        result.label === 'Best Value' && 'fx-beam [--beam-color:rgb(46_155_71)] [--beam-static:rgb(46_155_71/0.35)]'
+      )}
+      aria-label={`${result.label}: ${result.board_type} ${result.box_style}`}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className={cn('rounded-md px-2.5 py-1 text-xs font-semibold', LABEL_STYLE[result.label])}>{result.label}</span>
         <ConfidenceBadge confidence={result.confidence} />
@@ -41,7 +48,9 @@ export function ResultCard({ result, input, index }: ResultCardProps) {
 
       <div className="mt-5">
         <p className="label-mono text-muted-foreground">Indicative price · per unit</p>
-        <p className="tabular mt-1 font-display text-h2">{formatInr(result.estimated_price_inr)}</p>
+        <p className="tabular mt-1 font-display text-h2">
+          <RollingText text={formatInr(result.estimated_price_inr)} />
+        </p>
         <p className="tabular mt-1 text-sm text-muted-foreground">
           About {formatInr(result.estimated_price_inr * input.quantity)} for {input.quantity.toLocaleString('en-IN')} units
         </p>

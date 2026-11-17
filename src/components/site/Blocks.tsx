@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Diamond } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SplitWords } from '@/components/fx/SplitWords';
 
 interface SectionHeaderProps {
   /** Mono index, e.g. "02 — STRENGTH" */
@@ -14,11 +15,16 @@ interface SectionHeaderProps {
 }
 
 export function SectionHeader({ index, title, lead, id, align = 'left', size = 'h2', className }: SectionHeaderProps) {
-  const heading = (
-    <h2 id={id} className={cn('font-display text-balance', size === 'display' ? 'text-display-l' : 'text-h2')}>
-      {title}
-    </h2>
-  );
+  const headingClass = cn('font-display text-balance', size === 'display' ? 'text-display-l' : 'text-h2');
+  // plain-text titles resolve from a soft blur as they scroll in (FX-03); titles with markup stay as they are
+  const heading =
+    typeof title === 'string' ? (
+      <SplitWords as="h2" variant="blur" id={id} text={title} stagger={45} className={headingClass} />
+    ) : (
+      <h2 id={id} className={headingClass}>
+        {title}
+      </h2>
+    );
   if (align === 'split') {
     return (
       <header className={cn('grid gap-4 lg:grid-cols-12 lg:gap-8', className)}>
@@ -49,7 +55,8 @@ export function FactStrip({ facts, className }: { facts: Fact[]; className?: str
   return (
     <dl
       className={cn(
-        '-mx-4 flex snap-x gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0',
+        // scroll-px-4: snap-start aligns chips to the padded edge, not the screen edge
+        '-mx-4 flex snap-x scroll-px-4 gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:scroll-px-0 sm:px-0',
         className
       )}
     >
@@ -82,5 +89,18 @@ export function MadeSourcedBadge({ kind, className }: { kind: MadeOrSourced; cla
       <Diamond aria-hidden="true" className={cn('h-3 w-3', made && 'fill-current')} />
       {made ? 'Custom-made to order' : 'Sourced & QC-checked'}
     </span>
+  );
+}
+
+/** An email address that may wrap only before the "@" (break-all split "…gmail.co / m"); <wbr> stays out of copied text */
+export function EmailText({ email }: { email: string }) {
+  const at = email.indexOf('@');
+  if (at < 0) return <>{email}</>;
+  return (
+    <>
+      {email.slice(0, at)}
+      <wbr />
+      {email.slice(at)}
+    </>
   );
 }

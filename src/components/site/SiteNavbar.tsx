@@ -19,6 +19,7 @@ import ToolsMegaMenu from '@/components/site/ToolsMegaMenu';
 import { ToolsMobilePanel, ToolsMobileRow } from '@/components/site/ToolsMobileMenu';
 import MenuScrim from '@/components/site/MenuScrim';
 import { useScrollLock } from '@/hooks/useScrollLock';
+import { GlassPane } from '@/components/fx/GlassPane';
 
 const LINKS = [
   { label: 'Products', path: '/products' },
@@ -152,11 +153,12 @@ export default function Navbar() {
           open
             ? 'border-b border-ink-900/10 bg-paper-50'
             : condensed
-            ? cn('border-b backdrop-blur-md', ink ? 'border-paper-50/10 bg-ink-900/85' : 'border-ink-900/10 bg-paper-50/85')
+            ? 'border-b border-transparent'
             : 'border-b border-transparent bg-transparent'
         )}
         style={{ height: open ? undefined : 'var(--nav-h)' }}
       >
+        <GlassPane tone={ink ? 'ink' : 'paper'} on={condensed && !open} hidden={hidden && !open} edge="bottom" />
         <nav
           aria-label="Main"
           className="mx-auto flex h-full max-w-content items-center justify-between gap-4 px-4 md:px-6 lg:px-10"

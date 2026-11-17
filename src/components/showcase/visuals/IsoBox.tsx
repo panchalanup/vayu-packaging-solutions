@@ -7,7 +7,7 @@
 
 import { useEffect, useRef } from 'react';
 import type { BoxDimensions } from '@/types/boxDesigner';
-import { fitScale, iso, isoBounds, prismFaces } from '../fx/iso';
+import { fitScale, iso, isoBounds, prismFaces } from '@/components/fx/iso';
 
 const W = 520;
 const H = 420;

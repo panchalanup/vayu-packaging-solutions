@@ -19,6 +19,7 @@ import { availableLandings, findLanding, landingDesignerHref, landingOgImage } f
 import { findTemplate } from '@/lib/boxDesigner/templates';
 import { templateArtUrl } from '@/lib/boxDesigner/templateArt';
 import { getStyle } from '@/lib/boxDesigner/styles';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
 
 export default function BoxDesignerLanding() {
   const { style: slug } = useParams();
@@ -139,14 +140,14 @@ export default function BoxDesignerLanding() {
         <Section name="designer-landing-benefits" className="border-t border-border section-y">
           <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
             <h2 className="font-display text-h3">Why choose a {landing.name.toLowerCase()}</h2>
-            <ul className="mt-5 grid gap-4 md:grid-cols-3">
+            <SpotlightGrid as="ul" className="mt-5 grid gap-4 md:grid-cols-3">
               {landing.benefits.map((b, i) => (
-                <li key={b} className="rounded-xl border border-border bg-card p-5">
+                <li key={b} className="fx-glow rounded-xl border border-border bg-card p-5">
                   <span className="label-mono flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">{i + 1}</span>
                   <p className="mt-3">{b}</p>
                 </li>
               ))}
-            </ul>
+            </SpotlightGrid>
           </div>
         </Section>
       )}
@@ -156,12 +157,12 @@ export default function BoxDesignerLanding() {
         <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
           <h2 className="font-display text-h3">Start from a common size</h2>
           <p className="mt-2 text-muted-foreground">Inside dimensions. Open one and change anything.</p>
-          <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+          <SpotlightGrid as="ul" className="mt-6 grid gap-3 sm:grid-cols-3">
             {landing.sizes.map((s) => (
-              <li key={s.label}>
+              <li key={s.label} className="fx-glow rounded-xl">
                 <Link
                   to={landingDesignerHref(landing, s.dims)}
-                  className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all duration-quick hover:-translate-y-0.5 hover:border-primary/60 hover:shadow-md motion-reduce:hover:translate-y-0"
+                  className="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-[border-color,box-shadow] duration-quick hover:border-primary/60 hover:shadow-md"
                 >
                   <BoxThumbnail style={landing.style} dimensions={s.dims} colorHex={baseColour} className="h-16 w-16 shrink-0" />
                   <span className="min-w-0 flex-1">
@@ -174,7 +175,7 @@ export default function BoxDesignerLanding() {
                 </Link>
               </li>
             ))}
-          </ul>
+          </SpotlightGrid>
         </div>
       </Section>
 

@@ -24,6 +24,7 @@ import { FACTS } from '@/content/facts';
 import { quoteHref } from '@/lib/quotePrefill';
 import { whatsappHref } from '@/lib/contactLinks';
 import { reveal, STAGGER } from '@/lib/motion/tokens';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
 
 const container = 'mx-auto max-w-content px-4 md:px-6 lg:px-10';
 
@@ -84,16 +85,16 @@ export default function IndustryDetail() {
         <Section name="problem" theme="kraft" aria-labelledby="problem-heading" className="section-y">
           <div className={container}>
             <SectionHeader id="problem-heading" index="01 — The problem" title={industry.problem} align="split" />
-            <dl className="mt-10 grid gap-4 md:grid-cols-2">
-              <div className="rounded-[14px] bg-paper-50 p-6 md:p-8">
+            <SpotlightGrid as="dl" className="mt-10 grid gap-4 md:grid-cols-2">
+              <div className="fx-glow rounded-[14px] bg-paper-50 p-6 md:p-8">
                 <dt className="label-mono text-muted-foreground">Our spec</dt>
                 <dd className="mt-3 font-display text-h3">{industry.spec}</dd>
               </div>
-              <div className="rounded-[14px] bg-paper-50 p-6 md:p-8">
+              <div className="fx-glow rounded-[14px] bg-paper-50 p-6 md:p-8">
                 <dt className="label-mono text-muted-foreground">Why it works</dt>
                 <dd className="mt-3 text-body-l">{industry.why}</dd>
               </div>
-            </dl>
+            </SpotlightGrid>
           </div>
         </Section>
 
@@ -107,13 +108,13 @@ export default function IndustryDetail() {
               lead="Start with the first. The others cover different weights, shapes and branding needs."
               align="split"
             />
-            <ul className="mt-10 grid gap-4 md:grid-cols-3">
+            <SpotlightGrid as="ul" className="mt-10 grid gap-4 md:grid-cols-3">
               {industry.specs.map((spec, i) => (
                 <motion.li
                   key={spec.slug}
                   {...reveal}
                   transition={{ ...reveal.transition, delay: i * STAGGER }}
-                  className="flex flex-col rounded-[14px] border border-border p-6"
+                  className="fx-glow flex flex-col rounded-[14px] border border-border p-6"
                 >
                   <p className="label-mono text-muted-foreground">{String(i + 1).padStart(2, '0')}</p>
                   <h3 className="mt-3 font-display text-h3">{spec.name}</h3>
@@ -131,7 +132,7 @@ export default function IndustryDetail() {
                   </Cta>
                 </motion.li>
               ))}
-            </ul>
+            </SpotlightGrid>
             {/* VERIFY-LATER[PROOF-01]: add a case study here when a customer has agreed in writing to be named */}
           </div>
         </Section>
@@ -140,7 +141,8 @@ export default function IndustryDetail() {
         <Section name="faq" theme="kraft" aria-labelledby="faq-heading" className="section-y">
           <div className={container}>
             <SectionHeader id="faq-heading" index="03 — FAQ" title={`${industry.name} questions.`} align="split" />
-            <div className="mt-8 lg:ml-[33.333%]">
+            {/* lines up with SectionHeader split: column 5 of 12 with the 2rem gap */}
+            <div className="mt-8 lg:ml-[calc((100%_+_2rem)/3)]">
               <FaqAccordion items={industry.faqs} idPrefix={`ind-${industry.slug}`} />
             </div>
           </div>
@@ -166,7 +168,11 @@ export default function IndustryDetail() {
 
         <CtaBand
           name="industry-cta"
-          title={`Get the ${industry.name} spec.`}
+          title={
+            <>
+              Get the <span className="whitespace-nowrap">{industry.name}</span> spec.
+            </>
+          }
           lead="Tell us the product, size and quantity. We will confirm the spec and price."
           note={`Reply within ${FACTS.replySla}. ${FACTS.businessHours}.`}
         >

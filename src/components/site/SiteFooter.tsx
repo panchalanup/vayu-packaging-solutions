@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Instagram } from 'lucide-react';
 import { CONTACT_INFO, INDUSTRIES, SOCIAL_LINKS } from '@/constants';
+import { EmailText } from '@/components/site/Blocks';
 import { FACTS } from '@/content/facts';
 import { mailHref, telHref, whatsappHref } from '@/lib/contactLinks';
 import { useEventTracker } from '@/hooks/useAnalytics';
@@ -33,7 +34,7 @@ export default function SiteFooter() {
 
   return (
     <SectionNameProvider value="footer">
-      <footer data-theme="ink" className="relative overflow-hidden bg-ink-950 pb-8 pt-16 text-paper-100 md:pt-24">
+      <footer data-theme="ink" className="ink-grain light-pools relative overflow-hidden bg-ink-950 pb-8 pt-16 text-paper-100 md:pt-24">
         <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
           <div className="flex flex-col items-start justify-between gap-6 border-b border-paper-50/10 pb-10 md:flex-row md:items-end">
             <p className="font-display text-display-l text-paper-50">
@@ -133,7 +134,7 @@ export default function SiteFooter() {
                   </a>
                 </li>
                 <li><a href={telHref} className={`${link} tabular`}>{CONTACT_INFO.phone}</a></li>
-                <li><a href={mailHref} className={`${link} break-all`}>{CONTACT_INFO.email}</a></li>
+                <li><a href={mailHref} className={link}><EmailText email={CONTACT_INFO.email} /></a></li>
                 <li className="text-paper-100/85">{FACTS.addressFull}</li>
                 <li className="text-paper-muted">{FACTS.businessHours}</li>
                 <li>

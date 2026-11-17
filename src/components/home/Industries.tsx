@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Section } from '@/components/site/Section';
+import { SplitWords } from '@/components/fx/SplitWords';
 import { Cta } from '@/components/site/Cta';
 import { ImageSlot } from '@/components/site/ImageSlot';
 import { INDUSTRY_PANELS } from '@/content/home';
@@ -32,9 +33,7 @@ export default function Industries() {
       <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
         <header className="grid gap-4 lg:grid-cols-12 lg:gap-10">
           <p className="label-mono text-muted-foreground lg:col-span-4">04 — Industries</p>
-          <h2 id="industries-heading" className="font-display text-h2 lg:col-span-8">
-            Built for what you ship.
-          </h2>
+          <SplitWords as="h2" variant="blur" id="industries-heading" text="Built for what you ship." stagger={45} className="font-display text-h2 lg:col-span-8" />
         </header>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-12 lg:gap-10">

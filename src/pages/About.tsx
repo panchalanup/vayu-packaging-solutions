@@ -14,7 +14,7 @@ import { PAGE_METADATA } from '@/seo/metadata/pages';
 import { getBreadcrumbSchema, PAGE_BREADCRUMBS } from '@/seo/schema';
 import { Section } from '@/components/site/Section';
 import { Cta } from '@/components/site/Cta';
-import { FactStrip, SectionHeader } from '@/components/site/Blocks';
+import { EmailText, FactStrip, SectionHeader } from '@/components/site/Blocks';
 import { StatLedger } from '@/components/site/StatLedger';
 import { ImageSlot, type ImageSlotData } from '@/components/site/ImageSlot';
 import { PageHero } from '@/components/pages/PageHero';
@@ -26,6 +26,8 @@ import { mailHref, telHref, whatsappHref, pageWhatsAppMessage } from '@/lib/cont
 import { quoteHref } from '@/lib/quotePrefill';
 import { useEventTracker } from '@/hooks/useAnalytics';
 import { reveal, STAGGER } from '@/lib/motion/tokens';
+import { SpotlightGrid } from '@/components/fx/SpotlightGrid';
+import { ScrollFill } from '@/components/fx/ScrollFill';
 
 const ModelDiagram = lazy(() => import('@/components/pages/ModelDiagram'));
 
@@ -103,7 +105,12 @@ const About = () => {
               id="model-heading"
               index="01 — Our model"
               title="Made and sourced, through one gate."
-              lead="Custom boxes are made to order. Standard board and supplies come from vetted mills. All of it passes the same check before it reaches you."
+              lead={
+                <ScrollFill
+                  as="span"
+                  text="Custom boxes are made to order. Standard board and supplies come from vetted mills. All of it passes the same check before it reaches you."
+                />
+              }
               align="split"
             />
             {/* VERIFY-LATER[FACT-05]: the made-in-house vs sourced split is a default per product, not owner-confirmed (see FACT-06 in home.ts) */}
@@ -141,7 +148,7 @@ const About = () => {
         </Section>
 
         {/* QUALITY */}
-        <Section name="quality" theme="ink" aria-labelledby="quality-heading" className="section-y">
+        <Section name="quality" theme="ink" aria-labelledby="quality-heading" className="ink-grain light-pools section-y">
           <div className={container}>
             <SectionHeader
               id="quality-heading"
@@ -151,20 +158,20 @@ const About = () => {
               align="split"
             />
             {/* VERIFY-LATER[CERT-01]: no certificate (BIS, ISO, FSSAI) is claimed until the owner supplies the number and a PDF */}
-            <ol className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <SpotlightGrid as="ol" className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {QUALITY_STEPS.map((step, i) => (
                 <motion.li
                   key={step.title}
                   {...reveal}
                   transition={{ ...reveal.transition, delay: i * STAGGER }}
-                  className="rounded-[14px] border border-border bg-card p-6"
+                  className="fx-glow rounded-[14px] border border-border bg-card p-6"
                 >
                   <p className="label-mono text-paper-muted">{String(i + 1).padStart(2, '0')}</p>
                   <h3 className="mt-3 font-display text-h3">{step.title}</h3>
                   <p className="mt-2 text-paper-muted">{step.body}</p>
                 </motion.li>
               ))}
-            </ol>
+            </SpotlightGrid>
           </div>
         </Section>
 
@@ -184,8 +191,8 @@ const About = () => {
               <Cta id="about.facts.call" intent="call" variant="link" href={telHref}>
                 {CONTACT_INFO.phone}
               </Cta>
-              <Cta id="about.facts.email" intent="email" variant="link" href={mailHref} className="break-all">
-                {CONTACT_INFO.email}
+              <Cta id="about.facts.email" intent="email" variant="link" href={mailHref}>
+                <EmailText email={CONTACT_INFO.email} />
               </Cta>
               <Cta id="about.facts.locations" intent="navigate" variant="link" href="/locations" arrow>
                 Gujarat network

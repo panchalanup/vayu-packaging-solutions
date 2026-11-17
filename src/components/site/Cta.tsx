@@ -21,7 +21,7 @@ const ctaVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        primary: 'fx-shine bg-primary text-primary-foreground hover:bg-primary/90',
         secondary: 'border border-foreground/20 bg-transparent text-foreground hover:border-foreground/40 hover:bg-foreground/5',
         whatsapp: 'border border-foreground/20 bg-transparent text-foreground hover:border-foreground/40 hover:bg-foreground/5',
         call: 'border border-foreground/20 bg-transparent text-foreground hover:border-foreground/40 hover:bg-foreground/5',
@@ -51,6 +51,8 @@ export interface CtaProps
   meta?: Record<string, string | number>;
   /** Trailing arrow on primary/link CTAs */
   arrow?: boolean;
+  /** A light travels around the button's edge (one per screen, primary buttons only) */
+  beam?: boolean;
   children: ReactNode;
 }
 
@@ -61,7 +63,7 @@ const ICONS: Partial<Record<CtaIntent, ReactNode>> = {
 };
 
 export const Cta = forwardRef<HTMLAnchorElement, CtaProps>(function Cta(
-  { id, intent, href, meta, variant, size, arrow, className, children, onClick, ...rest },
+  { id, intent, href, meta, variant, size, arrow, beam, className, children, onClick, ...rest },
   ref
 ) {
   const section = useSectionName();
@@ -101,7 +103,7 @@ export const Cta = forwardRef<HTMLAnchorElement, CtaProps>(function Cta(
     </>
   );
 
-  const classes = cn(ctaVariants({ variant, size }), className);
+  const classes = cn(ctaVariants({ variant, size }), beam && 'fx-beam', className);
 
   if (internal) {
     return (

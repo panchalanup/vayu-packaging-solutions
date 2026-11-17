@@ -3,6 +3,7 @@
  * Values are indicative industry figures (see boardSpecs.ts).
  */
 
+import { useId } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { getBoardSpec } from '@/lib/boxDesigner/boardSpecs';
 import type { PlyType } from '@/types/boxDesigner';
@@ -40,9 +41,10 @@ function rowsFor(ply: PlyType, L: Layout): Row[] {
     const half = (layer.pitchMm * PX_PER_MM) / 2;
     const mid = y + h / 2;
     let d = `M0 ${mid}`;
-    // Quadratic apex = (mid + control) / 2, so these controls make each crest touch its liner
+    // Quadratic apex = (mid + control) / 2, so these controls make each crest touch its liner.
+    // Whole half-waves only; the last one runs past WIDTH and is clipped (a shortened one hooked back into the labels).
     for (let x = 0, up = true; x < WIDTH; x += half, up = !up) {
-      d += ` Q${x + half / 2} ${up ? y - h / 2 : y + h * 1.5} ${Math.min(WIDTH, x + half)} ${mid}`;
+      d += ` Q${x + half / 2} ${up ? y - h / 2 : y + h * 1.5} ${x + half} ${mid}`;
     }
     rows.push({ kind: 'flute', y: mid, label: `${layer.flute}-flute ${layer.heightMm} mm`, d });
     y += h;
@@ -55,8 +57,14 @@ export function BoardCrossSection({ ply, animate = true, compact = false, classN
   const L = layout(compact);
   const { width: WIDTH, labelX: LABEL_X, viewW: VIEW_W, viewH: VIEW_H } = L;
   const rows = rowsFor(ply, L);
+  const clipId = `board-${useId().replace(/:/g, '')}`;
   return (
     <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} className={className} role="img" aria-label={`${ply} board cross-section, to scale`}>
+      <defs>
+        <clipPath id={clipId}>
+          <rect x="0" y="0" width={WIDTH} height={VIEW_H} />
+        </clipPath>
+      </defs>
       <AnimatePresence mode="wait" initial={false}>
         <motion.g key={ply} exit={animate ? { opacity: 0, transition: { duration: 0.18 } } : undefined}>
           {rows.map((row, i) => (
@@ -71,6 +79,7 @@ export function BoardCrossSection({ ply, animate = true, compact = false, classN
               ) : (
                 <motion.path
                   d={row.d}
+                  clipPath={`url(#${clipId})`}
                   fill="none"
                   stroke="var(--kraft-300)"
                   strokeWidth={1.5}

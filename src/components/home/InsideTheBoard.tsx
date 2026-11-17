@@ -153,7 +153,7 @@ export default function InsideTheBoard() {
         <div
           ref={floodRef}
           data-theme="ink"
-          className="section-y bg-ink-900"
+          className="ink-grain section-y bg-ink-900"
           style={flood ? { clipPath: 'circle(0% at 88% 0%)' } : undefined}
         >
           <div className="mx-auto max-w-content px-4 md:px-6 lg:px-10">
