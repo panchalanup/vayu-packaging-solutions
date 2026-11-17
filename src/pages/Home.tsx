@@ -1,4 +1,4 @@
-/** Home (§6): S1 The Fold → S2 Trust → S3 Inside the Board → S4 Range → S5 Industries → S6 Process → S7 Ordering → S8 Proof → S9 Talk to us */
+/** Home (§6): S1 The Fold → S2 Trust → S3 Inside the Board → S4 Range → S5 Industries → ★ Story (one box, one journey) → S6 Process → S7 Ordering → S8 Proof → S9 Talk to us */
 
 import Layout from '@/components/Layout';
 import { MetaTags, StructuredData } from '@/seo';
@@ -17,6 +17,7 @@ import TrustBar from '@/components/home/TrustBar';
 import InsideTheBoard from '@/components/home/InsideTheBoard';
 import RangeIndex from '@/components/home/RangeIndex';
 import Industries from '@/components/home/Industries';
+import StorySection from '@/components/home/story/StorySection';
 import DielineToDispatch from '@/components/home/DielineToDispatch';
 import OrderYourWay from '@/components/home/OrderYourWay';
 import { Proof, TalkToUs } from '@/components/home/ProofAndContact';
@@ -37,6 +38,7 @@ export default function Home() {
       <InsideTheBoard />
       <RangeIndex />
       <Industries />
+      <StorySection />
       <DielineToDispatch />
       <OrderYourWay />
       <Proof />
