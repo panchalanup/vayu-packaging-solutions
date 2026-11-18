@@ -1,6 +1,8 @@
 # Vayu Packaging Solutions - Image & Video Guide
 
-> **Update 8 Oct 2026: how images work now.** The AI images described below were removed. Marketing images are original SVG illustrations (`npm run illustrations`) or credited open-licence photos (`src/content/imageCredits.ts`, shown on `/image-credits`). After editing any scene in `scripts/illustrations/`, run `npm run illustrations` and then `npm run illustrations:seo` (needs Edge or Chrome) to refresh the PNG copies used by structured data and social cards. The shot list below is still the brief for a real photo shoot.
+> **Update 8 Oct 2026: how images work now.** The AI images described below were removed. Marketing images are original SVG illustrations (`npm run illustrations`) or credited open-licence photos (`src/content/imageCredits.ts`, shown on `/image-credits`). After editing any scene in `scripts/illustrations/`, run `npm run illustrations` and then `npm run illustrations:seo` (needs Edge or Chrome) to refresh the raster copies used by structured data, the sitemap and social cards (`public/images/products|industries/<slug>.jpg`, `public/blog-images/*-og.png`). The shot list below is still the brief for a real photo shoot.
+>
+> **Update 18 Nov 2026:** the home, product and industry images use the detailed kit v2 (`scripts/illustrations/kit.mjs`, `kit-goods.mjs`, `art.mjs`, scenes in `scenes-v2*.mjs`): lit faces, kraft texture, real flute sections, labels, ISO 780 handling marks and props, at real sizes in centimetres. Keep each subject inside the central ~720 px so the 4:5 Range crop and the 16:10 phone crop still show it, and give every scene a specific `title` and `desc` (they are embedded in the SVG for accessibility and search).
 
 
 ## 🎯 Purpose

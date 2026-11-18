@@ -300,96 +300,160 @@
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/3-ply.jpg</image:loc>
+      <image:title>3-ply corrugated boxes</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/products/5-ply</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/5-ply.jpg</image:loc>
+      <image:title>5-ply corrugated boxes</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/products/7-ply</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/7-ply.jpg</image:loc>
+      <image:title>7-ply heavy-duty corrugated boxes</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/products/die-cut</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/die-cut.jpg</image:loc>
+      <image:title>Die-cut &amp; mailer boxes</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/products/printed</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/printed.jpg</image:loc>
+      <image:title>Printed &amp; branded boxes</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/products/food-grade</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/food-grade.jpg</image:loc>
+      <image:title>Food-grade boxes</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/products/bopp-tape</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/bopp-tape.jpg</image:loc>
+      <image:title>BOPP packaging tape</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/products/stretch-film</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/stretch-film.jpg</image:loc>
+      <image:title>Stretch film</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/products/bubble-wrap</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/bubble-wrap.jpg</image:loc>
+      <image:title>Bubble wrap</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/products/pp-strapping</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/products/pp-strapping.jpg</image:loc>
+      <image:title>PP strapping bands</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/industries/e-commerce</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/industries/e-commerce.jpg</image:loc>
+      <image:title>E-commerce packaging</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/industries/fmcg</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/industries/fmcg.jpg</image:loc>
+      <image:title>FMCG packaging</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/industries/electronics</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/industries/electronics.jpg</image:loc>
+      <image:title>Electronics packaging</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/industries/food-beverage</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/industries/food-beverage.jpg</image:loc>
+      <image:title>Food &amp; Beverage packaging</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/industries/pharma</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/industries/pharma.jpg</image:loc>
+      <image:title>Pharmaceuticals packaging</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/industries/automotive</loc>
     <lastmod>2026-10-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://vayupackaging.vercel.app/images/industries/automotive.jpg</image:loc>
+      <image:title>Automotive packaging</image:title>
+    </image:image>
   </url>
   <url>
     <loc>https://vayupackaging.vercel.app/blogs/types-of-corrugated-boxes</loc>
