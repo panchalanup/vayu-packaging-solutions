@@ -22,7 +22,7 @@ export function getProductDetailSchema(product: Product) {
     name: product.name,
     description: product.short,
     // Stable, crawlable raster export of the illustration (npm run illustrations:seo). The bundled SVG URL is hashed per build.
-    image: abs(`/images/products/${product.slug}.png`),
+    image: abs(`/images/products/${product.slug}.jpg`),
     category: product.group === 'box' ? 'Corrugated boxes' : 'Packaging supplies',
     sku: product.slug,
     url,

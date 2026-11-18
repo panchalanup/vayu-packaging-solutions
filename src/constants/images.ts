@@ -37,6 +37,7 @@ import supTape from '@/assets/illustrations/product-bopp-tape.svg';
 import supStretch from '@/assets/illustrations/product-stretch-film.svg';
 import supBubble from '@/assets/illustrations/product-bubble-wrap.svg';
 import supStrap from '@/assets/illustrations/product-pp-strapping.svg';
+import supAll from '@/assets/illustrations/product-supplies.svg';
 
 // Industry, process and about illustrations
 import indEcom from '@/assets/illustrations/industry-ecommerce.svg';
@@ -144,38 +145,40 @@ export const VIDEO_ASSETS = {
 // ============================================
 /** Index order is relied on by content/home.ts and content/products.ts: 0 3-ply, 1 5-ply, 2 7-ply, 3 die-cut, 4 printed, 5 food-grade */
 export const PRODUCT_IMAGES = [
-  { id: 'PROD-1', src: prod3ply, alt: 'Illustration of kraft 3-ply corrugated boxes stacked, one open, with a board cross-section', ...SIZE_43 },
-  { id: 'PROD-2', src: prod5ply, alt: 'Illustration of double-wall 5-ply corrugated cartons stacked, one open', ...SIZE_43 },
-  { id: 'PROD-3', src: prod7ply, alt: 'Illustration of a heavy-duty 7-ply box strapped on a pallet', ...SIZE_43 },
-  { id: 'PROD-4', src: prodDieCut, alt: 'Illustration of a die-cut corrugated mailer: flat dieline beside the assembled box', ...SIZE_43 },
-  { id: 'PROD-5', src: prodPrinted, alt: 'Illustration of printed corrugated boxes with plain brand-colour graphics', ...SIZE_43 },
-  { id: 'PROD-6', src: prodFood, alt: 'Illustration of a ventilated kraft corrugated box with fresh produce', ...SIZE_43 },
+  { id: 'PROD-1', src: prod3ply, alt: 'Illustration of kraft 3-ply corrugated shipping boxes, taped and labelled, one open, with a magnified view of the single-wall board', ...SIZE_43 },
+  { id: 'PROD-2', src: prod5ply, alt: 'Illustration of double-wall 5-ply corrugated cartons stacked, one open, with a magnified view of the two fluted walls', ...SIZE_43 },
+  { id: 'PROD-3', src: prod7ply, alt: 'Illustration of a heavy-duty 7-ply triple-wall box strapped on a pallet with corner boards and a heavy-load label', ...SIZE_43 },
+  { id: 'PROD-4', src: prodDieCut, alt: 'Illustration of a die-cut corrugated mailer box open with tissue inside, two closed mailers and the flat die-cut blank', ...SIZE_43 },
+  { id: 'PROD-5', src: prodPrinted, alt: 'Illustration of printed corrugated boxes for a sample brand, with a flexo printing plate and ink swatches', ...SIZE_43 },
+  { id: 'PROD-6', src: prodFood, alt: 'Illustration of a food-grade ventilated corrugated produce tray filled with mangoes beside a closed vented carton', ...SIZE_43 },
 ] as const;
 
 export const SUPPLY_IMAGES = {
-  'bopp-tape': { src: supTape, alt: 'Illustration of a roll of BOPP packing tape', ...SIZE_43 },
-  'stretch-film': { src: supStretch, alt: 'Illustration of a roll of stretch film', ...SIZE_43 },
-  'bubble-wrap': { src: supBubble, alt: 'Illustration of a bubble wrap sheet', ...SIZE_43 },
-  'pp-strapping': { src: supStrap, alt: 'Illustration of a coil of polypropylene strapping', ...SIZE_43 },
+  'bopp-tape': { src: supTape, alt: 'Illustration of brown, clear and printed FRAGILE BOPP packing tape rolls beside a taped carton', ...SIZE_43 },
+  'stretch-film': { src: supStretch, alt: 'Illustration of a pallet of cartons wrapped in stretch film with a hand roll of stretch film', ...SIZE_43 },
+  'bubble-wrap': { src: supBubble, alt: 'Illustration of a bubble wrap roll and an unrolled sheet of bubble wrap', ...SIZE_43 },
+  'pp-strapping': { src: supStrap, alt: 'Illustration of a coil of PP strapping, metal seals and a carton secured with PP straps', ...SIZE_43 },
+  /** All four together (home Range "Packaging supplies") */
+  all: { src: supAll, alt: 'Illustration of packaging supplies: BOPP tape rolls, stretch film, bubble wrap and a coil of PP strapping', ...SIZE_43 },
 } as const;
 
 // ============================================
 // INDUSTRY IMAGES (original illustrations)
 // ============================================
 export const INDUSTRY_IMAGES = {
-  'e-commerce': { src: indEcom, alt: 'Illustration of a taped shipping carton with a courier label beside a green mailer box', ...SIZE_43 },
-  fmcg: { src: indFmcg, alt: 'Illustration of a pallet of stacked cartons wrapped in stretch film', ...SIZE_43 },
-  electronics: { src: indElectronics, alt: 'Illustration of an electronics carton with foam corner protectors around a laptop', ...SIZE_43 },
-  'food-beverage': { src: indFood, alt: 'Illustration of a ventilated kraft box with fresh produce', ...SIZE_43 },
-  pharma: { src: indPharma, alt: 'Illustration of a clean white carton with a medical cross beside vials', ...SIZE_43 },
-  automotive: { src: indAuto, alt: 'Illustration of a heavy-duty carton on a pallet with a gear marking and corner protectors', ...SIZE_43 },
+  'e-commerce': { src: indEcom, alt: 'Illustration of e-commerce packaging: a courier carton with a shipping label and FRAGILE tape, and an open mailer box with paper fill', ...SIZE_43 },
+  fmcg: { src: indFmcg, alt: 'Illustration of a stretch-wrapped pallet of printed FMCG shipper cases with a pallet label and a shelf-ready tray', ...SIZE_43 },
+  electronics: { src: indElectronics, alt: 'Illustration of a 5-ply carton with a die-cut corrugated insert holding a laptop and charger, with ESD and fragile marks', ...SIZE_43 },
+  'food-beverage': { src: indFood, alt: 'Illustration of a corrugated bottle carton with partitions holding twelve glass bottles beside a printed food shipper case', ...SIZE_43 },
+  pharma: { src: indPharma, alt: 'Illustration of white pharmaceutical shipper cartons with a batch panel, one open with rows of mono cartons, and glass vials', ...SIZE_43 },
+  automotive: { src: indAuto, alt: 'Illustration of a triple-wall corrugated bulk box on a pallet holding gears and brake discs in a die-cut layer pad', ...SIZE_43 },
 } as const;
 
 // ============================================
 // PROCESS STEP IMAGES (home page "Dieline to Dispatch")
 // ============================================
 export const PROCESS_IMAGES: Record<'spec' | 'convert' | 'qc' | 'dispatch', ImageSlotData> = {
-  spec: { id: 'home.process.spec', src: procSpec, alt: 'Illustration of a carton dieline with length, breadth and height marked', kind: 'illustration', ...SIZE_43 },
+  spec: { id: 'home.process.spec', src: procSpec, alt: 'Illustration of a flat corrugated box blank with length, width and height marked, a spec sheet, a steel rule and a sample box', kind: 'illustration', ...SIZE_43 },
   convert: {
     id: 'home.process.convert',
     src: photoConveyor,
@@ -195,7 +198,7 @@ export const PROCESS_IMAGES: Record<'spec' | 'convert' | 'qc' | 'dispatch', Imag
     width: 1200,
     height: 900,
   },
-  dispatch: { id: 'home.process.dispatch', src: procDispatch, alt: 'Illustration of a delivery truck beside a pallet of boxes ready to load', kind: 'illustration', ...SIZE_43 },
+  dispatch: { id: 'home.process.dispatch', src: procDispatch, alt: 'Illustration of a stretch-wrapped pallet of cartons on a pallet jack behind a loaded Vayu delivery truck', kind: 'illustration', ...SIZE_43 },
 };
 
 // ============================================

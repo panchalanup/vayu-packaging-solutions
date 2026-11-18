@@ -28,7 +28,12 @@ for (const file of fs.readdirSync(src).filter((n) => n.endsWith('.svg') && (!fil
   const html = path.join(outDir, `.${file}.html`);
   fs.writeFileSync(html, `<!doctype html><meta charset="utf-8"><style>html,body{margin:0}img{display:block;width:${width}px;height:${height}px}</style><img src="${pathToFileURL(path.join(src, file))}">`);
   const png = path.join(outDir, file.replace(/\.svg$/, '.png'));
-  execFileSync(exe, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', `--window-size=${width},${height}`, `--screenshot=${png}`, pathToFileURL(html).href], { stdio: 'ignore' });
+  // Edge sometimes writes the screenshot and then never exits; a timeout keeps the batch moving
+  try {
+    execFileSync(exe, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', `--window-size=${width},${height}`, `--screenshot=${png}`, pathToFileURL(html).href], { stdio: 'ignore', timeout: 60000 });
+  } catch (err) {
+    if (!fs.existsSync(png)) throw err;
+  }
   fs.unlinkSync(html);
 }
 console.log('rendered', fs.readdirSync(outDir).filter((n) => n.endsWith('.png')).length, 'png');

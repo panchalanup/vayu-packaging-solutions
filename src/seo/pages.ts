@@ -385,6 +385,8 @@ export function getSeoPages(options: SeoPageOptions = {}): SeoPage[] {
       description: meta.description,
       keywords: meta.keywords,
       image: SEO_CONFIG.defaultImage,
+      // raster copy of the product illustration (scripts/illustrations/export-seo.mjs), also used by its Product JSON-LD
+      images: [{ path: `/images/products/${product.slug}.jpg`, title: product.name }],
       ogType: 'website',
       lastmod: STATIC_LASTMOD.products,
       changefreq: 'monthly',
@@ -403,6 +405,7 @@ export function getSeoPages(options: SeoPageOptions = {}): SeoPage[] {
       description: `${industry.problem} Vayu Packaging recommends ${industry.spec}: ${industry.metaFocus}. Minimum order ${FACTS.moqBoxes} boxes, GST invoice.`,
       keywords: [`${industry.name} packaging`, `${industry.name} corrugated boxes`, 'corrugated boxes Gujarat', 'Vayu Packaging Solutions'],
       image: SEO_CONFIG.defaultImage,
+      images: [{ path: `/images/industries/${industry.slug}.jpg`, title: `${industry.name} packaging` }],
       ogType: 'website',
       lastmod: STATIC_LASTMOD.services,
       changefreq: 'monthly',

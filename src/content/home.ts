@@ -92,7 +92,7 @@ export const RANGE: RangeItem[] = [
     moq: 'Per roll / carton',
     leadTime: `${FACTS.dispatchHours} hrs from stock`,
     quoteProduct: 'supplies',
-    image: art('home.range.supplies', SUPPLY_IMAGES['bopp-tape']),
+    image: art('home.range.supplies', SUPPLY_IMAGES.all),
   },
 ];
 
