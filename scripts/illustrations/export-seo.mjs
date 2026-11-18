@@ -1,6 +1,8 @@
 /**
  * Exports crawler-friendly raster copies of the illustrations (Google and social cards do not reliably use SVG):
- *   public/images/products/<slug>.png     1200×900, referenced by Product JSON-LD
+ *   public/images/products/<slug>.jpg     1200×900, referenced by Product JSON-LD and the sitemap
+ *   public/images/industries/<slug>.jpg   1200×900, image entries in the sitemap for /industries/<slug>
+ *   (JPEG: the illustrations' paper texture makes PNGs ~15× larger; Edge picks the format from the extension)
  *   public/blog-images/<name>-og.png      1200×630, referenced by blog Open Graph / Twitter tags
  *   scripts/illustrations/.out/og-image.png  1200×630 brand card (git-ignored; convert to public/og-image.jpg, see IMAGE_GUIDE.md)
  * Run: node scripts/illustrations/export-seo.mjs
@@ -20,20 +22,30 @@ const exe = [
 ].find((b) => fs.existsSync(b));
 if (!exe) throw new Error('No Edge/Chrome found');
 
-const only = process.argv[2]; // optional: products | blogs | card
+const only = process.argv[2]; // optional: products | industries | blogs | card
 const tmp = fs.mkdtempSync(path.join(root, 'node_modules/.cache-seo-'));
 function shot(html, out, w, h) {
   const file = path.join(tmp, 'page.html');
   fs.writeFileSync(file, html);
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  execFileSync(exe, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', `--window-size=${w},${h}`, `--screenshot=${out}`, pathToFileURL(file).href], { stdio: 'ignore', timeout: 60000 });
+  fs.rmSync(out, { force: true });
+  // Edge sometimes writes the screenshot and then never exits: accept the file if it is there when the timeout hits
+  try {
+    execFileSync(exe, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', `--window-size=${w},${h}`, `--screenshot=${out}`, pathToFileURL(file).href], { stdio: 'ignore', timeout: 60000 });
+  } catch (err) {
+    if (!fs.existsSync(out)) throw err;
+  }
   console.log('wrote', path.relative(root, out));
 }
 const cover = (src, w, h) => `<!doctype html><meta charset="utf-8"><style>html,body{margin:0}img{display:block;width:${w}px;height:${h}px;object-fit:cover}</style><img src="${src}">`;
 
 // 1) Product images for structured data
 const PRODUCTS = ['3-ply', '5-ply', '7-ply', 'die-cut', 'printed', 'food-grade', 'bopp-tape', 'stretch-film', 'bubble-wrap', 'pp-strapping'];
-if (!only || only === 'products') for (const slug of PRODUCTS) shot(cover(ill(`product-${slug}`), 1200, 900), path.join(root, `public/images/products/${slug}.png`), 1200, 900);
+if (!only || only === 'products') for (const slug of PRODUCTS) shot(cover(ill(`product-${slug}`), 1200, 900), path.join(root, `public/images/products/${slug}.jpg`), 1200, 900);
+
+// 1b) Industry images for the sitemap (keys are the /industries/<slug> slugs)
+const INDUSTRIES = { 'e-commerce': 'industry-ecommerce', fmcg: 'industry-fmcg', electronics: 'industry-electronics', 'food-beverage': 'industry-food', pharma: 'industry-pharma', automotive: 'industry-auto' };
+if (!only || only === 'industries') for (const [slug, svg] of Object.entries(INDUSTRIES)) shot(cover(ill(svg), 1200, 900), path.join(root, `public/images/industries/${slug}.jpg`), 1200, 900);
 
 // 2) Blog Open Graph images (names match src/seo/metadata/blogs.ts)
 const BLOGS = {
