@@ -148,7 +148,7 @@ export function MobileActionBar() {
       className="pb-safe fixed inset-x-0 bottom-0 z-40 md:hidden"
       aria-hidden={hidden}
     >
-      <GlassPane tone="paper" on edge="top" />
+      <GlassPane tone="paper" on hidden={hidden} edge="top" />
       <div className="flex gap-2 px-4 py-2">
         <a
           href={whatsappHref(pageWhatsAppMessage(pathname))}

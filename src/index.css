@@ -894,14 +894,14 @@
    fallback where the feature is missing. Glass only on floating surfaces; blur never animated on large areas.
    ========================================================================================================== */
 :root {
-  --glass-blur: 16px;
+  --glass-blur: 10px;
   --glow-green: rgb(61 186 90 / 0.12);
   --glow-edge: rgb(61 186 90 / 0.85);
   --blur-in: 8px;
 }
 @media (max-width: 767px) {
   :root {
-    --glass-blur: 12px;
+    --glass-blur: 8px;
   }
 }
 [data-theme='ink'] {
@@ -909,96 +909,112 @@
   --glow-edge: rgb(110 220 135 / 0.9);
 }
 
-/* FX-01 / FX-18 glass (components/fx/GlassPane): frosted pane + polished lip. Values follow soda-lime glass: ~4% face
-   reflection rising at the edges (Fresnel), a faint iron-oxide green that is strongest through the edge, a bright
-   total-internal-reflection rim and only a slight dispersion fringe (low dispersion glass). Blur radii never animate;
-   each layer fades its own opacity. */
+/* FX-01 / FX-18 glass (components/fx/GlassPane): the bar itself is frosted glass, with no separate edge strip. The
+   glass runs a little past the bar's content edge and fades out there as a progressive blur (full blur, then a lighter
+   one, then none), so the page melts into the glass instead of meeting a line or showing a sharp and a blurred copy. Values follow soda-lime glass: ~4% face reflection rising at the edges (Fresnel) and a
+   faint iron-oxide green. Blur radii never animate; each layer fades its own opacity. */
 .glass-pane {
   --sheen-x: 30%;
-  --pane-tint: rgb(251 248 243 / 0.58);
-  --pane-green: rgb(46 155 71 / 0.035);
-  --face-top: rgb(255 255 255 / 0.5);
+  --feather: 24px;
+  --pane-tint: rgb(251 248 243 / 0.6);
+  --pane-green: rgb(46 155 71 / 0.03);
+  --face-top: rgb(255 255 255 / 0.45);
   --face-mid: rgb(255 255 255 / 0.04);
-  --face-bottom: rgb(255 255 255 / 0.22);
-  --sheen-a: 0.6;
-  --lip-green: rgb(46 155 71 / 0.09);
-  --lip-seam: rgb(15 26 20 / 0.12);
-  --rim: rgb(255 255 255 / 0.95);
-  --fringe-cool: rgb(80 190 255 / 0.05);
-  --fringe-warm: rgb(255 120 70 / 0.04);
-  --pane-shadow: rgb(15 26 20 / 0.22);
+  --sheen-a: 0.5;
+  /* eased fade: blur and tint thin out quickly at first, then trail off, so there is no visible end */
+  --feather-mask: linear-gradient(
+    var(--feather-dir, to bottom),
+    #000 0,
+    #000 calc(100% - var(--feather)),
+    rgb(0 0 0 / 0.78) calc(100% - var(--feather) * 0.8),
+    rgb(0 0 0 / 0.5) calc(100% - var(--feather) * 0.58),
+    rgb(0 0 0 / 0.24) calc(100% - var(--feather) * 0.34),
+    rgb(0 0 0 / 0.07) calc(100% - var(--feather) * 0.14),
+    transparent 100%
+  );
+  /* the full blur hands over to the lighter one in the first part of the feather */
+  --frost-mask: linear-gradient(
+    var(--feather-dir, to bottom),
+    #000 0,
+    #000 calc(100% - var(--feather)),
+    rgb(0 0 0 / 0.55) calc(100% - var(--feather) * 0.78),
+    rgb(0 0 0 / 0.15) calc(100% - var(--feather) * 0.58),
+    transparent calc(100% - var(--feather) * 0.45)
+  );
+  --soften-mask: linear-gradient(
+    var(--feather-dir, to bottom),
+    transparent 0,
+    #000 12px,
+    #000 calc(12px + var(--feather) * 0.3),
+    rgb(0 0 0 / 0.45) calc(12px + var(--feather) * 0.62),
+    rgb(0 0 0 / 0.12) calc(12px + var(--feather) * 0.85),
+    transparent 100%
+  );
   position: absolute;
-  inset: 0;
+  inset: 0 0 calc(var(--feather) * -1) 0;
   z-index: -1;
   pointer-events: none;
 }
+.glass-pane[data-edge='top'] {
+  --feather-dir: to top;
+  inset: calc(var(--feather) * -1) 0 0 0;
+}
+@media (max-width: 767px) {
+  .glass-pane {
+    --feather: 18px;
+  }
+}
 .glass-pane[data-tone='ink'] {
-  --pane-tint: rgb(15 26 20 / 0.5);
-  --pane-green: rgb(61 186 90 / 0.05);
-  --face-top: rgb(255 255 255 / 0.16);
+  --pane-tint: rgb(15 26 20 / 0.55);
+  --pane-green: rgb(61 186 90 / 0.04);
+  --face-top: rgb(255 255 255 / 0.12);
   --face-mid: rgb(255 255 255 / 0.02);
-  --face-bottom: rgb(255 255 255 / 0.07);
-  --sheen-a: 0.2;
-  --lip-green: rgb(61 186 90 / 0.24);
-  --lip-seam: rgb(0 0 0 / 0.45);
-  --rim: rgb(225 255 235 / 0.55);
-  --fringe-cool: rgb(80 190 255 / 0.16);
-  --fringe-warm: rgb(255 120 70 / 0.12);
-  --pane-shadow: rgb(0 0 0 / 0.5);
+  --sheen-a: 0.16;
 }
 .glass-pane > * {
   position: absolute;
+  inset: 0;
   opacity: 0;
-  transition: opacity 240ms var(--ease-paper);
+  transition: opacity 260ms var(--ease-paper);
+  -webkit-mask-image: var(--feather-mask);
+  mask-image: var(--feather-mask);
 }
 .glass-pane[data-on='true'] > * {
   opacity: 1;
 }
-.glass-pane[data-on='true'][data-hidden='true'] > .glass-pane__lip {
+/* the host slid out of view, but the feather would still hang into the screen */
+.glass-pane[data-on='true'][data-hidden='true'] > * {
   opacity: 0;
 }
-.glass-pane__frost,
-.glass-pane__face,
-.glass-pane__glint {
-  inset: 0;
-}
-/* frost: scatter (blur), a little extra vibrancy and light, the green cast, and the etched grain */
+/* frost: scatter (blur), with a little extra vibrancy and light */
 .glass-pane__frost {
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.6) brightness(1.04);
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.6) brightness(1.04);
-  background-color: var(--pane-tint);
-  background-image: linear-gradient(var(--pane-green), var(--pane-green)),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.09 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4) brightness(1.03);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.4) brightness(1.03);
+  -webkit-mask-image: var(--frost-mask);
+  mask-image: var(--frost-mask);
 }
-/* face: Fresnel (brighter toward the edges) and the specular highlight of the light source */
+.glass-pane[data-rich='false'] > .glass-pane__frost {
+  -webkit-mask-image: var(--feather-mask);
+  mask-image: var(--feather-mask);
+}
+/* soften: a lighter blur along the feather only, so the scatter tapers off instead of ending */
+.glass-pane > .glass-pane__soften {
+  inset: auto 0 0 0;
+  height: calc(var(--feather) + 12px);
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.35));
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.35));
+  -webkit-mask-image: var(--soften-mask);
+  mask-image: var(--soften-mask);
+}
+.glass-pane[data-edge='top'] > .glass-pane__soften {
+  inset: 0 0 auto 0;
+}
+/* face: the milky tint and faint green cast, Fresnel (a soft brighter band at the outer edge) and the specular
+   highlight of the light source, which slides */
 .glass-pane__face {
-  background: radial-gradient(34% 260% at var(--sheen-x) -70%, rgb(255 255 255 / var(--sheen-a)), transparent 70%),
-    linear-gradient(to bottom, var(--face-top) 0, var(--face-mid) 32%, var(--face-mid) 70%, var(--face-bottom) 100%);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7);
-}
-/* lip: the clear polished edge, seen through the glass's thickness */
-.glass-pane__lip {
-  left: 0;
-  right: 0;
-  height: 10px;
-}
-.glass-pane__lip[data-lens='false'] {
-  -webkit-backdrop-filter: saturate(1.5) brightness(1.07);
-  backdrop-filter: saturate(1.5) brightness(1.07);
-}
-.glass-pane[data-edge='bottom'] .glass-pane__lip {
-  top: 100%;
-  background: radial-gradient(16% 100% at var(--sheen-x) 100%, rgb(255 255 255 / 0.9), transparent 75%) bottom / 100% 2px no-repeat,
-    linear-gradient(to bottom, var(--lip-green), rgb(255 255 255 / 0.14));
-  box-shadow: inset 0 1px 0 var(--lip-seam), inset 0 -1px 0 var(--rim), inset 0 -2px 0 var(--fringe-cool), 0 1px 0 var(--fringe-warm),
-    0 12px 24px -14px var(--pane-shadow);
-}
-.glass-pane[data-edge='top'] .glass-pane__lip {
-  bottom: 100%;
-  background: radial-gradient(16% 100% at var(--sheen-x) 0, rgb(255 255 255 / 0.9), transparent 75%) top / 100% 2px no-repeat,
-    linear-gradient(to top, var(--lip-green), rgb(255 255 255 / 0.14));
-  box-shadow: inset 0 -1px 0 var(--lip-seam), inset 0 1px 0 var(--rim), inset 0 2px 0 var(--fringe-cool), 0 -1px 0 var(--fringe-warm),
-    0 -12px 24px -14px var(--pane-shadow);
+  background: radial-gradient(34% 220% at var(--sheen-x) -60%, rgb(255 255 255 / var(--sheen-a)), transparent 70%),
+    linear-gradient(var(--feather-dir, to bottom), var(--face-top) 0, var(--face-mid) 40%, transparent 100%),
+    linear-gradient(var(--pane-green), var(--pane-green)), var(--pane-tint);
 }
 /* glint: one sweep of light when the pane appears */
 .glass-pane__glint {
@@ -1008,7 +1024,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 0.45) 49%, rgb(255 255 255 / 0.12) 53%, transparent 62%);
+  background: linear-gradient(100deg, transparent 38%, rgb(255 255 255 / 0.35) 49%, rgb(255 255 255 / 0.1) 53%, transparent 62%);
   transform: translateX(-110%);
   animation: glass-glint 1.1s var(--ease-paper) 0.05s forwards;
 }
@@ -1028,6 +1044,204 @@
 @media (prefers-reduced-motion: reduce) {
   .glass-pane__glint {
     display: none;
+  }
+}
+
+/* FX-01 liquid glass (components/fx/LiquidGlass): the floating header capsule and the menu panels. A frost with
+   strong vibrancy, a specular rim brightest toward the light (--sheen-x) with a fainter reflection on the far side, a
+   soft inner glow and a floating shadow. In Chromium the rim also bends what is behind it (--lens, an SVG displacement
+   filter). The bar is light glass; panels (menus) are frostier and more tinted so their text reads over anything.
+   Blur radii never animate. */
+.liquid-glass {
+  --sheen-x: 30%;
+  --lg-tint-top: rgb(255 255 255 / 0.3);
+  --lg-tint-bottom: rgb(251 248 243 / 0.2);
+  --lg-frost: 7px;
+  --lg-lens-frost: 4px;
+  --lg-bright: 1.03;
+  --lg-rim: rgb(255 255 255 / 0.95);
+  --lg-rim-far: rgb(255 255 255 / 0.6);
+  --lg-rim-base: rgb(255 255 255 / 0.35);
+  --lg-glow: rgb(255 255 255 / 0.3);
+  --lg-sheen: rgb(255 255 255 / 0.16);
+  --lg-shadow: rgb(15 26 20 / 0.16);
+  --lg-drop: 0 12px 32px -10px var(--lg-shadow), 0 2px 8px -3px var(--lg-shadow);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--lg-radius, 9999px);
+  pointer-events: none;
+  background: linear-gradient(to bottom, var(--lg-tint-top), var(--lg-tint-bottom));
+  -webkit-backdrop-filter: blur(var(--lg-frost)) saturate(1.8) brightness(var(--lg-bright));
+  backdrop-filter: blur(var(--lg-frost)) saturate(1.8) brightness(var(--lg-bright));
+  box-shadow: inset 0 0 8px var(--lg-glow), var(--lg-drop);
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 280ms var(--ease-paper), transform 520ms cubic-bezier(0.34, 1.3, 0.64, 1);
+}
+.liquid-glass[data-on='true'] {
+  opacity: 1;
+  transform: none;
+}
+/* frost, then the lens bends the rim. Frost first: blurring after the displacement leaves some displaced pixels sharp
+   in Chromium */
+.liquid-glass[data-lens='true'] {
+  -webkit-backdrop-filter: blur(var(--lg-lens-frost)) var(--lens) saturate(1.8) brightness(var(--lg-bright));
+  backdrop-filter: blur(var(--lg-lens-frost)) var(--lens) saturate(1.8) brightness(var(--lg-bright));
+}
+.liquid-glass[data-tone='ink'] {
+  --lg-tint-top: rgb(30 44 36 / 0.42);
+  --lg-tint-bottom: rgb(15 26 20 / 0.34);
+  --lg-bright: 1;
+  --lg-rim: rgb(225 255 235 / 0.7);
+  --lg-rim-far: rgb(225 255 235 / 0.3);
+  --lg-rim-base: rgb(255 255 255 / 0.12);
+  --lg-glow: rgb(255 255 255 / 0.08);
+  --lg-sheen: rgb(255 255 255 / 0.08);
+  --lg-shadow: rgb(0 0 0 / 0.45);
+}
+.liquid-glass[data-variant='panel'] {
+  --lg-tint-top: rgb(255 255 255 / 0.62);
+  --lg-tint-bottom: rgb(251 248 243 / 0.5);
+  --lg-frost: 22px;
+  --lg-lens-frost: 18px;
+  --lg-glow: rgb(255 255 255 / 0.55);
+  --lg-sheen: rgb(255 255 255 / 0.28);
+  --lg-drop: 0 32px 64px -24px rgb(15 26 20 / 0.38), 0 8px 20px -8px rgb(15 26 20 / 0.16);
+  box-shadow: inset 0 0 18px var(--lg-glow), var(--lg-drop);
+}
+/* the header capsule sits just inside the nav row */
+.liquid-glass--nav {
+  inset: 4px 6px;
+}
+@media (min-width: 768px) {
+  .liquid-glass--nav {
+    inset: 4px 10px;
+  }
+}
+@media (min-width: 1024px) {
+  .liquid-glass--nav {
+    inset: 4px 22px;
+  }
+}
+/* rim: a 1px ring, lit toward the light source and faintly on the opposite side */
+.liquid-glass::before,
+.liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.liquid-glass::before {
+  padding: 1px;
+  background: radial-gradient(28% 160% at var(--sheen-x) 0, var(--lg-rim), transparent 72%),
+    radial-gradient(28% 160% at calc(100% - var(--sheen-x)) 100%, var(--lg-rim-far), transparent 72%),
+    linear-gradient(var(--lg-rim-base), var(--lg-rim-base));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+/* surface sheen: the upper face catches a broad, soft reflection */
+.liquid-glass::after {
+  background: linear-gradient(to bottom, var(--lg-sheen), transparent 55%);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .liquid-glass {
+    --lg-tint-top: rgb(251 248 243 / 0.95);
+    --lg-tint-bottom: rgb(251 248 243 / 0.92);
+  }
+  .liquid-glass[data-tone='ink'] {
+    --lg-tint-top: rgb(15 26 20 / 0.95);
+    --lg-tint-bottom: rgb(15 26 20 / 0.92);
+  }
+}
+
+/* Surfacing (menus on liquid glass): the panel wells up out of the button it belongs to like a drop of water: it
+   starts small and squashed, overshoots a little taller and wider, wobbles and settles, while its rim ripples (see
+   LiquidGlass `ripple`) and the content comes into focus. Only transforms on the moving element; the glass and the
+   content fade their own opacity, because fading the panel itself would cut the glass off from the page behind it.
+   Set data-state="open" | "closed" on .lg-surface (Radix does this for its menus). */
+.lg-surface {
+  isolation: isolate;
+  transform-origin: var(--lg-origin, 50% 0);
+}
+.lg-surface[data-state='open'] {
+  animation: lg-surface-in 700ms both;
+}
+.lg-surface[data-state='closed'] {
+  animation: lg-surface-out 190ms var(--ease-paper) both;
+}
+.lg-surface[data-state='open'] > .liquid-glass {
+  animation: lg-fade-in 220ms ease-out both;
+}
+.lg-surface[data-state='closed'] > .liquid-glass {
+  animation: lg-fade-out 190ms ease-in both;
+}
+.lg-surface[data-state='open'] > .lg-surface__content {
+  animation: lg-content-in 480ms var(--ease-paper) 120ms both;
+}
+.lg-surface[data-state='closed'] > .lg-surface__content {
+  animation: lg-content-out 130ms ease-in both;
+}
+@keyframes lg-surface-in {
+  0% {
+    transform: translateY(-14px) scale(0.7, 0.36);
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  42% {
+    transform: translateY(2px) scale(1.022, 1.045);
+    animation-timing-function: ease-in-out;
+  }
+  63% {
+    transform: translateY(0) scale(0.992, 0.982);
+    animation-timing-function: ease-in-out;
+  }
+  81% {
+    transform: scale(1.003, 1.005);
+    animation-timing-function: ease-in-out;
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes lg-surface-out {
+  to {
+    transform: translateY(-8px) scale(0.94, 0.84);
+  }
+}
+@keyframes lg-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes lg-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes lg-content-in {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(-6px) scale(0.985);
+  }
+}
+@keyframes lg-content-out {
+  to {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .liquid-glass {
+    transform: none;
+    transition: opacity 200ms linear;
+  }
+  .lg-surface[data-state] {
+    animation: none;
+  }
+  .lg-surface[data-state='open'] > .lg-surface__content {
+    animation: lg-fade-in 160ms linear both;
   }
 }
 

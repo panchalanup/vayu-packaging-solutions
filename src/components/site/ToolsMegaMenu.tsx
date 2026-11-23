@@ -3,7 +3,9 @@
  * clicking one swaps the right side in place (items plus a live preview), so there is no flyout to chase and nothing
  * closes under the pointer. Built on Radix NavigationMenu: opens on hover (short intent delay), click and keyboard,
  * closes on Esc, outside click and after choosing a link, and exposes aria-expanded on the trigger.
- * The panel is centred under the navbar (not under the trigger), so it can never run off-screen.
+ * The panel is centred under the Tools button (Radix's list wrapper is the positioned box) and capped at the screen
+ * width less a margin. It is a pane of liquid glass that wells up out of the button like water (.lg-surface), with its
+ * rim rippling as it settles.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -13,6 +15,11 @@ import { ArrowUpRight, Box, Calculator, ChevronDown, Sparkles } from 'lucide-rea
 import BoxThumbnail from '@/components/BoxDesigner/BoxThumbnail';
 import { TOOLS_CATEGORIES, type ToolsCategory, type ToolsCategoryId } from '@/content/toolsMenu';
 import { cn } from '@/lib/utils';
+import { LiquidGlass } from '@/components/fx/LiquidGlass';
+
+/** Panel width and corner radius (px) */
+const PANEL_W = 800;
+const RADIUS = 22;
 
 const ICONS: Record<ToolsCategoryId, typeof Box> = { designer: Box, calculators: Calculator, finder: Sparkles };
 
@@ -28,7 +35,7 @@ function Preview({ category }: { category: ToolsCategory }) {
     <div
       key={category.id}
       aria-hidden="true"
-      className="relative hidden h-full min-h-[13rem] flex-col items-center justify-center overflow-hidden rounded-xl bg-paper-100 p-4 animate-in fade-in zoom-in-95 duration-300 lg:flex"
+      className="relative hidden h-full min-h-[13rem] flex-col items-center justify-center overflow-hidden rounded-xl bg-white/40 p-4 ring-1 ring-inset ring-white/60 animate-in fade-in zoom-in-95 duration-300 lg:flex"
     >
       {category.id === 'designer' ? (
         <>
@@ -37,7 +44,7 @@ function Preview({ category }: { category: ToolsCategory }) {
         </>
       ) : (
         <>
-          <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-paper-50 shadow-paper">
+          <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/80 shadow-paper">
             <Icon className="h-8 w-8 text-green-600" />
           </span>
           <p className="mt-3 text-center text-sm text-ink-500">{category.blurb}</p>
@@ -79,12 +86,16 @@ export default function ToolsMegaMenu({ active, triggerClass }: ToolsMegaMenuPro
           </NavigationMenu.Trigger>
 
           <NavigationMenu.Content
-            className={cn(
-              'absolute left-1/2 top-full z-50 mt-1 w-[min(800px,calc(100vw-32px))] -translate-x-1/2',
-              'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-top-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 duration-200'
-            )}
+            className="lg-surface absolute z-50 w-[min(800px,calc(100vw-32px))]"
+            style={{
+              left: `calc(50% - min(${PANEL_W / 2}px, 50vw - 16px))`,
+              // the list wrapper is centred in the nav row: drop to just under the header capsule
+              top: 'calc(50% + var(--nav-h) / 2 + 4px)',
+              borderRadius: RADIUS,
+            }}
           >
-            <div className="grid gap-2 rounded-2xl border border-ink-900/10 bg-paper-50 p-2 text-ink-900 shadow-[0_24px_60px_-20px_rgb(15_26_20/0.35)] lg:grid-cols-[13rem_minmax(0,1fr)_13rem]">
+            <LiquidGlass tone="paper" variant="panel" radius={RADIUS} on ripple />
+            <div className="lg-surface__content grid gap-2 p-2 text-ink-900 lg:grid-cols-[13rem_minmax(0,1fr)_13rem]">
               {/* tier 1: categories */}
               <ul className="m-0 flex list-none flex-col gap-1 p-1" aria-label="Tool categories">
                 {TOOLS_CATEGORIES.map((c) => {
@@ -100,7 +111,7 @@ export default function ToolsMegaMenu({ active, triggerClass }: ToolsMegaMenuPro
                         onClick={() => setCat(c.id)}
                         className={cn(
                           'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left outline-none transition-colors duration-quick focus-visible:ring-2 focus-visible:ring-ring',
-                          on ? 'bg-paper-200' : 'hover:bg-paper-100'
+                          on ? 'bg-white/70 shadow-[0_1px_2px_rgb(15_26_20/0.06)]' : 'hover:bg-white/45'
                         )}
                       >
                         <Icon aria-hidden="true" className={cn('h-5 w-5 shrink-0', on ? 'text-green-700' : 'text-ink-500')} />
@@ -126,8 +137,8 @@ export default function ToolsMegaMenu({ active, triggerClass }: ToolsMegaMenuPro
                         <Link
                           to={item.path}
                           className={cn(
-                            'group/item flex items-start justify-between gap-3 rounded-lg px-3 py-2 outline-none transition-colors duration-quick hover:bg-paper-100 focus-visible:bg-paper-100 focus-visible:ring-2 focus-visible:ring-ring',
-                            item.primary && 'bg-paper-100'
+                            'group/item flex items-start justify-between gap-3 rounded-lg px-3 py-2 outline-none transition-colors duration-quick hover:bg-white/55 focus-visible:bg-white/55 focus-visible:ring-2 focus-visible:ring-ring',
+                            item.primary && 'bg-white/40'
                           )}
                         >
                           <span className="min-w-0">
