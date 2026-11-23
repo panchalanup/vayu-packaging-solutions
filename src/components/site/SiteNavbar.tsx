@@ -1,25 +1,24 @@
 /**
- * Navbar (§7.1): sticky, shrinking, theme-aware (paper / ink), hides on scroll-down on mobile.
+ * Navbar (§7.1): sticky, shrinking, theme-aware (paper / ink), hides on scroll-down on mobile. Once scrolled, the nav
+ * sits on a floating liquid-glass capsule. The phone menu is a glass sheet that wells up out of the menu button.
  * Tools opens on hover, click and keyboard (Radix). The skip link is the first focusable element.
  */
 
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, Phone, X } from 'lucide-react';
 import { LOGO_IMAGES } from '@/constants/images';
 import { CONTACT_INFO } from '@/constants';
 import { isToolsPath } from '@/content/toolsMenu';
 import { cn } from '@/lib/utils';
 import { telHref, whatsappHref, pageWhatsAppMessage } from '@/lib/contactLinks';
-import { DUR, EASE } from '@/lib/motion/tokens';
 import { Cta } from '@/components/site/Cta';
 import { SectionNameProvider } from '@/components/site/Section';
 import ToolsMegaMenu from '@/components/site/ToolsMegaMenu';
 import { ToolsMobilePanel, ToolsMobileRow } from '@/components/site/ToolsMobileMenu';
 import MenuScrim from '@/components/site/MenuScrim';
 import { useScrollLock } from '@/hooks/useScrollLock';
-import { GlassPane } from '@/components/fx/GlassPane';
+import { LiquidGlass } from '@/components/fx/LiquidGlass';
 
 const LINKS = [
   { label: 'Products', path: '/products' },
@@ -29,6 +28,10 @@ const LINKS = [
 ] as const;
 
 type NavTheme = 'paper' | 'ink';
+
+/** Phone menu sheet: corner radius (px) and how long it takes to sink away (matches .lg-surface closing) */
+const SHEET_RADIUS = 28;
+const SHEET_EXIT_MS = 200;
 
 /** Reads data-theme of whatever section sits under the nav bar */
 function useThemeUnderNav(navRef: React.RefObject<HTMLElement>, pathname: string): NavTheme {
@@ -92,8 +95,18 @@ export default function Navbar() {
       window.removeEventListener('resize', onResize);
     };
   }, [open]);
+  // the sheet stays mounted while it sinks away, so its closing animation can play
+  const [sheetMounted, setSheetMounted] = useState(false);
   useEffect(() => {
-    if (!open) setMobileView('main');
+    if (open) {
+      setSheetMounted(true);
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      setSheetMounted(false);
+      setMobileView('main');
+    }, SHEET_EXIT_MS);
+    return () => window.clearTimeout(timer);
   }, [open]);
 
   useEffect(() => {
@@ -151,19 +164,20 @@ export default function Navbar() {
           'fixed inset-x-0 top-0 z-50 transition-[transform,background-color,border-color,height] duration-quick ease-paper',
           hidden && !open ? '-translate-y-full' : 'translate-y-0',
           open
-            ? 'border-b border-ink-900/10 bg-paper-50'
+            ? 'border-b border-transparent'
             : condensed
             ? 'border-b border-transparent'
             : 'border-b border-transparent bg-transparent'
         )}
         style={{ height: open ? undefined : 'var(--nav-h)' }}
       >
-        <GlassPane tone={ink ? 'ink' : 'paper'} on={condensed && !open} hidden={hidden && !open} edge="bottom" />
         <nav
           aria-label="Main"
-          className="mx-auto flex h-full max-w-content items-center justify-between gap-4 px-4 md:px-6 lg:px-10"
+          className="relative mx-auto flex h-full max-w-content items-center justify-between gap-4 px-4 md:px-6 lg:px-10"
           style={{ minHeight: 'var(--nav-h)' }}
         >
+          {/* while the menu is open the capsule frosts like the sheet below it, so the logo reads over anything */}
+          <LiquidGlass tone={ink ? 'ink' : 'paper'} variant={open ? 'panel' : 'bar'} on={open || (condensed && !hidden)} className="liquid-glass--nav" />
           <Link to="/" aria-label="Vayu Packaging Solutions, home" className="flex shrink-0 items-center">
             <img
               src={ink ? LOGO_IMAGES.horizontalLight : LOGO_IMAGES.horizontal}
@@ -202,7 +216,7 @@ export default function Navbar() {
               <Phone aria-hidden="true" className="h-4 w-4" />
               <span className="tabular">{CONTACT_INFO.phone}</span>
             </a>
-            <Cta id="nav.quote" intent="quote" href="/quote?src=nav.quote" size="md" className="min-h-10 px-4">
+            <Cta id="nav.quote" intent="quote" href="/quote?src=nav.quote" size="md" className="min-h-10 rounded-full px-4">
               Get a quote
             </Cta>
             <button
@@ -221,16 +235,15 @@ export default function Navbar() {
           </div>
         </nav>
 
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              id="mobile-menu"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8, transition: { duration: DUR.quick * 0.7, ease: EASE.exit } }}
-              transition={{ duration: DUR.base, ease: EASE.paper }}
-              className="max-h-[calc(100svh-64px)] overflow-y-auto overscroll-contain border-t border-ink-900/10 px-4 pb-6 pt-2 md:hidden"
-            >
+        {sheetMounted && (
+          <div
+            id="mobile-menu"
+            data-state={open ? 'open' : 'closed'}
+            className="lg-surface relative mx-1.5 mt-1 md:hidden"
+            style={{ borderRadius: SHEET_RADIUS, ['--lg-origin' as string]: 'calc(100% - 36px) 0' }}
+          >
+            <LiquidGlass tone="paper" variant="panel" radius={SHEET_RADIUS} on ripple />
+            <div className="lg-surface__content max-h-[calc(100svh-88px)] overflow-y-auto overscroll-contain px-5 pb-5 pt-2">
               {mobileView === 'tools' ? (
                 <ToolsMobilePanel onBack={() => setMobileView('main')} />
               ) : (
@@ -266,9 +279,9 @@ export default function Navbar() {
                   Call
                 </Cta>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </div>
+        )}
       </header>
     </SectionNameProvider>
   );
